@@ -1,3 +1,5 @@
+`include "bathtub_macros.sv"
+
 // ===================================================================
 package bathtub_pkg;
 // ===================================================================
@@ -39,6 +41,7 @@ package bathtub_pkg;
 			byte c;
 			string token;
 			bit ok;
+            byte CR = 13;
 
 			ok = 1;
 			tokens.delete();
@@ -49,7 +52,7 @@ package bathtub_pkg;
 					START: begin
 						token = "";
 						case (c)
-							" ", "\t", "\n" : begin
+							" ", "\t", "\n", CR : begin
 								state = WHITE_SPACE;
 							end
 							default : begin
@@ -61,7 +64,7 @@ package bathtub_pkg;
 
 					TOKEN: begin
 						case (c)
-							" ", "\t", "\n" : begin
+							" ", "\t", "\n", CR : begin
 								tokens.push_back(token);
 								token = "";
 								state = WHITE_SPACE;
@@ -75,7 +78,7 @@ package bathtub_pkg;
 
 					WHITE_SPACE: begin
 						case (c)
-							" ", "\t", "\n" : begin
+							" ", "\t", "\n", CR : begin
 								state = WHITE_SPACE;
 							end
 							default : begin
@@ -268,12 +271,13 @@ package bathtub_pkg;
 			byte c;
 			int index_of_first_non_white_space;
 			int index_of_last_non_white_space;
+            byte CR = 13;
 
 			index_of_first_non_white_space = line_buf.len(); // Beyond the end
 			for (int i = 0; i < line_buf.len(); i++) begin
 				c = line_buf[i];
 
-				if (!(c inside {" ", "\t", "\n"})) begin
+              if (!(c inside {" ", "\t", "\n", CR})) begin
 					index_of_first_non_white_space = i;
 					break;
 				end
@@ -283,7 +287,7 @@ package bathtub_pkg;
 			for (int i = line_buf.len() - 1; i >= 0; i--) begin
 				c = line_buf[i];
 
-				if (!(c inside {" ", "\t", "\n"})) begin
+              if (!(c inside {" ", "\t", "\n", CR})) begin
 					index_of_last_non_white_space = i;
 					break;
 				end
@@ -855,7 +859,7 @@ package bathtub_pkg;
 		endfunction : configure
 
 
-		virtual task run_test();
+      virtual task run_test(uvm_phase phase);
 			integer fd;
 			integer code;
 			line_value line_obj;
@@ -907,8 +911,8 @@ package bathtub_pkg;
 				end
 
 				runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
-				runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, dry_run, starting_scenario_number, stopping_scenario_number);
-				runner.run();
+              runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number);
+              runner.run();
 
 			end
 
@@ -928,6 +932,7 @@ package bathtub_pkg;
 			int first_colon_after_keyword;
 			byte c;
 			static string secondary_strings[] = {"\"\"\"", "|", "@", "#"};
+          byte CR = 13;
 
 			start_of_keyword = -1;
 			first_space_after_keyword = -1;
@@ -939,13 +944,13 @@ package bathtub_pkg;
 				c = line_buf[i];
 
 				if (start_of_keyword == -1) begin
-					if (!(c inside {" ", "\t", "\n"})) begin
+                  if (!(c inside {" ", "\t", "\n", CR})) begin
 						start_of_keyword = i;
 					end
 				end
 
 				if (start_of_keyword != -1 && first_space_after_keyword == -1) begin
-					if (c inside {" ", "\t", "\n"}) begin
+                  if (c inside {" ", "\t", "\n", CR}) begin
 						first_space_after_keyword = i;
 					end
 				end
@@ -1710,6 +1715,7 @@ package bathtub_pkg;
 		 * @param background -
 		 */
 		virtual task visit_background(gherkin_pkg::background background);
+          byte CR = 13;
 			$display({1{"  "}}, background.keyword, ": ", background.scenario_definition_name);
 
 			if (background.description.len() > 0) begin
@@ -1718,7 +1724,7 @@ package bathtub_pkg;
 					byte c = background.description[i];
 
 					$write(string'(c));
-					if (c == "\n") begin
+                  if (c inside {"\n", CR}) begin
 						$write({2{"  "}});
 					end
 				end
@@ -1755,6 +1761,7 @@ package bathtub_pkg;
 		endtask : visit_doc_string
 
 		virtual task visit_examples(gherkin_pkg::examples examples);
+          byte CR = 13;
 			$display({{2{"  "}}, examples.keyword, ": ", examples.examples_name});
 
 			if (examples.description != "") begin
@@ -1763,7 +1770,7 @@ package bathtub_pkg;
 					byte c = examples.description[i];
 
 					$write(string'(c));
-					if (c == "\n") begin
+                  if (c inside {"\n", CR}) begin
 						$write({2{"  "}});
 					end
 				end
@@ -1928,6 +1935,7 @@ package bathtub_pkg;
 		uvm_sequence_base parent_sequence;
 		int sequence_priority;
 		bit sequence_call_pre_post;
+      uvm_phase starting_phase;
 		string example_values[string];
 		string current_step_keyword;
 		bit dry_run;
@@ -1965,6 +1973,7 @@ package bathtub_pkg;
 				uvm_sequence_base parent_sequence = null,
 				int sequence_priority = -1,
 				bit sequence_call_pre_post = 1,
+          uvm_phase starting_phase,
 				bit dry_run = 0,
 				int starting_scenario_number = 0,
 				int stopping_scenario_number = 0
@@ -1973,6 +1982,7 @@ package bathtub_pkg;
 			this.parent_sequence = parent_sequence;
 			this.sequence_priority = sequence_priority;
 			this.sequence_call_pre_post = sequence_call_pre_post;
+          this.starting_phase = starting_phase;
 			this.dry_run = dry_run;
 			this.starting_scenario_number = starting_scenario_number;
 			this.stopping_scenario_number = stopping_scenario_number;
@@ -2017,10 +2027,10 @@ package bathtub_pkg;
 			end
 
 			`uvm_info_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH)
-			`uvm_message_add_string(step.text)
-			`uvm_message_add_string(search_keyword)
+          `uvm_message_add_string(step.text)
+          `uvm_message_add_string(search_keyword)
 			`uvm_info_end
-
+                   
 			step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, search_keyword, 1);
 
 			assert_step_resource_is_not_null : assert (step_resource) else begin
@@ -2061,6 +2071,7 @@ package bathtub_pkg;
 
 			seq.print_sequence_info = 1;
 			if (!dry_run) begin
+              seq.set_starting_phase(starting_phase);
 				seq.start(this.sequencer, this.parent_sequence, this.sequence_priority, this.sequence_call_pre_post);
 			end
 
