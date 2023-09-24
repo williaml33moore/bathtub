@@ -8,8 +8,10 @@ package bathtub_pkg;
 	import meta_pkg::*;
 	
 	
-	typedef enum {Given, When, Then} step_keyword_t;
+	typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
 	
+	parameter byte CR = 13; // ASCII carriage return
+	parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
 	
 	virtual class bathtub_utils;
 		// ===================================================================
@@ -41,7 +43,6 @@ package bathtub_pkg;
 			byte c;
 			string token;
 			bit ok;
-            byte CR = 13;
 
 			ok = 1;
 			tokens.delete();
@@ -271,7 +272,6 @@ package bathtub_pkg;
 			byte c;
 			int index_of_first_non_white_space;
 			int index_of_last_non_white_space;
-            byte CR = 13;
 
 			index_of_first_non_white_space = line_buf.len(); // Beyond the end
 			for (int i = 0; i < line_buf.len(); i++) begin
@@ -583,6 +583,7 @@ package bathtub_pkg;
 			`uvm_field_string(step_obj_name, UVM_DEFAULT)
 		`uvm_object_utils_end
 
+      
 		static function step_static_attributes_interface register_step(step_keyword_t keyword, string expression, uvm_object_wrapper step_obj);
 			step_nature new_obj;
 
@@ -598,7 +599,7 @@ package bathtub_pkg;
 				new_obj.regexp = bathtub_utils::bathtub_to_regexp(expression);
 			end
 			
-			uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, keyword.name(), step_obj);
+          uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, STEP_DEF_RESOURCE_NAME, step_obj);
 			
 			`uvm_info(`get_scope_name(), {"\n", new_obj.sprint()}, UVM_HIGH)
 			return new_obj;
@@ -932,7 +933,6 @@ package bathtub_pkg;
 			int first_colon_after_keyword;
 			byte c;
 			static string secondary_strings[] = {"\"\"\"", "|", "@", "#"};
-          byte CR = 13;
 
 			start_of_keyword = -1;
 			first_space_after_keyword = -1;
@@ -1715,7 +1715,6 @@ package bathtub_pkg;
 		 * @param background -
 		 */
 		virtual task visit_background(gherkin_pkg::background background);
-          byte CR = 13;
 			$display({1{"  "}}, background.keyword, ": ", background.scenario_definition_name);
 
 			if (background.description.len() > 0) begin
@@ -1761,7 +1760,6 @@ package bathtub_pkg;
 		endtask : visit_doc_string
 
 		virtual task visit_examples(gherkin_pkg::examples examples);
-          byte CR = 13;
 			$display({{2{"  "}}, examples.keyword, ": ", examples.examples_name});
 
 			if (examples.description != "") begin
@@ -2031,7 +2029,7 @@ package bathtub_pkg;
           `uvm_message_add_string(search_keyword)
 			`uvm_info_end
                    
-			step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, search_keyword, 1);
+			step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, STEP_DEF_RESOURCE_NAME, 1);
 
 			assert_step_resource_is_not_null : assert (step_resource) else begin
 				if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
