@@ -17,12 +17,19 @@
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
 `define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());\
-virtual function step_static_attributes_interface get_step_static_attributes();\
+bathtub_pkg::step_attributes_interface __step_attributes;\
+virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
 	return __step_static_attributes;\
-endfunction : get_step_static_attributes
+endfunction : get_step_static_attributes\
+virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
+    return __step_attributes;\
+endfunction : get_step_attributes\
+virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
+    this.__step_attributes = step_attributes;\
+endfunction : set_step_attributes
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());virtual function step_static_attributes_interface get_step_static_attributes();	return __step_static_attributes;endfunction : get_step_static_attributes
+`define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());bathtub_pkg::step_attributes_interface __step_attributes;virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();	return __step_static_attributes;endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes();    return __step_attributes; endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);    this.__step_attributes = step_attributes;endfunction : set_step_attributes
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
