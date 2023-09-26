@@ -316,14 +316,16 @@ package bathtub_pkg;
 
 
 	class feature_sequence extends uvm_sequence;
-		gherkin_pkg::visitor runner;
 		gherkin_pkg::feature feature;
+		gherkin_pkg::visitor runner;
 
 		function new(string name="feature_sequence");
 			super.new(name);
           feature = null;
 			runner = null;
 		endfunction : new
+
+		`uvm_object_utils(feature_sequence)
 
       virtual function void configure(gherkin_pkg::feature feature, gherkin_pkg::visitor runner);
 			this.feature = feature;
@@ -336,15 +338,32 @@ package bathtub_pkg;
 			end
 		endtask : body
 
-		`uvm_object_utils(feature_sequence)
 	endclass : feature_sequence
 	
 
 	class scenario_sequence extends uvm_sequence;
+		gherkin_pkg::scenario scenario;
+		gherkin_pkg::visitor runner;
+
 		function new(string name="scenario_sequence");
 			super.new(name);
+			scenario = null;
+			runner = null;
 		endfunction : new
+
 		`uvm_object_utils(scenario_sequence)
+
+		virtual function void configure(gherkin_pkg::scenario scenario, gherkin_pkg::visitor runner);
+			this.scenario = scenario;
+			this.runner = runner;
+		endfunction : configure
+
+		virtual task body();
+			if (scenario != null) begin
+				scenario.accept(runner);
+			end
+		endtask : body
+
 	endclass : scenario_sequence
 
 
@@ -2225,7 +2244,17 @@ package bathtub_pkg;
 			current_step_keyword = "Given";
 			if ($cast(background, scenario_definition)) background.accept(this);
 			else if ($cast(scenario_outline, scenario_definition)) scenario_outline.accept(this);
-			else if ($cast(scenario, scenario_definition)) scenario.accept(this);
+			else if ($cast(scenario, scenario_definition)) begin
+				// Only a scenario gets a scenario sequence.
+				current_scenario_sequence = scenario_sequence::type_id::create("current_scenario_sequence");
+				current_scenario_sequence.set_parent_sequence(current_feature_sequence);
+				current_scenario_sequence.set_sequencer(sequencer);
+				current_scenario_sequence.set_starting_phase(starting_phase);
+				current_scenario_sequence.set_priority(sequence_priority);
+
+				current_scenario_sequence.configure(scenario, this);
+				current_scenario_sequence.start(current_scenario_sequence.get_sequencer());
+			end
 			else `uvm_fatal(`get_scope_name(), {"Unknown scenario_definition: ", scenario_definition.get_type_name()})
 		endtask : visit_scenario_definition
 
@@ -2236,6 +2265,8 @@ package bathtub_pkg;
 			foreach (scenario_outline.examples[k]) begin
 
 				foreach (scenario_outline.examples[k].rows[j]) begin
+					gherkin_pkg::scenario scenario;
+					gherkin_pkg::scenario scenario_definition;
 				
 					`uvm_info(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM)
 
@@ -2246,14 +2277,16 @@ package bathtub_pkg;
 					foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
 						example_values[{"<", scenario_outline.examples[k].header.cells[i].value, ">"}] = scenario_outline.examples[k].rows[j].cells[i].value;
 					end
-					
-					if (this.feature_background != null) begin
-						this.feature_background.accept(this);
-					end
 
-					foreach (scenario_outline.steps[i]) begin
-						scenario_outline.steps[i].accept(this);
-					end
+					// Create a new scenario out of this unrolled scenario outline
+                  scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.scenario_definition_name, scenario_outline.description);
+					foreach (scenario_outline.steps[l])
+                      scenario.steps.push_back(scenario_outline.steps[l]);
+					foreach (scenario_outline.tags[l])
+                      scenario.tags.push_back(scenario_outline.tags[l]);
+					scenario_definition = scenario;
+					// Give our new scenario the full scenario treatment
+					scenario_definition.accept(this);
 
 					example_values.delete();
 
