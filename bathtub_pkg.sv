@@ -313,8 +313,41 @@ package bathtub_pkg;
 			this.eof = eof;
 		endfunction : new
 	endclass : line_value
+
+
+	class feature_sequence extends uvm_sequence;
+		gherkin_pkg::visitor runner;
+		gherkin_pkg::feature feature;
+
+		function new(string name="feature_sequence");
+			super.new(name);
+          feature = null;
+			runner = null;
+		endfunction : new
+
+      virtual function void configure(gherkin_pkg::feature feature, gherkin_pkg::visitor runner);
+			this.feature = feature;
+			this.runner = runner;
+		endfunction : configure
+
+		virtual task body();
+			if (feature != null) begin
+				feature.accept(runner);
+			end
+		endtask : body
+
+		`uvm_object_utils(feature_sequence)
+	endclass : feature_sequence
 	
-	
+
+	class scenario_sequence extends uvm_sequence;
+		function new(string name="scenario_sequence");
+			super.new(name);
+		endfunction : new
+		`uvm_object_utils(scenario_sequence)
+	endclass : scenario_sequence
+
+
 	class step_parameter_arg extends uvm_object;
 		typedef enum {INVALID, INT, REAL, STRING} arg_type_t;
 		protected int int_arg;
@@ -1931,6 +1964,8 @@ package bathtub_pkg;
 
 		uvm_sequencer_base sequencer;
 		uvm_sequence_base parent_sequence;
+		feature_sequence current_feature_sequence;
+		scenario_sequence current_scenario_sequence;
 		int sequence_priority;
 		bit sequence_call_pre_post;
       uvm_phase starting_phase;
@@ -1950,6 +1985,8 @@ package bathtub_pkg;
 		function new(string name = "gherkin_document_runner");
 			super.new(name);
 
+			current_feature_sequence = null;
+			current_scenario_sequence = null;
 			current_step_keyword = "Given";
 			feature_background = null;
 			starting_scenario_number = 0;
@@ -2140,7 +2177,7 @@ package bathtub_pkg;
 					only_scenarios.push_back(feature.scenario_definitions[i]);
 				end
 			end
-			
+
 			start = this.starting_scenario_number;
 			stop = this.stopping_scenario_number;
 			while (start < 0) start += only_scenarios.size();
@@ -2155,9 +2192,14 @@ package bathtub_pkg;
 		endtask : visit_feature
 
 		virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
-			if (gherkin_document.feature) begin
-				gherkin_document.feature.accept(this);
-			end
+			current_feature_sequence = feature_sequence::type_id::create("current_feature_sequence");
+			current_feature_sequence.set_parent_sequence(parent_sequence);
+			current_feature_sequence.set_sequencer(sequencer);
+			current_feature_sequence.set_starting_phase(starting_phase);
+			current_feature_sequence.set_priority(sequence_priority);
+
+			current_feature_sequence.configure(gherkin_document.feature, this);
+			current_feature_sequence.start(current_feature_sequence.get_sequencer());
 		endtask : visit_gherkin_document
 
 		virtual task visit_scenario(gherkin_pkg::scenario scenario);
