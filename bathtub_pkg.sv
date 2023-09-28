@@ -315,7 +315,11 @@ package bathtub_pkg;
 	endclass : line_value
 
 
-	class feature_sequence extends uvm_sequence;
+	interface class feature_sequence_interface;
+	endclass : feature_sequence_interface
+
+
+	class feature_sequence extends uvm_sequence implements feature_sequence_interface;
 		gherkin_pkg::feature feature;
 		gherkin_pkg::visitor runner;
 
@@ -341,7 +345,11 @@ package bathtub_pkg;
 	endclass : feature_sequence
 	
 
-	class scenario_sequence extends uvm_sequence;
+	interface class scenario_sequence_interface;
+	endclass : scenario_sequence_interface
+
+
+	class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
 		gherkin_pkg::scenario scenario;
 		gherkin_pkg::visitor runner;
 
@@ -737,6 +745,11 @@ package bathtub_pkg;
 		pure virtual function uvm_object_wrapper get_step_obj();
 		pure virtual function string get_step_obj_name();
 		
+		pure virtual function feature_sequence_interface get_current_feature_sequence();
+		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+		pure virtual function scenario_sequence_interface get_current_scenario_sequence();
+		pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
+
 		pure virtual function void print_attributes(uvm_verbosity verbosity);
 	endclass : step_attributes_interface
 	
@@ -747,9 +760,13 @@ package bathtub_pkg;
 		string text;
 		gherkin_pkg::step_argument argument;
 		step_static_attributes_interface static_attributes;
+		feature_sequence_interface current_feature_seq;
+		scenario_sequence_interface current_scenario_seq;
 
 		function new(string name="step_nurture");
 			super.new(name);
+			current_feature_seq = null;
+			current_scenario_seq = null;
 		endfunction : new
 
 		`uvm_object_utils_begin(step_nurture)
@@ -766,7 +783,6 @@ package bathtub_pkg;
 			`uvm_info_end
 			static_attributes.print_attributes(verbosity);
 		endfunction : print_attributes
-
 
 		virtual function string get_runtime_keyword();
 			return this.runtime_keyword;
@@ -823,6 +839,22 @@ package bathtub_pkg;
 		virtual function string get_step_obj_name();
 			return static_attributes.get_step_obj_name();
 		endfunction : get_step_obj_name
+
+		virtual function feature_sequence_interface get_current_feature_sequence();
+			return this.current_feature_seq;
+		endfunction : get_current_feature_sequence
+
+		virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+			this.current_feature_seq = seq;
+		endfunction : set_current_feature_sequence
+
+		virtual function scenario_sequence_interface get_current_scenario_sequence();
+			return this.current_scenario_seq;
+		endfunction : get_current_scenario_sequence
+
+		virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
+			this.current_scenario_seq = seq;
+		endfunction : set_current_scenario_sequence
 	
 	endclass : step_nurture
 
@@ -2114,6 +2146,8 @@ package bathtub_pkg;
 				step_attributes.set_text(step.text);
 				step_attributes.set_argument(step.argument);
 				step_attributes.set_static_attributes(step_seq.get_step_static_attributes());
+				step_attributes.set_current_feature_sequence(current_feature_sequence);
+				step_attributes.set_current_scenario_sequence(current_scenario_sequence);
 				step_seq.set_step_attributes(step_attributes);
 			end
 			else begin
