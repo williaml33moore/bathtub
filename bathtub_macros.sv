@@ -34,6 +34,23 @@ endfunction : set_step_attributes
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
+`define virtual_step_definition(e) virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
+	return null;\
+endfunction : get_step_static_attributes\
+virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
+    return null;\
+endfunction : get_step_attributes\
+virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
+endfunction : set_step_attributes
+
+`else // BATHTUB__MULTILINE_MACRO_IS_OK
+`define virtual_step_definition(e) virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes(); return null;endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes(); return null;endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes); endfunction : set_step_attributes
+`endif // BATHTUB__MULTILINE_MACRO_IS_OK
+
+
+
+`ifdef BATHTUB__MULTILINE_MACRO_IS_OK
+
 `define step_parameter_get_args_begin(f=get_step_attributes().get_expression())\
 begin : step_parameter_get_args\
     step_parameters __step_params;\
