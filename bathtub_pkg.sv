@@ -346,25 +346,38 @@ package bathtub_pkg;
 	
 
 	interface class scenario_sequence_interface;
+		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+		pure virtual function feature_sequence_interface get_current_feature_sequence();
 	endclass : scenario_sequence_interface
 
 
 	class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
 		gherkin_pkg::scenario scenario;
 		gherkin_pkg::visitor runner;
+		feature_sequence_interface current_feature_seq;
 
 		function new(string name="scenario_sequence");
 			super.new(name);
 			scenario = null;
 			runner = null;
+			current_feature_seq = null;
 		endfunction : new
 
 		`uvm_object_utils(scenario_sequence)
 
-		virtual function void configure(gherkin_pkg::scenario scenario, gherkin_pkg::visitor runner);
+		virtual function void configure(gherkin_pkg::scenario scenario, gherkin_pkg::visitor runner, feature_sequence_interface current_feature_seq);
 			this.scenario = scenario;
 			this.runner = runner;
+			this.current_feature_seq = current_feature_seq;
 		endfunction : configure
+
+		virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+			this.current_feature_seq = seq;
+		endfunction : set_current_feature_sequence
+
+		virtual function feature_sequence_interface get_current_feature_sequence();
+			return this.current_feature_seq;
+		endfunction : get_current_feature_sequence
 
 		virtual task body();
 			if (scenario != null) begin
@@ -2015,8 +2028,8 @@ package bathtub_pkg;
 
 		uvm_sequencer_base sequencer;
 		uvm_sequence_base parent_sequence;
-		feature_sequence current_feature_sequence;
-		scenario_sequence current_scenario_sequence;
+		feature_sequence current_feature_seq;
+		scenario_sequence current_scenario_seq;
 		int sequence_priority;
 		bit sequence_call_pre_post;
       uvm_phase starting_phase;
@@ -2036,8 +2049,8 @@ package bathtub_pkg;
 		function new(string name = "gherkin_document_runner");
 			super.new(name);
 
-			current_feature_sequence = null;
-			current_scenario_sequence = null;
+			current_feature_seq = null;
+			current_scenario_seq = null;
 			current_step_keyword = "Given";
 			feature_background = null;
 			starting_scenario_number = 0;
@@ -2146,8 +2159,8 @@ package bathtub_pkg;
 				step_attributes.set_text(step.text);
 				step_attributes.set_argument(step.argument);
 				step_attributes.set_static_attributes(step_seq.get_step_static_attributes());
-				step_attributes.set_current_feature_sequence(current_feature_sequence);
-				step_attributes.set_current_scenario_sequence(current_scenario_sequence);
+				step_attributes.set_current_feature_sequence(current_feature_seq);
+				step_attributes.set_current_scenario_sequence(current_scenario_seq);
 				step_seq.set_step_attributes(step_attributes);
 			end
 			else begin
@@ -2245,14 +2258,14 @@ package bathtub_pkg;
 		endtask : visit_feature
 
 		virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
-			current_feature_sequence = feature_sequence::type_id::create("current_feature_sequence");
-			current_feature_sequence.set_parent_sequence(parent_sequence);
-			current_feature_sequence.set_sequencer(sequencer);
-			current_feature_sequence.set_starting_phase(starting_phase);
-			current_feature_sequence.set_priority(sequence_priority);
+			current_feature_seq = feature_sequence::type_id::create("current_feature_seq");
+			current_feature_seq.set_parent_sequence(parent_sequence);
+			current_feature_seq.set_sequencer(sequencer);
+			current_feature_seq.set_starting_phase(starting_phase);
+			current_feature_seq.set_priority(sequence_priority);
 
-			current_feature_sequence.configure(gherkin_document.feature, this);
-			current_feature_sequence.start(current_feature_sequence.get_sequencer());
+			current_feature_seq.configure(gherkin_document.feature, this);
+			current_feature_seq.start(current_feature_seq.get_sequencer());
 		endtask : visit_gherkin_document
 
 		virtual task visit_scenario(gherkin_pkg::scenario scenario);
@@ -2280,14 +2293,14 @@ package bathtub_pkg;
 			else if ($cast(scenario_outline, scenario_definition)) scenario_outline.accept(this);
 			else if ($cast(scenario, scenario_definition)) begin
 				// Only a scenario gets a scenario sequence.
-				current_scenario_sequence = scenario_sequence::type_id::create("current_scenario_sequence");
-				current_scenario_sequence.set_parent_sequence(current_feature_sequence);
-				current_scenario_sequence.set_sequencer(sequencer);
-				current_scenario_sequence.set_starting_phase(starting_phase);
-				current_scenario_sequence.set_priority(sequence_priority);
+				current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
+				current_scenario_seq.set_parent_sequence(current_feature_seq);
+				current_scenario_seq.set_sequencer(sequencer);
+				current_scenario_seq.set_starting_phase(starting_phase);
+				current_scenario_seq.set_priority(sequence_priority);
 
-				current_scenario_sequence.configure(scenario, this);
-				current_scenario_sequence.start(current_scenario_sequence.get_sequencer());
+				current_scenario_seq.configure(scenario, this, current_feature_seq);
+				current_scenario_seq.start(current_scenario_seq.get_sequencer());
 			end
 			else `uvm_fatal(`get_scope_name(), {"Unknown scenario_definition: ", scenario_definition.get_type_name()})
 		endtask : visit_scenario_definition
