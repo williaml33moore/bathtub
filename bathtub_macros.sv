@@ -18,33 +18,57 @@
 
 `define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());\
 bathtub_pkg::step_attributes_interface __step_attributes;\
+bathtub_pkg::feature_sequence_interface __current_feature_seq;\
+bathtub_pkg::scenario_sequence_interface __current_scenario_seq;\
 virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
-	return __step_static_attributes;\
+return __step_static_attributes;\
 endfunction : get_step_static_attributes\
 virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
-    return __step_attributes;\
+return __step_attributes;\
 endfunction : get_step_attributes\
 virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
-    this.__step_attributes = step_attributes;\
-endfunction : set_step_attributes
+this.__step_attributes = step_attributes;\
+endfunction : set_step_attributes\
+virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
+return this.__current_feature_seq;\
+endfunction : get_current_feature_sequence\
+virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq);\
+this.__current_feature_seq = seq;\
+endfunction : set_current_feature_sequence\
+virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence();\
+return this.__current_scenario_seq;\
+endfunction : get_current_scenario_sequence\
+virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq);\
+this.__current_scenario_seq = seq;\
+endfunction : set_current_scenario_sequence
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());bathtub_pkg::step_attributes_interface __step_attributes;virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();	return __step_static_attributes;endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes();    return __step_attributes; endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);    this.__step_attributes = step_attributes;endfunction : set_step_attributes
+`define __register_step_def(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type()); bathtub_pkg::step_attributes_interface __step_attributes; bathtub_pkg::feature_sequence_interface __current_feature_seq; bathtub_pkg::scenario_sequence_interface __current_scenario_seq; virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes(); return __step_static_attributes; endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes(); return __step_attributes; endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes); this.__step_attributes = step_attributes; endfunction : set_step_attributes virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence(); return this.__current_feature_seq; endfunction : get_current_feature_sequence virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq); this.__current_feature_seq = seq; endfunction : set_current_feature_sequence virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence(); return this.__current_scenario_seq; endfunction : get_current_scenario_sequence virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq); this.__current_scenario_seq = seq; endfunction : set_current_scenario_sequence
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
 `define virtual_step_definition(e) virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
-	return null;\
+return null;\
 endfunction : get_step_static_attributes\
 virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
-    return null;\
+return null;\
 endfunction : get_step_attributes\
 virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
-endfunction : set_step_attributes
+endfunction : set_step_attributes\
+virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
+return null;\
+endfunction : get_current_feature_sequence\
+virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq);\
+endfunction : set_current_feature_sequence\
+virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence();\
+return null;\
+endfunction : get_current_scenario_sequence\
+virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq);\
+endfunction : set_current_scenario_sequence
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define virtual_step_definition(e) virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes(); return null;endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes(); return null;endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes); endfunction : set_step_attributes
+`define virtual_step_definition(e) virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes(); return null; endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes(); return null; endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes); endfunction : set_step_attributes virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence(); return null; endfunction : get_current_feature_sequence virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq); endfunction : set_current_feature_sequence virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence(); return null; endfunction : get_current_scenario_sequence virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq); endfunction : set_current_scenario_sequence
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 

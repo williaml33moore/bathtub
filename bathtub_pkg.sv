@@ -876,6 +876,10 @@ package bathtub_pkg;
 		pure virtual function step_attributes_interface get_step_attributes();
 		pure virtual function void set_step_attributes(step_attributes_interface step_attributes);
 		pure virtual function step_static_attributes_interface get_step_static_attributes();
+		pure virtual function feature_sequence_interface get_current_feature_sequence();
+		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+		pure virtual function scenario_sequence_interface get_current_scenario_sequence();
+		pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
 	endclass : step_definition_interface
 
 
