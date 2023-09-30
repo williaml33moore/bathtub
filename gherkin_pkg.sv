@@ -139,6 +139,7 @@ package gherkin_pkg;
 		endfunction : new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
+			super.accept(visitor);
 			visitor.visit_data_table(this);
 		endtask : accept
 
@@ -165,6 +166,7 @@ package gherkin_pkg;
 		endfunction : configure
 
 		virtual task accept(gherkin_pkg::visitor visitor);
+			super.accept(visitor);
 			visitor.visit_doc_string(this);
 		endtask : accept
 
@@ -250,6 +252,7 @@ package gherkin_pkg;
 		endfunction : create_new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
+			super.accept(visitor);
 			visitor.visit_background(this);
 		endtask : accept
 
@@ -337,6 +340,7 @@ package gherkin_pkg;
 		endfunction : create_new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
+			super.accept(visitor);
 			visitor.visit_scenario_outline(this);
 		endtask : accept
 
@@ -366,6 +370,7 @@ package gherkin_pkg;
 		endfunction : create_new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
+			super.accept(visitor);
 			visitor.visit_scenario(this);
 		endtask : accept
 

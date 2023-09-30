@@ -9,6 +9,9 @@ package bathtub_pkg;
 	
 	
 	typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
+	typedef class gherkin_document_printer;
+	typedef class gherkin_document_runner;
+	
 	
 	parameter byte CR = 13; // ASCII carriage return
 	parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
@@ -315,23 +318,125 @@ package bathtub_pkg;
 	endclass : line_value
 
 
-	interface class feature_sequence_interface;
+	interface class pool_provider_interface;
+		pure virtual function uvm_pool#(string, shortint) get_shortint_pool();
+		pure virtual function uvm_pool#(string, int) get_int_pool();
+		pure virtual function uvm_pool#(string, longint) get_longint_pool();
+		pure virtual function uvm_pool#(string, byte) get_byte_pool();
+		pure virtual function uvm_pool#(string, integer) get_integer_pool();
+		pure virtual function uvm_pool#(string, time) get_time_pool();
+		pure virtual function uvm_pool#(string, real) get_real_pool();
+		pure virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
+		pure virtual function uvm_pool#(string, realtime) get_realtime_pool();
+		pure virtual function uvm_pool#(string, string) get_string_pool();
+		pure virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
+	endclass : pool_provider_interface
+
+
+	class pool_provider implements pool_provider_interface;
+		uvm_pool#(string, shortint) shortint_pool;
+		uvm_pool#(string, int) int_pool;
+		uvm_pool#(string, longint) longint_pool;
+		uvm_pool#(string, byte) byte_pool;
+		uvm_pool#(string, integer) integer_pool;
+		uvm_pool#(string, time) time_pool;
+		uvm_pool#(string, real) real_pool;
+		uvm_pool#(string, shortreal) shortreal_pool;
+		uvm_pool#(string, realtime) realtime_pool;
+		uvm_pool#(string, string) string_pool;
+		uvm_pool#(string, uvm_object) uvm_object_pool;
+
+		function new();
+			shortint_pool = null;
+			int_pool = null;
+			longint_pool = null;
+			byte_pool = null;
+			integer_pool = null;
+			time_pool = null;
+			real_pool = null;
+			shortreal_pool = null;
+			realtime_pool = null;
+			string_pool = null;
+			uvm_object_pool = null;
+		endfunction : new
+
+		virtual function uvm_pool#(string, shortint) get_shortint_pool();
+			if (!shortint_pool) shortint_pool = new("shortint_pool");
+			return shortint_pool;
+		endfunction : get_shortint_pool
+
+		virtual function uvm_pool#(string, int) get_int_pool();
+			if (!int_pool) int_pool = new("int_pool");
+			return int_pool;
+		endfunction : get_int_pool
+
+		virtual function uvm_pool#(string, longint) get_longint_pool();
+			if (!longint_pool) longint_pool = new("longint_pool");
+			return longint_pool;
+		endfunction : get_longint_pool
+
+		virtual function uvm_pool#(string, byte) get_byte_pool();
+			if (!byte_pool) byte_pool = new("byte_pool");
+			return byte_pool;
+		endfunction : get_byte_pool
+
+		virtual function uvm_pool#(string, integer) get_integer_pool();
+			if (!integer_pool) integer_pool = new("integer_pool");
+			return integer_pool;
+		endfunction : get_integer_pool
+
+		virtual function uvm_pool#(string, time) get_time_pool();
+			if (!time_pool) time_pool = new("time_pool");
+			return time_pool;
+		endfunction : get_time_pool
+
+		virtual function uvm_pool#(string, real) get_real_pool();
+			if (!real_pool) real_pool = new("real_pool");
+			return real_pool;
+		endfunction : get_real_pool
+
+		virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
+			if (!shortreal_pool) shortreal_pool = new("shortreal_pool");
+			return shortreal_pool;
+		endfunction : get_shortreal_pool
+
+		virtual function uvm_pool#(string, realtime) get_realtime_pool();
+			if (!realtime_pool) realtime_pool = new("realtime_pool");
+			return realtime_pool;
+		endfunction : get_realtime_pool
+
+		virtual function uvm_pool#(string, string) get_string_pool();
+			if (!string_pool) string_pool = new("string_pool");
+			return string_pool;
+		endfunction : get_string_pool
+
+		virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
+			if (!uvm_object_pool) uvm_object_pool = new("uvm_object_pool");
+			return uvm_object_pool;
+		endfunction : get_uvm_object_pool
+
+	endclass : pool_provider
+
+
+	interface class feature_sequence_interface extends pool_provider_interface;
 	endclass : feature_sequence_interface
 
 
 	class feature_sequence extends uvm_sequence implements feature_sequence_interface;
 		gherkin_pkg::feature feature;
-		gherkin_pkg::visitor runner;
+		gherkin_document_runner runner;
+		pool_provider pool_prvdr;
 
 		function new(string name="feature_sequence");
 			super.new(name);
-          feature = null;
+          	feature = null;
 			runner = null;
+			pool_prvdr = new();
 		endfunction : new
 
 		`uvm_object_utils(feature_sequence)
 
-      virtual function void configure(gherkin_pkg::feature feature, gherkin_pkg::visitor runner);
+      virtual function void configure(gherkin_pkg::feature feature, gherkin_document_runner runner);
 			this.feature = feature;
 			this.runner = runner;
 		endfunction : configure
@@ -342,10 +447,54 @@ package bathtub_pkg;
 			end
 		endtask : body
 
+		virtual function uvm_pool#(string, shortint) get_shortint_pool();
+			return pool_prvdr.get_shortint_pool();
+		endfunction : get_shortint_pool
+
+		virtual function uvm_pool#(string, int) get_int_pool();
+			return pool_prvdr.get_int_pool();
+		endfunction : get_int_pool
+		
+		virtual function uvm_pool#(string, longint) get_longint_pool();
+			return pool_prvdr.get_longint_pool();
+		endfunction : get_longint_pool
+		
+		virtual function uvm_pool#(string, byte) get_byte_pool();
+			return pool_prvdr.get_byte_pool();
+		endfunction : get_byte_pool
+		
+		virtual function uvm_pool#(string, integer) get_integer_pool();
+			return pool_prvdr.get_integer_pool();
+		endfunction : get_integer_pool
+		
+		virtual function uvm_pool#(string, time) get_time_pool();
+			return pool_prvdr.get_time_pool();
+		endfunction : get_time_pool
+		
+		virtual function uvm_pool#(string, real) get_real_pool();
+			return pool_prvdr.get_real_pool();
+		endfunction : get_real_pool
+		
+		virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
+			return pool_prvdr.get_shortreal_pool();
+		endfunction : get_shortreal_pool
+		
+		virtual function uvm_pool#(string, realtime) get_realtime_pool();
+			return pool_prvdr.get_realtime_pool();
+		endfunction : get_realtime_pool
+		
+		virtual function uvm_pool#(string, string) get_string_pool();
+			return pool_prvdr.get_string_pool();
+		endfunction : get_string_pool
+		
+		virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
+			return pool_prvdr.get_uvm_object_pool();
+		endfunction : get_uvm_object_pool
+
 	endclass : feature_sequence
 	
 
-	interface class scenario_sequence_interface;
+	interface class scenario_sequence_interface extends pool_provider_interface;
 		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
 		pure virtual function feature_sequence_interface get_current_feature_sequence();
 	endclass : scenario_sequence_interface
@@ -353,19 +502,21 @@ package bathtub_pkg;
 
 	class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
 		gherkin_pkg::scenario scenario;
-		gherkin_pkg::visitor runner;
+		gherkin_document_runner runner;
 		feature_sequence_interface current_feature_seq;
+		pool_provider pool_prvdr;
 
 		function new(string name="scenario_sequence");
 			super.new(name);
 			scenario = null;
 			runner = null;
 			current_feature_seq = null;
+			pool_prvdr = new();
 		endfunction : new
 
 		`uvm_object_utils(scenario_sequence)
 
-		virtual function void configure(gherkin_pkg::scenario scenario, gherkin_pkg::visitor runner, feature_sequence_interface current_feature_seq);
+		virtual function void configure(gherkin_pkg::scenario scenario, gherkin_document_runner runner, feature_sequence_interface current_feature_seq);
 			this.scenario = scenario;
 			this.runner = runner;
 			this.current_feature_seq = current_feature_seq;
@@ -381,9 +532,61 @@ package bathtub_pkg;
 
 		virtual task body();
 			if (scenario != null) begin
-				scenario.accept(runner);
+
+				if (runner.feature_background != null) begin
+					runner.feature_background.accept(runner);
+				end
+
+				foreach (scenario.steps[i]) begin
+					scenario.steps[i].accept(runner);
+				end
+;
 			end
 		endtask : body
+
+		virtual function uvm_pool#(string, shortint) get_shortint_pool();
+			return pool_prvdr.get_shortint_pool();
+		endfunction : get_shortint_pool
+
+		virtual function uvm_pool#(string, int) get_int_pool();
+			return pool_prvdr.get_int_pool();
+		endfunction : get_int_pool
+		
+		virtual function uvm_pool#(string, longint) get_longint_pool();
+			return pool_prvdr.get_longint_pool();
+		endfunction : get_longint_pool
+		
+		virtual function uvm_pool#(string, byte) get_byte_pool();
+			return pool_prvdr.get_byte_pool();
+		endfunction : get_byte_pool
+		
+		virtual function uvm_pool#(string, integer) get_integer_pool();
+			return pool_prvdr.get_integer_pool();
+		endfunction : get_integer_pool
+		
+		virtual function uvm_pool#(string, time) get_time_pool();
+			return pool_prvdr.get_time_pool();
+		endfunction : get_time_pool
+		
+		virtual function uvm_pool#(string, real) get_real_pool();
+			return pool_prvdr.get_real_pool();
+		endfunction : get_real_pool
+		
+		virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
+			return pool_prvdr.get_shortreal_pool();
+		endfunction : get_shortreal_pool
+		
+		virtual function uvm_pool#(string, realtime) get_realtime_pool();
+			return pool_prvdr.get_realtime_pool();
+		endfunction : get_realtime_pool
+		
+		virtual function uvm_pool#(string, string) get_string_pool();
+			return pool_prvdr.get_string_pool();
+		endfunction : get_string_pool
+		
+		virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
+			return pool_prvdr.get_uvm_object_pool();
+		endfunction : get_uvm_object_pool
 
 	endclass : scenario_sequence
 
@@ -883,10 +1086,6 @@ package bathtub_pkg;
 	endclass : step_definition_interface
 
 
-	typedef class gherkin_document_printer;
-	typedef class gherkin_document_runner;
-	
-	
 	// Bundle the document with its file name externally.
 	// The AST doesn't provide a place for the file name inside the document.
 	class gherkin_doc_bundle;
@@ -1948,14 +2147,6 @@ package bathtub_pkg;
 		endtask : visit_scenario
 
 		virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
-			gherkin_pkg::background background;
-			gherkin_pkg::scenario_outline scenario_outline;
-			gherkin_pkg::scenario scenario;
-
-			if ($cast(background, scenario_definition)) background.accept(this);
-			else if ($cast(scenario_outline, scenario_definition)) scenario_outline.accept(this);
-			else if ($cast(scenario, scenario_definition)) scenario.accept(this);
-			else `uvm_fatal(`get_scope_name(), {"Unknown scenario_definition: ", scenario_definition.get_type_name()})
 		endtask : visit_scenario_definition
 
 		virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
@@ -2276,37 +2467,20 @@ package bathtub_pkg;
 
 			`uvm_info(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM)
 
-			if (this.feature_background != null) begin
-				this.feature_background.accept(this);
-			end
+			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
+			current_scenario_seq.set_parent_sequence(current_feature_seq);
+			current_scenario_seq.set_sequencer(sequencer);
+			current_scenario_seq.set_starting_phase(starting_phase);
+			current_scenario_seq.set_priority(sequence_priority);
 
-			foreach (scenario.steps[i]) begin
-				scenario.steps[i].accept(this);
-			end
-
+			current_scenario_seq.configure(scenario, this, current_feature_seq);
+			current_scenario_seq.start(current_scenario_seq.get_sequencer());
 		endtask : visit_scenario
 
 		virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
-			gherkin_pkg::background background;
-			gherkin_pkg::scenario_outline scenario_outline;
-			gherkin_pkg::scenario scenario;
 
 			// Reset current keyword to default "Given" in case first step is "And" or "But".
 			current_step_keyword = "Given";
-			if ($cast(background, scenario_definition)) background.accept(this);
-			else if ($cast(scenario_outline, scenario_definition)) scenario_outline.accept(this);
-			else if ($cast(scenario, scenario_definition)) begin
-				// Only a scenario gets a scenario sequence.
-				current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
-				current_scenario_seq.set_parent_sequence(current_feature_seq);
-				current_scenario_seq.set_sequencer(sequencer);
-				current_scenario_seq.set_starting_phase(starting_phase);
-				current_scenario_seq.set_priority(sequence_priority);
-
-				current_scenario_seq.configure(scenario, this, current_feature_seq);
-				current_scenario_seq.start(current_scenario_seq.get_sequencer());
-			end
-			else `uvm_fatal(`get_scope_name(), {"Unknown scenario_definition: ", scenario_definition.get_type_name()})
 		endtask : visit_scenario_definition
 
 		virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
