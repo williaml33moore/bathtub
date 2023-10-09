@@ -1418,6 +1418,23 @@ package bathtub_pkg;
 		endtask : parse_description
 
 
+		virtual task parse_examples_header(gherkin_pkg::table_row header, ref line_value line_obj);
+			string cell_values[$];
+
+			split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
+			foreach (cell_values[i]) begin
+				gherkin_pkg::table_cell table_cell;
+
+				table_cell = gherkin_pkg::table_cell::create_new(
+					.name ("table_cell"),
+					.value (cell_values[i])
+				);
+				header.cells.push_back(table_cell);
+			end
+			get_next_line(line_obj);
+		endtask : parse_examples_header
+
+
 		virtual task parse_lines();
 			line_value line_obj;
 			line_analysis_result_t line_analysis_result;
@@ -1848,22 +1865,10 @@ package bathtub_pkg;
 													case (line_analysis_result.secondary_keyword)
 														"|" : begin : construct_examples_header
 															gherkin_pkg::table_row header;
-															string cell_values[$];
 
 															header = new("header");
-
-															split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-															foreach (cell_values[i]) begin
-																gherkin_pkg::table_cell table_cell;
-
-																table_cell = gherkin_pkg::table_cell::create_new(
-																	.name ("table_cell"),
-																	.value (cell_values[i])
-																);
-																header.cells.push_back(table_cell);
-															end
+															parse_examples_header(header, line_obj);
 															examples.header = header;
-															get_next_line(line_obj);
 
 															forever begin : examples_rows
 
