@@ -1335,6 +1335,70 @@ package bathtub_pkg;
 		endtask : split_table_row
 
 
+		virtual task parse_step_elements(gherkin_pkg::step step, ref line_value line_obj);
+			line_analysis_result_t line_analysis_result;
+
+			get_next_line(line_obj);
+
+			forever begin : step_elements
+
+				if (line_obj.eof) break;
+
+				analyze_line(line_obj.text, line_analysis_result);
+
+				case (line_analysis_result.secondary_keyword)
+					"|" : begin : construct_data_table
+						gherkin_pkg::data_table data_table;
+
+						data_table = new("data_table");
+
+						forever begin : data_table_elements
+
+							if (line_obj.eof) break;
+
+							analyze_line(line_obj.text, line_analysis_result);
+
+							if (line_analysis_result.secondary_keyword == "|") begin
+								gherkin_pkg::table_row table_row;
+								string cell_values[$];
+
+								table_row = new("table_row");
+
+								split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
+								foreach (cell_values[i]) begin
+									gherkin_pkg::table_cell table_cell;
+
+									table_cell = gherkin_pkg::table_cell::create_new(
+										.name ("table_cell"),
+										.value (cell_values[i])
+									);
+									table_row.cells.push_back(table_cell);
+								end
+								data_table.rows.push_back(table_row);
+								get_next_line(line_obj);
+							end
+							else begin
+								break;
+							end
+						end
+
+						step.argument = data_table;
+					end
+
+					"\"\"\"" : begin : construct_doc_string
+						$warning("Placeholder");
+						get_next_line(line_obj);
+					end
+
+					default: begin
+						break;
+					end
+				endcase
+
+			end
+		endtask : parse_step_elements
+
+
 		virtual task parse_lines();
 			line_value line_obj;
 			line_analysis_result_t line_analysis_result;
@@ -1578,64 +1642,8 @@ package bathtub_pkg;
 													.keyword (keyword),
 													.text (text)
 												);
-												get_next_line(line_obj);
 
-												forever begin : step_elements
-
-													if (line_obj.eof) break;
-
-													analyze_line(line_obj.text, line_analysis_result);
-
-													case (line_analysis_result.secondary_keyword)
-														"|" : begin : construct_data_table
-															gherkin_pkg::data_table data_table;
-
-															data_table = new("data_table");
-
-															forever begin : data_table_elements
-
-																if (line_obj.eof) break;
-
-																analyze_line(line_obj.text, line_analysis_result);
-
-																if (line_analysis_result.secondary_keyword == "|") begin
-																	gherkin_pkg::table_row table_row;
-																	string cell_values[$];
-
-																	table_row = new("table_row");
-
-																	split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-																	foreach (cell_values[i]) begin
-																		gherkin_pkg::table_cell table_cell;
-
-																		table_cell = gherkin_pkg::table_cell::create_new(
-																			.name ("table_cell"),
-																			.value (cell_values[i])
-																		);
-																		table_row.cells.push_back(table_cell);
-																	end
-																	data_table.rows.push_back(table_row);
-																	get_next_line(line_obj);
-																end
-																else begin
-																	break;
-																end
-															end
-
-															step.argument = data_table;
-														end
-
-														"\"\"\"" : begin : construct_doc_string
-															$warning("Placeholder");
-															get_next_line(line_obj);
-														end
-
-														default: begin
-															break;
-														end
-													endcase
-
-												end
+												parse_step_elements(step, line_obj);
 
 												scenario.steps.push_back(step);
 
