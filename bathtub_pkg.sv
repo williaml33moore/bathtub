@@ -1418,7 +1418,7 @@ package bathtub_pkg;
 		endtask : parse_description
 
 
-		virtual task parse_examples_header(gherkin_pkg::table_row header, ref line_value line_obj);
+		virtual task parse_examples_header_cells(gherkin_pkg::table_row header, ref line_value line_obj);
 			string cell_values[$];
 
 			split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
@@ -1432,7 +1432,43 @@ package bathtub_pkg;
 				header.cells.push_back(table_cell);
 			end
 			get_next_line(line_obj);
-		endtask : parse_examples_header
+		endtask : parse_examples_header_cells
+
+
+		virtual task parse_examples_rows(gherkin_pkg::examples examples, ref line_value line_obj);
+			line_analysis_result_t line_analysis_result;
+
+			forever begin : examples_rows
+
+				if (line_obj.eof) break;
+
+				analyze_line(line_obj.text, line_analysis_result);
+
+				if (line_analysis_result.secondary_keyword == "|") begin
+					gherkin_pkg::table_row table_row;
+					string cell_values[$];
+
+					table_row = new("table_row");
+
+					split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
+					foreach (cell_values[i]) begin
+						gherkin_pkg::table_cell table_cell;
+
+						table_cell = gherkin_pkg::table_cell::create_new(
+							.name ("table_cell"),
+							.value (cell_values[i])
+						);
+						table_row.cells.push_back(table_cell);
+					end
+					examples.rows.push_back(table_row);
+					get_next_line(line_obj);
+				end
+				else begin
+					break;
+				end
+			end
+		endtask : parse_examples_rows
+
 
 
 		virtual task parse_lines();
@@ -1867,38 +1903,10 @@ package bathtub_pkg;
 															gherkin_pkg::table_row header;
 
 															header = new("header");
-															parse_examples_header(header, line_obj);
+															parse_examples_header_cells(header, line_obj);
 															examples.header = header;
 
-															forever begin : examples_rows
-
-																if (line_obj.eof) break;
-
-																analyze_line(line_obj.text, line_analysis_result);
-
-																if (line_analysis_result.secondary_keyword == "|") begin
-																	gherkin_pkg::table_row table_row;
-																	string cell_values[$];
-
-																	table_row = new("table_row");
-
-																	split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-																	foreach (cell_values[i]) begin
-																		gherkin_pkg::table_cell table_cell;
-
-																		table_cell = gherkin_pkg::table_cell::create_new(
-																			.name ("table_cell"),
-																			.value (cell_values[i])
-																		);
-																		table_row.cells.push_back(table_cell);
-																	end
-																	examples.rows.push_back(table_row);
-																	get_next_line(line_obj);
-																end
-																else begin
-																	break;
-																end
-															end
+															parse_examples_rows(examples, line_obj);
 														end
 
 														default: begin
