@@ -1399,7 +1399,7 @@ package bathtub_pkg;
 		endtask : parse_step_elements
 
 
-		virtual task parse_description(ref string description, ref line_value line_obj);
+		virtual task parse_scenario_description(ref string description, ref line_value line_obj);
 			line_analysis_result_t line_analysis_result;
 
 			description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
@@ -1415,7 +1415,26 @@ package bathtub_pkg;
 					get_next_line(line_obj);
 				end
 			end
-		endtask : parse_description
+		endtask : parse_scenario_description
+
+
+		virtual task parse_feature_description(ref string description, ref line_value line_obj);
+			line_analysis_result_t line_analysis_result;
+			
+			description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+			get_next_line(line_obj);
+			forever begin
+				if (line_obj.eof) break;
+				analyze_line(line_obj.text, line_analysis_result);
+				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+					break;
+				end
+				else begin
+					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+					get_next_line(line_obj);
+				end
+			end
+		endtask : parse_feature_description
 
 
 		virtual task parse_examples_header_cells(gherkin_pkg::table_row header, ref line_value line_obj);
@@ -1946,7 +1965,7 @@ package bathtub_pkg;
 													default : begin
 														if (can_receive_description) begin : construct_description
 															string description;
-															parse_description(description, line_obj);
+															parse_scenario_description(description, line_obj);
 															scenario_outline.description = description;
 															can_receive_description = 0;
 														end
@@ -1966,19 +1985,7 @@ package bathtub_pkg;
 									default : begin
 										if (can_receive_description) begin
 											string description;
-											description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-											get_next_line(line_obj);
-											forever begin
-												if (line_obj.eof) break;
-												analyze_line(line_obj.text, line_analysis_result);
-												if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
-													break;
-												end
-												else begin
-													description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-													get_next_line(line_obj);
-												end
-											end
+											parse_feature_description(description, line_obj);
 											feature.description = description;
 											can_receive_description = 0;
 										end
