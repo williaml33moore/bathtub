@@ -1470,6 +1470,40 @@ package bathtub_pkg;
 		endtask : parse_examples_rows
 
 
+		virtual task parse_data_table_elements(gherkin_pkg::data_table data_table, ref line_value line_obj);
+			line_analysis_result_t line_analysis_result;
+
+			forever begin : data_table_elements
+
+				if (line_obj.eof) break;
+
+				analyze_line(line_obj.text, line_analysis_result);
+
+				if (line_analysis_result.secondary_keyword == "|") begin
+					gherkin_pkg::table_row table_row;
+					string cell_values[$];
+
+					table_row = new("table_row");
+
+					split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
+					foreach (cell_values[i]) begin
+						gherkin_pkg::table_cell table_cell;
+
+						table_cell = gherkin_pkg::table_cell::create_new(
+							.name ("table_cell"),
+							.value (cell_values[i])
+						);
+						table_row.cells.push_back(table_cell);
+					end
+					data_table.rows.push_back(table_row);
+					get_next_line(line_obj);
+				end
+				else begin
+					break;
+				end
+			end
+		endtask : parse_data_table_elements
+
 
 		virtual task parse_lines();
 			line_value line_obj;
@@ -1828,37 +1862,7 @@ package bathtub_pkg;
 															gherkin_pkg::data_table data_table;
 
 															data_table = new("data_table");
-
-															forever begin : data_table_elements
-
-																if (line_obj.eof) break;
-
-																analyze_line(line_obj.text, line_analysis_result);
-
-																if (line_analysis_result.secondary_keyword == "|") begin
-																	gherkin_pkg::table_row table_row;
-																	string cell_values[$];
-
-																	table_row = new("table_row");
-
-																	split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-																	foreach (cell_values[i]) begin
-																		gherkin_pkg::table_cell table_cell;
-
-																		table_cell = gherkin_pkg::table_cell::create_new(
-																			.name ("table_cell"),
-																			.value (cell_values[i])
-																		);
-																		table_row.cells.push_back(table_cell);
-																	end
-																	data_table.rows.push_back(table_row);
-																	get_next_line(line_obj);
-																end
-																else begin
-																	break;
-																end
-															end
-
+															parse_data_table_elements(data_table, line_obj);
 															step.argument = data_table;
 														end
 
