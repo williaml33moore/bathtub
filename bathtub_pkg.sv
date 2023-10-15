@@ -9,6 +9,7 @@ package bathtub_pkg;
 	
 	
 	typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
+	typedef class gherkin_parser;
 	typedef class gherkin_document_printer;
 	typedef class gherkin_document_runner;
 	
@@ -1102,20 +1103,9 @@ package bathtub_pkg;
 
 	class bathtub extends uvm_object;
 
-		typedef struct {
-			string token_before_space;
-			string token_before_colon;
-			string remainder_after_space;
-			string remainder_after_colon;
-			string secondary_keyword;
-			string remainder_after_secondary_keyword;
-		} line_analysis_result_t;
-
 		string feature_files[$];
 
 		gherkin_doc_bundle gherkin_docs[$];
-		mailbox line_mbox;
-		mailbox gherkin_mbox;
 		uvm_sequencer_base sequencer;
 		uvm_sequence_base parent_sequence;
 		int sequence_priority;
@@ -1135,8 +1125,6 @@ package bathtub_pkg;
 			super.new(name);
 
 			feature_files.delete();
-			line_mbox = new(1);
-			gherkin_mbox = new(1);
 			sequencer = null;
 			parent_sequence = null;
 			sequence_priority = -1;
@@ -1166,6 +1154,7 @@ package bathtub_pkg;
 			line_value line_obj;
 			int line_number;
 			gherkin_doc_bundle gherkin_doc_bundle;
+			gherkin_parser parser;
 			gherkin_document_printer printer;
 			gherkin_document_runner runner;
 
@@ -1191,7 +1180,7 @@ package bathtub_pkg;
 					code = $fgets(line_buf, fd);
 					line_obj = new(line_buf, feature_files[i], line_number);
 					line_number++;
-					line_mbox.put(line_obj);
+					parser.line_mbox.put(line_obj);
 				end
 
 				$fclose(fd);
@@ -1200,9 +1189,9 @@ package bathtub_pkg;
 					.text (""),
 					.file_name (feature_files[i])
 				); // Special signal that file is done
-				line_mbox.put(line_obj);
+				parser.line_mbox.put(line_obj);
 
-				gherkin_mbox.get(gherkin_doc_bundle);
+				parser.gherkin_mbox.get(gherkin_doc_bundle);
 
 				assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
 
@@ -1221,11 +1210,35 @@ package bathtub_pkg;
 
 
 		virtual task start_file_parser(string file_name);
-			fork
-				parse_lines();
-			join_none
+			`uvm_fatal("PENDING", "")
 		endtask : start_file_parser
 
+	endclass : bathtub
+
+
+	class gherkin_parser extends uvm_object implements gherkin_pkg::visitor;
+
+		typedef struct {
+			string token_before_space;
+			string token_before_colon;
+			string remainder_after_space;
+			string remainder_after_colon;
+			string secondary_keyword;
+			string remainder_after_secondary_keyword;
+		} line_analysis_result_t;
+
+		mailbox line_mbox;
+		mailbox gherkin_mbox;
+
+		`uvm_object_utils_begin(gherkin_parser)
+		`uvm_object_utils_end
+
+		function new(string name = "gherkin_parser");
+			super.new(name);
+
+			line_mbox = new(1);
+			gherkin_mbox = new(1);
+		endfunction : new
 
 		function void analyze_line(string line_buf, ref line_analysis_result_t result);
 			int start_of_keyword;
@@ -2018,7 +2031,67 @@ package bathtub_pkg;
 
 		endtask : parse_lines
 
-	endclass : bathtub
+		virtual task visit_background(gherkin_pkg::background background);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_background
+
+		virtual task visit_comment(gherkin_pkg::comment comment);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_comment
+
+		virtual task visit_data_table(gherkin_pkg::data_table data_table);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_data_table
+
+		virtual task visit_doc_string(gherkin_pkg::doc_string doc_string);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_doc_string
+
+		virtual task visit_examples(gherkin_pkg::examples examples);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_examples
+
+		virtual task visit_feature(gherkin_pkg::feature feature);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_feature
+
+		virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_gherkin_document
+
+		virtual task visit_scenario(gherkin_pkg::scenario scenario);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_scenario
+
+		virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_scenario_definition
+
+		virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_scenario_outline
+
+		virtual task visit_step(gherkin_pkg::step step);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_step
+
+		virtual task visit_step_argument(gherkin_pkg::step_argument step_argument);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_step_argument
+
+		virtual task visit_table_cell(gherkin_pkg::table_cell table_cell);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_table_cell
+
+		virtual task visit_table_row(gherkin_pkg::table_row table_row);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_table_row
+
+		virtual task visit_tag(gherkin_pkg::tag tag);
+			`uvm_fatal("PENDING", "")
+		endtask : visit_tag
+
+	endclass : gherkin_parser
 
 
 	class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;
