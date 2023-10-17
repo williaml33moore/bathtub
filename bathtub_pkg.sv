@@ -2051,67 +2051,83 @@ package bathtub_pkg;
 
 		endtask : parse_lines
 
-		virtual task visit_background(gherkin_pkg::background background);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_background
-
-		virtual task visit_comment(gherkin_pkg::comment comment);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_comment
-
-		virtual task visit_data_table(gherkin_pkg::data_table data_table);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_data_table
-
-		virtual task visit_doc_string(gherkin_pkg::doc_string doc_string);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_doc_string
-
-		virtual task visit_examples(gherkin_pkg::examples examples);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_examples
-
-		virtual task visit_feature(gherkin_pkg::feature feature);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_feature
-
-		virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_gherkin_document
-
-		virtual task visit_scenario(gherkin_pkg::scenario scenario);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_scenario
-
-		virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_scenario_definition
-
-		virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_scenario_outline
-
-		virtual task visit_step(gherkin_pkg::step step);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_step
-
-		virtual task visit_step_argument(gherkin_pkg::step_argument step_argument);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_step_argument
-
-		virtual task visit_table_cell(gherkin_pkg::table_cell table_cell);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_table_cell
-
-		virtual task visit_table_row(gherkin_pkg::table_row table_row);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_table_row
-
-		virtual task visit_tag(gherkin_pkg::tag tag);
-			`uvm_fatal("PENDING", "")
-		endtask : visit_tag
+		extern virtual task visit_background(gherkin_pkg::background background);
+		extern virtual task visit_comment(gherkin_pkg::comment comment);
+		extern virtual task visit_data_table(gherkin_pkg::data_table data_table);
+		extern virtual task visit_doc_string(gherkin_pkg::doc_string doc_string);
+		extern virtual task visit_examples(gherkin_pkg::examples examples);
+		extern virtual task visit_feature(gherkin_pkg::feature feature);
+		extern virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
+		extern virtual task visit_scenario(gherkin_pkg::scenario scenario);
+		extern virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
+		extern virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
+		extern virtual task visit_step(gherkin_pkg::step step);
+		extern virtual task visit_step_argument(gherkin_pkg::step_argument step_argument);
+		extern virtual task visit_table_cell(gherkin_pkg::table_cell table_cell);
+		extern virtual task visit_table_row(gherkin_pkg::table_row table_row);
+		extern virtual task visit_tag(gherkin_pkg::tag tag);
 
 	endclass : gherkin_parser
+
+	task gherkin_parser::visit_background(gherkin_pkg::background background);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_background
+
+	task gherkin_parser::visit_comment(gherkin_pkg::comment comment);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_comment
+
+	task gherkin_parser::visit_data_table(gherkin_pkg::data_table data_table);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_data_table
+
+	task gherkin_parser::visit_doc_string(gherkin_pkg::doc_string doc_string);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_doc_string
+
+	task gherkin_parser::visit_examples(gherkin_pkg::examples examples);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_examples
+
+	task gherkin_parser::visit_feature(gherkin_pkg::feature feature);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_feature
+
+	task gherkin_parser::visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_gherkin_document
+
+	task gherkin_parser::visit_scenario(gherkin_pkg::scenario scenario);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_scenario
+
+	task gherkin_parser::visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_scenario_definition
+
+	task gherkin_parser::visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_scenario_outline
+
+	task gherkin_parser::visit_step(gherkin_pkg::step step);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_step
+
+	task gherkin_parser::visit_step_argument(gherkin_pkg::step_argument step_argument);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_step_argument
+
+	task gherkin_parser::visit_table_cell(gherkin_pkg::table_cell table_cell);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_table_cell
+
+	task gherkin_parser::visit_table_row(gherkin_pkg::table_row table_row);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_table_row
+
+	task gherkin_parser::visit_tag(gherkin_pkg::tag tag);
+		`uvm_fatal("PENDING", "")
+	endtask : visit_tag
 
 
 	class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;
