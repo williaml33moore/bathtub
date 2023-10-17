@@ -2094,7 +2094,72 @@ package bathtub_pkg;
 	endtask : visit_feature
 
 	task gherkin_parser::visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+		int feature_count = 0;
+
+		// Prime the mailbox so it contains the first non-empty line
+
+		forever begin : find_first_non_empty_line
+			line_mbox.peek(line_obj);
+
+			if (line_obj.eof) break;
+
+			else if (bathtub_utils::trim_white_space(line_obj.text) == "") begin
+				// Ignore empty lines
+				get_next_line(line_obj);
+			end
+
+			else begin
+				// Mailbox is ready
+				break;
+			end
+		end
+
+		forever begin : document_elements
+			line_mbox.peek(line_obj);
+
+			if (line_obj.eof) break;
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.token_before_colon)
+
+				"Feature" : begin : construct_feature
+					gherkin_pkg::feature feature;
+
+					feature = gherkin_pkg::feature::type_id::create("feature");
+					feature.accept(this);
+					if (feature_count == 0) begin
+						gherkin_document.feature = feature;
+						feature_count++;
+					end
+					else begin
+						`uvm_error(`get_scope_name(), "A Gherkin document can have only one feature")
+					end
+				end
+
+				default : begin
+
+					case (line_analysis_result.secondary_keyword)
+
+						"#" : begin : construct_omment
+							gherkin_pkg::comment comment;
+
+							comment = gherkin_pkg::comment::type_id::create("comment");
+							comment.accept(this);
+							gherkin_document.comments.push_back(comment);
+						end
+
+						default : begin
+							`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon})
+							get_next_line(line_obj);
+							break;
+						end
+					endcase
+				end
+			endcase
+		end
 	endtask : visit_gherkin_document
 
 	task gherkin_parser::visit_scenario(gherkin_pkg::scenario scenario);
