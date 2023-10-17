@@ -1149,49 +1149,17 @@ package bathtub_pkg;
 
 
       virtual task run_test(uvm_phase phase);
-			integer fd;
-			integer code;
-			line_value line_obj;
-			int line_number;
 			gherkin_doc_bundle gherkin_doc_bundle;
 			gherkin_parser parser;
 			gherkin_document_printer printer;
 			gherkin_document_runner runner;
 
-			foreach (feature_files[i]) begin
+			foreach (feature_files[i]) begin : iterate_over_feature_files
 				
-				`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_LOW)
+				`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
 
-				start_file_parser(feature_files[i]);
-
-				fd = $fopen(feature_files[i], "r");
-				assert_fopen_succeeded : assert (fd != 0) else begin
-					string ferror_msg;
-					integer errno;
-
-					errno = $ferror(fd, ferror_msg);
-					`uvm_fatal(`get_scope_name(-2), ferror_msg)
-				end
-
-				line_number = 1;
-				while (!$feof(fd)) begin
-					string line_buf;
-
-					code = $fgets(line_buf, fd);
-					line_obj = new(line_buf, feature_files[i], line_number);
-					line_number++;
-					parser.line_mbox.put(line_obj);
-				end
-
-				$fclose(fd);
-
-				line_obj = new(.eof (1),
-					.text (""),
-					.file_name (feature_files[i])
-				); // Special signal that file is done
-				parser.line_mbox.put(line_obj);
-
-				parser.gherkin_mbox.get(gherkin_doc_bundle);
+				parser = gherkin_parser::type_id::create("parser");
+				parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
 
 				assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
 
@@ -1208,15 +1176,15 @@ package bathtub_pkg;
 
 		endtask : run_test
 
-
-		virtual task start_file_parser(string file_name);
-			`uvm_fatal("PENDING", "")
-		endtask : start_file_parser
-
 	endclass : bathtub
 
 
-	class gherkin_parser extends uvm_object implements gherkin_pkg::visitor;
+	interface class gherkin_parser_interface;
+	    pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
+	endclass : gherkin_parser_interface;
+
+
+	class gherkin_parser extends uvm_object implements gherkin_parser_interface, gherkin_pkg::visitor;
 
 		typedef struct {
 			string token_before_space;
@@ -1228,7 +1196,6 @@ package bathtub_pkg;
 		} line_analysis_result_t;
 
 		mailbox line_mbox;
-		mailbox gherkin_mbox;
 
 		`uvm_object_utils_begin(gherkin_parser)
 		`uvm_object_utils_end
@@ -1237,8 +1204,61 @@ package bathtub_pkg;
 			super.new(name);
 
 			line_mbox = new(1);
-			gherkin_mbox = new(1);
 		endfunction : new
+
+
+      	virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
+			integer fd;
+			integer code;
+			line_value line_obj;
+			int line_number;
+			gherkin_pkg::gherkin_document gherkin_doc;
+				
+			`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_file_name}, UVM_LOW)
+
+			gherkin_doc = gherkin_pkg::gherkin_document::type_id::create("gherkin_doc");
+
+			fork
+				start_gherkin_document_parser : gherkin_doc.accept(this);
+
+				begin : read_feature_file_and_feed_lines_to_parser
+
+					fd = $fopen(feature_file_name, "r");
+					assert_fopen_succeeded : assert (fd != 0) else begin
+						string ferror_msg;
+						integer errno;
+
+						errno = $ferror(fd, ferror_msg);
+						`uvm_fatal(`get_scope_name(-2), ferror_msg)
+					end
+
+					line_number = 1;
+					while (!$feof(fd)) begin
+						string line_buf;
+
+						code = $fgets(line_buf, fd);
+						line_obj = new(line_buf, feature_file_name, line_number);
+						line_number++;
+						line_mbox.put(line_obj);
+					end
+
+					$fclose(fd);
+
+					line_obj = new(.eof (1),
+						.text (""),
+						.file_name (feature_file_name)
+					); // Special signal that file is done
+					line_mbox.put(line_obj);
+				end
+			join
+
+			gherkin_doc_bndl = new(
+				.document (gherkin_doc),
+				.file_name (feature_file_name)
+			);
+
+		endtask : parse_feature_file
+
 
 		function void analyze_line(string line_buf, ref line_analysis_result_t result);
 			int start_of_keyword;
@@ -2025,7 +2045,7 @@ package bathtub_pkg;
 				);
 
 				$display(); // Final new line if we are printing for debug
-				gherkin_mbox.put(bundle);
+//				gherkin_document_mbox.put(bundle); // NOTE: mbox has been removed
 
 			end
 
