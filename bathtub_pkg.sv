@@ -2090,8 +2090,98 @@ package bathtub_pkg;
 	endtask : visit_examples
 
 	task gherkin_parser::visit_feature(gherkin_pkg::feature feature);
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		if (line_obj.eof) return;
+
+		analyze_line(line_obj.text, line_analysis_result);
+
+		case (line_analysis_result.token_before_colon)
+
+			"Feature" : begin : configure_feature
+				string language;
+				string keyword;
+				string feature_name;
+				string description;
+				gherkin_pkg::tag tags[$];
+				gherkin_pkg::scenario_definition scenario_definitions[$];
+				int description_count = 0;
+				int background_count = 0;
+				bit can_receive_description = 1;
+
+				keyword = line_analysis_result.token_before_colon;
+				feature_name = line_analysis_result.remainder_after_colon;
+				feature.keyword = keyword;
+				feature.feature_name = feature_name;
+				get_next_line(line_obj);
+
+				forever begin : feature_elements
+					line_mbox.peek(line_obj);
+
+					if (line_obj.eof) break;
+
+					analyze_line(line_obj.text, line_analysis_result);
+
+					case (line_analysis_result.token_before_colon)
+
+						"Background" : begin : construct_background
+							gherkin_pkg::background background;
+
+							background = gherkin_pkg::background::type_id::create("background");
+							background.accept(this);
+							if (background_count == 0) begin
+								feature.scenario_definitions.push_back(background);
+								background_count++;
+							end
+							else begin
+								`uvm_error(`get_scope_name(), "A feature can have only one background")
+							end
+						end
+
+						"Scenario", "Example" : begin : construct_scenario
+							gherkin_pkg::scenario scenario;
+
+							scenario = gherkin_pkg::scenario::type_id::create("scenario");
+							scenario.accept(this);
+							feature.scenario_definitions.push_back(scenario);
+						end
+
+						"Scenario Outline", "Scenario Template" : begin : construct_scenario_outline
+							gherkin_pkg::scenario_outline scenario_outline;
+
+							scenario_outline = gherkin_pkg::scenario_outline::type_id::create("scenario_outline");
+							scenario_outline.accept(this);
+							feature.scenario_definitions.push_back(scenario_outline);
+						end
+
+						default : begin
+							if (can_receive_description) begin
+								string description;
+								parse_feature_description(description, line_obj);
+								feature.description = description;
+								can_receive_description = 0;
+							end
+							else begin
+								break;
+							end
+						end
+
+					endcase
+				end
+			end
+
+			default : begin
+				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+					". Expecting \"Feature:\"."})
+			end
+		endcase
+
 		`uvm_fatal("PENDING", "")
 	endtask : visit_feature
+
 
 	task gherkin_parser::visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
 		line_value line_obj;
@@ -2143,7 +2233,7 @@ package bathtub_pkg;
 
 					case (line_analysis_result.secondary_keyword)
 
-						"#" : begin : construct_omment
+						"#" : begin : construct_comment
 							gherkin_pkg::comment comment;
 
 							comment = gherkin_pkg::comment::type_id::create("comment");
@@ -2152,7 +2242,8 @@ package bathtub_pkg;
 						end
 
 						default : begin
-							`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon})
+							`uvm_error(`get_scope_name(), {"Syntax error. Expecting \"Feature:\" or \"#\".",
+								"\n", line_obj.text})
 							get_next_line(line_obj);
 							break;
 						end
