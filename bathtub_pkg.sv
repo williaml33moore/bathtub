@@ -1195,7 +1195,12 @@ package bathtub_pkg;
 			string remainder_after_secondary_keyword;
 		} line_analysis_result_t;
 
+		typedef enum {
+			OK, ERROR
+		} status_t;
+
 		mailbox line_mbox;
+		status_t status;
 
 		`uvm_object_utils_begin(gherkin_parser)
 		`uvm_object_utils_end
@@ -1214,7 +1219,13 @@ package bathtub_pkg;
 			int line_number;
 			gherkin_pkg::gherkin_document gherkin_doc;
 				
+			`uvm_info_begin(`get_scope_name(), "parse_feature_file enter", UVM_HIGH);
+			`uvm_message_add_string(feature_file_name)
+			`uvm_info_end
+
 			`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_file_name}, UVM_LOW)
+
+			status = OK;
 
 			gherkin_doc = gherkin_pkg::gherkin_document::type_id::create("gherkin_doc");
 
@@ -1229,6 +1240,7 @@ package bathtub_pkg;
 						integer errno;
 
 						errno = $ferror(fd, ferror_msg);
+						status = ERROR;
 						`uvm_fatal(`get_scope_name(-2), ferror_msg)
 					end
 
@@ -1252,10 +1264,17 @@ package bathtub_pkg;
 				end
 			join
 
-			gherkin_doc_bndl = new(
-				.document (gherkin_doc),
-				.file_name (feature_file_name)
-			);
+			gherkin_doc_bndl = null;
+			if (status == OK) begin
+				gherkin_doc_bndl = new(
+					.document (gherkin_doc),
+					.file_name (feature_file_name)
+				);
+			end
+			
+			`uvm_info_begin(`get_scope_name(), "parse_feature_file exit", UVM_HIGH);
+			`uvm_message_add_tag("status", status.name)
+			`uvm_info_end
 
 		endtask : parse_feature_file
 
@@ -1318,21 +1337,27 @@ package bathtub_pkg;
 
 
 		virtual task get_next_line(ref line_value line_obj);
-			forever begin
-				line_mbox.get(line_obj);
+			line_mbox.get(line_obj);
+			$write("%s [%4d]: %s", line_obj.file_name, line_obj.line_number, line_obj.text);
 
-				if (line_obj.eof) begin
-					return;
-				end
-				else begin
-					$write("%s [%4d]: %s", line_obj.file_name, line_obj.line_number, line_obj.text);
+			if (!line_obj.eof) begin
 
-					if (bathtub_utils::trim_white_space(line_obj.text) == "") begin
-						// Ignore empty lines
-						continue;
+				forever begin
+					line_mbox.peek(line_obj);
+
+					if (!line_obj.eof) begin
+
+						if (bathtub_utils::trim_white_space(line_obj.text) == "") begin
+							// Discard empty lines
+							line_mbox.get(line_obj);
+							$write("%s [%4d]: %s", line_obj.file_name, line_obj.line_number, line_obj.text);
+						end
+						else begin
+							break;
+						end
 					end
 					else begin
-						return;
+						break;
 					end
 				end
 			end
@@ -1453,20 +1478,39 @@ package bathtub_pkg;
 
 		virtual task parse_feature_description(ref string description, ref line_value line_obj);
 			line_analysis_result_t line_analysis_result;
-			
-			description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-			get_next_line(line_obj);
-			forever begin
-				if (line_obj.eof) break;
-				analyze_line(line_obj.text, line_analysis_result);
-				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
-					break;
-				end
-				else begin
-					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-					get_next_line(line_obj);
-				end
+
+			line_mbox.peek(line_obj);
+
+			`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature_description enter", UVM_HIGH)
+			`uvm_message_add_string(line_obj.file_name)
+			`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+			`uvm_message_add_int(line_obj.eof, UVM_BIN)
+			if (!line_obj.eof) begin
+				`uvm_message_add_string(line_obj.text)
 			end
+			`uvm_info_end
+
+			if (!line_obj.eof) begin
+
+				description = "";
+
+				while (status == OK) begin
+					if (line_obj.eof) break;
+					analyze_line(line_obj.text, line_analysis_result);
+					if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+						break;
+					end
+					else begin
+						description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+						get_next_line(line_obj);
+					end
+				end
+
+			end
+
+			`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature_description exit", UVM_HIGH)
+			`uvm_message_add_string(description)
+			`uvm_info_end
 		endtask : parse_feature_description
 
 
@@ -2095,91 +2139,111 @@ package bathtub_pkg;
 
 		line_mbox.peek(line_obj);
 
-		if (line_obj.eof) return;
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_feature enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
 
-		analyze_line(line_obj.text, line_analysis_result);
+		if (!line_obj.eof) begin
 
-		case (line_analysis_result.token_before_colon)
+			analyze_line(line_obj.text, line_analysis_result);
 
-			"Feature" : begin : configure_feature
-				string language;
-				string keyword;
-				string feature_name;
-				string description;
-				gherkin_pkg::tag tags[$];
-				gherkin_pkg::scenario_definition scenario_definitions[$];
-				int description_count = 0;
-				int background_count = 0;
-				bit can_receive_description = 1;
+			case (line_analysis_result.token_before_colon)
 
-				keyword = line_analysis_result.token_before_colon;
-				feature_name = line_analysis_result.remainder_after_colon;
-				feature.keyword = keyword;
-				feature.feature_name = feature_name;
-				get_next_line(line_obj);
+				"Feature" : begin : configure_feature
+					string language;
+					string keyword;
+					string feature_name;
+					string description;
+					gherkin_pkg::tag tags[$];
+					gherkin_pkg::scenario_definition scenario_definitions[$];
+					int description_count = 0;
+					int background_count = 0;
+					bit can_receive_description = 1;
 
-				forever begin : feature_elements
-					line_mbox.peek(line_obj);
+					keyword = line_analysis_result.token_before_colon;
+					feature_name = line_analysis_result.remainder_after_colon;
+					feature.keyword = keyword;
+					feature.feature_name = feature_name;
+					get_next_line(line_obj);
 
-					if (line_obj.eof) break;
+					while (status == OK) begin : feature_elements
+						line_mbox.peek(line_obj);
 
-					analyze_line(line_obj.text, line_analysis_result);
+						if (line_obj.eof) break;
 
-					case (line_analysis_result.token_before_colon)
+						analyze_line(line_obj.text, line_analysis_result);
 
-						"Background" : begin : construct_background
-							gherkin_pkg::background background;
+						case (line_analysis_result.token_before_colon)
 
-							background = gherkin_pkg::background::type_id::create("background");
-							background.accept(this);
-							if (background_count == 0) begin
-								feature.scenario_definitions.push_back(background);
-								background_count++;
+							"Background" : begin : construct_background
+								gherkin_pkg::background background;
+
+								background = gherkin_pkg::background::type_id::create("background");
+								background.accept(this);
+								if (status == OK) begin
+									if (background_count == 0) begin
+										feature.scenario_definitions.push_back(background);
+										background_count++;
+									end
+									else begin
+										status = ERROR;
+										`uvm_error(`get_scope_name(), "A feature can have only one background")
+									end
+								end
 							end
-							else begin
-								`uvm_error(`get_scope_name(), "A feature can have only one background")
+
+							"Scenario", "Example" : begin : construct_scenario
+								gherkin_pkg::scenario scenario;
+
+								scenario = gherkin_pkg::scenario::type_id::create("scenario");
+								scenario.accept(this);
+								if (status == OK) begin
+									feature.scenario_definitions.push_back(scenario);
+								end
 							end
-						end
 
-						"Scenario", "Example" : begin : construct_scenario
-							gherkin_pkg::scenario scenario;
+							"Scenario Outline", "Scenario Template" : begin : construct_scenario_outline
+								gherkin_pkg::scenario_outline scenario_outline;
 
-							scenario = gherkin_pkg::scenario::type_id::create("scenario");
-							scenario.accept(this);
-							feature.scenario_definitions.push_back(scenario);
-						end
-
-						"Scenario Outline", "Scenario Template" : begin : construct_scenario_outline
-							gherkin_pkg::scenario_outline scenario_outline;
-
-							scenario_outline = gherkin_pkg::scenario_outline::type_id::create("scenario_outline");
-							scenario_outline.accept(this);
-							feature.scenario_definitions.push_back(scenario_outline);
-						end
-
-						default : begin
-							if (can_receive_description) begin
-								string description;
-								parse_feature_description(description, line_obj);
-								feature.description = description;
-								can_receive_description = 0;
+								scenario_outline = gherkin_pkg::scenario_outline::type_id::create("scenario_outline");
+								scenario_outline.accept(this);
+								if (status == OK) begin
+									feature.scenario_definitions.push_back(scenario_outline);
+								end
 							end
-							else begin
-								break;
-							end
-						end
 
-					endcase
+							default : begin
+								if (can_receive_description) begin
+									string description;
+									parse_feature_description(description, line_obj);
+									feature.description = description;
+									can_receive_description = 0;
+								end
+								else begin
+									break;
+								end
+							end
+
+						endcase
+					end
 				end
-			end
 
-			default : begin
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-					". Expecting \"Feature:\"."})
-			end
-		endcase
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+						". Expecting \"Feature:\"."})
+				end
+			endcase
+		end
 
-		`uvm_fatal("PENDING", "")
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_feature exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_info_end
 	endtask : visit_feature
 
 
@@ -2206,7 +2270,7 @@ package bathtub_pkg;
 			end
 		end
 
-		forever begin : document_elements
+		while (status == OK) begin : document_elements
 			line_mbox.peek(line_obj);
 
 			if (line_obj.eof) break;
@@ -2220,12 +2284,15 @@ package bathtub_pkg;
 
 					feature = gherkin_pkg::feature::type_id::create("feature");
 					feature.accept(this);
-					if (feature_count == 0) begin
-						gherkin_document.feature = feature;
-						feature_count++;
-					end
-					else begin
-						`uvm_error(`get_scope_name(), "A Gherkin document can have only one feature")
+					if (status == OK) begin
+						if (feature_count == 0) begin
+							gherkin_document.feature = feature;
+							feature_count++;
+						end
+						else begin
+							status = ERROR;
+							`uvm_error(`get_scope_name(), "A Gherkin document can have only one feature")
+						end
 					end
 				end
 
@@ -2238,10 +2305,13 @@ package bathtub_pkg;
 
 							comment = gherkin_pkg::comment::type_id::create("comment");
 							comment.accept(this);
-							gherkin_document.comments.push_back(comment);
+							if (status == OK) begin
+								gherkin_document.comments.push_back(comment);
+							end
 						end
 
 						default : begin
+							status = ERROR;
 							`uvm_error(`get_scope_name(), {"Syntax error. Expecting \"Feature:\" or \"#\".",
 								"\n", line_obj.text})
 							get_next_line(line_obj);
