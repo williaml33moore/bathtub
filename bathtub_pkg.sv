@@ -1460,19 +1460,38 @@ package bathtub_pkg;
 		virtual task parse_scenario_description(ref string description, ref line_value line_obj);
 			line_analysis_result_t line_analysis_result;
 
-			description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-			get_next_line(line_obj);
-			forever begin : description_elements
-				if (line_obj.eof) break;
-				analyze_line(line_obj.text, line_analysis_result);
-				if (line_analysis_result.token_before_space inside {"Given", "When", "Then", "And", "But", "*"}) begin
-					break;
-				end
-				else begin
-					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-					get_next_line(line_obj);
-				end
+			line_mbox.peek(line_obj);
+
+			`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_description enter", UVM_HIGH)
+			`uvm_message_add_string(line_obj.file_name)
+			`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+			`uvm_message_add_int(line_obj.eof, UVM_BIN)
+			if (!line_obj.eof) begin
+				`uvm_message_add_string(line_obj.text)
 			end
+			`uvm_info_end
+
+			if (!line_obj.eof) begin
+
+				description = "";
+
+				while (status == OK) begin
+					if (line_obj.eof) break;
+					analyze_line(line_obj.text, line_analysis_result);
+				if (line_analysis_result.token_before_space inside {"Given", "When", "Then", "And", "But", "*"}) begin
+						break;
+					end
+					else begin
+						description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+						get_next_line(line_obj);
+					end
+				end
+
+			end
+
+			`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_description exit", UVM_HIGH)
+			`uvm_message_add_string(description)
+			`uvm_info_end
 		endtask : parse_scenario_description
 
 
@@ -2114,7 +2133,119 @@ package bathtub_pkg;
 	endclass : gherkin_parser
 
 	task gherkin_parser::visit_background(gherkin_pkg::background background);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.token_before_colon)
+				"Background": begin : configure_background
+
+					string keyword;
+					string name;
+					bit can_receive_description = 1;
+
+					keyword = line_analysis_result.token_before_colon;
+					name = line_analysis_result.remainder_after_colon;
+					background.keyword = keyword;
+					background.scenario_definition_name = name;
+
+					get_next_line(line_obj);
+
+					while (status == OK) begin : background_elements
+						line_mbox.peek(line_obj);
+
+						if (line_obj.eof) break;
+
+						analyze_line(line_obj.text, line_analysis_result);
+
+						case (line_analysis_result.token_before_space)
+							"Given",
+							"When",
+							"Then",
+							"And",
+							"But",
+							"*": begin : construct_step
+								gherkin_pkg::step step;
+
+								step = gherkin_pkg::step::type_id::create("step");
+								step.accept(this);
+
+								if (status == OK) begin
+									background.steps.push_back(step);
+								end
+								// Can't have a description after steps
+								can_receive_description = 0;
+							end
+
+							default : begin
+
+								case (line_analysis_result.token_before_colon)
+									"Feature",
+									"Rule",
+									"Example",
+									"Scenario",
+									"Background",
+									"Scenario Outline",
+									"Scenario Template",
+									"Examples",
+									"Scenarios" : begin : terminate_background
+										// Any primary keyword terminates the background.
+										break;
+									end
+
+									default : begin
+
+										case (line_analysis_result.secondary_keyword)
+											"#" : begin : ignore_comment
+												get_next_line(line_obj);
+											end
+
+											default : begin
+
+												if (can_receive_description) begin
+													string description;
+													parse_scenario_description(description, line_obj);
+													background.description = description;
+													can_receive_description = 0;
+												end
+												else begin
+													status = ERROR;
+													`uvm_error(`get_scope_name(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
+												end
+											end
+										endcase
+									end
+								endcase
+							end
+						endcase
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+						". Expecting \"Background:\""})
+				end
+			endcase
+		end
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_info_end
 	endtask : visit_background
 
 	task gherkin_parser::visit_comment(gherkin_pkg::comment comment);
