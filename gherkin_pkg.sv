@@ -178,7 +178,10 @@ package gherkin_pkg;
 		string text;
 		step_argument argument;
 
-		`uvm_object_utils(step)
+		`uvm_object_utils_begin(step)
+		`uvm_field_string(keyword, UVM_ALL_ON)
+		`uvm_field_string(text, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "step");
 			super.new(name);
