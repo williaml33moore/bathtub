@@ -292,6 +292,8 @@ package gherkin_pkg;
 		table_row header;
 		table_row rows[$];
 
+		`uvm_object_utils(examples)
+
 		function new(string name="examples");
 			super.new(name);
 

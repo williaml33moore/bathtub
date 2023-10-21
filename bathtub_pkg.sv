@@ -444,7 +444,7 @@ package bathtub_pkg;
 
 		virtual task body();
 			if (feature != null) begin
-				feature.accept(runner);
+				feature.accept(runner); // runner.visit_feature(feature)
 			end
 		endtask : body
 
@@ -535,11 +535,11 @@ package bathtub_pkg;
 			if (scenario != null) begin
 
 				if (runner.feature_background != null) begin
-					runner.feature_background.accept(runner);
+					runner.feature_background.accept(runner); // runner.visit_feature_background(runner.feature_background)
 				end
 
 				foreach (scenario.steps[i]) begin
-					scenario.steps[i].accept(runner);
+					scenario.steps[i].accept(runner); // runner.visit_step(scenario.steps[i])
 				end
 ;
 			end
@@ -1230,7 +1230,7 @@ package bathtub_pkg;
 			gherkin_doc = gherkin_pkg::gherkin_document::type_id::create("gherkin_doc");
 
 			fork
-				start_gherkin_document_parser : gherkin_doc.accept(this);
+				start_gherkin_document_parser : gherkin_doc.accept(this); // visit_gherkin_doc(gherkin_doc)
 
 				begin : read_feature_file_and_feed_lines_to_parser
 
@@ -1687,7 +1687,7 @@ package bathtub_pkg;
 								gherkin_pkg::step step;
 
 								step = gherkin_pkg::step::type_id::create("step");
-								step.accept(this);
+								step.accept(this); // visit_step(step)
 
 								if (status == OK) begin
 									background.steps.push_back(step);
@@ -1820,7 +1820,7 @@ package bathtub_pkg;
 								gherkin_pkg::background background;
 
 								background = gherkin_pkg::background::type_id::create("background");
-								background.accept(this);
+								background.accept(this); // visit_background(background)
 								if (status == OK) begin
 									if (background_count == 0) begin
 										feature.scenario_definitions.push_back(background);
@@ -1837,7 +1837,7 @@ package bathtub_pkg;
 								gherkin_pkg::scenario scenario;
 
 								scenario = gherkin_pkg::scenario::type_id::create("scenario");
-								scenario.accept(this);
+								scenario.accept(this); // visit_scenario(scenario)
 								if (status == OK) begin
 									feature.scenario_definitions.push_back(scenario);
 								end
@@ -1847,7 +1847,7 @@ package bathtub_pkg;
 								gherkin_pkg::scenario_outline scenario_outline;
 
 								scenario_outline = gherkin_pkg::scenario_outline::type_id::create("scenario_outline");
-								scenario_outline.accept(this);
+								scenario_outline.accept(this); // visit_scenario_outline(scenario_outline)
 								if (status == OK) begin
 									feature.scenario_definitions.push_back(scenario_outline);
 								end
@@ -1919,7 +1919,7 @@ package bathtub_pkg;
 					gherkin_pkg::feature feature;
 
 					feature = gherkin_pkg::feature::type_id::create("feature");
-					feature.accept(this);
+					feature.accept(this); // visit_feature(feature)
 					if (status == OK) begin
 						if (feature_count == 0) begin
 							gherkin_document.feature = feature;
@@ -1940,7 +1940,7 @@ package bathtub_pkg;
 							gherkin_pkg::comment comment;
 
 							comment = gherkin_pkg::comment::type_id::create("comment");
-							comment.accept(this);
+							comment.accept(this); // visit_comment(comment)
 							if (status == OK) begin
 								gherkin_document.comments.push_back(comment);
 							end
@@ -2009,7 +2009,7 @@ package bathtub_pkg;
 								gherkin_pkg::step step;
 
 								step = gherkin_pkg::step::type_id::create("step");
-								step.accept(this);
+								step.accept(this); // visit_step(step)
 
 								if (status == OK) begin
 									scenario.steps.push_back(step);
@@ -2070,10 +2070,9 @@ package bathtub_pkg;
 			endcase
 		end
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background exit", UVM_HIGH)
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_info_end
-
 	endtask : visit_scenario
 
 	task gherkin_parser::visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
@@ -2117,7 +2116,137 @@ package bathtub_pkg;
 	endtask : visit_scenario_definition
 
 	task gherkin_parser::visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario_outline enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.token_before_colon)
+				"Scenario Outline", "Scenario Template" : begin : configure_scenario_outline
+
+					string keyword;
+					string name;
+					bit can_receive_description = 1;
+					bit can_receive_step = 1;
+
+					keyword = line_analysis_result.token_before_colon;
+					name = line_analysis_result.remainder_after_colon;
+					scenario_outline.keyword = keyword;
+					scenario_outline.scenario_definition_name = name;
+
+					get_next_line(line_obj);
+
+					while (status == OK) begin : scenario_outline_elements
+						line_mbox.peek(line_obj);
+
+						if (line_obj.eof) break;
+
+						analyze_line(line_obj.text, line_analysis_result);
+
+						case (line_analysis_result.token_before_space)
+							"Given",
+							"When",
+							"Then",
+							"And",
+							"But",
+							"*": begin : construct_step
+								gherkin_pkg::step step;
+
+								step = gherkin_pkg::step::type_id::create("step");
+								step.accept(this); // visit_step(step)
+
+								if (status == OK) begin
+									if (can_receive_step) begin
+										scenario_outline.steps.push_back(step);
+									end
+									else begin
+										status = ERROR;
+										`uvm_error(`get_scope_name(), "Can't have a step after a scenario outline example")
+									end
+								end
+								// Can't have a description after steps
+								can_receive_description = 0;
+							end
+
+							default : begin
+
+								case (line_analysis_result.token_before_colon)
+									"Examples",
+									"Scenarios" : begin : construct_examples
+										gherkin_pkg::examples examples;
+
+										examples = gherkin_pkg::examples::type_id::create("examples");
+										examples.accept(this); // visit_examples(examples)
+
+										if (status == OK) begin
+											scenario_outline.examples.push_back(examples);
+											can_receive_step = 0;
+										end
+									end
+
+									"Feature",
+									"Rule",
+									"Example",
+									"Scenario",
+									"Background",
+									"Scenario Outline",
+									"Scenario Template" : begin : terminate_scenario
+										// Any other primary keyword terminates the scenario outline.
+										break;
+									end
+
+									default : begin
+
+										case (line_analysis_result.secondary_keyword)
+											"#" : begin : ignore_comment
+												get_next_line(line_obj);
+											end
+
+											default : begin
+
+												if (can_receive_description) begin
+													string description;
+													parse_scenario_description(description, line_obj);
+													scenario_outline.description = description;
+													can_receive_description = 0;
+												end
+												else begin
+													status = ERROR;
+													`uvm_error(`get_scope_name(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
+												end
+											end
+										endcase
+									end
+								endcase
+							end
+						endcase
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+						". Expecting \"Scenario:\" or \"Example\""})
+				end
+			endcase
+		end
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario_outline exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_info_end
 	endtask : visit_scenario_outline
 
 	task gherkin_parser::visit_step(gherkin_pkg::step step);
@@ -2169,7 +2298,7 @@ package bathtub_pkg;
 								gherkin_pkg::data_table data_table;
 
 								data_table = gherkin_pkg::data_table::type_id::create("data_table");
-								data_table.accept(this);
+								data_table.accept(this); // visit_data_table(data_table)
 
 								if (status == OK) begin
 									if (num_step_arguments == 0) begin
@@ -2187,7 +2316,7 @@ package bathtub_pkg;
 								gherkin_pkg::doc_string doc_string;
 
 								doc_string = gherkin_pkg::doc_string::type_id::create("doc_string");
-								doc_string.accept(this);
+								doc_string.accept(this); // visit_doc_string(doc_string)
 
 								if (status == OK) begin
 									if (num_step_arguments == 0) begin
@@ -2266,7 +2395,7 @@ package bathtub_pkg;
 
 
 		virtual task print();
-			document.accept(this);
+			document.accept(this); // visit_gherkin_document(document)
 		endtask : print
 
 		/**
@@ -2289,7 +2418,7 @@ package bathtub_pkg;
 			end
 
 			foreach (background.steps[i]) begin
-				background.steps[i].accept(this);
+				background.steps[i].accept(this); // visit_step(background.steps[i])
 			end
 			$display();
 
@@ -2305,7 +2434,7 @@ package bathtub_pkg;
 
 		virtual task visit_data_table(gherkin_pkg::data_table data_table);
 			foreach (data_table.rows[i]) begin
-				data_table.rows[i].accept(this);
+				data_table.rows[i].accept(this); // visit_table_row(data_table.rows[i])
 			end
 		endtask : visit_data_table
 
@@ -2333,10 +2462,10 @@ package bathtub_pkg;
 				$display();
 			end
 
-			examples.header.accept(this);
+			examples.header.accept(this); // visit_table_row(examples.header)
 
 			foreach (examples.rows[i]) begin
-				examples.rows[i].accept(this);
+				examples.rows[i].accept(this); // visit_table_row(examples.rows[i])
 			end
 			$display();
 			
@@ -2349,7 +2478,7 @@ package bathtub_pkg;
 			$display({"# language: ", feature.language});
 
 			foreach (feature.tags[i]) begin
-				feature.tags[i].accept(this);
+				feature.tags[i].accept(this); // visit_tag(feature.tags[i])
 			end
 
 			$display(feature.keyword, ": ", feature.feature_name);
@@ -2372,16 +2501,16 @@ package bathtub_pkg;
 
 		virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
 			foreach (gherkin_document.comments[i]) begin
-				gherkin_document.comments[i].accept(this);
+				gherkin_document.comments[i].accept(this); // visit_comment(gherkin_document.comments[i])
 			end
 
-			gherkin_document.feature.accept(this);
+			gherkin_document.feature.accept(this); // visit_feature(gherkin_document.feature)
 
 		endtask : visit_gherkin_document
 
 		virtual task visit_scenario(gherkin_pkg::scenario scenario);
 			foreach (scenario.tags[i]) begin
-				scenario.tags[i].accept(this);
+				scenario.tags[i].accept(this); // visit_tag(scenario.tags[i])
 			end
 
 			$display({1{"  "}}, scenario.keyword, ": ", scenario.scenario_definition_name);
@@ -2398,7 +2527,7 @@ package bathtub_pkg;
 			$display();
 
 			foreach (scenario.steps[i]) begin
-				scenario.steps[i].accept(this);
+				scenario.steps[i].accept(this); // visit_step(scenario.steps[i])
 			end
 			$display();
 			
@@ -2409,7 +2538,7 @@ package bathtub_pkg;
 
 		virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
 			foreach (scenario_outline.tags[i]) begin
-				scenario_outline.tags[i].accept(this);
+				scenario_outline.tags[i].accept(this); // visit_tag(scenario_outline.tags[i])
 			end
 
 			$display({1{"  "}}, scenario_outline.keyword, ": ", scenario_outline.scenario_definition_name);
@@ -2426,12 +2555,12 @@ package bathtub_pkg;
 			$display();
 
 			foreach (scenario_outline.steps[i]) begin
-				scenario_outline.steps[i].accept(this);
+				scenario_outline.steps[i].accept(this); // visit_step(scenario_outline.steps[i])
 			end
 			$display();
 
 			foreach (scenario_outline.examples[i]) begin
-				scenario_outline.examples[i].accept(this);
+				scenario_outline.examples[i].accept(this); // visit_examples(scenario_outline.examples[i])
 			end
 
 		endtask : visit_scenario_outline
@@ -2444,12 +2573,7 @@ package bathtub_pkg;
 		endtask : visit_step
 
 		virtual task visit_step_argument(gherkin_pkg::step_argument step_argument);
-			gherkin_pkg::data_table data_table;
-			gherkin_pkg::doc_string doc_string;
-
-			if ($cast(data_table, step_argument)) data_table.accept(this);
-			else if ($cast(doc_string, step_argument)) doc_string.accept(this);
-			else `uvm_fatal(`get_scope_name(), {"Unknown step_argument: ", step_argument.get_type_name()})
+			// Nothing to do
 		endtask : visit_step_argument
 
 		virtual task visit_table_cell(gherkin_pkg::table_cell table_cell);
@@ -2459,7 +2583,7 @@ package bathtub_pkg;
 		virtual task visit_table_row(gherkin_pkg::table_row table_row);
 			$write({{2{"  "}}, "|"});
 			foreach (table_row.cells[i]) begin
-				table_row.cells[i].accept(this);
+				table_row.cells[i].accept(this); // visit_table_cell(table_row.cells[i])
 			end
 			$display();
 		endtask : visit_table_row
@@ -2543,7 +2667,7 @@ package bathtub_pkg;
 
 		virtual task run();
 			`uvm_info(get_name(), {"\n", sprint()}, UVM_MEDIUM)
-			document.accept(this);
+			document.accept(this); // visit_gherkin_docment(document)
 		endtask : run
 
 		/*
@@ -2636,7 +2760,7 @@ package bathtub_pkg;
 			`uvm_info(get_name(), $sformatf("%s: %s", background.keyword, background.scenario_definition_name), UVM_MEDIUM)
 
 			foreach (background.steps[i]) begin
-				background.steps[i].accept(this);
+				background.steps[i].accept(this); // visit_step(background.steps[i])
 			end
 
 		endtask : visit_background
