@@ -1619,501 +1619,6 @@ package bathtub_pkg;
 			end
 		endtask : parse_data_table_elements
 
-
-		virtual task parse_lines();
-			line_value line_obj;
-			line_analysis_result_t line_analysis_result;
-
-			get_next_line(line_obj);
-
-			forever begin : documents
-				gherkin_pkg::gherkin_document gherkin_doc;
-				gherkin_doc_bundle bundle;
-
-				if (line_obj.eof) break;
-
-				gherkin_doc = new("gherkin_doc");
-
-				forever begin : document_elements
-
-					if (line_obj.eof) break;
-
-					analyze_line(line_obj.text, line_analysis_result);
-
-					case (line_analysis_result.token_before_colon)
-
-						"Feature" : begin : construct_feature
-							gherkin_pkg::feature feature;
-							string keyword;
-							string name;
-							bit can_receive_description = 1;
-
-							keyword = line_analysis_result.token_before_colon;
-							name = line_analysis_result.remainder_after_colon;
-							feature = gherkin_pkg::feature::create_new(
-								.name ("feature"),
-								.keyword (keyword),
-								.feature_name (name)
-							);
-							get_next_line(line_obj);
-
-							forever begin : feature_elements
-
-								if (line_obj.eof) break;
-
-								analyze_line(line_obj.text, line_analysis_result);
-
-								case (line_analysis_result.token_before_colon)
-
-									"Background" : begin : construct_background
-										gherkin_pkg::background background;
-										string keyword;
-										string name;
-										bit can_receive_description = 1;
-										bit can_receive_step = 1;
-
-										keyword = line_analysis_result.token_before_colon;
-										name = line_analysis_result.remainder_after_colon;
-										background = gherkin_pkg::background::create_new(
-											.name ("background"),
-											.keyword (keyword),
-											.scenario_definition_name(name),
-											.description("")
-										);
-										get_next_line(line_obj);
-
-										forever begin : background_elements
-
-											if (line_obj.eof) break;
-
-											analyze_line(line_obj.text, line_analysis_result);
-
-											if (line_analysis_result.token_before_space inside {
-														"Given",
-														"When",
-														"Then",
-														"And",
-														"But",
-														"*"})  begin : construct_step
-												gherkin_pkg::step step;
-												string keyword;
-												string text;
-
-												keyword = line_analysis_result.token_before_space;
-												text = line_analysis_result.remainder_after_space;
-												step = gherkin_pkg::step::create_new(
-													.name ("step"),
-													.keyword (keyword),
-													.text (text)
-												);
-												get_next_line(line_obj);
-
-												forever begin : step_elements
-
-													if (line_obj.eof) break;
-
-													analyze_line(line_obj.text, line_analysis_result);
-
-													case (line_analysis_result.secondary_keyword)
-														"|" : begin : construct_data_table
-															gherkin_pkg::data_table data_table;
-
-															data_table = new("data_table");
-
-															forever begin : data_table_elements
-
-																if (line_obj.eof) break;
-
-																analyze_line(line_obj.text, line_analysis_result);
-
-																if (line_analysis_result.secondary_keyword == "|") begin
-																	gherkin_pkg::table_row table_row;
-																	string cell_values[$];
-
-																	table_row = new("table_row");
-
-																	split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-																	foreach (cell_values[i]) begin
-																		gherkin_pkg::table_cell table_cell;
-
-																		table_cell = gherkin_pkg::table_cell::create_new(
-																			.name ("table_cell"),
-																			.value (cell_values[i])
-																		);
-																		table_row.cells.push_back(table_cell);
-																	end
-																	data_table.rows.push_back(table_row);
-																	get_next_line(line_obj);
-																end
-																else begin
-																	break;
-																end
-															end
-
-															step.argument = data_table;
-														end
-
-														"\"\"\"" : begin : construct_doc_string
-															$warning("Placeholder");
-															get_next_line(line_obj);
-														end
-
-														default: begin
-															break;
-														end
-													endcase
-
-												end
-
-												background.steps.push_back(step);
-
-											end
-
-											else if (line_analysis_result.token_before_colon inside {
-														"Feature",
-														"Rule",
-														"Example",
-														"Scenario",
-														"Background",
-														"Scenario Outline",
-														"Scenario Template",
-														"Examples",
-														"Scenarios"}) begin : terminate_background
-												// Any primary keyword terminates the background.
-												break;
-											end
-
-											else begin
-
-												case (line_analysis_result.secondary_keyword)
-													"#" : begin : ignore_comment
-														get_next_line(line_obj);
-													end
-
-													default : begin
-														if (can_receive_description) begin : construct_description
-															string description;
-															description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-															get_next_line(line_obj);
-															forever begin : description_elements
-																if (line_obj.eof) break;
-																analyze_line(line_obj.text, line_analysis_result);
-																if (line_analysis_result.token_before_space inside {"Given", "When", "Then", "And", "But", "*"}) begin
-																	break;
-																end
-																else begin
-																	description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-																	get_next_line(line_obj);
-																end
-															end
-															background.description = description;
-															can_receive_description = 0;
-														end
-														else begin
-															$error("Unexpected line");
-															break;
-														end
-													end
-												endcase
-											end
-
-										end
-
-										feature.scenario_definitions.push_back(background);
-									end
-
-									"Scenario", "Example" : begin : construct_scenario
-										gherkin_pkg::scenario scenario;
-										string keyword;
-										string name;
-										bit can_receive_description = 1;
-										bit can_receive_step = 1;
-
-										keyword = line_analysis_result.token_before_colon;
-										name = line_analysis_result.remainder_after_colon;
-										scenario = gherkin_pkg::scenario::create_new(
-											.name ("scenario"),
-											.keyword (keyword),
-											.scenario_definition_name(name),
-											.description("")
-										);
-										get_next_line(line_obj);
-
-										forever begin : scenario_elements
-
-											if (line_obj.eof) break;
-
-											analyze_line(line_obj.text, line_analysis_result);
-
-											if (line_analysis_result.token_before_space inside {
-														"Given",
-														"When",
-														"Then",
-														"And",
-														"But",
-														"*"})  begin : construct_step
-												gherkin_pkg::step step;
-												string keyword;
-												string text;
-
-												keyword = line_analysis_result.token_before_space;
-												text = line_analysis_result.remainder_after_space;
-												step = gherkin_pkg::step::create_new(
-													.name ("step"),
-													.keyword (keyword),
-													.text (text)
-												);
-
-												parse_step_elements(step, line_obj);
-
-												scenario.steps.push_back(step);
-
-											end
-
-											else if (line_analysis_result.token_before_colon inside {
-														"Feature",
-														"Rule",
-														"Example",
-														"Scenario",
-														"Background",
-														"Scenario Outline",
-														"Scenario Template",
-														"Examples",
-														"Scenarios"}) begin : terminate_scenario
-												// Any primary keyword terminates the scenario outline.
-												break;
-											end
-
-											else begin
-
-												case (line_analysis_result.secondary_keyword)
-													"#" : begin : ignore_comment
-														get_next_line(line_obj);
-													end
-
-													default : begin
-														if (can_receive_description) begin : construct_description
-															string description;
-															description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-															get_next_line(line_obj);
-															forever begin : description_elements
-																if (line_obj.eof) break;
-																analyze_line(line_obj.text, line_analysis_result);
-																if (line_analysis_result.token_before_space inside {"Given", "When", "Then", "And", "But", "*"}) begin
-																	break;
-																end
-																else begin
-																	description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
-																	get_next_line(line_obj);
-																end
-															end
-															scenario.description = description;
-															can_receive_description = 0;
-														end
-														else begin
-															$error("Unexpected line");
-															break;
-														end
-													end
-												endcase
-											end
-
-										end
-
-										feature.scenario_definitions.push_back(scenario);
-									end
-
-									"Scenario Outline", "Scenario Template" : begin : construct_scenario_outline
-										gherkin_pkg::scenario_outline scenario_outline;
-										string keyword;
-										string name;
-										bit can_receive_description = 1;
-										bit can_receive_step = 1;
-
-										keyword = line_analysis_result.token_before_colon;
-										name = line_analysis_result.remainder_after_colon;
-										scenario_outline = gherkin_pkg::scenario_outline::create_new(
-											.name ("scenario_outline"),
-											.keyword (keyword),
-											.scenario_definition_name(name),
-											.description("")
-										);
-										get_next_line(line_obj);
-
-										forever begin : scenario_outline_elements
-
-											if (line_obj.eof) break;
-
-											analyze_line(line_obj.text, line_analysis_result);
-
-											if (line_analysis_result.token_before_space inside {
-														"Given",
-														"When",
-														"Then",
-														"And",
-														"But",
-														"*"})  begin : construct_step
-												gherkin_pkg::step step;
-												string keyword;
-												string text;
-
-												keyword = line_analysis_result.token_before_space;
-												text = line_analysis_result.remainder_after_space;
-												step = gherkin_pkg::step::create_new(
-													.name ("step"),
-													.keyword (keyword),
-													.text (text)
-												);
-												get_next_line(line_obj);
-
-												forever begin : step_elements
-
-													if (line_obj.eof) break;
-
-													analyze_line(line_obj.text, line_analysis_result);
-
-													case (line_analysis_result.secondary_keyword)
-														"|" : begin : construct_data_table
-															gherkin_pkg::data_table data_table;
-
-															data_table = new("data_table");
-															parse_data_table_elements(data_table, line_obj);
-															step.argument = data_table;
-														end
-
-														"\"\"\"" : begin : construct_doc_string
-															$warning("Placeholder");
-															get_next_line(line_obj);
-														end
-
-														default: begin
-															break;
-														end
-													endcase
-
-												end
-
-												scenario_outline.steps.push_back(step);
-
-											end
-
-											else if (line_analysis_result.token_before_colon inside {"Examples", "Scenarios"}) begin : construct_examples
-												gherkin_pkg::examples examples;
-												string keyword;
-												string name;
-
-												keyword = line_analysis_result.token_before_colon;
-												name = line_analysis_result.remainder_after_colon;
-												examples = gherkin_pkg::examples::create_new(
-													.name ("examples"),
-													.keyword(keyword),
-													.examples_name(name)
-												);
-												get_next_line(line_obj);
-
-												forever begin : examples_elements
-
-													if (line_obj.eof) break;
-
-													analyze_line(line_obj.text, line_analysis_result);
-
-													case (line_analysis_result.secondary_keyword)
-														"|" : begin : construct_examples_header
-															gherkin_pkg::table_row header;
-
-															header = new("header");
-															parse_examples_header_cells(header, line_obj);
-															examples.header = header;
-
-															parse_examples_rows(examples, line_obj);
-														end
-
-														default: begin
-															break;
-														end
-													endcase
-
-												end
-
-												scenario_outline.examples.push_back(examples);
-												can_receive_step = 0;
-											end
-
-											else if (line_analysis_result.token_before_colon inside {
-														"Feature",
-														"Rule",
-														"Example",
-														"Scenario",
-														"Background",
-														"Scenario Outline",
-														"Scenario Template"}) begin : terminate_scenario_outline
-												// Any other primary keyword terminates the scenario outline.
-												break;
-											end
-
-											else begin
-
-												case (line_analysis_result.secondary_keyword)
-													"#" : begin : ignore_comment
-														get_next_line(line_obj);
-													end
-
-													default : begin
-														if (can_receive_description) begin : construct_description
-															string description;
-															parse_scenario_description(description, line_obj);
-															scenario_outline.description = description;
-															can_receive_description = 0;
-														end
-														else begin
-															$error("Unexpected line");
-															break;
-														end
-													end
-												endcase
-											end
-
-										end
-
-										feature.scenario_definitions.push_back(scenario_outline);
-									end
-
-									default : begin
-										if (can_receive_description) begin
-											string description;
-											parse_feature_description(description, line_obj);
-											feature.description = description;
-											can_receive_description = 0;
-										end
-										else begin
-											break;
-										end
-									end
-
-								endcase
-
-							end
-
-							gherkin_doc.feature = feature;
-
-						end
-
-					endcase
-
-				end
-
-				bundle = new(
-					.document (gherkin_doc),
-					.file_name (line_obj.file_name)
-				);
-
-				$display(); // Final new line if we are printing for debug
-//				gherkin_document_mbox.put(bundle); // NOTE: mbox has been removed
-
-			end
-
-		endtask : parse_lines
-
 		extern virtual task visit_background(gherkin_pkg::background background);
 		extern virtual task visit_comment(gherkin_pkg::comment comment);
 		extern virtual task visit_data_table(gherkin_pkg::data_table data_table);
@@ -2455,7 +1960,120 @@ package bathtub_pkg;
 	endtask : visit_gherkin_document
 
 	task gherkin_parser::visit_scenario(gherkin_pkg::scenario scenario);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.token_before_colon)
+				"Scenario", "Example": begin : configure_scenario
+
+					string keyword;
+					string name;
+					bit can_receive_description = 1;
+
+					keyword = line_analysis_result.token_before_colon;
+					name = line_analysis_result.remainder_after_colon;
+					scenario.keyword = keyword;
+					scenario.scenario_definition_name = name;
+
+					get_next_line(line_obj);
+
+					while (status == OK) begin : scenario_elements
+						line_mbox.peek(line_obj);
+
+						if (line_obj.eof) break;
+
+						analyze_line(line_obj.text, line_analysis_result);
+
+						case (line_analysis_result.token_before_space)
+							"Given",
+							"When",
+							"Then",
+							"And",
+							"But",
+							"*": begin : construct_step
+								gherkin_pkg::step step;
+
+								step = gherkin_pkg::step::type_id::create("step");
+								step.accept(this);
+
+								if (status == OK) begin
+									scenario.steps.push_back(step);
+								end
+								// Can't have a description after steps
+								can_receive_description = 0;
+							end
+
+							default : begin
+
+								case (line_analysis_result.token_before_colon)
+									"Feature",
+									"Rule",
+									"Example",
+									"Scenario",
+									"Background",
+									"Scenario Outline",
+									"Scenario Template",
+									"Examples",
+									"Scenarios" : begin : terminate_scenario
+										// Any primary keyword terminates the scenario.
+										break;
+									end
+
+									default : begin
+
+										case (line_analysis_result.secondary_keyword)
+											"#" : begin : ignore_comment
+												get_next_line(line_obj);
+											end
+
+											default : begin
+
+												if (can_receive_description) begin
+													string description;
+													parse_scenario_description(description, line_obj);
+													scenario.description = description;
+													can_receive_description = 0;
+												end
+												else begin
+													status = ERROR;
+													`uvm_error(`get_scope_name(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
+												end
+											end
+										endcase
+									end
+								endcase
+							end
+						endcase
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+						". Expecting \"Scenario:\" or \"Example\""})
+				end
+			endcase
+		end
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_info_end
+
 	endtask : visit_scenario
 
 	task gherkin_parser::visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
