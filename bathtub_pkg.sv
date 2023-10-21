@@ -2503,7 +2503,106 @@ package bathtub_pkg;
 	endtask : visit_scenario_outline
 
 	task gherkin_parser::visit_step(gherkin_pkg::step step);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_step enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.token_before_space)
+				"Given",
+				"When",
+				"Then",
+				"And",
+				"But",
+				"*": begin : configure_step
+					string keyword;
+					string text;
+					int num_step_arguments = 0;
+
+					keyword = line_analysis_result.token_before_space;
+					text = line_analysis_result.remainder_after_space;
+					step.keyword = keyword;
+					step.text = text;
+
+					get_next_line(line_obj);
+
+					while (status == OK) begin : step_elements
+						line_mbox.peek(line_obj);
+
+						if (line_obj.eof) break;
+
+						analyze_line(line_obj.text, line_analysis_result);
+
+						case (line_analysis_result.secondary_keyword)
+							"|" : begin : construct_data_table
+								gherkin_pkg::data_table data_table;
+
+								data_table = gherkin_pkg::data_table::type_id::create("data_table");
+								data_table.accept(this);
+
+								if (status == OK) begin
+									if (num_step_arguments == 0) begin
+										step.argument = data_table;
+										num_step_arguments++;
+									end
+									else begin
+										status = ERROR;
+										`uvm_error(`get_scope_name(), "A step can have only one argument")
+									end
+								end
+							end
+
+							"\"\"\"" : begin : construct_doc_string
+								gherkin_pkg::doc_string doc_string;
+
+								doc_string = gherkin_pkg::doc_string::type_id::create("doc_string");
+								doc_string.accept(this);
+
+								if (status == OK) begin
+									if (num_step_arguments == 0) begin
+										step.argument = doc_string;
+										num_step_arguments++;
+									end
+									else begin
+										status = ERROR;
+										`uvm_error(`get_scope_name(), "A step can have only one argument")
+									end
+								end
+							end
+
+							default: begin
+								// Anything else terminates the step
+								break;
+							end
+						endcase
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_space,
+						". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""})
+				end
+			endcase
+		end
+
+		`uvm_info_begin(`get_scope_name(), "visit_step exit", UVM_HIGH);
+		`uvm_message_add_tag("status", status.name)
+		`uvm_message_add_object(step)
+		`uvm_info_end
 	endtask : visit_step
 
 	task gherkin_parser::visit_step_argument(gherkin_pkg::step_argument step_argument);
