@@ -2440,7 +2440,20 @@ package bathtub_pkg;
 	endtask : visit_step_argument
 
 	task gherkin_parser::visit_table_cell(gherkin_pkg::table_cell table_cell);
-		`uvm_fatal("PENDING", "")
+		string cell_value;
+
+		cell_mbox.get(cell_value);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_cell enter", UVM_HIGH)
+		`uvm_message_add_string(cell_value)
+		`uvm_info_end
+
+		table_cell.value = cell_value;
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_cell exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(table_cell)
+		`uvm_info_end
 	endtask : visit_table_cell
 
 	task gherkin_parser::visit_table_row(gherkin_pkg::table_row table_row);
