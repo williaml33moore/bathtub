@@ -1276,6 +1276,7 @@ package bathtub_pkg;
 			
 			`uvm_info_begin(`get_scope_name(), "parse_feature_file exit", UVM_HIGH);
 			`uvm_message_add_tag("status", status.name)
+			`uvm_message_add_object(gherkin_doc)
 			`uvm_info_end
 
 		endtask : parse_feature_file
@@ -1752,6 +1753,7 @@ package bathtub_pkg;
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(background)
 		`uvm_info_end
 	endtask : visit_background
 
@@ -1962,6 +1964,7 @@ package bathtub_pkg;
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_feature exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(feature)
 		`uvm_info_end
 	endtask : visit_feature
 
@@ -2155,6 +2158,7 @@ package bathtub_pkg;
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(scenario)
 		`uvm_info_end
 	endtask : visit_scenario
 
@@ -2195,6 +2199,7 @@ package bathtub_pkg;
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario_definition exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(scenario_definition)
 		`uvm_info_end
 	endtask : visit_scenario_definition
 
@@ -2329,6 +2334,7 @@ package bathtub_pkg;
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario_outline exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(scenario_outline)
 		`uvm_info_end
 	endtask : visit_scenario_outline
 

@@ -51,7 +51,9 @@ package gherkin_pkg;
 	class comment extends uvm_object implements element;
 		string text;
 
-		`uvm_object_utils(comment)
+		`uvm_object_utils_begin(comment)
+		`uvm_field_string(text, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "comment");
 			super.new(name);
@@ -86,7 +88,9 @@ package gherkin_pkg;
 	class table_cell extends uvm_object implements element;
 		string value;
 
-		`uvm_object_utils(table_cell)
+		`uvm_object_utils_begin(table_cell)
+		`uvm_field_string(value, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name="table_cell");
 			super.new(name);
@@ -112,7 +116,9 @@ package gherkin_pkg;
 	class table_row extends uvm_object implements element;
 		table_cell cells[$];
 
-		`uvm_object_utils(table_row)
+		`uvm_object_utils_begin(table_row)
+		`uvm_field_queue_object(cells, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name="table_row");
 			super.new(name);
@@ -130,7 +136,9 @@ package gherkin_pkg;
 	class data_table extends step_argument implements element;
 		table_row rows[$];
 
-		`uvm_object_utils(data_table)
+		`uvm_object_utils_begin(data_table)
+		`uvm_field_queue_object(rows, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "data_table");
 			super.new(name);
@@ -150,7 +158,10 @@ package gherkin_pkg;
 		string content;
 		string content_type;
 
-		`uvm_object_utils(doc_string)
+		`uvm_object_utils_begin(doc_string)
+		`uvm_field_string(content, UVM_ALL_ON)
+		`uvm_field_string(content_type, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "doc_string");
 			super.new(name);
@@ -181,6 +192,7 @@ package gherkin_pkg;
 		`uvm_object_utils_begin(step)
 		`uvm_field_string(keyword, UVM_ALL_ON)
 		`uvm_field_string(text, UVM_ALL_ON)
+		`uvm_field_object(argument, UVM_ALL_ON)
 		`uvm_object_utils_end
 
 		function new(string name = "step");
@@ -214,6 +226,13 @@ package gherkin_pkg;
 		string description;
 		step steps[$];
 
+		`uvm_field_utils_begin(scenario_definition)
+		`uvm_field_string(keyword, UVM_ALL_ON)
+		`uvm_field_string(scenario_definition_name, UVM_ALL_ON)
+		`uvm_field_string(description, UVM_ALL_ON)
+		`uvm_field_queue_object(steps, UVM_ALL_ON)
+		`uvm_field_utils_end
+
 		function new(string name = "scenario_definition");
 			super.new(name);
 
@@ -233,7 +252,9 @@ package gherkin_pkg;
 	class background extends scenario_definition implements element;
 		step steps[$];
 
-		`uvm_object_utils(background)
+		`uvm_object_utils_begin(background)
+		`uvm_field_queue_object(steps, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
 			super.new(name);
@@ -265,7 +286,9 @@ package gherkin_pkg;
 	class tag extends uvm_object implements element;
 		string    tag_name;
 
-		`uvm_object_utils(tag)
+		`uvm_object_utils_begin(tag)
+		`uvm_field_string(tag_name, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name="tag");
 			super.new(name);
@@ -292,7 +315,13 @@ package gherkin_pkg;
 		table_row header;
 		table_row rows[$];
 
-		`uvm_object_utils(examples)
+		`uvm_object_utils_begin(examples)
+		`uvm_field_string(keyword, UVM_ALL_ON)
+		`uvm_field_string(examples_name, UVM_ALL_ON)
+		`uvm_field_string(description, UVM_ALL_ON)
+		`uvm_field_object(header, UVM_ALL_ON)
+		`uvm_field_queue_object(rows, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name="examples");
 			super.new(name);
@@ -325,7 +354,10 @@ package gherkin_pkg;
 		tag tags[$];
 		gherkin_pkg::examples examples[$];
 
-		`uvm_object_utils(scenario_outline)
+		`uvm_object_utils_begin(scenario_outline)
+		`uvm_field_queue_object(tags, UVM_ALL_ON)
+		`uvm_field_queue_object(examples, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "scenario_outline");
 			super.new(name);
@@ -355,7 +387,9 @@ package gherkin_pkg;
 	class scenario extends scenario_definition implements element;
 		tag tags[$];
 
-		`uvm_object_utils(scenario)
+		`uvm_object_utils_begin(scenario)
+		`uvm_field_queue_object(tags, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "scenario");
 			super.new(name);
@@ -390,7 +424,14 @@ package gherkin_pkg;
 		tag tags[$];
 		scenario_definition scenario_definitions[$];
 
-		`uvm_object_utils(feature)
+		`uvm_object_utils_begin(feature)
+		`uvm_field_string(language, UVM_ALL_ON)
+		`uvm_field_string(keyword, UVM_ALL_ON)
+		`uvm_field_string(feature_name, UVM_ALL_ON)
+		`uvm_field_string(description, UVM_ALL_ON)
+		`uvm_field_queue_object(tags, UVM_ALL_ON)
+		`uvm_field_queue_object(scenario_definitions, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "feature");
 			super.new(name);
@@ -420,7 +461,10 @@ package gherkin_pkg;
 		gherkin_pkg::feature feature;
 		comment comments[$];
 
-		`uvm_object_utils(gherkin_document)
+		`uvm_object_utils_begin(gherkin_document)
+		`uvm_field_object(feature, UVM_ALL_ON)
+		`uvm_field_queue_object(comments, UVM_ALL_ON)
+		`uvm_object_utils_end
 
 		function new(string name = "gherkin_document");
 			super.new(name);
