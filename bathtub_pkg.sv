@@ -1200,6 +1200,7 @@ package bathtub_pkg;
 		} status_t;
 
 		mailbox line_mbox;
+		mailbox cell_mbox; // For table row cells
 		status_t status;
 
 		`uvm_object_utils_begin(gherkin_parser)
@@ -1209,6 +1210,7 @@ package bathtub_pkg;
 			super.new(name);
 
 			line_mbox = new(1);
+			cell_mbox = new(1);
 		endfunction : new
 
 
@@ -1808,7 +1810,7 @@ package bathtub_pkg;
 								gherkin_pkg::table_row row;
 
 								row = gherkin_pkg::table_row::type_id::create("row");
-								row.accept(this); // visit_row(row)
+								row.accept(this); // visit_table_row(row)
 								if (status == OK) begin
 									if (num_headers == 0) begin
 										examples.header = row;
@@ -2442,8 +2444,61 @@ package bathtub_pkg;
 	endtask : visit_table_cell
 
 	task gherkin_parser::visit_table_row(gherkin_pkg::table_row table_row);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_row enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.secondary_keyword)
+				"|" : begin : configure_table_row
+					string cell_values[$];
+
+					split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
+					get_next_line(line_obj);
+
+					foreach (cell_values[i]) begin : construct_table_cell
+						gherkin_pkg::table_cell table_cell;
+
+						table_cell = gherkin_pkg::table_cell::type_id::create("table_cell");
+						fork
+							cell_mbox.put(cell_values[i]);
+							table_cell.accept(this); // visit_table_cell(table_cell)
+						join
+
+						if (status == OK) begin
+							table_row.cells.push_back(table_cell);
+						end
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+						". Expecting a table row beginning with \"|\""})
+				end
+			endcase
+
+		end	
+		
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_row exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(table_row)
+		`uvm_info_end
 	endtask : visit_table_row
+
 
 	task gherkin_parser::visit_tag(gherkin_pkg::tag tag);
 		`uvm_fatal("PENDING", "")
