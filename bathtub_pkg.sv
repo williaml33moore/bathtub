@@ -1766,7 +1766,88 @@ package bathtub_pkg;
 	endtask : visit_doc_string
 
 	task gherkin_parser::visit_examples(gherkin_pkg::examples examples);
-		`uvm_fatal("PENDING", "")
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+		string keyword;
+		string name;
+		int num_headers = 0;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_examples enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+			
+			case (line_analysis_result.token_before_colon)
+				"Examples", "Scenarios" : begin : configure_examples
+
+					examples.keyword = keyword;
+					examples.examples_name = name;
+
+					get_next_line(line_obj);
+
+					while (status == OK) begin : examples_elements
+
+						line_mbox.peek(line_obj);
+
+						if (line_obj.eof) break;
+
+						analyze_line(line_obj.text, line_analysis_result);
+
+						case (line_analysis_result.secondary_keyword)
+							"|" : begin : construct_examples_row
+								gherkin_pkg::table_row row;
+
+								row = gherkin_pkg::table_row::type_id::create("row");
+								row.accept(this); // visit_row(row)
+								if (status == OK) begin
+									if (num_headers == 0) begin
+										examples.header = row;
+										num_headers++;
+									end
+									else begin
+										examples.rows.push_back(row);
+									end
+								end
+							end
+
+							default: begin
+								// Any other keyword terminates the examples table
+								break;
+							end
+						endcase
+
+					end
+
+					if (num_headers != 1) begin
+						status = ERROR;
+						`uvm_error(`get_scope_name(), "An examples table must have exactly only one header row")
+					end
+
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+						". Expecting a table row beginning with \"|\"."})
+				end
+
+			endcase
+		end
+
+		`uvm_info_begin(`get_scope_name(), "visit_examples exit", UVM_HIGH);
+		`uvm_message_add_tag("status", status.name)
+		`uvm_message_add_object(examples)
+		`uvm_info_end
 	endtask : visit_examples
 
 	task gherkin_parser::visit_feature(gherkin_pkg::feature feature);
