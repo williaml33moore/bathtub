@@ -23,6 +23,39 @@ package gherkin_pkg;
 
 	(* value_object *)
 	typedef struct {
+		string text="";
+	} comment_value;
+
+	(* value_object *)
+	typedef struct {
+		string value="";
+	} table_cell_value;
+
+	(* value_object *)
+	typedef struct {
+		table_cell cells[$];
+	} table_row_value;
+
+	(* value_object *)
+	typedef struct {
+		table_row rows[$];
+	} data_table_value;
+
+	(* value_object *)
+	typedef struct {
+		string content;
+		string content_type;
+	} doc_string_value;
+
+	(* value_object *)
+	typedef struct {
+		string keyword;
+		string text;
+		step_argument argument;
+	} step_value;
+
+	(* value_object *)
+	typedef struct {
 		string keyword="";
 		string scenario_definition_name="";
 		string description="";
@@ -111,10 +144,15 @@ package gherkin_pkg;
 		`uvm_field_string(text, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "comment");
+		function new(string name = "comment", comment_value value='{""});
 			super.new(name);
+
+			this.text = value.text;
 		endfunction : new
 
+		virtual function comment_value get_value();
+			get_value.text = this.text;
+		endfunction : get_value
 
 		function comment configure(string text);
 			this.text = text;
@@ -148,11 +186,15 @@ package gherkin_pkg;
 		`uvm_field_string(value, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name="table_cell");
+		function new(string name="table_cell", table_cell_value value='{""});
 			super.new(name);
 
-			this.value = "";
+			this.value = value.value;
 		endfunction : new
+
+		virtual function table_cell get_value();
+			get_value.value = this.value;
+		endfunction : get_value
 
 		static function table_cell create_new(string name="table_cell", string value="");
 			table_cell new_obj;
@@ -176,11 +218,23 @@ package gherkin_pkg;
 		`uvm_field_queue_object(cells, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name="table_row");
+		function new(string name="table_row", table_row_value value='{'{}});
 			super.new(name);
 
-			cells.delete();
+			this.cells.delete();
+			foreach (value.cells[i]) begin
+				table_cell new_obj = new value.cells[i]; // TODO - deep copy
+				this.cells.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function table_row_value get_value();
+			get_value.cells.delete();
+			foreach (this.cells[i]) begin
+				table_cell new_obj = new this.cells[i]; // TODO - deep copy
+				get_value.cells.push_back(new_obj);
+			end
+		endfunction : get_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_table_row(this);
@@ -196,11 +250,23 @@ package gherkin_pkg;
 		`uvm_field_queue_object(rows, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "data_table");
+		function new(string name = "data_table", data_table_value value='{'{}});
 			super.new(name);
 
-			rows.delete();
+			this.rows.delete();
+			foreach (value.rows[i]) begin
+				table_row new_obj = new value.rows[i]; // TODO - deep copy
+				this.rows.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function data_table_value get_value();
+			get_value.rows.delete();
+			foreach (this.rows[i]) begin
+				table_row new_obj = new this.rows[i]; // TODO - deep copy
+				get_value.rows.push_back(new_obj);
+			end
+		endfunction : get_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			super.accept(visitor);
@@ -219,12 +285,17 @@ package gherkin_pkg;
 		`uvm_field_string(content_type, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "doc_string");
+		function new(string name = "doc_string", doc_string_value value='{"", ""});
 			super.new(name);
 
-			this.content = "";
-			this.content_type = "";
+			this.content = value.content;
+			this.content_type = value.content_type;
 		endfunction : new
+
+		virtual function doc_string_value get_value();
+			get_value.content = this.content;
+			get_value.content_type = this.content_type;
+		endfunction : get_value
 
 		function doc_string configure(string content="", string content_type="");
 			this.content = content;
@@ -251,14 +322,23 @@ package gherkin_pkg;
 		`uvm_field_object(argument, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "step");
+		function new(string name = "step", step_value value='{
+			"", // keyword
+			"", // text
+			null // argument
+		});
 			super.new(name);
 
-			this.keyword = "";
-			this.text = "";
-			this.argument = null;
+			this.keyword = value.keyword;
+			this.text = value.text;
+			this.argument = value.argument;
 		endfunction : new
 
+		virtual function step_value get_value();
+			get_value.keyword = this.keyword;
+			get_value.text = this.text;
+			get_value.argument = new this.argument; // TODO - deep copy
+		endfunction : get_value
 
 		static function step create_new(string name = "step", string keyword, string text);
 			step new_obj;
