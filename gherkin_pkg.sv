@@ -55,6 +55,20 @@ package gherkin_pkg;
 		scenario_definition_value base;
 	} scenario_value;
 
+	typedef struct {
+		string language="";
+		tag tags[$];
+		string keyword="";
+		string feature_name="";
+		string description="";
+		scenario_definition scenario_definitions[$];
+	} feature_value;
+
+	typedef struct {
+		gherkin_pkg::feature feature;
+		comment comments[$];
+	} gherkin_document_value;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -576,11 +590,54 @@ package gherkin_pkg;
 		`uvm_field_queue_object(scenario_definitions, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "feature");
+		function new(string name = "feature", feature_value value='{
+			"", // language
+			'{}, // tags
+			"", // keyword
+			"", // feature_name
+			"", // description
+			'{} // scenario_definitions
+		});
 			super.new(name);
 
-			scenario_definitions.delete();
+			this.language = value.language;
+			
+			this.tags.delete();
+			foreach (value.tags[i]) begin
+				tag new_obj = new value.tags[i]; // TODO - deep copy
+				this.tags.push_back(new_obj);
+			end
+
+			this.keyword = value.keyword;
+			this.feature_name = value.feature_name;
+			this.description = value.description;
+
+			this.scenario_definitions.delete();
+			foreach (value.scenario_definitions[i]) begin
+				scenario_definition new_obj = new value.scenario_definitions[i]; // TODO - deep copy
+				this.scenario_definitions.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function feature_value get_value();
+			get_value.language = this.language;
+			
+			get_value.tags.delete();
+			foreach (this.tags[i]) begin
+				tag new_obj = new this.tags[i]; // TODO - deep copy
+				get_value.tags.push_back(new_obj);
+			end
+
+			get_value.keyword = this.keyword;
+			get_value.feature_name = this.feature_name;
+			get_value.description = this.description;
+
+			get_value.scenario_definitions.delete();
+			foreach (this.scenario_definitions[i]) begin
+				scenario_definition new_obj = new this.scenario_definitions[i]; // TODO - deep copy
+				get_value.scenario_definitions.push_back(new_obj);
+			end
+		endfunction : get_value
 
 		static function feature create_new(string name = "feature", string feature_name="", string description="", string keyword="Feature", string language="en");
 			feature new_obj;
@@ -609,12 +666,30 @@ package gherkin_pkg;
 		`uvm_field_queue_object(comments, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "gherkin_document");
+		function new(string name="gherkin_document", gherkin_document_value value='{
+			null, // feature
+			'{} // comments
+		});
 			super.new(name);
 
-			this.feature = null;
+			this.feature = value.feature;
+
 			this.comments.delete();
+			foreach (value.comments[i]) begin
+				comment new_obj = new value.comments[i]; // TODO - deep copy
+				this.comments.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function gherkin_document_value get_value();
+			get_value.feature = this.feature;
+
+			get_value.comments.delete();
+			foreach (this.comments[i]) begin
+				comment new_obj = new this.comments[i]; // TODO - deep copy
+				get_value.comments.push_back(new_obj);
+			end
+		endfunction : get_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_gherkin_document(this);
