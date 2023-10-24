@@ -244,14 +244,34 @@ package gherkin_pkg;
 		`uvm_field_queue_object(steps, UVM_ALL_ON)
 		`uvm_field_utils_end
 
-		function new(string name = "scenario_definition");
+		function new(string name = "scenario_definition", scenario_definition_value value='{
+				"", // keyword
+				"", // scenario_definition_name
+				"", // description
+				'{} // steps
+		});
 			super.new(name);
 
-			this.keyword = "";
-			this.scenario_definition_name = "";
-			this.description = "";
+			this.keyword = value.keyword;
+			this.scenario_definition_name = value.scenario_definition_name;
+			this.description = value.description;
+
 			this.steps.delete();
+			foreach (value.steps[i]) begin
+				this.steps.push_back(value.steps[i]);
+			end
 		endfunction : new
+
+		function scenario_definition_value get_value();
+			get_value.keyword = this.keyword;
+			get_value.scenario_definition_name = this.scenario_definition_name;
+			get_value.description = this.description;
+			
+			get_value.steps.delete();
+			foreach (this.steps[i]) begin
+				get_value.steps.push_back(this.steps[i]);
+			end
+		endfunction : get_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_scenario_definition(this);
@@ -273,16 +293,12 @@ package gherkin_pkg;
 					'{} // steps
 				}
 			});
-			super.new(name);
-
-			this.keyword = value.base.keyword;
-			this.scenario_definition_name = value.base.scenario_definition_name;
-			this.description = value.base.description;
-			this.steps.delete();
-			foreach (value.base.steps[i]) begin
-				this.steps.push_back(value.base.steps[i]);
-			end
+			super.new(name, value.base);
 		endfunction : new
+
+		virtual function background_value get_value();
+			get_value.base = super.get_value();
+		endfunction : get_value
 
 		static function background create_new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
 			background new_obj;
