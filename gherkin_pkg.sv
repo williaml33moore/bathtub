@@ -44,6 +44,12 @@ package gherkin_pkg;
 		table_row rows[$];
 	} examples_value;
 
+	typedef struct {
+		tag tags[$];
+		scenario_definition_value base;
+		gherkin_pkg::examples examples[$];
+	} scenario_outline_value;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -436,12 +442,47 @@ package gherkin_pkg;
 		`uvm_field_queue_object(examples, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "scenario_outline");
-			super.new(name);
+		function new(string name = "scenario_outline", scenario_outline_value value='{
+			'{}, // tags
+			'{
+				"", // keyword
+				"", // scenario_definition_name
+				"", // description
+				'{} // steps
+			}, // base
+			'{} // examples
+		});
+			super.new(name, value.base);
 
-			tags.delete();
-			examples.delete();
+			this.tags.delete();
+			foreach (value.tags[i]) begin
+				tag new_obj = new value.tags[i]; // TODO - deep copy
+				this.tags.push_back(new_obj);
+			end
+
+			this.examples.delete();
+			foreach (value.examples[i]) begin
+				gherkin_pkg::examples new_obj = new value.examples[i]; // TODO - deep copy
+				this.examples.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function scenario_outline_value get_value();
+
+			get_value.tags.delete();
+			foreach (this.tags[i]) begin
+				tag new_obj = new this.tags[i]; // TODO - deep copy
+				get_value.tags.push_back(new_obj);
+			end
+
+			get_value.base = super.get_value();
+
+			get_value.examples.delete();
+			foreach (this.examples[i]) begin
+				gherkin_pkg::examples new_obj = new this.examples[i]; // TODO - deep copy
+				get_value.examples.push_back(new_obj);
+			end
+		endfunction : scenario_outline_value
 
 		static function scenario_outline create_new(string name = "scenario_outline", string scenario_definition_name="", string description="", string keyword="Scenario Outline");
 			scenario_outline new_obj;
