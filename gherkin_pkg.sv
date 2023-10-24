@@ -32,6 +32,18 @@ package gherkin_pkg;
 		scenario_definition_value base;
 	} background_value;
 
+	typedef struct {
+		string tag_name="";
+	} tag_value;
+
+	typedef struct {
+		string keyword="";
+		string examples_name="";
+		string description="";
+		table_row header;
+		table_row rows[$];
+	} examples_value;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -319,17 +331,21 @@ package gherkin_pkg;
 
 
 	class tag extends uvm_object implements element;
-		string    tag_name;
+		string tag_name;
 
 		`uvm_object_utils_begin(tag)
 		`uvm_field_string(tag_name, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name="tag");
+		function new(string name="tag", tag_value value='{""});
 			super.new(name);
 
-			tag_name = "";
+			this.tag_name = value.tag_name;
 		endfunction : new
+
+		virtual function tag_value get_value();
+			get_value.tag_name = this.tag_name;
+		endfunction : get_value
 
 		function tag configure(string tag_name="");
 			this.tag_name = tag_name;
@@ -358,15 +374,41 @@ package gherkin_pkg;
 		`uvm_field_queue_object(rows, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name="examples");
+		function new(string name="examples", examples_value value='{
+			"", // keyword
+			"", // examples_name
+			"", // description
+			null, // header
+			'{} // rows
+		});
 			super.new(name);
 
-			this.keyword = "Examples";
-			this.examples_name = "";
-			this.description = "";
-			this.header = new("header");
+			this.keyword = value.keyword;
+			this.examples_name = value.examples_name;
+			this.description = value.description;
+
+			this.header = new value.header; // TODO - deep copy
+
 			this.rows.delete();
+			foreach (value.rows[i]) begin
+				table_row new_obj = new value.rows[i]; // TODO - deep copy
+				this.rows.push_back(new_obj);
+			end
 		endfunction : new
+
+		virtual function examples_value get_value();
+			get_value.keyword = this.keyword;
+			get_value.examples_name = this.examples_name;
+			get_value.description = this.description;
+
+			get_value.header = new this.header; // TODO - deep copy
+
+			get_value.rows.delete();
+			foreach (this.rows[i]) begin
+				table_row new_obj = new this.rows[i]; // TODO - deep copy
+				get_value.rows.push_back(new_obj);
+			end
+		endfunction : get_value
 
 		static function examples create_new(string name="examples", string examples_name="", string description="", string keyword="Examples");
 			examples new_obj;
