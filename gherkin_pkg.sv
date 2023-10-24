@@ -21,6 +21,7 @@ package gherkin_pkg;
 	typedef class table_row;
 	typedef class tag;
 
+	(* value_object *)
 	typedef struct {
 		string keyword="";
 		string scenario_definition_name="";
@@ -28,14 +29,17 @@ package gherkin_pkg;
 		step steps[$];
 	} scenario_definition_value;
 
+	(* value_object *)
 	typedef struct {
 		scenario_definition_value base;
 	} background_value;
 
+	(* value_object *)
 	typedef struct {
 		string tag_name="";
 	} tag_value;
 
+	(* value_object *)
 	typedef struct {
 		string keyword="";
 		string examples_name="";
@@ -44,17 +48,20 @@ package gherkin_pkg;
 		table_row rows[$];
 	} examples_value;
 
+	(* value_object *)
 	typedef struct {
 		tag tags[$];
 		scenario_definition_value base;
 		gherkin_pkg::examples examples[$];
 	} scenario_outline_value;
 
+	(* value_object *)
 	typedef struct {
 		tag tags[$];
 		scenario_definition_value base;
 	} scenario_value;
 
+	(* value_object *)
 	typedef struct {
 		string language="";
 		tag tags[$];
@@ -64,6 +71,7 @@ package gherkin_pkg;
 		scenario_definition scenario_definitions[$];
 	} feature_value;
 
+	(* value_object *)
 	typedef struct {
 		gherkin_pkg::feature feature;
 		comment comments[$];
