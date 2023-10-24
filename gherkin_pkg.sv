@@ -21,6 +21,17 @@ package gherkin_pkg;
 	typedef class table_row;
 	typedef class tag;
 
+	typedef struct {
+		string keyword="";
+		string scenario_definition_name="";
+		string description="";
+		step steps[$];
+	} scenario_definition_value;
+
+	typedef struct {
+		scenario_definition_value base;
+	} background_value;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -250,19 +261,27 @@ package gherkin_pkg;
 
 
 	class background extends scenario_definition implements element;
-		step steps[$];
 
 		`uvm_object_utils_begin(background)
-		`uvm_field_queue_object(steps, UVM_ALL_ON)
 		`uvm_object_utils_end
 
-		function new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
+		function new(string name="background", background_value value='{
+				'{
+					"", // keyword
+					"", // scenario_definition_name
+					"", // description
+					'{} // steps
+				}
+			});
 			super.new(name);
 
-			this.scenario_definition_name = scenario_definition_name;
-			this.description = description;
-			this.keyword = keyword;
+			this.keyword = value.base.keyword;
+			this.scenario_definition_name = value.base.scenario_definition_name;
+			this.description = value.base.description;
 			this.steps.delete();
+			foreach (value.base.steps[i]) begin
+				this.steps.push_back(value.base.steps[i]);
+			end
 		endfunction : new
 
 		static function background create_new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
