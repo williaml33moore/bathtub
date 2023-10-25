@@ -1,5 +1,25 @@
 `include "bathtub_macros.sv"
 
+`define push_onto_visitor_stack(o) visitor_stack.push_front(o);
+
+`ifdef BATHTUB__MULTILINE_MACRO_IS_OK
+
+`define pop_from_visitor_stack(o) if (visitor_stack.size() == 0) begin \
+status = ERROR; \
+`uvm_fatal(`get_scope_name(), "Visitor stack is empty") \
+end \
+else begin \
+uvm_object obj = visitor_stack.pop_front(); \
+if (!$cast(o, obj)) begin \
+status = ERROR; \
+`uvm_fatal(`get_scope_name(), "Popped unexpected object type from visitor stack") \
+end \
+end
+
+`else // BATHTUB__MULTILINE_MACRO_IS_OK
+`define pop_from_visitor_stack(o) if (visitor_stack.size() == 0) begin status = ERROR; `uvm_fatal(`get_scope_name(), "Visitor stack is empty") end else begin uvm_object obj = visitor_stack.pop_front(); if (!$cast(o, obj)) begin status = ERROR; `uvm_fatal(`get_scope_name(), "Popped unexpected object type from visitor stack") end end
+`endif // BATHTUB__MULTILINE_MACRO_IS_OK
+
 // ===================================================================
 package bathtub_pkg;
 // ===================================================================
@@ -1201,6 +1221,7 @@ package bathtub_pkg;
 
 		mailbox line_mbox;
 		mailbox cell_mbox; // For table row cells
+		uvm_object visitor_stack[$]; // For visitor method return values
 		status_t status;
 
 		`uvm_object_utils_begin(gherkin_parser)
@@ -1211,6 +1232,7 @@ package bathtub_pkg;
 
 			line_mbox = new(1);
 			cell_mbox = new(1);
+			visitor_stack.delete();
 		endfunction : new
 
 
@@ -1232,7 +1254,10 @@ package bathtub_pkg;
 			gherkin_doc = gherkin_pkg::gherkin_document::type_id::create("gherkin_doc");
 
 			fork
-				start_gherkin_document_parser : gherkin_doc.accept(this); // visit_gherkin_doc(gherkin_doc)
+				begin : start_gherkin_document_parser
+					gherkin_doc.accept(this); // visit_gherkin_document(gherkin_doc)
+					`pop_from_visitor_stack(gherkin_doc)
+				end
 
 				begin : read_feature_file_and_feed_lines_to_parser
 
@@ -1493,6 +1518,9 @@ package bathtub_pkg;
 	task gherkin_parser::visit_background(gherkin_pkg::background background);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::background_value background_value;
+
+		background_value = background.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -1504,6 +1532,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -1512,14 +1541,10 @@ package bathtub_pkg;
 			case (line_analysis_result.token_before_colon)
 				"Background": begin : configure_background
 
-					string keyword;
-					string name;
 					bit can_receive_description = 1;
 
-					keyword = line_analysis_result.token_before_colon;
-					name = line_analysis_result.remainder_after_colon;
-					background.keyword = keyword;
-					background.scenario_definition_name = name;
+					background_value.base.keyword = line_analysis_result.token_before_colon;
+					background_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
 
 					get_next_line(line_obj);
 
@@ -1541,9 +1566,10 @@ package bathtub_pkg;
 
 								step = gherkin_pkg::step::type_id::create("step");
 								step.accept(this); // visit_step(step)
+								`pop_from_visitor_stack(step)
 
 								if (status == OK) begin
-									background.steps.push_back(step);
+									background_value.base.steps.push_back(step);
 								end
 								// Can't have a description after steps
 								can_receive_description = 0;
@@ -1577,7 +1603,7 @@ package bathtub_pkg;
 												if (can_receive_description) begin
 													string description;
 													parse_scenario_description(description, line_obj);
-													background.description = description;
+													background_value.base.description = description;
 													can_receive_description = 0;
 												end
 												else begin
@@ -1601,10 +1627,14 @@ package bathtub_pkg;
 			endcase
 		end
 
+		background = new("background", background_value);
+		`push_onto_visitor_stack(background)
+
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_background exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(background)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_background
 
 	task gherkin_parser::visit_comment(gherkin_pkg::comment comment);
@@ -1622,8 +1652,8 @@ package bathtub_pkg;
 	task gherkin_parser::visit_examples(gherkin_pkg::examples examples);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
-		string keyword;
-		string name;
+		gherkin_pkg::examples_value examples_value;
+
 		int num_headers = 0;
 
 		line_mbox.peek(line_obj);
@@ -1636,6 +1666,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -1644,8 +1675,8 @@ package bathtub_pkg;
 			case (line_analysis_result.token_before_colon)
 				"Examples", "Scenarios" : begin : configure_examples
 
-					examples.keyword = keyword;
-					examples.examples_name = name;
+					examples_value.keyword = line_analysis_result.token_before_colon;
+					examples_value.examples_name = line_analysis_result.remainder_after_colon;
 
 					get_next_line(line_obj);
 
@@ -1663,13 +1694,14 @@ package bathtub_pkg;
 
 								row = gherkin_pkg::table_row::type_id::create("row");
 								row.accept(this); // visit_table_row(row)
+								`pop_from_visitor_stack(row)
 								if (status == OK) begin
 									if (num_headers == 0) begin
-										examples.header = row;
+										examples_value.header = row;
 										num_headers++;
 									end
 									else begin
-										examples.rows.push_back(row);
+										examples_value.rows.push_back(row);
 									end
 								end
 							end
@@ -1698,15 +1730,22 @@ package bathtub_pkg;
 			endcase
 		end
 
+		examples = new("examples", examples_value);
+		`push_onto_visitor_stack(examples)
+
 		`uvm_info_begin(`get_scope_name(), "visit_examples exit", UVM_HIGH);
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(examples)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_examples
 
 	task gherkin_parser::visit_feature(gherkin_pkg::feature feature);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::feature_value feature_value;
+
+		feature_value = feature.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -1718,6 +1757,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -1726,20 +1766,12 @@ package bathtub_pkg;
 			case (line_analysis_result.token_before_colon)
 
 				"Feature" : begin : configure_feature
-					string language;
-					string keyword;
-					string feature_name;
-					string description;
-					gherkin_pkg::tag tags[$];
-					gherkin_pkg::scenario_definition scenario_definitions[$];
 					int description_count = 0;
 					int background_count = 0;
 					bit can_receive_description = 1;
 
-					keyword = line_analysis_result.token_before_colon;
-					feature_name = line_analysis_result.remainder_after_colon;
-					feature.keyword = keyword;
-					feature.feature_name = feature_name;
+					feature_value.keyword = line_analysis_result.token_before_colon;
+					feature_value.feature_name = line_analysis_result.remainder_after_colon;
 					get_next_line(line_obj);
 
 					while (status == OK) begin : feature_elements
@@ -1756,9 +1788,10 @@ package bathtub_pkg;
 
 								background = gherkin_pkg::background::type_id::create("background");
 								background.accept(this); // visit_background(background)
+								`pop_from_visitor_stack(background)
 								if (status == OK) begin
 									if (background_count == 0) begin
-										feature.scenario_definitions.push_back(background);
+										feature_value.scenario_definitions.push_back(background);
 										background_count++;
 									end
 									else begin
@@ -1773,8 +1806,9 @@ package bathtub_pkg;
 
 								scenario = gherkin_pkg::scenario::type_id::create("scenario");
 								scenario.accept(this); // visit_scenario(scenario)
+								`pop_from_visitor_stack(scenario)
 								if (status == OK) begin
-									feature.scenario_definitions.push_back(scenario);
+									feature_value.scenario_definitions.push_back(scenario);
 								end
 							end
 
@@ -1783,8 +1817,9 @@ package bathtub_pkg;
 
 								scenario_outline = gherkin_pkg::scenario_outline::type_id::create("scenario_outline");
 								scenario_outline.accept(this); // visit_scenario_outline(scenario_outline)
+								`pop_from_visitor_stack(scenario_outline)
 								if (status == OK) begin
-									feature.scenario_definitions.push_back(scenario_outline);
+									feature_value.scenario_definitions.push_back(scenario_outline);
 								end
 							end
 
@@ -1792,7 +1827,7 @@ package bathtub_pkg;
 								if (can_receive_description) begin
 									string description;
 									parse_feature_description(description, line_obj);
-									feature.description = description;
+									feature_value.description = description;
 									can_receive_description = 0;
 								end
 								else begin
@@ -1812,17 +1847,24 @@ package bathtub_pkg;
 			endcase
 		end
 
+		feature = new("feature", feature_value);
+		`push_onto_visitor_stack(feature)
+
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_feature exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(feature)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_feature
 
 
 	task gherkin_parser::visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::gherkin_document_value gherkin_document_value;
 		int feature_count = 0;
+
+		gherkin_document_value = gherkin_document.get_as_value();
 
 		// Prime the mailbox so it contains the first non-empty line
 
@@ -1842,6 +1884,16 @@ package bathtub_pkg;
 			end
 		end
 
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_gherkin_document enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
+
 		while (status == OK) begin : document_elements
 			line_mbox.peek(line_obj);
 
@@ -1856,9 +1908,11 @@ package bathtub_pkg;
 
 					feature = gherkin_pkg::feature::type_id::create("feature");
 					feature.accept(this); // visit_feature(feature)
+					`pop_from_visitor_stack(feature)
+
 					if (status == OK) begin
 						if (feature_count == 0) begin
-							gherkin_document.feature = feature;
+							gherkin_document_value.feature = feature;
 							feature_count++;
 						end
 						else begin
@@ -1877,8 +1931,9 @@ package bathtub_pkg;
 
 							comment = gherkin_pkg::comment::type_id::create("comment");
 							comment.accept(this); // visit_comment(comment)
+							`pop_from_visitor_stack(comment)
 							if (status == OK) begin
-								gherkin_document.comments.push_back(comment);
+								gherkin_document_value.comments.push_back(comment);
 							end
 						end
 
@@ -1893,11 +1948,23 @@ package bathtub_pkg;
 				end
 			endcase
 		end
+
+		gherkin_document = new("gherkin_document", gherkin_document_value);
+		`push_onto_visitor_stack(gherkin_document)
+
+		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_gherkin_document exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_object(gherkin_document)
+		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_gherkin_document
 
 	task gherkin_parser::visit_scenario(gherkin_pkg::scenario scenario);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::scenario_value scenario_value;
+
+		scenario_value = scenario.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -1909,6 +1976,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -1917,15 +1985,11 @@ package bathtub_pkg;
 			case (line_analysis_result.token_before_colon)
 				"Scenario", "Example": begin : configure_scenario
 
-					string keyword;
-					string name;
 					bit can_receive_description = 1;
 
-					keyword = line_analysis_result.token_before_colon;
-					name = line_analysis_result.remainder_after_colon;
-					scenario.keyword = keyword;
-					scenario.scenario_definition_name = name;
-
+					scenario_value.base.keyword = line_analysis_result.token_before_colon;
+					scenario_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
+					
 					get_next_line(line_obj);
 
 					while (status == OK) begin : scenario_elements
@@ -1946,9 +2010,10 @@ package bathtub_pkg;
 
 								step = gherkin_pkg::step::type_id::create("step");
 								step.accept(this); // visit_step(step)
+								`pop_from_visitor_stack(step)
 
 								if (status == OK) begin
-									scenario.steps.push_back(step);
+									scenario_value.base.steps.push_back(step);
 								end
 								// Can't have a description after steps
 								can_receive_description = 0;
@@ -1982,7 +2047,7 @@ package bathtub_pkg;
 												if (can_receive_description) begin
 													string description;
 													parse_scenario_description(description, line_obj);
-													scenario.description = description;
+													scenario_value.base.description = description;
 													can_receive_description = 0;
 												end
 												else begin
@@ -2006,10 +2071,14 @@ package bathtub_pkg;
 			endcase
 		end
 
+		scenario = new("scenario", scenario_value);
+		`push_onto_visitor_stack(scenario)
+
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(scenario)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_scenario
 
 	task gherkin_parser::visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
@@ -2056,6 +2125,9 @@ package bathtub_pkg;
 	task gherkin_parser::visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::scenario_outline_value scenario_outline_value;
+
+		scenario_outline_value = scenario_outline.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -2067,6 +2139,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -2075,15 +2148,11 @@ package bathtub_pkg;
 			case (line_analysis_result.token_before_colon)
 				"Scenario Outline", "Scenario Template" : begin : configure_scenario_outline
 
-					string keyword;
-					string name;
 					bit can_receive_description = 1;
 					bit can_receive_step = 1;
 
-					keyword = line_analysis_result.token_before_colon;
-					name = line_analysis_result.remainder_after_colon;
-					scenario_outline.keyword = keyword;
-					scenario_outline.scenario_definition_name = name;
+					scenario_outline_value.base.keyword = line_analysis_result.token_before_colon;
+					scenario_outline_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
 
 					get_next_line(line_obj);
 
@@ -2105,10 +2174,11 @@ package bathtub_pkg;
 
 								step = gherkin_pkg::step::type_id::create("step");
 								step.accept(this); // visit_step(step)
+								`pop_from_visitor_stack(step)
 
 								if (status == OK) begin
 									if (can_receive_step) begin
-										scenario_outline.steps.push_back(step);
+										scenario_outline_value.base.steps.push_back(step);
 									end
 									else begin
 										status = ERROR;
@@ -2128,9 +2198,10 @@ package bathtub_pkg;
 
 										examples = gherkin_pkg::examples::type_id::create("examples");
 										examples.accept(this); // visit_examples(examples)
+										`pop_from_visitor_stack(examples)
 
 										if (status == OK) begin
-											scenario_outline.examples.push_back(examples);
+											scenario_outline_value.examples.push_back(examples);
 											can_receive_step = 0;
 										end
 									end
@@ -2158,7 +2229,7 @@ package bathtub_pkg;
 												if (can_receive_description) begin
 													string description;
 													parse_scenario_description(description, line_obj);
-													scenario_outline.description = description;
+													scenario_outline_value.base.description = description;
 													can_receive_description = 0;
 												end
 												else begin
@@ -2182,15 +2253,22 @@ package bathtub_pkg;
 			endcase
 		end
 
+		scenario_outline = new("scenario_outline", scenario_outline_value);
+		`push_onto_visitor_stack(scenario_outline)
+
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_scenario_outline exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(scenario_outline)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_scenario_outline
 
 	task gherkin_parser::visit_step(gherkin_pkg::step step);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::step_value step_value;
+
+		step_value = step.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -2202,6 +2280,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -2214,14 +2293,10 @@ package bathtub_pkg;
 				"And",
 				"But",
 				"*": begin : configure_step
-					string keyword;
-					string text;
 					int num_step_arguments = 0;
 
-					keyword = line_analysis_result.token_before_space;
-					text = line_analysis_result.remainder_after_space;
-					step.keyword = keyword;
-					step.text = text;
+					step_value.keyword = line_analysis_result.token_before_space;
+					step_value.text = line_analysis_result.remainder_after_space;
 
 					get_next_line(line_obj);
 
@@ -2238,10 +2313,11 @@ package bathtub_pkg;
 
 								data_table = gherkin_pkg::data_table::type_id::create("data_table");
 								data_table.accept(this); // visit_data_table(data_table)
+								`pop_from_visitor_stack(data_table)
 
 								if (status == OK) begin
 									if (num_step_arguments == 0) begin
-										step.argument = data_table;
+										step_value.argument = data_table;
 										num_step_arguments++;
 									end
 									else begin
@@ -2256,10 +2332,11 @@ package bathtub_pkg;
 
 								doc_string = gherkin_pkg::doc_string::type_id::create("doc_string");
 								doc_string.accept(this); // visit_doc_string(doc_string)
+								`pop_from_visitor_stack(doc_string)
 
 								if (status == OK) begin
 									if (num_step_arguments == 0) begin
-										step.argument = doc_string;
+										step_value.argument = doc_string;
 										num_step_arguments++;
 									end
 									else begin
@@ -2285,10 +2362,14 @@ package bathtub_pkg;
 			endcase
 		end
 
+		step = new("step", step_value);
+		`push_onto_visitor_stack(step)
+
 		`uvm_info_begin(`get_scope_name(), "visit_step exit", UVM_HIGH);
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(step)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_step
 
 	task gherkin_parser::visit_step_argument(gherkin_pkg::step_argument step_argument);
@@ -2297,24 +2378,34 @@ package bathtub_pkg;
 
 	task gherkin_parser::visit_table_cell(gherkin_pkg::table_cell table_cell);
 		string cell_value;
+		gherkin_pkg::table_cell_value table_cell_value;
+
+		table_cell_value = table_cell.get_as_value();
 
 		cell_mbox.get(cell_value);
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_cell enter", UVM_HIGH)
 		`uvm_message_add_string(cell_value)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
-		table_cell.value = cell_value;
+		table_cell_value.value = cell_value;
+		table_cell = new("table_cell", table_cell_value);
+		`push_onto_visitor_stack(table_cell)
 
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_cell exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(table_cell)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_table_cell
 
 	task gherkin_parser::visit_table_row(gherkin_pkg::table_row table_row);
 		line_value line_obj;
 		line_analysis_result_t line_analysis_result;
+		gherkin_pkg::table_row_value table_row_value;
+
+		table_row_value = table_row.get_as_value();
 
 		line_mbox.peek(line_obj);
 
@@ -2326,6 +2417,7 @@ package bathtub_pkg;
 			`uvm_message_add_string(line_obj.text)
 		end
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 
 		if (!line_obj.eof) begin
 
@@ -2344,11 +2436,14 @@ package bathtub_pkg;
 						table_cell = gherkin_pkg::table_cell::type_id::create("table_cell");
 						fork
 							cell_mbox.put(cell_values[i]);
-							table_cell.accept(this); // visit_table_cell(table_cell)
+							begin
+								table_cell.accept(this); // visit_table_cell(table_cell)
+								`pop_from_visitor_stack(table_cell)
+							end
 						join
 
 						if (status == OK) begin
-							table_row.cells.push_back(table_cell);
+							table_row_value.cells.push_back(table_cell);
 						end
 					end
 				end
@@ -2360,12 +2455,16 @@ package bathtub_pkg;
 				end
 			endcase
 
-		end	
+		end
+
+		table_row = new("table_row", table_row_value);
+		`push_onto_visitor_stack(table_row)
 		
 		`uvm_info_begin(`get_scope_name(), "gherkin_parser::visit_table_row exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_object(table_row)
 		`uvm_info_end
+		`uvm_info(`get_scope_name(), $sformatf("visitor_stack: %p", visitor_stack), UVM_HIGH)
 	endtask : visit_table_row
 
 

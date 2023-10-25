@@ -150,9 +150,9 @@ package gherkin_pkg;
 			this.text = value.text;
 		endfunction : new
 
-		virtual function comment_value get_value();
-			get_value.text = this.text;
-		endfunction : get_value
+		virtual function comment_value get_as_value();
+			get_as_value.text = this.text;
+		endfunction : get_as_value
 
 		function comment configure(string text);
 			this.text = text;
@@ -192,9 +192,9 @@ package gherkin_pkg;
 			this.value = value.value;
 		endfunction : new
 
-		virtual function table_cell get_value();
-			get_value.value = this.value;
-		endfunction : get_value
+		virtual function table_cell_value get_as_value();
+			get_as_value.value = this.value;
+		endfunction : get_as_value
 
 		static function table_cell create_new(string name="table_cell", string value="");
 			table_cell new_obj;
@@ -228,13 +228,13 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function table_row_value get_value();
-			get_value.cells.delete();
+		virtual function table_row_value get_as_value();
+			get_as_value.cells.delete();
 			foreach (this.cells[i]) begin
 				table_cell new_obj = new this.cells[i]; // TODO - deep copy
-				get_value.cells.push_back(new_obj);
+				get_as_value.cells.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_table_row(this);
@@ -260,13 +260,13 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function data_table_value get_value();
-			get_value.rows.delete();
+		virtual function data_table_value get_as_value();
+			get_as_value.rows.delete();
 			foreach (this.rows[i]) begin
 				table_row new_obj = new this.rows[i]; // TODO - deep copy
-				get_value.rows.push_back(new_obj);
+				get_as_value.rows.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			super.accept(visitor);
@@ -292,10 +292,10 @@ package gherkin_pkg;
 			this.content_type = value.content_type;
 		endfunction : new
 
-		virtual function doc_string_value get_value();
-			get_value.content = this.content;
-			get_value.content_type = this.content_type;
-		endfunction : get_value
+		virtual function doc_string_value get_as_value();
+			get_as_value.content = this.content;
+			get_as_value.content_type = this.content_type;
+		endfunction : get_as_value
 
 		function doc_string configure(string content="", string content_type="");
 			this.content = content;
@@ -334,11 +334,11 @@ package gherkin_pkg;
 			this.argument = value.argument;
 		endfunction : new
 
-		virtual function step_value get_value();
-			get_value.keyword = this.keyword;
-			get_value.text = this.text;
-			get_value.argument = new this.argument; // TODO - deep copy
-		endfunction : get_value
+		virtual function step_value get_as_value();
+			get_as_value.keyword = this.keyword;
+			get_as_value.text = this.text;
+			get_as_value.argument = new this.argument; // TODO - deep copy
+		endfunction : get_as_value
 
 		static function step create_new(string name = "step", string keyword, string text);
 			step new_obj;
@@ -387,16 +387,16 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		function scenario_definition_value get_value();
-			get_value.keyword = this.keyword;
-			get_value.scenario_definition_name = this.scenario_definition_name;
-			get_value.description = this.description;
+		function scenario_definition_value get_as_value();
+			get_as_value.keyword = this.keyword;
+			get_as_value.scenario_definition_name = this.scenario_definition_name;
+			get_as_value.description = this.description;
 			
-			get_value.steps.delete();
+			get_as_value.steps.delete();
 			foreach (this.steps[i]) begin
-				get_value.steps.push_back(this.steps[i]);
+				get_as_value.steps.push_back(this.steps[i]);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_scenario_definition(this);
@@ -421,9 +421,9 @@ package gherkin_pkg;
 			super.new(name, value.base);
 		endfunction : new
 
-		virtual function background_value get_value();
-			get_value.base = super.get_value();
-		endfunction : get_value
+		virtual function background_value get_as_value();
+			get_as_value.base = super.get_as_value();
+		endfunction : get_as_value
 
 		static function background create_new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
 			background new_obj;
@@ -456,9 +456,9 @@ package gherkin_pkg;
 			this.tag_name = value.tag_name;
 		endfunction : new
 
-		virtual function tag_value get_value();
-			get_value.tag_name = this.tag_name;
-		endfunction : get_value
+		virtual function tag_value get_as_value();
+			get_as_value.tag_name = this.tag_name;
+		endfunction : get_as_value
 
 		function tag configure(string tag_name="");
 			this.tag_name = tag_name;
@@ -509,19 +509,19 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function examples_value get_value();
-			get_value.keyword = this.keyword;
-			get_value.examples_name = this.examples_name;
-			get_value.description = this.description;
+		virtual function examples_value get_as_value();
+			get_as_value.keyword = this.keyword;
+			get_as_value.examples_name = this.examples_name;
+			get_as_value.description = this.description;
 
-			get_value.header = new this.header; // TODO - deep copy
+			get_as_value.header = new this.header; // TODO - deep copy
 
-			get_value.rows.delete();
+			get_as_value.rows.delete();
 			foreach (this.rows[i]) begin
 				table_row new_obj = new this.rows[i]; // TODO - deep copy
-				get_value.rows.push_back(new_obj);
+				get_as_value.rows.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		static function examples create_new(string name="examples", string examples_name="", string description="", string keyword="Examples");
 			examples new_obj;
@@ -574,21 +574,21 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function scenario_outline_value get_value();
-			get_value.tags.delete();
+		virtual function scenario_outline_value get_as_value();
+			get_as_value.tags.delete();
 			foreach (this.tags[i]) begin
 				tag new_obj = new this.tags[i]; // TODO - deep copy
-				get_value.tags.push_back(new_obj);
+				get_as_value.tags.push_back(new_obj);
 			end
 
-			get_value.base = super.get_value();
+			get_as_value.base = super.get_as_value();
 
-			get_value.examples.delete();
+			get_as_value.examples.delete();
 			foreach (this.examples[i]) begin
 				gherkin_pkg::examples new_obj = new this.examples[i]; // TODO - deep copy
-				get_value.examples.push_back(new_obj);
+				get_as_value.examples.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		static function scenario_outline create_new(string name = "scenario_outline", string scenario_definition_name="", string description="", string keyword="Scenario Outline");
 			scenario_outline new_obj;
@@ -633,15 +633,15 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function scenario_value get_value();
-			get_value.tags.delete();
+		virtual function scenario_value get_as_value();
+			get_as_value.tags.delete();
 			foreach (this.tags[i]) begin
 				tag new_obj = new this.tags[i]; // TODO - deep copy
-				get_value.tags.push_back(new_obj);
+				get_as_value.tags.push_back(new_obj);
 			end
 
-			get_value.base = super.get_value();
-		endfunction : get_value
+			get_as_value.base = super.get_as_value();
+		endfunction : get_as_value
 
 		static function scenario create_new(string name = "scenario", string scenario_definition_name="", string description="", string keyword="Scenario");
 			scenario new_obj;
@@ -707,25 +707,25 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function feature_value get_value();
-			get_value.language = this.language;
+		virtual function feature_value get_as_value();
+			get_as_value.language = this.language;
 			
-			get_value.tags.delete();
+			get_as_value.tags.delete();
 			foreach (this.tags[i]) begin
 				tag new_obj = new this.tags[i]; // TODO - deep copy
-				get_value.tags.push_back(new_obj);
+				get_as_value.tags.push_back(new_obj);
 			end
 
-			get_value.keyword = this.keyword;
-			get_value.feature_name = this.feature_name;
-			get_value.description = this.description;
+			get_as_value.keyword = this.keyword;
+			get_as_value.feature_name = this.feature_name;
+			get_as_value.description = this.description;
 
-			get_value.scenario_definitions.delete();
+			get_as_value.scenario_definitions.delete();
 			foreach (this.scenario_definitions[i]) begin
 				scenario_definition new_obj = new this.scenario_definitions[i]; // TODO - deep copy
-				get_value.scenario_definitions.push_back(new_obj);
+				get_as_value.scenario_definitions.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		static function feature create_new(string name = "feature", string feature_name="", string description="", string keyword="Feature", string language="en");
 			feature new_obj;
@@ -769,15 +769,15 @@ package gherkin_pkg;
 			end
 		endfunction : new
 
-		virtual function gherkin_document_value get_value();
-			get_value.feature = this.feature;
+		virtual function gherkin_document_value get_as_value();
+			get_as_value.feature = this.feature;
 
-			get_value.comments.delete();
+			get_as_value.comments.delete();
 			foreach (this.comments[i]) begin
 				comment new_obj = new this.comments[i]; // TODO - deep copy
-				get_value.comments.push_back(new_obj);
+				get_as_value.comments.push_back(new_obj);
 			end
-		endfunction : get_value
+		endfunction : get_as_value
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_gherkin_document(this);
