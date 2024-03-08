@@ -21,5 +21,5 @@ I plan to keep developing it to complete a few features that I intentionally bro
 In the meantime, feel free to have a look at [bathtub_test_paper](https://edaplayground.com/x/RiMD) on EDA Playground.
 Its purpose is to validate the code samples in the paper.
 
-I promise, more is to come!
+I promise, there is more to come!
 Stay tuned and stay in touch.
