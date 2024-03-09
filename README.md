@@ -18,7 +18,7 @@ The source code is all here and it works.
 However this repo is not very user friendly at this time.
 I plan to keep developing it to complete a few features that I intentionally broke when I rewrote the parser, to add user documentation, and to provide more examples.
 
-In the meantime, feel free to have a look at [bathtub_test_paper](https://edaplayground.com/x/RiMD) on EDA Playground.
+In the meantime, feel free to have a look at [bathtub_test_paper](https://edaplayground.com/x/Prp5) on EDA Playground.
 Its purpose is to validate the code samples in the paper.
 
 I promise, there is more to come!
