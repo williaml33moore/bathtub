@@ -30,11 +30,11 @@ twitter_username: jekyllrb
 github_username:  jekyll
 
 # Build settings
-#theme: jekyll-theme-dinky
-remote_theme: pages-themes/dinky
+theme: minimal
+#remote_theme: pages-themes/dinky
 plugins:
   - jekyll-feed
-  - jekyl-remote-theme
+#  - jekyl-remote-theme
 
 # Exclude from processing.
 # The following items will not be processed, by default.
