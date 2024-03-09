@@ -19,9 +19,9 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Bathtub BDD
-email: your-email@example.com
+email: private
 description: >- # this means to ignore newlines until "baseurl:"
-  Bathtub is a package written completely in SystemVerilog
+  Bathtub is a SystemVerilog package based on UVM 
   which enables silicon design and verification teams
   to realize the benefits of Behavior-Driven Design (BDD) and Gherkin
   to facilitate collaboration and generate true living documentation.
