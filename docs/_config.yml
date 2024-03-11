@@ -36,7 +36,7 @@ github_username:  williaml33moore
 remote_theme: ejjoo/jekyll-theme-monos
 plugins:
   - jekyll-feed
-#  - jekyl-remote-theme
+  - jekyl-remote-theme
 
 # Exclude from processing.
 # The following items will not be processed, by default.
