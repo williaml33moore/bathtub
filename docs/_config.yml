@@ -31,8 +31,9 @@ twitter_username: thebillmo
 github_username:  williaml33moore
 
 # Build settings
-theme: jekyll-theme-dinky
+#theme: jekyll-theme-dinky
 #remote_theme: pages-themes/dinky
+remote_theme: ejjoo/jekyll-theme-monos
 plugins:
   - jekyll-feed
 #  - jekyl-remote-theme
