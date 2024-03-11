@@ -21,10 +21,9 @@
 title: Bathtub BDD
 email: private
 description: >- # this means to ignore newlines until "baseurl:"
-  Bathtub is a SystemVerilog package based on UVM 
-  which enables silicon design and verification teams
-  to realize the benefits of Behavior-Driven Design (BDD) and Gherkin
-  to facilitate collaboration and generate true living documentation.
+  Bathtub brings Behavior-Driven Development (BDD) and Gherkin
+  to SystemVerilog and UVM 
+  for silicon design and verification.
 baseurl: "bathtub" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: thebillmo
