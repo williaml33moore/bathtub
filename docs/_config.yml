@@ -63,4 +63,4 @@ tag_dir: tag/
 #   - vendor/gems/
 #   - vendor/ruby/
 exclude:
-  - public/
+  - public/css/syntax/README.md
