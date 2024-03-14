@@ -19,7 +19,7 @@
 	  </li>
 	  {% assign pages_list = site.pages %}
 	  {% for node in pages_list %}
-	    {% if node.title != null %}
+	    {% if node.title != null %}<li>DEBUG: {{ node.title }}</li>
 	      {% if node.layout == "page" %}
 	        <li>
 	        	<a class="nav-item" href="{{ node.url }}">
