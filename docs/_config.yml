@@ -40,6 +40,8 @@ plugins:
 # Options for jekyll-theme-monos
 highlighter-theme: emacs
 date_format: "%M-%d-%Y"
+category_dir: category/
+tag_dir: tag/
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -60,3 +62,4 @@ date_format: "%M-%d-%Y"
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+#   - public/
