@@ -22,7 +22,7 @@
 	    {% if node.title != null %}
 	      {% if node.layout == "page" %}
 	        <li>
-	        	<a class="nav-item" href="{{ site.baseurl}}/{{ node.url }}">
+	        	<a class="nav-item" href="{{ site.baseurl }}/{{ node.url }}">
 	            	{{ node.title }}
 	            </a>
 	        </li>
@@ -37,7 +37,7 @@
 			<li class="nav-title">Categories</li>
 	    {% for category in site.categories %}
 	    <li>
-	    	<a class="nav-item" href="{{ root_url }}/{{ site.category_dir }}#{{ category | first }}">
+	    	<a class="nav-item" href="{{ root_url }}/{{ site.baseurl }}/{{ site.category_dir }}#{{ category | first }}">
 				<span class="name">{{ category | first }}</span>
 				<span class="badge">{{ category | last | size }}</span>
 	    	</a>
