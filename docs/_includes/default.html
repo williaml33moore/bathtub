@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: "en" }}">
   {%- include head.html -%}
-  <style>@import url(/public/css/syntax/{{ site.highlighter-theme }}.css);</style>
+  <style>@import url({{ site.baseurl }}/public/css/syntax/{{ site.highlighter-theme }}.css);</style>
   <title>{{ site.title }}</title>
   <!-- <link href="{{ site.baseurl }}/public/css/bootstrap.min.css" rel="stylesheet"> -->
 
