@@ -35,7 +35,7 @@ github_username:  williaml33moore
 remote_theme: ejjoo/jekyll-theme-monos
 plugins:
   - jekyll-feed
-  - jekyl-remote-theme
+  - jekyll-remote-theme
 
 # Options for jekyll-theme-monos
 highlighter-theme: emacs

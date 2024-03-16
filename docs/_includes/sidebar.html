@@ -21,11 +21,15 @@
 	  {% for node in pages_list %}
 	    {% if node.title != null %}
 	      {% if node.layout == "page" %}
-	        <li>
-	        	<a class="nav-item" href="{{ site.baseurl }}/{{ node.url }}">
-	            	{{ node.title }}
-	            </a>
-	        </li>
+			<li>
+				{% if node.permalink == null %}
+				<a class="nav-item" href="{{ site.baseurl }}/{{ node.url }}">
+				{% else %}
+				<a class="nav-item" href="{{ site.baseurl }}{{ node.permalink }}">
+				{% endif %}
+					{{ node.title }}
+				</a>
+			</li>
 	      {% endif %}
 	    {% endif %}
 	  {% endfor %}
@@ -37,7 +41,7 @@
 			<li class="nav-title">Categories</li>
 	    {% for category in site.categories %}
 	    <li>
-	    	<a class="nav-item" href="{{ root_url }}/{{ site.baseurl }}/{{ site.category_dir }}#{{ category | first }}">
+	    	<a class="nav-item" href="{{ root_url }}{{ site.baseurl }}/{{ site.category_dir }}#{{ category | first }}">
 				<span class="name">{{ category | first }}</span>
 				<span class="badge">{{ category | last | size }}</span>
 	    	</a>
