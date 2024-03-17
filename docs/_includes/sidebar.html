@@ -38,12 +38,12 @@
 
 <div class="sidebar-item sidebar-nav">
   	<ul class="nav">
-			<li class="nav-title">Categories</li>
-	    {% for category in site.categories %}
+			<li class="nav-title">Tags</li>
+	    {% for tag in site.tags %}
 	    <li>
-	    	<a class="nav-item" href="{{ root_url }}{{ site.baseurl }}/{{ site.category_dir }}#{{ category | first }}">
-				<span class="name">{{ category | first }}</span>
-				<span class="badge">{{ category | last | size }}</span>
+	    	<a class="nav-item" href="{{ root_url }}{{ site.baseurl }}/{{ site.tag_dir }}#{{ tag | first }}">
+				<span class="name">{{ tag | first }}</span>
+				<span class="badge">{{ tag | last | size }}</span>
 	    	</a>
  		</li>
 	    {% endfor %}

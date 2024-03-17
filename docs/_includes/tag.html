@@ -1,13 +1,13 @@
 <article class="post">
 	<header class="post-header home">
-		<div class="post-title">Category - <span id='category-name'></span></div>
+		<div class="post-title">Tag - <span id='tag-name'></span></div>
 	</header>
 
 	<div class="post-content">
 		{%- if site.posts.size > 0 -%}
 		<ul class="post-list">
 			{%- for post in site.posts -%}
-			<li class="post-list-item post-category-{{post.categories}}">
+			<li class="post-list-item post-tag-{{post.tags}}">
 				<!-- {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%} -->
 				{%- assign date_format = "%Y/%m/%d" -%}
 				<span class="post-date">{{ post.date | date: date_format }}</span>
@@ -24,13 +24,13 @@
 
 <script src="{{ site.baseurl }}/public/js/jquery-3.4.1.slim.min.js"></script>
 <script>
-	function removeCategory() {
+	function removeTag() {
 		if (window.location.hash) {
 			let hash = window.location.hash.substring(1);
-			$('#category-name').text(hash.substring(0, 1).toUpperCase() + hash.substring(1));
-			let category_class = '.post-category-' + hash;
+			$('#tag-name').text(hash.substring(0, 1).toUpperCase() + hash.substring(1));
+			let tag_class = '.post-tag-' + hash;
 			let items = $('.post-list-item').each((i, e) => {
-				if (!$(e).hasClass('post-category-' + hash)) {
+				if (!$(e).hasClass('post-tag-' + hash)) {
 					$(e).hide();
 				} else {
 					$(e).show();
@@ -39,10 +39,10 @@
 		}
 	}
 	$(window).on('hashchange', () => {
-		removeCategory();
+		removeTag();
 	});
 	$(document).ready(() => {
-		removeCategory();	
+		removeTag();	
 	})
 	
 </script>
