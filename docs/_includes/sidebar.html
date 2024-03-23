@@ -15,7 +15,7 @@
 	<ul class="nav">
       <li class="nav-title">Pages</li>
 	  <li>
-	  	<a class="nav-item" href="{{ site.baseurl }}/">Articles</a>
+	  	<a class="nav-item" href="{{ site.baseurl }}/">Home</a>
 	  </li>
 	  {% assign pages_list = site.pages %}
 	  {% for node in pages_list %}
@@ -33,6 +33,9 @@
 	      {% endif %}
 	    {% endif %}
 	  {% endfor %}
+	  <li>
+	  	<a class="nav-item" href="https://github.com/{{ site.github_username }}{{ site.baseurl }}" target="_blank">GitHub</a>
+	  </li>
 	</ul>
 </div>
 
@@ -53,4 +56,5 @@
 
 <div class="sidebar-item sidebar-footer">
 	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+	<p>Theme: <a href="https://github.com/ejjoo/jekyll-theme-monos">Monos</a></p>
 </div>
