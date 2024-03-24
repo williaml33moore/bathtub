@@ -19,7 +19,7 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 
 These easy-to-remember bookmarkable URLs all redirect you to the home page:
 * [bathtubBDD.dev](https://bathtubbdd.dev)
-* [bathtubBDD.com](http://bathtubbdd.com})
+* [bathtubBDD.com](http://bathtubbdd.com)
 * [bathtubBDD.org](http://bathtubbdd.org)
 
 but you will note from the true URL in your web browser that these pages are served from GitHub.
