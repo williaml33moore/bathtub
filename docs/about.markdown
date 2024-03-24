@@ -3,7 +3,130 @@ layout: page
 title: About
 permalink: /about/
 ---
-![DVCon U.S. 2024](https://github.com/williaml33moore/bathtub/assets/118405419/8b8800c3-cca1-4f58-ae71-a4c6d1018cc3)
+# Description
+{% comment %}
+# `description` object is defined in _config.yml
+{% endcomment %}
+{{ site.description }}
 
-Welcome!
+## Executable Specifications and Living Documentation
+Hardware and software development projects rely on documentation to keep teams on the same page.
+Detailed specifications let project sponsors, developers, and testers agree on what to create, why to create it, and how to test that it is created correctly.
+The problem is that traditional static specifications can get stale.
+If anyone changes the spec, the developers have to make sure the changes are reflected in the code.
+Likewise if the developers change the code, the spec needs to be brought up-to-date.
+If the spec and the code get too far out-of-sync, the tests could be incomplete and a serious bug might slip through to the shipped product.
+
+What's needed is an executable specification--a document which is still written and readable by humans, but which has a little machine-parsable structure to it. Thanks to this structure, the spec becomes a test which the team can run automatically to verify that the spec and the code still agree whenever either of them changes. Such a specification is no longer static; it has become living documentation.
+
+## Integrated Circuit Design and Verification
+Integrated circuits (ICs), or computer chips, are the tiny silicon brains inside all the electronic devices and systems we use today, like cell phones, self-driving cars, and submarines.
+Being physical, tangible objects, ICs are hardware, yet thanks to electronic design automation (EDA), chip designers can use specialized _register-transfer level_ (RTL) hardware description languages (HDLs) to model circuits as software code, replacing the hand-drawn schematics of old.
+Expert engineers use a sophisticated chain of programs and automated manufacturing equipment to fabricate physical hardware chips from the designers' software models.
+
+It costs millions of dollars to produce a line of chips because they're so complex.
+If a bug is found late, it's very expensive to fix it and start the fabrication process all over again.
+It's much better and cheaper to find and fix all the bugs sooner, while the design is still an RTL software model.
+To that end, chip companies utilize teams of talented and good-looking[^1] design verification (DV) engineers, specialists who analyze specifications and designs, then write and run simulations that thoroughly test the RTL models before they're released to manufacturing.
+
+[^1]: I may be biased.
+
+## BDD and Gherkin
+Just like chip companies, software companies want to be sure their software products (apps, web sites, enterprise software, etc.) are free from defects before they are released to customers, so they too utilize teams of software testing and quality assurance engineers.
+But more importantly, the software industry continuously analyzes candidly what works and doesn't work in each generation, and over the years has evolved techniques that help coders increase productivity and quality.
+Many of the leading techniques are known together as Agile software development because their biggest benefit is helping teams respond better to change and even turn it to competitive advantage.
+
+Test code can be complex so software testers, guided by Agile values and principles, figured out ways to write tests in plain English instead and use programs to turn the English into code automatically.
+The transformational revelation was that comprehensive natural language tests are a great way to describe what a piece of code is supposed to do, i.e., its intended behavior.
+Furthermore these descriptions enable teams to have conversations about behavior early in the development process, before any code is written, and to include diverse perspectives from non-technical participants.
+In short, Agile software developers and testers created a way to collaborate up front on executable specifications that can be run as automated tests.
+When the new code passes these tests, it demonstrates that it does what it's supposed to to, and can be accepted as done.
+This Agile process of specification-to-acceptance is called [behavior-driven development (BDD)](https://dannorth.net/introducing-bdd/).
+
+[Cucumber](https://cucumber.io) is a popular BDD tool for turning natural language specifications into executable tests. Recall that executable specifications require a little structure so tools can parse them. Cucumber uses a de facto standard lightweight programming language called [Gherkin](https://cucumber.io/docs/gherkin/) to provide that structure. Gherkin files read like natural language specs, but run like tests.
+
+```gherkin
+# This Gherkin feature file's name is alu_division.feature
+
+Feature: Arithmetic Logic Unit division operations
+
+    The arithmetic logic unit performs integer division.
+
+    Scenario: With integer division, the remainder is discarded
+        Given operand A is 15 and operand B is 4
+        When the ALU performs the division operation
+        Then the result should be 3
+        And the DIV_BY_ZERO flag should be clear
+
+    Scenario: Attempting to divide by zero results in an error
+        Given operand A is 10 and operand B is 0
+        When the ALU performs the division operation
+        Then the DIV_BY_ZERO flag should be raised
+```
+
+## SystemVerilog and UVM
+Cucumber works with many popular programming languages like Ruby, Java, and JavaScript. Other BDD tools support even more languages like Python, Perl, and C#.
+IC design and verification engineers use a variety of programming languages on a daily basis, but the two most prevalent HDLs for modeling circuits are [SystemVerilog](https://standards.ieee.org/ieee/1800/7743/) and [VHDL](https://standards.ieee.org/ieee/1076/5179/). SystemVerilog and VHDL users require simulators, EDA tools that can compile and execute RTL code.
+
+The SystemVerilog language is backward compatible with its predecessor, [Verilog](https://standards.ieee.org/ieee/1364/3641/). Verilog is in the C family of programming languages in that it's procedural, uses familiar keywords and operators like _if_, _then_, _else_, _for_, _&&_, and terminates lines with semicolons. Verilog also has unique syntax and concepts essential for modeling digital hardware like native _time_ and _wire_ types, four-state variables, and concurrent processes.
+
+SystemVerilog builds on Verilog by adding features verification engineers find useful for testing hardware models. Those features include object-oriented programming, constrained random value generation, assertions, and functional coverage.
+
+SystemVerilog gives users a lot of freedom in how to write tests, which meant that every individual and company developed their own ways of doing things. To bring some coherence to this Tower of Babel, industry leaders got together to develop the [Universal Verification Methodology (UVM)](https://www.accellera.org/activities/working-groups/uvm), now an [IEEE standard](https://standards.ieee.org/ieee/1800.2/7567/) library and approach for creating standardized, interoperable verification environments.
+
+BDD was largely unknown in the IC world and sadly no BDD tools supported SystemVerilog and UVM. Until now.
+
+## Bathtub
+Or...
+: <strong>B</strong>DD
+: <strong>A</strong>utomated
+: <strong>T</strong>ests
+: <strong>H</strong>elping
+: <strong>T</strong>eams
+: <strong>U</strong>nderstand
+: <strong>B</strong>ehavior
+
+Bathtub is a library written entirely in SystemVerilog that enables BDD for IC projects.
+It's built on top of UVM so it integrates seamlessly with existing verification environments.
+Users run it in their simulators along with their RTL models, it reads and parses their Gherkin files, and executes them as tests.
+
+A slightly deeper dive for the UVM community.
+Assuming you already have a working UVM test bench, you need to do a few things to add Bathtub to it.
+First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
+These are called step definitions and they effectively map your natural language Gherkin steps to runnable SystemVerilog code.
+Bathtub provides macros that simplify step definition creation.
+Then you need to write a new UVM test that's a lot like your existing tests in that it instantiates your UVM environment, but it also instantiates and configures a `bathtub` object from the package `bathtub_pkg`.
+When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all in order on your existing virtual sequencer.
+
+Bathtub supports only SystemVerilog, not VHDL. 
+
+## Open-Source
+The Bathtub project, including these web pages, is maintained on GitHub at [https://github.com/williaml33moore/bathtub](https://github.com/williaml33moore/bathtub). The "GitHub" link in the sidebar of these web pages also takes you there.
+
+These easy-to-remember bookmarkable URLs all redirect you here:
+* [bathtubBDD.dev](https://bathtubbdd.dev{{ page.url }})
+* [bathtubBDD.com](http://bathtubbdd.com{{ page.url }})
+* [bathtubBDD.org](http://bathtubbdd.org{{ page.url }})
+
+but you will note from the true URL in your web browser that these pages are served from GitHub at [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
+
+These pages present a relatively user-friendly façade for general audiences with content like blog posts, background material, and announcements. The GitHub project is more technical and requires some GitHub familiarity to navigate, but it is the complete single source of truth for Bathtub.
+
+The GitHub repo contains the following:
+* [Source code](https://github.com/williaml33moore/bathtub)
+: The Bathtub source code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
+The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone.
+* [Pages](https://williaml33moore.github.io/bathtub/)
+: These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
+* [Issues](https://github.com/williaml33moore/bathtub/issues)
+: These are for tracking tasks and reporting bugs.
+* [Discussions](https://github.com/williaml33moore/bathtub/discussions)
+: This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
+* [Wiki](https://github.com/williaml33moore/bathtub/wiki)
+: For technical documentation and user guides.
+
+Bathtub is a new work-in-progress so everything is incomplete today, but hopefully continuously improving.
+
+## About Me
+---
 
