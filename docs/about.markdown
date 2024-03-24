@@ -95,6 +95,7 @@ Assuming you already have a working UVM test bench, you need to do a few things 
 First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
 These are called step definitions and they effectively map your natural language Gherkin steps to runnable SystemVerilog code.
 Bathtub provides macros that simplify step definition creation.
+Your _Then_ steps should include assertions or equivalents so your scenarios can be self-checking.
 Then you need to write a new UVM test that's a lot like your existing tests in that it instantiates your UVM environment, but it also instantiates and configures a `bathtub` object from the package `bathtub_pkg`.
 When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all in order on your existing virtual sequencer.
 
@@ -110,12 +111,16 @@ These easy-to-remember bookmarkable URLs all redirect you here:
 
 but you will note from the true URL in your web browser that these pages are served from GitHub at [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 
+This QR code takes you to the home page.
+
+![QR code for bathtub pages]({{ site.baseurl }}/assets/about/qrcode_williaml33moore.github.io.png)
+
 These pages present a relatively user-friendly façade for general audiences with content like blog posts, background material, and announcements. The GitHub project is more technical and requires some GitHub familiarity to navigate, but it is the complete single source of truth for Bathtub.
 
 The GitHub repo contains the following:
 * [Source code](https://github.com/williaml33moore/bathtub)
-: The Bathtub source code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
-The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone.
+: The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
+The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone. Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
 * [Pages](https://williaml33moore.github.io/bathtub/)
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 * [Issues](https://github.com/williaml33moore/bathtub/issues)
