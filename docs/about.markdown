@@ -31,12 +31,12 @@ To that end, chip companies utilize teams of talented and good-looking[^1] desig
 
 [^1]: I may be biased.
 
-## BDD and Gherkin
+## Agile, BDD, and Gherkin
 Just like chip companies, software companies want to be sure their software products (apps, web sites, enterprise software, etc.) are free from defects before they are released to customers, so they too utilize teams of software testing and quality assurance engineers.
 But more importantly, the software industry continuously analyzes candidly what works and doesn't work in each generation, and over the years has evolved techniques that help coders increase productivity and quality.
 Many of the leading techniques are known together as Agile software development because their biggest benefit is helping teams respond better to change and even turn it to competitive advantage.
 
-Test code can be complex so software testers, guided by Agile values and principles, figured out ways to write tests in plain English instead and use programs to turn the English into code automatically.
+Test code can be complex, so software testers, guided by Agile values and principles, figured out ways to write tests in plain English instead and use programs to turn the English into code automatically.
 The transformational revelation was that comprehensive natural language tests are a great way to describe what a piece of code is supposed to do, i.e., its intended behavior.
 Furthermore these descriptions enable teams to have conversations about behavior early in the development process, before any code is written, and to include diverse perspectives from non-technical participants.
 In short, Agile software developers and testers created a way to collaborate up front on executable specifications that can be run as automated tests.
@@ -66,7 +66,7 @@ Feature: Arithmetic Logic Unit division operations
 
 ## SystemVerilog and UVM
 Cucumber works with many popular programming languages like Ruby, Java, and JavaScript. Other BDD tools support even more languages like Python, Perl, and C#.
-IC design and verification engineers use a variety of programming languages on a daily basis, but the two most prevalent HDLs for modeling circuits are [SystemVerilog](https://standards.ieee.org/ieee/1800/7743/) and [VHDL](https://standards.ieee.org/ieee/1076/5179/). SystemVerilog and VHDL users require simulators, EDA tools that can compile and execute RTL code.
+IC design and verification engineers use a variety of programming languages on a daily basis, but the two most prevalent HDLs for modeling circuits are [SystemVerilog](https://standards.ieee.org/ieee/1800/7743/) and [VHDL](https://standards.ieee.org/ieee/1076/5179/). SystemVerilog and VHDL users require simulators, commercial EDA tools that can compile and execute RTL code.
 
 The SystemVerilog language is backward compatible with its predecessor, [Verilog](https://standards.ieee.org/ieee/1364/3641/). Verilog is in the C family of programming languages in that it's procedural, uses familiar keywords and operators like _if_, _then_, _else_, _for_, _&&_, and terminates lines with semicolons. Verilog also has unique syntax and concepts essential for modeling digital hardware like native _time_ and _wire_ types, four-state variables, and concurrent processes.
 
@@ -137,5 +137,20 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 Bathtub is a new work-in-progress so everything is incomplete today, but hopefully continuously improving.
 
 ## About Me
+My name is Bill Moore.
+I received a B.S. in Electrical Engineering from Stanford University and have enjoyed a thirty year career in IC design and verification, working for or with over a dozen companies.
+I am currently a Senior Verification Engineer with [Paradigm Works](http://paradigm-works.com).
+A compulsive lifelong learner, I have a passion for finding creative solutions to technical problems, and a gift for helping teams and individuals communicate more effectively.
+I live in San Jose, California--the "Capital of Silicon Valley"--with my wife and son.
+
+In 2022 I was researching possible solutions to widespread problems with documentation such as those described earlier.
+I discovered living documentation and BDD and was intrigued and also a little jealous because as a SystemVerilog enthusiast, I felt left out.
+So I ported Gherkin to SystemVerilog at my previous employer, [Everactive](https://everactive.com), and got it working on a limited experimental basis on our current project at that time.
+I don't work there anymore but before I left, they were gracious enough to release Bathtub as open-source software so I could continue to develop it and share it with the design verification community.
+I published a paper on Bathtub and presented it at [DVCon U.S.](https://dvcon.org) 2024, the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper Presentation](https://2024.dvcon.org/press-release-march-20-2024) award!
+
+**Please Note**--The views and opinions expressed on these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers--past, current, or future--or any other organizations which with I am affiliated.
+Bathtub was begun at Everactive, but currently it is a personal project I work on on my own time.
+
 ---
 
