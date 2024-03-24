@@ -118,16 +118,20 @@ This QR code takes you to the home page.
 These pages present a relatively user-friendly façade for general audiences with content like blog posts, background material, and announcements. The GitHub project is more technical and requires some GitHub familiarity to navigate, but it is the complete single source of truth for Bathtub.
 
 The GitHub repo contains the following:
-* [Source code](https://github.com/williaml33moore/bathtub)
+[Source code](https://github.com/williaml33moore/bathtub)
 : The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
 The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone. Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
-* [Pages](https://williaml33moore.github.io/bathtub/)
+
+[Pages](https://williaml33moore.github.io/bathtub/)
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
-* [Issues](https://github.com/williaml33moore/bathtub/issues)
+
+[Issues](https://github.com/williaml33moore/bathtub/issues)
 : These are for tracking tasks and reporting bugs.
-* [Discussions](https://github.com/williaml33moore/bathtub/discussions)
+
+[Discussions](https://github.com/williaml33moore/bathtub/discussions)
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
-* [Wiki](https://github.com/williaml33moore/bathtub/wiki)
+
+[Wiki](https://github.com/williaml33moore/bathtub/wiki)
 : For technical documentation and user guides.
 
 Bathtub is a new work-in-progress so everything is incomplete today, but hopefully continuously improving.
