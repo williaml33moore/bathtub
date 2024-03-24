@@ -149,7 +149,7 @@ So I ported Gherkin to SystemVerilog at my previous employer, [Everactive](https
 I don't work there anymore but before I left, they were gracious enough to release Bathtub as open-source software so I could continue to develop it and share it with the design verification community.
 I published a paper on Bathtub and presented it at [DVCon U.S.](https://dvcon.org) 2024, the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper Presentation](https://2024.dvcon.org/press-release-march-20-2024) award!
 
-**Please Note**--The views and opinions expressed on these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers--past, current, or future--or any other organizations which with I am affiliated.
+**Please Note**--The views and opinions expressed in these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers--past, current, or future--or any other organizations which with I am affiliated.
 Bathtub was begun at Everactive, but currently it is a personal project I work on on my own time.
 
 ---
