@@ -3,7 +3,7 @@ layout: post
 author: Bill
 title: "The Story So Far..."
 date: 2024-03-23 00:00:00 -0700
-tags: livingdocumentation bdd systemverilog uvm bathtub dvcon github pages
+tags: livingdocs bdd systemverilog uvm bathtub dvcon github pages
 ---
 ![award]({{ site.baseurl }}/assets/posts/2024/03/award.jpeg)
 
