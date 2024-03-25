@@ -3,6 +3,12 @@ layout: page
 title: About
 permalink: /about/
 ---
+![A pickle glowing when an electric current is passed through it.](https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Glowing-pickle-elfi-von-fliegenpilz.png/640px-Glowing-pickle-elfi-von-fliegenpilz.png) \
+A gherkin glows when an electric current is passed through it. \
+\[["File:Glowing-pickle-elfi-von-fliegenpilz.png"](https://commons.wikimedia.org/wiki/File:Glowing-pickle-elfi-von-fliegenpilz.png)
+by Elfi von Fliegenpilz
+is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)\]
+
 # Description
 {% comment %}
 # `description` object is defined in _config.yml
@@ -36,14 +42,14 @@ Just like chip companies, software companies want to be sure their software prod
 But more importantly, the software industry continuously analyzes candidly what works and doesn't work in each generation, and over the years has evolved techniques that help coders increase productivity and quality.
 Many of the leading techniques are known together as Agile software development because their biggest benefit is helping teams respond better to change and even turn it to competitive advantage.
 
-Test code can be complex, so software testers, guided by Agile values and principles, figured out ways to write tests in plain English instead and use programs to turn the English into code automatically.
+Test code can be complex, so software testers, guided by Agile values and principles, figured out ways to write tests in natural language (e.g., plain English) instead and use programs to turn the natural language into code automatically.
 The transformational revelation was that comprehensive natural language tests are a great way to describe what a piece of code is supposed to do, i.e., its intended behavior.
-Furthermore these descriptions enable teams to have conversations about behavior early in the development process, before any code is written, and to include diverse perspectives from non-technical participants.
-In short, Agile software developers and testers created a way to collaborate up front on executable specifications that can be run as automated tests.
-When the new code passes these tests, it demonstrates that it does what it's supposed to to, and can be accepted as done.
-This Agile process of specification-to-acceptance is called [behavior-driven development (BDD)](https://dannorth.net/introducing-bdd/).
+Furthermore these descriptions enable teams to have conversations about behavior early in the development cycle, before any code is written, and to include diverse perspectives from non-technical participants.
+In short, Agile software developers and testers created a way to collaborate up front on executable specifications that can be run as automated tests that guide development.
+When the new code passes these tests, it demonstrates that it does what it's supposed to do, and can be accepted as done.
+This Agile flow from collaboration to specification to acceptance is called [behavior-driven development (BDD)](https://dannorth.net/introducing-bdd/).
 
-[Cucumber](https://cucumber.io) is a popular BDD tool for turning natural language specifications into executable tests. Recall that executable specifications require a little structure so tools can parse them. Cucumber uses a de facto standard lightweight programming language called [Gherkin](https://cucumber.io/docs/gherkin/) to provide that structure. Gherkin files read like natural language specs, but run like tests.
+BDD is an abstract concept put into practice with actual tools. [Cucumber](https://cucumber.io) is a popular BDD tool for turning natural language specifications into executable tests. Recall that executable specifications require a little structure so tools can parse them. Cucumber relies on a de facto standard lightweight programming language called [Gherkin](https://cucumber.io/docs/gherkin/) to provide that structure. The heart of a Gherkin file is a collection of concrete scenarios, phrased in a particular _Given-When-Then_ pattern, that illustrate the behavior of a new feature. Gherkin feature files read like natural language specs, but run like tests.
 
 ```gherkin
 # This Gherkin feature file's name is alu_division.feature
@@ -66,38 +72,38 @@ Feature: Arithmetic Logic Unit division operations
 
 ## SystemVerilog and UVM
 Cucumber works with many popular programming languages like Ruby, Java, and JavaScript. Other BDD tools support even more languages like Python, Perl, and C#.
-IC design and verification engineers use a variety of programming languages on a daily basis, but the two most prevalent HDLs for modeling circuits are [SystemVerilog](https://standards.ieee.org/ieee/1800/7743/) and [VHDL](https://standards.ieee.org/ieee/1076/5179/). SystemVerilog and VHDL users require simulators, commercial EDA tools that can compile and execute RTL code.
+IC design and verification engineers use a variety of programming languages on a daily basis, but the two most prevalent HDLs for modeling circuits are [SystemVerilog](https://standards.ieee.org/ieee/1800/7743/) and [VHDL](https://standards.ieee.org/ieee/1076/5179/). SystemVerilog and VHDL users require simulators--commercial EDA tools that can compile and execute RTL code and associated test fixtures.
 
-The SystemVerilog language is backward compatible with its predecessor, [Verilog](https://standards.ieee.org/ieee/1364/3641/). Verilog is in the C family of programming languages in that it's procedural, uses familiar keywords and operators like _if_, _then_, _else_, _for_, _&&_, and terminates lines with semicolons. Verilog also has unique syntax and concepts essential for modeling digital hardware like native _time_ and _wire_ types, four-state variables, and concurrent processes.
+The SystemVerilog language is backward compatible with its predecessor, [Verilog](https://standards.ieee.org/ieee/1364/3641/). Verilog is in the C family of programming languages in that it's procedural, terminates lines with semicolons, and uses familiar keywords and operators like _if_, _then_, _else_, _for_, and _&&_. Verilog also has unique syntax and concepts essential for modeling digital hardware like native _time_ and _wire_ types, four-state variables, and concurrent processes.
 
-SystemVerilog builds on Verilog by adding features verification engineers find useful for testing hardware models. Those features include object-oriented programming, constrained random value generation, assertions, and functional coverage.
+SystemVerilog builds on Verilog by adding features verification engineers find useful for testing hardware models. These features include object-oriented programming, constrained random value generation, assertions, and functional coverage.
 
-SystemVerilog gives users a lot of freedom in how to write tests, which meant that every individual and company developed their own ways of doing things. To bring some coherence to this Tower of Babel, industry leaders got together to develop the [Universal Verification Methodology (UVM)](https://www.accellera.org/activities/working-groups/uvm), now an [IEEE standard](https://standards.ieee.org/ieee/1800.2/7567/) library and approach for creating standardized, interoperable verification environments.
+SystemVerilog gives users a lot of freedom in how to write tests, so inevitably every individual and company developed their own ways of doing things. To bring some coherence to this Tower of Babel, industry leaders got together to develop the [Universal Verification Methodology (UVM)](https://www.accellera.org/activities/working-groups/uvm), now an [IEEE standard](https://standards.ieee.org/ieee/1800.2/7567/) library specification and approach for creating standardized, interoperable verification environments.
 
 BDD was largely unknown in the IC world and sadly no BDD tools supported SystemVerilog and UVM. Until now.
 
 ## Bathtub
-Or...
-: <strong>B</strong>DD
-: <strong>A</strong>utomated
-: <strong>T</strong>ests
-: <strong>H</strong>elping
-: <strong>T</strong>eams
-: <strong>U</strong>nderstand
-: <strong>B</strong>ehavior
+
+**B**DD \
+**A**utomated \
+**T**ests \
+**H**elping \
+**T**eams \
+**U**nderstand \
+**B**ehavior
 
 Bathtub is a library written entirely in SystemVerilog that enables BDD for IC projects.
 It's built on top of UVM so it integrates seamlessly with existing verification environments.
-Users run it in their simulators along with their RTL models, it reads and parses their Gherkin files, and executes them as tests.
+Users run it in their simulators along with their RTL models; it reads and parses their Gherkin files, and executes them as tests.
 
 A slightly deeper dive for the UVM community.
 Assuming you already have a working UVM test bench, you need to do a few things to add Bathtub to it.
 First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
 These are called step definitions and they effectively map your natural language Gherkin steps to runnable SystemVerilog code.
 Bathtub provides macros that simplify step definition creation.
-Your _Then_ steps should include assertions or equivalents so your scenarios can be self-checking.
+Your _Then_ steps should include assertions or equivalent conditionals so your scenarios can be self-checking.
 Then you need to write a new UVM test that's a lot like your existing tests in that it instantiates your UVM environment, but it also instantiates and configures a `bathtub` object from the package `bathtub_pkg`.
-When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all in order on your existing virtual sequencer.
+When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all sequentially on your existing virtual sequencer.
 
 Bathtub supports only SystemVerilog, not VHDL. 
 
@@ -126,7 +132,7 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 
 [Issues](https://github.com/williaml33moore/bathtub/issues)
-: These are for tracking tasks and reporting bugs.
+: Tasks are tracked and bugs are reported here.
 
 [Discussions](https://github.com/williaml33moore/bathtub/discussions)
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
@@ -146,10 +152,10 @@ I live in San Jose, California--the "Capital of Silicon Valley"--with my wife an
 In 2022 I was researching possible solutions to widespread problems with documentation such as those described earlier.
 I discovered living documentation and BDD and was intrigued and also a little jealous because as a SystemVerilog enthusiast, I felt left out.
 So I ported Gherkin to SystemVerilog at my previous employer, [Everactive](https://everactive.com), and got it working on a limited experimental basis on our current project at that time.
-I don't work there anymore but before I left, they were gracious enough to release Bathtub as open-source software so I could continue to develop it and share it with the design verification community.
+I don't work there anymore but before I left, they were gracious enough to release Bathtub as [open-source software](https://github.com/everactive/bathtub) so I could continue to develop it and share it with the design verification community.
 I published a paper on Bathtub and presented it at [DVCon U.S.](https://dvcon.org) 2024, the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper](https://2024.dvcon.org/press-release-march-20-2024) award!
 
-**Please Note**--The views and opinions expressed in these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers, clients, partners, or vendors--past, current, or future--or any other organizations which with I am affiliated.
+**Please Note**--The views and opinions expressed by me in these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers, clients, partners, or vendors--past, current, or future--or any other organizations which with I am affiliated.
 Bathtub was begun at Everactive, but currently it is a personal project I work on on my own time.
 
 ---
