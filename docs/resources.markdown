@@ -32,19 +32,22 @@ Check them out if you'd like to learn more.
 
 * [cucumber/gherkin: A parser and compiler for the Gherkin language](https://github.com/cucumber/gherkin)
   : Github repo for Gherkin parsers supported by Cucumber.
+  Bathtub implements the same abstract syntax tree (AST) in SystemVerilog.
 
 * [Cucumber Blog](https://cucumber.io/blog/)
   : Covers wide ranging topics including BDD best practices and Gherkin dos and don'ts.
-  Bathtub implements the same abstract syntax tree (AST) in SystemVerilog.
 
 [AgileSoC](http://agilesoc.com)
-  : A seminal blog by Neil Johnson and Bryan Morris about Agile approaches to IC development and verification.
+: A seminal blog by Neil Johnson and Bryan Morris about Agile approaches to IC development and verification.
 
 [SVUnit](http://agilesoc.com/open-source-projects/svunit/)
-  : The ground-breaking test-driven development (TDD) unit testing framework for SystemVerilog.
+: The ground-breaking test-driven development (TDD) unit testing framework for SystemVerilog.
+
+[BDD Addict Newsletter](https://www.specsolutions.eu/news/bddaddict/)
+: Survey what's going on in the world of BDD.
 
 [Automation Panda](https://automationpanda.com/bdd/)
-  : This blog by software test automation influencer Andrew Knight goes deep into BDD.
+: This blog by software test automation influencer Andrew Knight goes deep into BDD.
 
 [Behavior-driven development](https://en.wikipedia.org/wiki/Behavior-driven_development)
   : Wikipedia. 'Nuff said. 
