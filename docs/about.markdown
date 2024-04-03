@@ -15,6 +15,8 @@ is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)\]
 {% endcomment %}
 {{ site.description }}
 
+What does all that mean?
+
 ## Executable Specifications and Living Documentation
 Hardware and software development projects rely on documentation to keep teams on the same page.
 Detailed specifications let project sponsors, developers, and testers agree on what to create, why to create it, and how to test that it is created correctly.

@@ -3,7 +3,7 @@ layout: page
 title: Resources
 permalink: /resources/
 ---
-Here is a collection of resources I've found helpful while working on Bathtub.
+Here is a collection of resources that have been helpful in the development of Bathtub.
 Check them out if you'd like to learn more.
 
 # Behavior-Driven Development (BDD)
