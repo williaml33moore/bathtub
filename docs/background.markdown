@@ -1,13 +1,12 @@
 ---
 layout: page
-title: About
-permalink: /about/
+title: Background
+permalink: /background/
 ---
 ![A pickle glowing when an electric current is passed through it.](https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Glowing-pickle-elfi-von-fliegenpilz.png/640px-Glowing-pickle-elfi-von-fliegenpilz.png) \
-A gherkin glows when an electric current is passed through it. \
-\[["File:Glowing-pickle-elfi-von-fliegenpilz.png"](https://commons.wikimedia.org/wiki/File:Glowing-pickle-elfi-von-fliegenpilz.png)
-by Elfi von Fliegenpilz
-is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)\]
+A gherkin glows when an electric current is passed through it.[^electric_gherkin]
+
+[^electric_gherkin]: ["File:Glowing-pickle-elfi-von-fliegenpilz.png"](https://commons.wikimedia.org/wiki/File:Glowing-pickle-elfi-von-fliegenpilz.png) by Elfi von Fliegenpilz is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 # Description
 {% comment %}
@@ -142,23 +141,7 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 [Wiki](https://github.com/williaml33moore/bathtub/wiki)
 : For technical documentation and user guides.
 
-Bathtub is a new work-in-progress so everything is incomplete today, but hopefully continuously improving.
-
-## About Me
-My name is Bill Moore.
-I received a B.S. in Electrical Engineering from Stanford University and have enjoyed a thirty year career in IC design and verification, working for or with over a dozen companies.
-I am currently a Senior Verification Engineer with [Paradigm Works](http://paradigm-works.com).
-A compulsive lifelong learner, I have a passion for finding creative solutions to technical problems, and a gift for helping teams and individuals communicate more effectively.
-I live in San Jose, California--the "Capital of Silicon Valley"--with my wife and son.
-
-In 2022 I was researching possible solutions to widespread problems with documentation such as those described earlier.
-I discovered living documentation and BDD and was intrigued and also a little jealous because as a SystemVerilog enthusiast, I felt left out.
-So I ported Gherkin to SystemVerilog at my previous employer, [Everactive](https://everactive.com), and got it working on a limited experimental basis on our current project at that time.
-I don't work there anymore but before I left, they were gracious enough to release Bathtub as [open-source software](https://github.com/everactive/bathtub) so I could continue to develop it and share it with the design verification community.
-I published a paper on Bathtub and presented it at [DVCon U.S.](https://dvcon.org) 2024, the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper](https://2024.dvcon.org/press-release-march-20-2024) award!
-
-**Please Note**--The views and opinions expressed by me in these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers, clients, partners, or vendors--past, current, or future--or any other organizations which with I am affiliated.
-Bathtub was begun at Everactive, but currently it is a personal project I work on on my own time.
+Bathtub is a new work-in-progress so everything is incomplete today, but continuously improving.
 
 ---
 

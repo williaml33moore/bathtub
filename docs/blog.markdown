@@ -1,5 +1,6 @@
 ---
-layout: tag
-title: Tag
-permalink: /tag/
+layout: page
+title: Blog
+permalink: /blog/
 ---
+{%- include blog.html -%}

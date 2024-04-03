@@ -13,7 +13,7 @@ My name is Bill and I've been an IC design and verification engineer in Silicon 
 In 2022 I discovered living documentation and decided to port BDD to SystemVerilog and UVM.
 The result is Bathtub.
 
-(I'm using a lot of jargon here without defining it. Most of it is introduced in the [About]({{ site.baseurl }}/about/) page.)
+(I'm using a lot of jargon here without defining it. Most of it is introduced in the [Background]({{ site.baseurl }}/background/) page.)
 
 In 2023 I decided to write a paper proposal about Bathtub and submit it to [DVCon U.S.](https://dvcon.org) 2024 for publication.
 I've attended DVCon for the past ten years and this was my first time submitting anything.

@@ -5,13 +5,15 @@ layout: home
 
 ## Behavior-Driven Development for Integrated Circuits
 BDD helps you and your colleagues bring diverse perspectives--business, design, verification, firmware--to the specification of new IC features. Together, you create living documentation that not only describes, but also automatically checks the correct behavior of the device.
-* Write your chip design specs in Gherkin, the de facto standard plain text file format for executable specifications.
+* Write your chip design specs in Cucumber-compliant Gherkin, the de facto standard plain text file format for executable specifications.
 * Let concrete examples in the Gherkin files guide the front-end design.
 * Bathtub reads and parses your Gherkin files and runs them as automated acceptance tests against your RTL.
 * When the tests pass, you know your RTL behaves as the specs say it should.
 * BDD is not just for software development anymore; IC design and verification can be Agile too!
 
 {% highlight gherkin %}
+# Sample Gherkin feature file
+
 Feature: Arithmetic Logic Unit division operations
 
     The arithmetic logic unit performs integer division.
@@ -37,6 +39,8 @@ As a design verification engineer, you use Bathtub to translate the natural lang
 * Include your Bathtub tests in your regression suites to validate changes to specs and RTL.
 
 {% highlight verilog %}
+// Sample step definition: a UVM virtual sequence class
+
 class set_operand_A_and_B_vseq extends alu_base_vsequence
         implements bathtub_pkg::step_definition_interface;
 
@@ -65,7 +69,9 @@ endclass : set_operand_A_and_B_vseq
 
 ## Get Started with Bathtub and BDD
 Browse around these pages to learn more about the topics at hand.
-* [About](/bathtub/about/): An overview of IC design and BDD
+* [About](/bathtub/about/): About this site
+* [Background](/bathtub/background/): An overview of IC design and BDD
+* [Blog](/bathtub/blog/): News and views you can use
 * [Resources](/bathtub/resources/): A curated collection for further reading
 * [GitHub](https://github.com/williaml33moore/bathtub): The open-source Bathtub source code repository, plus:
   * [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides

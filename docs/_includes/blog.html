@@ -1,26 +1,18 @@
 <article class="post">
-	<header class="post-header home">
-		<div class="post-title">Tag - <span id='tag-name'></span></div>
-	</header>
-
 	<div class="post-content">
 		{%- if site.posts.size > 0 -%}
 		<ul class="post-list">
-            {% for tag in site.tags %}
-                {% assign tag_name = tag[0] %}
-                {% assign tag_list_of_posts = tag[1] %}
-                {%- for post in tag_list_of_posts -%}
-                <li class="post-list-item post-tag-{{ tag_name }}">
-                    <!-- {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%} -->
-                    {%- assign date_format = "%Y/%m/%d" -%}
-                    <span class="post-date">{{ post.date | date: date_format }}</span>
-                    <a class="post-link" href="{{ post.url | relative_url }}">
-                        {{ post.title | escape }}
-                    </a>
-                    {%- if site.show_excerpts -%}{{ post.excerpt }}{%- endif -%}
-                </li>
-                {%- endfor -%}
-            {% endfor %}
+			{%- for post in site.posts -%}
+			<li class="post-list-item post-tag-{{ tag_name }}">
+				<!-- {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%} -->
+				{%- assign date_format = "%Y/%m/%d" -%}
+				<span class="post-date">{{ post.date | date: date_format }}</span>
+				<a class="post-link" href="{{ post.url | relative_url }}">
+					{{ post.title | escape }}
+				</a>
+				{%- if site.show_excerpts -%}{{ post.excerpt }}{%- endif -%}
+			</li>
+			{%- endfor -%}
 		</ul>
 	  	{%- endif -%}
 	</div>
