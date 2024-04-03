@@ -42,7 +42,7 @@ plugins:
   - jekyll-remote-theme
 
 # Options for jekyll-theme-monos
-highlighter-theme: emacs
+highlighter-theme: native
 date_format: "%M-%D-%Y"
 category_dir: category/
 tag_dir: tag/
