@@ -1,0 +1,5 @@
+  CREATE_STREAM @0.000s {NAME:current_feature_seq T:Transactions SCOPE:uvm_test_top.my_alu_env.alu_vseqr STREAM:3047}
+  CREATE_STREAM @0.000s {NAME:set_operand_A_and_B_vseq T:Transactions SCOPE:uvm_test_top.my_alu_env.alu_vseqr STREAM:3141}
+  CREATE_STREAM @0.000s {NAME:do_division_operation_vseq T:Transactions SCOPE:uvm_test_top.my_alu_env.alu_vseqr STREAM:3221}
+  CREATE_STREAM @0.000s {NAME:check_result_vseq T:Transactions SCOPE:uvm_test_top.my_alu_env.alu_vseqr STREAM:3246}
+  CREATE_STREAM @0.000s {NAME:check_DIV_BY_ZERO_flag_vseq T:Transactions SCOPE:uvm_test_top.my_alu_env.alu_vseqr STREAM:3253}

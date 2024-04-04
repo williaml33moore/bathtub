@@ -1,0 +1,1 @@
+s1(04Apr2024:13:34:13):  xrun -Q -unbuffered -f files.f +define+EDAPG -timescale 1ns/1ns -sysv -access +rw +UVM_TESTNAME=bathtub_test +UVM_VERBOSITY=UVM_HIGH -uvmnocdnsextra -uvmhome /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/src/uvm_macros.svh design.sv testbench.sv 
