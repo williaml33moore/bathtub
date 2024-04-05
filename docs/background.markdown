@@ -132,16 +132,15 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 [Pages](https://williaml33moore.github.io/bathtub/)
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 
-[Issues](https://github.com/williaml33moore/bathtub/issues)
-: Tasks are tracked and bugs are reported here.
+[Wiki](https://github.com/williaml33moore/bathtub/wiki)
+: For technical documentation and user guides.
 
 [Discussions](https://github.com/williaml33moore/bathtub/discussions)
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
 
-[Wiki](https://github.com/williaml33moore/bathtub/wiki)
-: For technical documentation and user guides.
+[Issues](https://github.com/williaml33moore/bathtub/issues)
+: Tasks are tracked and bugs are reported here.
 
 Bathtub is a new work-in-progress so everything is incomplete today, but continuously improving.
 
 ---
-
