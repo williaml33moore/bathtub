@@ -4,9 +4,9 @@ layout: home
 ![Bathtub_Logo](/bathtub/assets/Bathtub_Logo.png)
 
 ## Behavior-Driven Development for Integrated Circuits
-BDD helps you and your colleagues bring diverse perspectives--business, design, verification, firmware--to the specification of new IC features. Together, you create living documentation that not only describes, but also automatically checks the correct behavior of the device.
+BDD helps you and your colleagues bring your diverse perspectives--business, design, verification, firmware--to the specification of new RTL features for your ASIC, SoC, FPGA, and IP projects. Together, you create living documentation that not only describes, but also automatically checks the correct behavior of the device.
 * Write your chip design specs in Cucumber-compliant Gherkin, the de facto standard plain text file format for executable specifications.
-* Let concrete examples in the Gherkin files guide the front-end design.
+* Collect illustrative concrete examples in the Gherkin files to guide the front-end design.
 * Bathtub reads and parses your Gherkin files and runs them as automated acceptance tests against your RTL.
 * When the tests pass, you know your RTL behaves as the specs say it should.
 * BDD is not just for software development anymore; IC design and verification can be Agile too!
@@ -32,11 +32,12 @@ Feature: Arithmetic Logic Unit division operations
 
 ## Seamless Integration with Existing Verification Environments
 As a design verification engineer, you use Bathtub to translate the natural language Gherkin files into self-checking SystemVerilog tests that run on your chip's testbench so you can close the BDD loop and drive to tapeout with confidence.
-* Bathtub is written entirely in SystemVerilog and UVM.
-* Run Bathtub natively in your SystemVerilog simulator as just another UVM test for your DUT, e.g., `+UVM_TESTNAME=my_bathtub_test`.
-* Reuse your current verification components, unchanged.
+* Bathtub is written entirely in SystemVerilog and UVM open source code; there are no additional applications to install or integrate.
+* Run Bathtub natively in your SystemVerilog simulator as an extension of your DUT's UVM tests, e.g., `+UVM_TESTNAME=my_bathtub_test`.
+* Reuse all your current verification components, unchanged.
 * With convenient Bathtub macros, write parameterized step definitions in the form of simple UVM virtual sequence classes for all the _Given-When-Then_ steps in your Gherkin scenarios.
 * Include your Bathtub tests in your regression suites to validate changes to specs and RTL.
+* You're not limited to RTL; you can use BDD to document, implement, and unit-test stand-alone verification components or, for that matter, _any_ isolated SystemVerilog code.
 
 {% highlight verilog %}
 // Sample step definition: a UVM virtual sequence class
