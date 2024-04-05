@@ -31,9 +31,9 @@ but you will note from the true URL in your web browser that these pages are ser
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
 
 [Wiki](https://github.com/williaml33moore/bathtub/wiki)
-: For technical documentation and user guides. Coming soon!
+: For technical documentation and user guides.
 
-Bathtub is a new work-in-progress so everything is incomplete today, but hopefully continuously improving.
+Bathtub is a new work-in-progress so everything is incomplete today, but continuously improving.
 
 B.A.T.H.T.U.B.:
 - BDD
