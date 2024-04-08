@@ -3,12 +3,12 @@ layout: post
 author: Bill
 title: "Living, Breathing Documentation"
 date: 2024-04-08 06:00:00 -0700
-tags: bdd systemverilog uvm bathtub dvcon
+tags: eclipse vscode pages wiki livingdocs design dvcon github
 ---
 
 ![dvclub_logo]({{ site.baseurl }}/assets/posts/2024/04/2024-04-08.png)
 
-Today is the Great American Eclipse, a total solar eclipse crossing the U.S. from Texas to New England.
+Today is the [Great American Eclipse](https://www.timeanddate.com/eclipse/solar/2024-april-8), a total solar eclipse crossing the U.S. from Texas to New England.
 Ironically, I'm banging this post out in Visual Studio Code.
 (IDE humor.)
 
@@ -23,17 +23,17 @@ Ironically, I'm banging this post out in Visual Studio Code.
  It soon became apparent that though I was writing, it wasn't documentation.
  It was design.
  Not "design" as in "circuit design;" more like "design" as in "graphic design" or "interior design." 
- In short: "design thinking."
+ In short: "[design thinking](https://dschool.stanford.edu/executive-education-resource-collections/keep-learning1)."
  That is, finding creative ways to put things in the service of people to meet the people's needs.
  So I put aside the Kanban board and grabbed a pencil and my notebook, and literally sketched out some ideas.
 
- I'm happy with the result so far.
+ I'm happy with the [result]({{ site.baseurl }}/) so far.
  The front page has a clever logo (if I may say so myself), an introduction for everyone, a pitch for DV engineers who are my potential users, and a call to action.
  Plus I unapologetically put a strenuous snippet of SystemVerilog code right on the front page.
  If that doesn't scare the reader away, I know they're in the right place.
 
  In contrast, the wiki _is_ for documentation.
- I added a new page with a really long description of the super simple ALU example from my DVCon paper.
+ I added a [new page](https://github.com/williaml33moore/bathtub/wiki/alu_division) with a really long description of the super simple ALU example from my DVCon paper.
  I was concerned that this would would be old-fashioned static documentation, but really I needn't have worried.
  The problem with static documentation is that it can get out-of-date when code or requirements change.
  But happily since this example has already been published, it's never going to change.
@@ -49,6 +49,8 @@ Since GitHub hosts the source code, the web site, and the wiki, all adjacently, 
 Just being able to hyperlink everything together is a great start.
 Beyond that, there are cool opportunities to use automation to remix source and docs and create new ways to communicate knowledge and intent.
 That's what this Bathtub project has always been about: facilitating communication.
-And now that central motivation is spilling over the rim, out of circuits, into documentation. And documentation about documentation.
+And now that central motivation is spilling over the rim, out of circuits, into documentation. And into documentation about documentation.
 
-The future's so bright, I have to wear ISO 12312-2 shades.
+I'm excited. The future's so bright, I have to wear [ISO 12312-2](https://www.iso.org/standard/59289.html) shades.
+
+![eclipse glasses]({{ site.baseurl }}/assets/posts/2024/04/2024-04-08-02.png)
