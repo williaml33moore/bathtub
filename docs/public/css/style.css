@@ -298,6 +298,12 @@ footer {
 	color: #ccc;
 }
 
+input.button {
+	padding: 1em 1em 1em 1em;
+	font-family: 'Gelasio', 'Nanum Myeongjo', serif;
+	border-radius: 8px;
+	font-size: 1em;
+}
 
 @media (max-width: 576px) {
 	article {
