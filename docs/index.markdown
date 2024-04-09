@@ -74,7 +74,9 @@ Browse around these pages to learn more about the topics at hand.
 * [Background](/bathtub/background/): An overview of IC design and BDD
 * [Blog](/bathtub/blog/): News and views you can use
 * [Resources](/bathtub/resources/): A curated collection for further reading
-* [GitHub](https://github.com/williaml33moore/bathtub): The open-source Bathtub source code repository, plus:
-  * [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides
-  * [Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation (requires a free [account](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_))
-  * [Issues](https://github.com/williaml33moore/bathtub/issues): Task and bug tracking
+
+Bathtub is maintained at [GitHub](https://github.com/).
+* [Repository](https://github.com/williaml33moore/bathtub): Source code repository
+* [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides
+* [Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation (requires a free [account](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_))
+* [Issues](https://github.com/williaml33moore/bathtub/issues): Task and bug tracking

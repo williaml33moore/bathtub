@@ -21,7 +21,7 @@
 title: Bathtub BDD
 email: private
 description: >- # this means to ignore newlines until "baseurl:"
-  Bathtub is an open-source
+  Bathtub is a free open-source
   SystemVerilog package
   based on UVM 
   that brings Agile Behavior-Driven Development (BDD)
