@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "uvm_macros.svh"
 `include "bathtub_macros.sv"
 
 `define push_onto_parser_stack(o) parser_stack.push_front(o);
@@ -45,7 +46,6 @@ package bathtub_pkg;
 // ===================================================================
 
 	import uvm_pkg::*;
-	import meta_pkg::*;
 	
 	
 	typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
@@ -61,7 +61,7 @@ package bathtub_pkg;
 		// ===================================================================
 		static function bit split_string;
 // ===================================================================
-			`FUNCTION_METADATA('{
+/*			`FUNCTION_METADATA('{
 
 					description:
 					"Take a string containing tokens separated by white space, split the tokens, and return them in the supplied SystemVerilog queue.",
@@ -74,7 +74,7 @@ package bathtub_pkg;
 
 					string: ""
 				})
-
+*/
 			// Parameters:
 
 			input string str;           // Incoming string of white space-separated tokans

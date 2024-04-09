@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "uvm_macros.svh"
+
 // ===================================================================
 package gherkin_pkg;
 	// ===================================================================
 
 	import uvm_pkg::*;
-	import meta_pkg::*;
 
 	typedef class background;
 	typedef class comment;

@@ -1,0 +1,997 @@
+xrun: 20.09-s003: (c) Copyright 1995-2020 Cadence Design Systems, Inc.
+TOOL:	xrun	20.09-s003: Started on Apr 04, 2024 at 13:34:13 EDT
+xrun
+	-Q
+	-unbuffered
+	-f files.f
+		gherkin_pkg.sv
+		bathtub_pkg.sv
+	+define+EDAPG
+	-timescale 1ns/1ns
+	-sysv
+	-access +rw
+	+UVM_TESTNAME=bathtub_test
+	+UVM_VERBOSITY=UVM_HIGH
+	-uvmnocdnsextra
+	-uvmhome /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv
+	/xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/src/uvm_macros.svh
+	design.sv
+	testbench.sv
+
+   User defined plus("+") options:
+	+UVM_VERBOSITY=UVM_HIGH
+
+	Top level design units:
+		uvm_pkg
+		gherkin_pkg
+		bathtub_pkg
+		top
+xmelab: *W,DSEMEL: This SystemVerilog design will be simulated as per IEEE 1800-2009 SystemVerilog simulation semantics. Use -disable_sem2009 option for turning off SV 2009 simulation semantics.
+Loading snapshot worklib.top:sv .................... Done
+SVSEED default: 1
+xmsim: *W,RNDXCELON: A newer version of the SystemVerilog constraint solver is being used which has better support for array-solving, new solve-order mechanism, and seed stability enhancements..
+xmsim: *W,DSEM2009: This SystemVerilog design is simulated as per IEEE 1800-2009 SystemVerilog simulation semantics. Use -disable_sem2009 option for turning off SV 2009 simulation semantics.
+xcelium> source /xcelium20.09/tools/xcelium/files/xmsimrc
+xcelium> source /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/files/tcl/uvm_sim.tcl
+xcelium> run
+UVM_INFO /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/src/base/uvm_root.svh(412) @ 0: reporter [UVM/RELNOTES] 
+----------------------------------------------------------------
+CDNS-UVM-1.2 (20.09-s003)
+(C) 2007-2014 Mentor Graphics Corporation
+(C) 2007-2014 Cadence Design Systems, Inc.
+(C) 2006-2014 Synopsys, Inc.
+(C) 2011-2013 Cypress Semiconductor Corp.
+(C) 2013-2014 NVIDIA Corporation
+----------------------------------------------------------------
+
+  ***********       IMPORTANT RELEASE NOTES         ************
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_NO_DEPRECATED undefined.
+  See http://www.eda.org/svdb/view.php?id=3313 for more details.
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_OBJECT_DO_NOT_NEED_CONSTRUCTOR undefined.
+  See http://www.eda.org/svdb/view.php?id=3770 for more details.
+
+      (Specify +UVM_NO_RELNOTES to turn off this notice)
+
+UVM_INFO bathtub_pkg.sv(921) @ 0: reporter [bathtub_pkg::step_nature.register_step] 
+-----------------------------------------------------------------------------------------------------------------------------
+Name                Type            Size  Value                                                                              
+-----------------------------------------------------------------------------------------------------------------------------
+static_step_object  step_nature     -     @1980                                                                              
+  keyword           step_keyword_t  32    Given                                                                              
+  expression        string          35    operand A is %d and operand B is %d                                                
+  regexp            string          83    /^operand A is (([-+]?[0-9_]+)|[xXzZ?]) and operand B is (([-+]?[0-9_]+)|[xXzZ?])$/
+  step_obj_name     string          24    set_operand_A_and_B_vseq                                                           
+-----------------------------------------------------------------------------------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(921) @ 0: reporter [bathtub_pkg::step_nature.register_step] 
+----------------------------------------------------------------------------------
+Name                Type            Size  Value                                   
+----------------------------------------------------------------------------------
+static_step_object  step_nature     -     @1257                                   
+  keyword           step_keyword_t  32    Then                                    
+  expression        string          33    the DIV_BY_ZERO flag should be %s       
+  regexp            string          40    /^the DIV_BY_ZERO flag should be (\S*)$/
+  step_obj_name     string          27    check_DIV_BY_ZERO_flag_vseq             
+----------------------------------------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(921) @ 0: reporter [bathtub_pkg::step_nature.register_step] 
+-------------------------------------------------------------------------------------
+Name                Type            Size  Value                                      
+-------------------------------------------------------------------------------------
+static_step_object  step_nature     -     @2040                                      
+  keyword           step_keyword_t  32    When                                       
+  expression        string          39    the ALU performs the division operation    
+  regexp            string          43    /^the ALU performs the division operation$/
+  step_obj_name     string          26    do_division_operation_vseq                 
+-------------------------------------------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(921) @ 0: reporter [bathtub_pkg::step_nature.register_step] 
+-------------------------------------------------------------------------------------------
+Name                Type            Size  Value                                            
+-------------------------------------------------------------------------------------------
+static_step_object  step_nature     -     @2028                                            
+  keyword           step_keyword_t  32    Then                                             
+  expression        string          23    the result should be %d                          
+  regexp            string          49    /^the result should be (([-+]?[0-9_]+)|[xXzZ?])$/
+  step_obj_name     string          17    check_result_vseq                                
+-------------------------------------------------------------------------------------------
+
+UVM_INFO @ 0.000s: reporter [RNTST] Running test bathtub_test...
+UVM_INFO bathtub_pkg.sv(1199) @ 0.000s: reporter [bathtub_pkg::bathtub.run_test.unmblk1.iterate_over_feature_files] Feature file: alu_division.feature
+UVM_INFO bathtub_pkg.sv(1266) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature_file.unmblk1] parse_feature_file enter
+-------------------------------------------------------------------------------------
+ +Name                 Type                                  Size  Value               
+ +-------------------------------------------------------------------------------------
+ +element_container    uvm_report_message_element_container  -     @2869               
+ +  feature_file_name  string                                20    alu_division.feature
+ +-------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1270) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature_file] Feature file: alu_division.feature
+UVM_INFO bathtub_pkg.sv(1935) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_gherkin_document.unmblk1] gherkin_parser::parse_gherkin_document enter
+---------------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                       
+ +---------------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2888                                                       
+ +  file_name        string                                20    alu_division.feature                                        
+ +  line_number      integral                              32    'd1                                                         
+ +  eof              integral                              1     'b0                                                         
+ +  text             string                                60    # This Gherkin feature file's name is alu_division.feature
+
+ +---------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1943) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_gherkin_document] parser_stack: '{}
+UVM_INFO bathtub_pkg.sv(1662) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_comment.unmblk1] gherkin_parser::parse_comment enter
+---------------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                       
+ +---------------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2916                                                       
+ +  file_name        string                                20    alu_division.feature                                        
+ +  line_number      integral                              32    'd1                                                         
+ +  eof              integral                              1     'b0                                                         
+ +  text             string                                60    # This Gherkin feature file's name is alu_division.feature
+
+ +---------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1670) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_comment] parser_stack: '{}
+alu_division.feature [   1]: # This Gherkin feature file's name is alu_division.feature
+alu_division.feature [   2]: 
+UVM_INFO bathtub_pkg.sv(1693) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_comment.unmblk2] parse_comment exit
+-----------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                   
+ +-----------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2894                                                   
+ +  status           string                                2     OK                                                      
+ +  comment          comment                               -     @2881                                                   
+ +    text           string                                56    This Gherkin feature file's name is alu_division.feature
+ +-----------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1697) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_comment] parser_stack: '{uvm_pkg::uvm_object@2881_9}
+UVM_INFO bathtub_pkg.sv(1805) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature.unmblk1] gherkin_parser::parse_feature enter
+-------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                               
+ +-------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2920                                               
+ +  file_name        string                                20    alu_division.feature                                
+ +  line_number      integral                              32    'd3                                                 
+ +  eof              integral                              1     'b0                                                 
+ +  text             string                                52    Feature: Arithmetic Logic Unit division operations
+
+ +-------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1813) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature] parser_stack: '{}
+alu_division.feature [   3]: Feature: Arithmetic Logic Unit division operations
+alu_division.feature [   4]: 
+UVM_INFO bathtub_pkg.sv(1485) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature_description.unmblk1] gherkin_parser::parse_feature_description enter
+-------------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                     
+ +-------------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2951                                                     
+ +  file_name        string                                20    alu_division.feature                                      
+ +  line_number      integral                              32    'd5                                                       
+ +  eof              integral                              1     'b0                                                       
+ +  text             string                                58        The arithmetic logic unit performs integer division.
+
+ +-------------------------------------------------------------------------------------------------------------------------
+ +
+alu_division.feature [   5]:     The arithmetic logic unit performs integer division.
+alu_division.feature [   6]: 
+UVM_INFO bathtub_pkg.sv(1512) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature_description.unmblk2] gherkin_parser::parse_feature_description exit
+--------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                
+ +--------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2918                                                
+ +  description      string                                53    The arithmetic logic unit performs integer division.
+
+ +--------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2015) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario.unmblk1] gherkin_parser::parse_scenario enter
+------------------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                          
+ +------------------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2928                                                          
+ +  file_name        string                                20    alu_division.feature                                           
+ +  line_number      integral                              32    'd7                                                            
+ +  eof              integral                              1     'b0                                                            
+ +  text             string                                63        Scenario: In integer division, the remainder is discarded
+
+ +------------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2023) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario] parser_stack: '{}
+alu_division.feature [   7]:     Scenario: In integer division, the remainder is discarded
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+-----------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                             
+ +-----------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2957                                             
+ +  file_name        string                                20    alu_division.feature                              
+ +  line_number      integral                              32    'd8                                               
+ +  eof              integral                              1     'b0                                               
+ +  text             string                                50            Given operand A is 15 and operand B is 4
+
+ +-----------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [   8]:         Given operand A is 15 and operand B is 4
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+-------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                             
+ +-------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2973                             
+ +  status           string                                2     OK                                
+ +  step             step                                  -     @2928                             
+ +    keyword        string                                5     Given                             
+ +    text           string                                34    operand A is 15 and operand B is 4
+ +    argument       object                                -     <null>                            
+ +-------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@2928_21}
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+---------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                 
+ +---------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2988                                                 
+ +  file_name        string                                20    alu_division.feature                                  
+ +  line_number      integral                              32    'd9                                                   
+ +  eof              integral                              1     'b0                                                   
+ +  text             string                                54            When the ALU performs the division operation
+
+ +---------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [   9]:         When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                  
+ +------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3013                                  
+ +  status           string                                2     OK                                     
+ +  step             step                                  -     @3011                                  
+ +    keyword        string                                4     When                                   
+ +    text           string                                39    the ALU performs the division operation
+ +    argument       object                                -     <null>                                 
+ +------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@3011_18}
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+----------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                
+ +----------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2942                                
+ +  file_name        string                                20    alu_division.feature                 
+ +  line_number      integral                              32    'd10                                 
+ +  eof              integral                              1     'b0                                  
+ +  text             string                                37            Then the result should be 3
+
+ +----------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [  10]:         Then the result should be 3
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+-------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                 
+ +-------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3013                 
+ +  status           string                                2     OK                    
+ +  step             step                                  -     @2957                 
+ +    keyword        string                                4     Then                  
+ +    text           string                                22    the result should be 3
+ +    argument       object                                -     <null>                
+ +-------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@2957_41}
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+-----------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                             
+ +-----------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2987                                             
+ +  file_name        string                                20    alu_division.feature                              
+ +  line_number      integral                              32    'd11                                              
+ +  eof              integral                              1     'b0                                               
+ +  text             string                                50            And the DIV_BY_ZERO flag should be clear
+
+ +-----------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [  11]:         And the DIV_BY_ZERO flag should be clear
+alu_division.feature [  12]: 
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+---------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                               
+ +---------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2916                               
+ +  status           string                                2     OK                                  
+ +  step             step                                  -     @2923                               
+ +    keyword        string                                3     And                                 
+ +    text           string                                36    the DIV_BY_ZERO flag should be clear
+ +    argument       object                                -     <null>                              
+ +---------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@2923_47}
+UVM_INFO bathtub_pkg.sv(2120) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario.unmblk2] gherkin_parser::parse_scenario exit
+-------------------------------------------------------------------------------------------------------------------------
+ +Name                          Type                                  Size  Value                                          
+ +-------------------------------------------------------------------------------------------------------------------------
+ +element_container             uvm_report_message_element_container  -     @66                                            
+ +  status                      string                                2     OK                                             
+ +  scenario                    scenario                              -     @2981                                          
+ +    keyword                   string                                8     Scenario                                       
+ +    scenario_definition_name  string                                47    In integer division, the remainder is discarded
+ +    description               string                                0     ""                                             
+ +    steps                     da(object)                            4     -                                              
+ +      [0]                     step                                  -     @2928                                          
+ +        keyword               string                                5     Given                                          
+ +        text                  string                                34    operand A is 15 and operand B is 4             
+ +        argument              object                                -     <null>                                         
+ +      [1]                     step                                  -     @3011                                          
+ +        keyword               string                                4     When                                           
+ +        text                  string                                39    the ALU performs the division operation        
+ +        argument              object                                -     <null>                                         
+ +      [2]                     step                                  -     @2957                                          
+ +        keyword               string                                4     Then                                           
+ +        text                  string                                22    the result should be 3                         
+ +        argument              object                                -     <null>                                         
+ +      [3]                     step                                  -     @2923                                          
+ +        keyword               string                                3     And                                            
+ +        text                  string                                36    the DIV_BY_ZERO flag should be clear           
+ +        argument              object                                -     <null>                                         
+ +    tags                      da(object)                            0     -                                              
+ +-------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2124) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario] parser_stack: '{uvm_pkg::uvm_object@2981_16}
+UVM_INFO bathtub_pkg.sv(2015) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario.unmblk1] gherkin_parser::parse_scenario enter
+-------------------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                           
+ +-------------------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3000                                                           
+ +  file_name        string                                20    alu_division.feature                                            
+ +  line_number      integral                              32    'd13                                                            
+ +  eof              integral                              1     'b0                                                             
+ +  text             string                                64        Scenario: Attempting to divide by zero results in an error
+
+ +-------------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2023) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario] parser_stack: '{}
+alu_division.feature [  13]:     Scenario: Attempting to divide by zero results in an error
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+-----------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                             
+ +-----------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3089                                             
+ +  file_name        string                                20    alu_division.feature                              
+ +  line_number      integral                              32    'd14                                              
+ +  eof              integral                              1     'b0                                               
+ +  text             string                                50            Given operand A is 10 and operand B is 0
+
+ +-----------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [  14]:         Given operand A is 10 and operand B is 0
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+-------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                             
+ +-------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @2929                             
+ +  status           string                                2     OK                                
+ +  step             step                                  -     @3099                             
+ +    keyword        string                                5     Given                             
+ +    text           string                                34    operand A is 10 and operand B is 0
+ +    argument       object                                -     <null>                            
+ +-------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@3099_15}
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+---------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                                 
+ +---------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3095                                                 
+ +  file_name        string                                20    alu_division.feature                                  
+ +  line_number      integral                              32    'd15                                                  
+ +  eof              integral                              1     'b0                                                   
+ +  text             string                                54            When the ALU performs the division operation
+
+ +---------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [  15]:         When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                  
+ +------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3076                                  
+ +  status           string                                2     OK                                     
+ +  step             step                                  -     @3083                                  
+ +    keyword        string                                4     When                                   
+ +    text           string                                39    the ALU performs the division operation
+ +    argument       object                                -     <null>                                 
+ +------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@3083_25}
+UVM_INFO bathtub_pkg.sv(2312) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk1] gherkin_parser::parse_step enter
+-------------------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                               
+ +-------------------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3036                                               
+ +  file_name        string                                20    alu_division.feature                                
+ +  line_number      integral                              32    'd16                                                
+ +  eof              integral                              1     'b0                                                 
+ +  text             string                                52            Then the DIV_BY_ZERO flag should be raised
+
+ +-------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{}
+alu_division.feature [  16]:         Then the DIV_BY_ZERO flag should be raised
+alu_division.feature [  17]: 
+alu_division.feature [  18]: UVM_INFO bathtub_pkg.sv(2403) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step.unmblk2] parse_step exit
+----------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                
+ +----------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3077                                
+ +  status           string                                2     OK                                   
+ +  step             step                                  -     @3088                                
+ +    keyword        string                                4     Then                                 
+ +    text           string                                37    the DIV_BY_ZERO flag should be raised
+ +    argument       object                                -     <null>                               
+ +----------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2407) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_step] parser_stack: '{uvm_pkg::uvm_object@3088_33}
+UVM_INFO bathtub_pkg.sv(2120) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario.unmblk2] gherkin_parser::parse_scenario exit
+--------------------------------------------------------------------------------------------------------------------------
+ +Name                          Type                                  Size  Value                                           
+ +--------------------------------------------------------------------------------------------------------------------------
+ +element_container             uvm_report_message_element_container  -     @3084                                           
+ +  status                      string                                2     OK                                              
+ +  scenario                    scenario                              -     @3001                                           
+ +    keyword                   string                                8     Scenario                                        
+ +    scenario_definition_name  string                                48    Attempting to divide by zero results in an error
+ +    description               string                                0     ""                                              
+ +    steps                     da(object)                            3     -                                               
+ +      [0]                     step                                  -     @3099                                           
+ +        keyword               string                                5     Given                                           
+ +        text                  string                                34    operand A is 10 and operand B is 0              
+ +        argument              object                                -     <null>                                          
+ +      [1]                     step                                  -     @3083                                           
+ +        keyword               string                                4     When                                            
+ +        text                  string                                39    the ALU performs the division operation         
+ +        argument              object                                -     <null>                                          
+ +      [2]                     step                                  -     @3088                                           
+ +        keyword               string                                4     Then                                            
+ +        text                  string                                37    the DIV_BY_ZERO flag should be raised           
+ +        argument              object                                -     <null>                                          
+ +    tags                      da(object)                            0     -                                               
+ +--------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2124) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_scenario] parser_stack: '{uvm_pkg::uvm_object@3001_39}
+UVM_INFO bathtub_pkg.sv(1903) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature.unmblk2] gherkin_parser::parse_feature exit
+-----------------------------------------------------------------------------------------------------------------------------------
+ +Name                              Type                                  Size  Value                                                
+ +-----------------------------------------------------------------------------------------------------------------------------------
+ +element_container                 uvm_report_message_element_container  -     @3044                                                
+ +  status                          string                                2     OK                                                   
+ +  feature                         feature                               -     @3022                                                
+ +    language                      string                                0     ""                                                   
+ +    keyword                       string                                7     Feature                                              
+ +    feature_name                  string                                41    Arithmetic Logic Unit division operations            
+ +    description                   string                                53    The arithmetic logic unit performs integer division.
+
+ +    tags                          da(object)                            0     -                                                    
+ +    scenario_definitions          da(object)                            2     -                                                    
+ +      [0]                         scenario                              -     @2981                                                
+ +        keyword                   string                                8     Scenario                                             
+ +        scenario_definition_name  string                                47    In integer division, the remainder is discarded      
+ +        description               string                                0     ""                                                   
+ +        steps                     da(object)                            4     -                                                    
+ +          [0]                     step                                  -     @2928                                                
+ +            keyword               string                                5     Given                                                
+ +            text                  string                                34    operand A is 15 and operand B is 4                   
+ +            argument              object                                -     <null>                                               
+ +          [1]                     step                                  -     @3011                                                
+ +            keyword               string                                4     When                                                 
+ +            text                  string                                39    the ALU performs the division operation              
+ +            argument              object                                -     <null>                                               
+ +          [2]                     step                                  -     @2957                                                
+ +            keyword               string                                4     Then                                                 
+ +            text                  string                                22    the result should be 3                               
+ +            argument              object                                -     <null>                                               
+ +          [3]                     step                                  -     @2923                                                
+ +            keyword               string                                3     And                                                  
+ +            text                  string                                36    the DIV_BY_ZERO flag should be clear                 
+ +            argument              object                                -     <null>                                               
+ +        tags                      da(object)                            0     -                                                    
+ +      [1]                         scenario                              -     @3001                                                
+ +        keyword                   string                                8     Scenario                                             
+ +        scenario_definition_name  string                                48    Attempting to divide by zero results in an error     
+ +        description               string                                0     ""                                                   
+ +        steps                     da(object)                            3     -                                                    
+ +          [0]                     step                                  -     @3099                                                
+ +            keyword               string                                5     Given                                                
+ +            text                  string                                34    operand A is 10 and operand B is 0                   
+ +            argument              object                                -     <null>                                               
+ +          [1]                     step                                  -     @3083                                                
+ +            keyword               string                                4     When                                                 
+ +            text                  string                                39    the ALU performs the division operation              
+ +            argument              object                                -     <null>                                               
+ +          [2]                     step                                  -     @3088                                                
+ +            keyword               string                                4     Then                                                 
+ +            text                  string                                37    the DIV_BY_ZERO flag should be raised                
+ +            argument              object                                -     <null>                                               
+ +        tags                      da(object)                            0     -                                                    
+ +-----------------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(1907) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature] parser_stack: '{uvm_pkg::uvm_object@3022_25}
+UVM_INFO bathtub_pkg.sv(2001) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_gherkin_document.unmblk2] gherkin_parser::parse_gherkin_document exit
+----------------------------------------------------------------------------------------------------------------------------------------
+ +Name                                Type                                  Size  Value                                                   
+ +----------------------------------------------------------------------------------------------------------------------------------------
+ +element_container                   uvm_report_message_element_container  -     @2966                                                   
+ +  status                            string                                2     OK                                                      
+ +  gherkin_document                  gherkin_document                      -     @2880                                                   
+ +    feature                         feature                               -     @3022                                                   
+ +      language                      string                                0     ""                                                      
+ +      keyword                       string                                7     Feature                                                 
+ +      feature_name                  string                                41    Arithmetic Logic Unit division operations               
+ +      description                   string                                53    The arithmetic logic unit performs integer division.
+   
+ +      tags                          da(object)                            0     -                                                       
+ +      scenario_definitions          da(object)                            2     -                                                       
+ +        [0]                         scenario                              -     @2981                                                   
+ +          keyword                   string                                8     Scenario                                                
+ +          scenario_definition_name  string                                47    In integer division, the remainder is discarded         
+ +          description               string                                0     ""                                                      
+ +          steps                     da(object)                            4     -                                                       
+ +            [0]                     step                                  -     @2928                                                   
+ +              keyword               string                                5     Given                                                   
+ +              text                  string                                34    operand A is 15 and operand B is 4                      
+ +              argument              object                                -     <null>                                                  
+ +            [1]                     step                                  -     @3011                                                   
+ +              keyword               string                                4     When                                                    
+ +              text                  string                                39    the ALU performs the division operation                 
+ +              argument              object                                -     <null>                                                  
+ +            [2]                     step                                  -     @2957                                                   
+ +              keyword               string                                4     Then                                                    
+ +              text                  string                                22    the result should be 3                                  
+ +              argument              object                                -     <null>                                                  
+ +            [3]                     step                                  -     @2923                                                   
+ +              keyword               string                                3     And                                                     
+ +              text                  string                                36    the DIV_BY_ZERO flag should be clear                    
+ +              argument              object                                -     <null>                                                  
+ +          tags                      da(object)                            0     -                                                       
+ +        [1]                         scenario                              -     @3001                                                   
+ +          keyword                   string                                8     Scenario                                                
+ +          scenario_definition_name  string                                48    Attempting to divide by zero results in an error        
+ +          description               string                                0     ""                                                      
+ +          steps                     da(object)                            3     -                                                       
+ +            [0]                     step                                  -     @3099                                                   
+ +              keyword               string                                5     Given                                                   
+ +              text                  string                                34    operand A is 10 and operand B is 0                      
+ +              argument              object                                -     <null>                                                  
+ +            [1]                     step                                  -     @3083                                                   
+ +              keyword               string                                4     When                                                    
+ +              text                  string                                39    the ALU performs the division operation                 
+ +              argument              object                                -     <null>                                                  
+ +            [2]                     step                                  -     @3088                                                   
+ +              keyword               string                                4     Then                                                    
+ +              text                  string                                37    the DIV_BY_ZERO flag should be raised                   
+ +              argument              object                                -     <null>                                                  
+ +          tags                      da(object)                            0     -                                                       
+ +    comments                        da(object)                            1     -                                                       
+ +      [0]                           comment                               -     @2881                                                   
+ +        text                        string                                56    This Gherkin feature file's name is alu_division.feature
+ +----------------------------------------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2005) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_gherkin_document] parser_stack: '{uvm_pkg::uvm_object@2880_4}
+UVM_INFO bathtub_pkg.sv(1320) @ 0.000s: reporter [bathtub_pkg::gherkin_parser.parse_feature_file.unmblk2] parse_feature_file exit
+----------------------------------------------------------------------------------------------------------------------------------------
+ +Name                                Type                                  Size  Value                                                   
+ +----------------------------------------------------------------------------------------------------------------------------------------
+ +element_container                   uvm_report_message_element_container  -     @2020                                                   
+ +  status                            string                                2     OK                                                      
+ +  gherkin_doc                       gherkin_document                      -     @2880                                                   
+ +    feature                         feature                               -     @3022                                                   
+ +      language                      string                                0     ""                                                      
+ +      keyword                       string                                7     Feature                                                 
+ +      feature_name                  string                                41    Arithmetic Logic Unit division operations               
+ +      description                   string                                53    The arithmetic logic unit performs integer division.
+   
+ +      tags                          da(object)                            0     -                                                       
+ +      scenario_definitions          da(object)                            2     -                                                       
+ +        [0]                         scenario                              -     @2981                                                   
+ +          keyword                   string                                8     Scenario                                                
+ +          scenario_definition_name  string                                47    In integer division, the remainder is discarded         
+ +          description               string                                0     ""                                                      
+ +          steps                     da(object)                            4     -                                                       
+ +            [0]                     step                                  -     @2928                                                   
+ +              keyword               string                                5     Given                                                   
+ +              text                  string                                34    operand A is 15 and operand B is 4                      
+ +              argument              object                                -     <null>                                                  
+ +            [1]                     step                                  -     @3011                                                   
+ +              keyword               string                                4     When                                                    
+ +              text                  string                                39    the ALU performs the division operation                 
+ +              argument              object                                -     <null>                                                  
+ +            [2]                     step                                  -     @2957                                                   
+ +              keyword               string                                4     Then                                                    
+ +              text                  string                                22    the result should be 3                                  
+ +              argument              object                                -     <null>                                                  
+ +            [3]                     step                                  -     @2923                                                   
+ +              keyword               string                                3     And                                                     
+ +              text                  string                                36    the DIV_BY_ZERO flag should be clear                    
+ +              argument              object                                -     <null>                                                  
+ +          tags                      da(object)                            0     -                                                       
+ +        [1]                         scenario                              -     @3001                                                   
+ +          keyword                   string                                8     Scenario                                                
+ +          scenario_definition_name  string                                48    Attempting to divide by zero results in an error        
+ +          description               string                                0     ""                                                      
+ +          steps                     da(object)                            3     -                                                       
+ +            [0]                     step                                  -     @3099                                                   
+ +              keyword               string                                5     Given                                                   
+ +              text                  string                                34    operand A is 10 and operand B is 0                      
+ +              argument              object                                -     <null>                                                  
+ +            [1]                     step                                  -     @3083                                                   
+ +              keyword               string                                4     When                                                    
+ +              text                  string                                39    the ALU performs the division operation                 
+ +              argument              object                                -     <null>                                                  
+ +            [2]                     step                                  -     @3088                                                   
+ +              keyword               string                                4     Then                                                    
+ +              text                  string                                37    the DIV_BY_ZERO flag should be raised                   
+ +              argument              object                                -     <null>                                                  
+ +          tags                      da(object)                            0     -                                                       
+ +    comments                        da(object)                            1     -                                                       
+ +      [0]                           comment                               -     @2881                                                   
+ +        text                        string                                56    This Gherkin feature file's name is alu_division.feature
+ +----------------------------------------------------------------------------------------------------------------------------------------
+ +
+# language: 
+Feature: Arithmetic Logic Unit division operations
+  The arithmetic logic unit performs integer division.
+   
+  Scenario: In integer division, the remainder is discarded
+     
+    Given operand A is 15 and operand B is 4
+    When the ALU performs the division operation
+    Then the result should be 3
+    And the DIV_BY_ZERO flag should be clear
+ 
+  Scenario: Attempting to divide by zero results in an error
+     
+    Given operand A is 10 and operand B is 0
+    When the ALU performs the division operation
+    Then the DIV_BY_ZERO flag should be raised
+ 
+UVM_INFO bathtub_pkg.sv(2803) @ 0.000s: reporter [runner] 
+---------------------------------------------------------------------------------------------------------------------------
+Name                                Type                     Size  Value                                                   
+---------------------------------------------------------------------------------------------------------------------------
+runner                              gherkin_document_runner  -     @2868                                                   
+  document                          gherkin_document         -     @2880                                                   
+    feature                         feature                  -     @3022                                                   
+      language                      string                   0     ""                                                      
+      keyword                       string                   7     Feature                                                 
+      feature_name                  string                   41    Arithmetic Logic Unit division operations               
+      description                   string                   53    The arithmetic logic unit performs integer division.
+   
+      tags                          da(object)               0     -                                                       
+      scenario_definitions          da(object)               2     -                                                       
+        [0]                         scenario                 -     @2981                                                   
+          keyword                   string                   8     Scenario                                                
+          scenario_definition_name  string                   47    In integer division, the remainder is discarded         
+          description               string                   0     ""                                                      
+          steps                     da(object)               4     -                                                       
+            [0]                     step                     -     @2928                                                   
+              keyword               string                   5     Given                                                   
+              text                  string                   34    operand A is 15 and operand B is 4                      
+              argument              object                   -     <null>                                                  
+            [1]                     step                     -     @3011                                                   
+              keyword               string                   4     When                                                    
+              text                  string                   39    the ALU performs the division operation                 
+              argument              object                   -     <null>                                                  
+            [2]                     step                     -     @2957                                                   
+              keyword               string                   4     Then                                                    
+              text                  string                   22    the result should be 3                                  
+              argument              object                   -     <null>                                                  
+            [3]                     step                     -     @2923                                                   
+              keyword               string                   3     And                                                     
+              text                  string                   36    the DIV_BY_ZERO flag should be clear                    
+              argument              object                   -     <null>                                                  
+          tags                      da(object)               0     -                                                       
+        [1]                         scenario                 -     @3001                                                   
+          keyword                   string                   8     Scenario                                                
+          scenario_definition_name  string                   48    Attempting to divide by zero results in an error        
+          description               string                   0     ""                                                      
+          steps                     da(object)               3     -                                                       
+            [0]                     step                     -     @3099                                                   
+              keyword               string                   5     Given                                                   
+              text                  string                   34    operand A is 10 and operand B is 0                      
+              argument              object                   -     <null>                                                  
+            [1]                     step                     -     @3083                                                   
+              keyword               string                   4     When                                                    
+              text                  string                   39    the ALU performs the division operation                 
+              argument              object                   -     <null>                                                  
+            [2]                     step                     -     @3088                                                   
+              keyword               string                   4     Then                                                    
+              text                  string                   37    the DIV_BY_ZERO flag should be raised                   
+              argument              object                   -     <null>                                                  
+          tags                      da(object)               0     -                                                       
+    comments                        da(object)               1     -                                                       
+      [0]                           comment                  -     @2881                                                   
+        text                        string                   56    This Gherkin feature file's name is alu_division.feature
+  dry_run                           integral                 1     'h0                                                     
+  starting_scenario_number          integral                 32    'd0                                                     
+  stopping_scenario_number          integral                 32    'd0                                                     
+---------------------------------------------------------------------------------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(2940) @ 0.000s: reporter [runner] Feature: Arithmetic Logic Unit division operations
+UVM_INFO bathtub_pkg.sv(2984) @ 0.000s: reporter [runner] Scenario: In integer division, the remainder is discarded
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: Given operand A is 15 and operand B is 4
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] Given operand A is 15 and operand B is 4
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] Given operand A is 15 and operand B is 4
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+-------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                             
+ +-------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3221                             
+ +  text             string                                34    operand A is 15 and operand B is 4
+ +  search_keyword   string                                5     Given                             
+ +-------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence set_operand_A_and_B_vseq (set_operand_A_and_B_vseq)
+UVM_INFO bathtub_pkg.sv(767) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk1] 
+--------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                              
+ +--------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3171                              
+ +  step_text        string                                34    operand A is 15 and operand B is 4 
+ +  scanf_format     string                                35    operand A is %d and operand B is %d
+ +--------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3151   
+  arg_type    arg_type_t          32    INT     
+  int_arg     integral            32    'hf     
+  real_arg    real                64    0.000000
+  string_arg  string              0     ""      
+------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3192   
+  arg_type    arg_type_t          32    INT     
+  int_arg     integral            32    'h4     
+  real_arg    real                64    0.000000
+  string_arg  string              0     ""      
+------------------------------------------------
+
+UVM_INFO testbench.sv(64) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@set_operand_A_and_B_vseq [set_operand_A_and_B_vseq] set_operand_A
+UVM_INFO testbench.sv(69) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@set_operand_A_and_B_vseq [set_operand_A_and_B_vseq] set_operand_B
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                  
+ +------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3182                                  
+ +  text             string                                39    the ALU performs the division operation
+ +  search_keyword   string                                4     When                                   
+ +------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence do_division_operation_vseq (do_division_operation_vseq)
+UVM_INFO testbench.sv(74) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@do_division_operation_vseq [do_division_operation_vseq] set_operation
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: Then the result should be 3
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] Then the result should be 3
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] Then the result should be 3
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+-------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                 
+ +-------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3129                 
+ +  text             string                                22    the result should be 3
+ +  search_keyword   string                                4     Then                  
+ +-------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence check_result_vseq (check_result_vseq)
+UVM_INFO bathtub_pkg.sv(767) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk1] 
+--------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                  
+ +--------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3237                  
+ +  step_text        string                                22    the result should be 3 
+ +  scanf_format     string                                23    the result should be %d
+ +--------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3174   
+  arg_type    arg_type_t          32    INT     
+  int_arg     integral            32    'h3     
+  real_arg    real                64    0.000000
+  string_arg  string              0     ""      
+------------------------------------------------
+
+UVM_INFO testbench.sv(79) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@check_result_vseq [check_result_vseq] get_result
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: And the DIV_BY_ZERO flag should be clear
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] And the DIV_BY_ZERO flag should be clear
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] And the DIV_BY_ZERO flag should be clear
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+---------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                               
+ +---------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3251                               
+ +  text             string                                36    the DIV_BY_ZERO flag should be clear
+ +  search_keyword   string                                4     Then                                
+ +---------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence check_DIV_BY_ZERO_flag_vseq (check_DIV_BY_ZERO_flag_vseq)
+UVM_INFO bathtub_pkg.sv(767) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk1] 
+---------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                               
+ +---------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3105                               
+ +  step_text        string                                36    the DIV_BY_ZERO flag should be clear
+ +  scanf_format     string                                33    the DIV_BY_ZERO flag should be %s   
+ +---------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3267   
+  arg_type    arg_type_t          32    STRING  
+  int_arg     integral            32    'h0     
+  real_arg    real                64    0.000000
+  string_arg  string              5     clear   
+------------------------------------------------
+
+UVM_INFO testbench.sv(85) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@check_DIV_BY_ZERO_flag_vseq [check_DIV_BY_ZERO_flag_vseq] get_div_by_zero_flag
+UVM_INFO bathtub_pkg.sv(2984) @ 0.000s: reporter [runner] Scenario: Attempting to divide by zero results in an error
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: Given operand A is 10 and operand B is 0
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] Given operand A is 10 and operand B is 0
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] Given operand A is 10 and operand B is 0
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+-------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                             
+ +-------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3093                             
+ +  text             string                                34    operand A is 10 and operand B is 0
+ +  search_keyword   string                                5     Given                             
+ +-------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence set_operand_A_and_B_vseq (set_operand_A_and_B_vseq)
+UVM_INFO bathtub_pkg.sv(767) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk1] 
+--------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                              
+ +--------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3264                              
+ +  step_text        string                                34    operand A is 10 and operand B is 0 
+ +  scanf_format     string                                35    operand A is %d and operand B is %d
+ +--------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3278   
+  arg_type    arg_type_t          32    INT     
+  int_arg     integral            32    'ha     
+  real_arg    real                64    0.000000
+  string_arg  string              0     ""      
+------------------------------------------------
+
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3276   
+  arg_type    arg_type_t          32    INT     
+  int_arg     integral            32    'h0     
+  real_arg    real                64    0.000000
+  string_arg  string              0     ""      
+------------------------------------------------
+
+UVM_INFO testbench.sv(64) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@set_operand_A_and_B_vseq [set_operand_A_and_B_vseq] set_operand_A
+UVM_INFO testbench.sv(69) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@set_operand_A_and_B_vseq [set_operand_A_and_B_vseq] set_operand_B
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] When the ALU performs the division operation
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+------------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                  
+ +------------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3149                                  
+ +  text             string                                39    the ALU performs the division operation
+ +  search_keyword   string                                4     When                                   
+ +------------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence do_division_operation_vseq (do_division_operation_vseq)
+UVM_INFO testbench.sv(74) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@do_division_operation_vseq [do_division_operation_vseq] set_operation
+UVM_INFO bathtub_pkg.sv(3072) @ 0.000s: reporter [runner] Before replacement: Then the DIV_BY_ZERO flag should be raised
+UVM_INFO bathtub_pkg.sv(3116) @ 0.000s: reporter [runner] Then the DIV_BY_ZERO flag should be raised
+UVM_INFO bathtub_pkg.sv(2825) @ 0.000s: reporter [bathtub_pkg::gherkin_document_runner.start_step] Then the DIV_BY_ZERO flag should be raised
+UVM_INFO bathtub_pkg.sv(2839) @ 0.000s: reporter [runner] uvm_resource_db search parameters
+----------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                
+ +----------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3250                                
+ +  text             string                                37    the DIV_BY_ZERO flag should be raised
+ +  search_keyword   string                                4     Then                                 
+ +----------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(2882) @ 0.000s: reporter [runner] Executing sequence check_DIV_BY_ZERO_flag_vseq (check_DIV_BY_ZERO_flag_vseq)
+UVM_INFO bathtub_pkg.sv(767) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk1] 
+----------------------------------------------------------------------------------------------------
+ +Name               Type                                  Size  Value                                
+ +----------------------------------------------------------------------------------------------------
+ +element_container  uvm_report_message_element_container  -     @3256                                
+ +  step_text        string                                37    the DIV_BY_ZERO flag should be raised
+ +  scanf_format     string                                33    the DIV_BY_ZERO flag should be %s    
+ +----------------------------------------------------------------------------------------------------
+ +
+UVM_INFO bathtub_pkg.sv(838) @ 0.000s: reporter [bathtub_pkg::step_parameters.scan_step_params.unmblk3] 
+------------------------------------------------
+Name          Type                Size  Value   
+------------------------------------------------
+anonymous     step_parameter_arg  -     @3147   
+  arg_type    arg_type_t          32    STRING  
+  int_arg     integral            32    'h0     
+  real_arg    real                64    0.000000
+  string_arg  string              6     raised  
+------------------------------------------------
+
+UVM_INFO testbench.sv(85) @ 0.000s: uvm_test_top.my_alu_env.alu_vseqr@@check_DIV_BY_ZERO_flag_vseq [check_DIV_BY_ZERO_flag_vseq] get_div_by_zero_flag
+UVM_INFO /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/src/base/uvm_objection.svh(1271) @ 0.000s: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+UVM_INFO /xcelium20.09/tools//methodology/UVM/CDNS-1.2/sv/src/base/uvm_report_server.svh(847) @ 0.000s: reporter [UVM/REPORT/SERVER] 
+--- UVM Report Summary ---
+
+** Report counts by severity
+UVM_INFO :  121
+UVM_WARNING :    0
+UVM_ERROR :    0
+UVM_FATAL :    0
+** Report counts by id
+[RNTST]     1
+[TEST_DONE]     1
+[UVM/RELNOTES]     1
+[bathtub_pkg::bathtub.run_test.unmblk1.iterate_over_feature_files]     1
+[bathtub_pkg::gherkin_document_runner.start_step]     7
+[bathtub_pkg::gherkin_parser.parse_comment]     2
+[bathtub_pkg::gherkin_parser.parse_comment.unmblk1]     1
+[bathtub_pkg::gherkin_parser.parse_comment.unmblk2]     1
+[bathtub_pkg::gherkin_parser.parse_feature]     2
+[bathtub_pkg::gherkin_parser.parse_feature.unmblk1]     1
+[bathtub_pkg::gherkin_parser.parse_feature.unmblk2]     1
+[bathtub_pkg::gherkin_parser.parse_feature_description.unmblk1]     1
+[bathtub_pkg::gherkin_parser.parse_feature_description.unmblk2]     1
+[bathtub_pkg::gherkin_parser.parse_feature_file]     1
+[bathtub_pkg::gherkin_parser.parse_feature_file.unmblk1]     1
+[bathtub_pkg::gherkin_parser.parse_feature_file.unmblk2]     1
+[bathtub_pkg::gherkin_parser.parse_gherkin_document]     2
+[bathtub_pkg::gherkin_parser.parse_gherkin_document.unmblk1]     1
+[bathtub_pkg::gherkin_parser.parse_gherkin_document.unmblk2]     1
+[bathtub_pkg::gherkin_parser.parse_scenario]     4
+[bathtub_pkg::gherkin_parser.parse_scenario.unmblk1]     2
+[bathtub_pkg::gherkin_parser.parse_scenario.unmblk2]     2
+[bathtub_pkg::gherkin_parser.parse_step]    14
+[bathtub_pkg::gherkin_parser.parse_step.unmblk1]     7
+[bathtub_pkg::gherkin_parser.parse_step.unmblk2]     7
+[bathtub_pkg::step_nature.register_step]     4
+[bathtub_pkg::step_parameters.scan_step_params.unmblk1]     5
+[bathtub_pkg::step_parameters.scan_step_params.unmblk3]     7
+[check_DIV_BY_ZERO_flag_vseq]     2
+[check_result_vseq]     1
+[do_division_operation_vseq]     2
+[runner]    32
+[set_operand_A_and_B_vseq]     4
+
+Simulation complete via $finish(1) at time 0 FS + 298
+/xcelium20.09/tools/methodology/UVM/CDNS-1.2/sv/src/base/uvm_root.svh:543     $finish;
+xcelium> exit
+TOOL:	xrun	20.09-s003: Exiting on Apr 04, 2024 at 13:34:22 EDT  (total: 00:00:09)
