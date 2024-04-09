@@ -1,6 +1,6 @@
 # Bathtub
 
-![Bathtub_Logo](assets/Bathtub_Logo.png)
+![Bathtub_Logo](docs/assets/Bathtub_Logo.png)
 
 Bathtub is an open-source
 SystemVerilog package
