@@ -4,9 +4,9 @@ layout: home
 ![Bathtub_Logo](/bathtub/assets/Bathtub_Logo.png)
 
 ## Behavior-Driven Development for Integrated Circuits
-BDD helps you and your colleagues bring your diverse perspectives--business, design, verification, firmware--to the specification of new RTL features for your ASIC, SoC, FPGA, and IP projects. Together, you create living documentation that not only describes, but also automatically checks the correct behavior of the device.
+BDD helps you and your colleagues bring your diverse perspectives--business, design, verification, software--to the specification of new RTL features for your ASIC, SoC, FPGA, and IP projects. Together, you create living documentation that not only describes the intent, but also automatically checks the behavior of the device.
 * Write your chip design specs in Cucumber-compliant Gherkin, the de facto standard plain text file format for executable specifications.
-* Collect illustrative concrete examples in the Gherkin files to guide the front-end design.
+* Give concrete examples in the Gherkin files that illustrate functionality and guide front-end design.
 * Bathtub reads and parses your Gherkin files and runs them as automated acceptance tests against your RTL.
 * When the tests pass, you know your RTL behaves as the specs say it should.
 * BDD is not just for software development anymore; IC design and verification can be Agile too!
@@ -76,5 +76,5 @@ Browse around these pages to learn more about the topics at hand.
 * [Resources](/bathtub/resources/): A curated collection for further reading
 * [GitHub](https://github.com/williaml33moore/bathtub): The open-source Bathtub source code repository, plus:
   * [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides
-  * [Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation
+  * [Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation (requires a free [account](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_))
   * [Issues](https://github.com/williaml33moore/bathtub/issues): Task and bug tracking
