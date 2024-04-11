@@ -10,11 +10,11 @@ and Gherkin
 to the design and verification of integrated circuits,
 enabling executable specifications and true living documentation.
 
-This repository contains the following:
+This release contains the following:
 
-* `src`: Bathtub source code
-* `docs`: Files that support Bathtub documentation
-* `examples`: Examples of Bathtub tests and applications
+* `src/`: Bathtub source code
+* `docs/`: Files that support Bathtub documentation
+* `examples/`: Examples of Bathtub tests and applications
 
 Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
 
