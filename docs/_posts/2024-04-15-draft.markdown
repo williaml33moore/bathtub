@@ -1,0 +1,62 @@
+---
+layout: post
+author: Bill
+title: "Keeping It Real"
+date: 2024-04-22 06:00:00 -0700
+tags: 
+---
+So far the only working Bathtub code I have shared is for my arithmetic logic unit (ALU) example.
+I've gotten a lot of mileage out of it.
+It's in the DVCon paper and presentation, it's publicly available at EDA Playground, and parts of it are even sprinkled around this web site.
+It's a reasonable introduction to BDD and Bathtub, but it's dead simple.
+
+I created the ALU example specifically for the DVCon paper, so it had to be simple because I was under tight space and time constraints.
+The design under test is a basic calculator that performs mathematical calculations on two integers, `A` and `B`:
+```
+A + B
+A - B
+A * B
+A / B
+```
+No clocks, no resets, no state machines...just combinational arithmetic.
+
+I do have a more involved example which I haven't shared yet, which I call "calculator."
+Here's a snippet:
+
+```gherkin
+Feature: Cash register calculator
+
+    This calculator stores item names and unit prices.
+    It calculates a subtotal when given an item and quantity.
+    
+    Background:
+        Given the calculator is reset
+
+    Scenario: Perform a simple successful calculation
+        When I load item apples at 105 cents each
+        And I calculate the subtotal for 7 apples
+        Then the subtotal should be 7.35 USD
+        And the error flag should be deasserted
+
+    Scenario: Try a calculation with a nonexistent item, get an error
+        * I load item apples at 105 cents each
+        * I calculate the subtotal for 3 oranges
+        * the error flag should be asserted
+```
+I've been using it to exercise Bathtub's Gherkin parser, so the feature file uses more of the language.
+For example, this snippet introduces the `Background` keyword, and uses asterisks instead of `Given/When/Then` for some of the steps.
+It goes on to include a `Scenario Outline:`, which is the fanciest feature in Gherkin.
+My first version of Bathtub could parse the entire Gherkin language, but the code was a mess (I had to prioritize working software over clean code) so I started rewriting the parser last year, following better design principles.
+It's still a work in progress, so as I flush out the parser, the calculator example will get a little richer to match.
+
+All the same, the DUT is still super simple.
+As you can see--thanks to the expressive power of Gherkin--I can load a unit price for a selection of items, and the calculator figures the subtotal for a given quantity.
+That's pretty much it.
+It can't even sum up the grand total.
+
+Toy examples like this serve a purpose.
+Mine help me bring up and illustrate Bathtub.
+But ASICs are much more complicated than these one-page designs, so it's fair of you to wonder: can Bathtub scale up and be useful on a multi-million gate chip?
+
+To be honest, I don't know if it makes sense for an entire ASIC.
+But in my limited experience, I can assert that yes, Bathtub works great for reasonably-partitioned portions of a design.
