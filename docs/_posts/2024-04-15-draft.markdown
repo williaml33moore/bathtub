@@ -59,4 +59,76 @@ Mine help me bring up and illustrate Bathtub.
 But ASICs are much more complicated than these one-page designs, so it's fair of you to wonder: can Bathtub scale up and be useful on a multi-million gate chip?
 
 To be honest, I don't know if it makes sense for an entire ASIC.
+I'm pretty curious about that myself.
 But in my limited experience, I can assert that yes, Bathtub works great for reasonably-partitioned portions of a design.
+
+## Two Case Studies
+
+When I first created Bathtub at Everactive, I tried it out on two blocks in the SoC we were working on at the time.
+I'll give a high-level idea of how it worked out to show Bathtub's use in an actual ASIC projpect.
+
+### Energy Aware Subsystem
+
+The first block was the controller for our Energy Aware Subsystem (EAS).
+Our chip had to be able to function in environments where sources of energy were scarce (it was kind of our thing), so the EAS helped us prolong run-time.
+The EAS collected relevant data from other blocks in the chip like available energy, energy usage, and temperature, and used that information to put the chip in various power modes ranging from running full-bore to being in deep sleep.
+The EAS had a block of registers so the ARM core could program it and read its status.
+
+The EAS was my first candidate for Bathtub.
+This was not a complete BDD flow.
+I worked largely alone and used the RTL and my pre-existing verification components and sequences as a vehicle to bring up Bathtub.
+Even so I was able to build up a nice collection of Gherkin scenarios that were genuinely useful in documenting and demonstrating the behavior of the EAS.
+For example the EAS had a mode register that determined what power states to put the ARM core and the RAMs in.
+I had a scenario for each EAS mode.
+There was one particularly tricky combination of states that had me confused.
+Once I straightened it out with the RTL designer, I added a scenario that explicitly described it, and referred to that scenario often as definitive documentation.
+
+The EAS contained some large counters so it could gather statistical power data over long periods, for example to identify what time of day or even what day of the week power would be plentiful or scant.
+Clearly we can't simulate virtual _days_ so I added plusargs that sped up the counters by orders of magnitude.
+I added comments to the Gherkin file to remind myself which plusargs were required.
+This is a good use of Gherkin comments; they weren't about the behavior of the RTL, they were meta-information about the tests themselves.
+
+In any sort of testing, an anti-pattern is tests that have side-effects that alter the outcome of subsequent tests.
+To avoid that scenario, you want to make sure each test starts with a clean slate.
+Bathtub runs its scenarios one after another so I decided to add a background step that did a hard-reset and effective reboot of the RTL before every scenario. Something like this:
+
+```gherkin
+Background:
+  Given the chip is powered up and reset
+```
+
+All these additional resets made the tests run longer, but it was important that the RTL be in a consistent state for each scenario.
+
+Bathtub worked and the tests ran and passed.
+I added them to the regression suite.
+
+### Encryption
+
+The other block was an AES encryption/decryption peripheral.
+It also had registers where the ARM core could initialize it with an encryption key, and provide cleartext data to be encrypted into ciphertext, and vice versa.
+
+The AES standard contains sample data sets which I had put into text files.
+The data sets are pretty large, too large to put into a feature file.
+No one wants to read a Gherkin file that goes on like this for pages and pages:
+
+```gherkin
+    Given the plaintext is AF 89 5D 39 32 0F CC 45 2C A9 96 ...
+```
+
+So instead I just referenced the data sets by name in the Gherkin file.
+
+```gherkin
+    Given the plaintext is SAMPLE_DATA_SET_00
+```
+
+This is a basic example of times when you want to keep the Gherkin file high-level and readable by pushing the low-level complexity into the step definition.
+In this case, the step definition knew how to map the named data sets to the files which contained the actual data.
+
+## It's Real
+
+I didn't try to tackle the entire ASIC with Bathtub.
+Rather I introduced it in two blocks I happened to be working on.
+The key is to find a partition of RTL that's just the right size to fit into a reasonable feature file.
+Remember you can have as many feature files as you need, so if a feature starts to look too big, that might be a signal to break it up.
+My ALU example is of course too small to be of significant value in the real world.
+But the EAS and AES (funny coincidence that they're anagrams of each other) show that Bathtub can do real work. 
