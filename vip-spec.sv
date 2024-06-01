@@ -45,31 +45,48 @@ Usage:
 
 program \vip-spec ();
 
-    static struct {
-        string name, incdirs[], files[];
-    } spec = '{
+    /*
+     * Specifier schema
+     */
+    typedef struct {
+        string name, description, version, repository, author, license, bugs,
+        homepage, path, incdirs[], files[];
+    } spec_schema_t;
+    
+    /*
+     * VIP specifier
+     */
+     static spec_schema_t spec = '{
         name: "bathtub",
+        description: "BDD for SystemVerilog and UVM",
+        version: "0.1.0",
+        repository: "https://github.com/williaml33moore/bathtub.git",
+        author: "Bill Moore <williaml33moore@gmail.com>",
+        license: "MIT",
+        bugs: "https://github.com/williaml33moore/bathtub/issues",
+        homepage: "https://bathtubbdd.dev",
+        path: `__FILE__,
         incdirs: '{
             "src"
         },
         files: '{
             "src/gherkin_pkg.sv",
             "src/bathtub_pkg.sv"
-        }
+        },
+        string: ""
     };
-
+    
     function void main();
-        static string spec_file = `__FILE__;
         static string file_name = "vip-spec.sv";
         static string base_name;
         string dir_name;
         string files_file_name;
         bit[31:0] files_fd;
 
-        base_name = spec_file.substr(spec_file.len() - file_name.len(), spec_file.len() - 1);
+        base_name = spec.path.substr(spec.path.len() - file_name.len(), spec.path.len() - 1);
         if (base_name != file_name)
-            $fatal(0, "Spec file must be called '%s'. Actual spec file is called '%s'.", file_name, spec_file);
-        dir_name = spec_file.substr(0, spec_file.len() - base_name.len() - 1);
+            $fatal(0, "Spec file must be called '%s'. Actual spec file is called '%s'.", file_name, spec.path);
+        dir_name = spec.path.substr(0, spec.path.len() - base_name.len() - 1);
         if (dir_name[dir_name.len() - 1] == "/")
             dir_name = dir_name.substr(0, dir_name.len() - 2);
         if (dir_name.len() == 0)
@@ -80,7 +97,7 @@ program \vip-spec ();
         if (files_fd == 0)
             $fatal(0, "Could not open file '%s' for writing.", files_file_name);
 
-        $fdisplay(files_fd, {"// Automatically generated from VIP spec ", spec_file});
+        $fdisplay(files_fd, {"// Automatically generated from VIP spec ", spec.path});
         $fdisplay(files_fd);
         foreach (spec.incdirs[i]) begin
             $fdisplay(files_fd, {"-incdir", " ", dir_name, "/", spec.incdirs[i]});
