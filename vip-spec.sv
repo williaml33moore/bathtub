@@ -75,6 +75,62 @@ program \vip-spec ();
         },
         string: ""
     };
+
+    typedef struct{string dir_name, base_name;} file_name_t;
+
+    function file_name_t parse_file_name(string file_name, byte sep="/");
+        string base_name;
+        string dir_name;
+        byte file_name_array[$];
+        int sep_indices[$];
+        int sep_index;
+        
+        file_name_array.delete();
+        foreach (file_name[i]) file_name_array.push_back(file_name[i]);
+        while (file_name_array[$] == sep) void'(file_name_array.pop_back());
+        sep_indices = file_name_array.find_last_index(c) with (c == sep);
+        sep_index = (sep_indices.size() > 0) ? sep_indices[0] : -1;
+        dir_name = (sep_index >= 0) ? file_name.substr(0, sep_index - 1) : ".";
+        base_name = file_name.substr(sep_index + 1, file_name_array.size() - 1);
+        parse_file_name = '{dir_name: dir_name, base_name: base_name};
+    endfunction : parse_file_name
+
+    function void test_parse_file_name();
+        static string test_data[][] = '{
+            '{"file_name", "expected_dir_name", "expected_base_name", "notes"},
+            '{"/a/b/c", "/a/b", "c"},
+            '{"/aa/bbb/cccc", "/aa/bbb", "cccc"},
+            '{"/a/b/c/", "/a/b", "c"},
+            '{"/a/b/c///", "/a/b", "c"},
+            '{"a/b/c", "a/b", "c"},
+            '{"a/b/c/", "a/b", "c"},
+            '{"a/b/c///", "a/b", "c"},
+            '{"c", ".", "c", "If there is no slash, dir_name should be '.'"},
+            '{"cccc", ".", "cccc"},
+            '{"./c", ".", "c"},
+            '{"./cccc", ".", "cccc"},
+            '{"", ".", "", "Degenerate case; make sure it doesn't crash"}
+        };
+        file_name_t actual;
+        string file_name, expected_dir_name, expected_base_name;
+
+        foreach(test_data[i]) begin : test_data_loop
+            if (i == 0) continue;
+            file_name = test_data[i][0];
+            expected_dir_name = test_data[i][1];
+            expected_base_name = test_data[i][2];
+            actual = parse_file_name(file_name);
+            check_dir_name : assert (actual.dir_name == expected_dir_name)
+                $info("file_name=%s, expected=%s, actual=%s", file_name, expected_dir_name, actual.dir_name);
+            else
+                $fatal(0, "file_name=%s, expected=%s, actual=%s", file_name, expected_dir_name, actual.dir_name);
+
+            check_base_name : assert (actual.base_name == expected_base_name)
+                $info("file_name=%s, expected=%s, actual=%s", file_name, expected_base_name, actual.base_name);
+            else
+                $fatal(0, "file_name=%s, expected=%s, actual=%s", file_name, expected_base_name, actual.base_name);
+        end
+    endfunction : test_parse_file_name
     
     function void main();
         static string file_name = "vip-spec.sv";
@@ -82,15 +138,13 @@ program \vip-spec ();
         string dir_name;
         string files_file_name;
         bit[31:0] files_fd;
+        file_name_t parsed_file_name;
 
-        base_name = spec.path.substr(spec.path.len() - file_name.len(), spec.path.len() - 1);
+        parsed_file_name = parse_file_name(spec.path);
+        dir_name = parsed_file_name.dir_name;
+        base_name = parsed_file_name.base_name; 
         if (base_name != file_name)
             $fatal(0, "Spec file must be called '%s'. Actual spec file is called '%s'.", file_name, spec.path);
-        dir_name = spec.path.substr(0, spec.path.len() - base_name.len() - 1);
-        if (dir_name[dir_name.len() - 1] == "/")
-            dir_name = dir_name.substr(0, dir_name.len() - 2);
-        if (dir_name.len() == 0)
-            dir_name = ".";
         files_file_name = {spec.name, ".f"};
         
         files_fd = $fopen(files_file_name, "w");
@@ -108,6 +162,14 @@ program \vip-spec ();
         $fclose(files_fd);
     endfunction : main
 
+`ifdef UNIT_TEST
+
+    initial test_parse_file_name();
+
+`else // UNIT_TEST
+
     initial main();
+
+`endif // UNIT_TEST
 
 endprogram : \vip-spec 
