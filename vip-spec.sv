@@ -81,14 +81,17 @@ program \vip-spec ();
     function file_name_t parse_file_name(string file_name, byte sep="/");
         string base_name;
         string dir_name;
-        byte file_name_array[$];
-        byte dir_name_array[$];
-        byte base_name_array[$];
+        byte unsigned file_name_array[$];
+        byte unsigned dir_name_array[$];
+        byte unsigned base_name_array[$];
         int sep_indices[$];
         int sep_index;
         
         file_name_array.delete();
         foreach (file_name[i]) file_name_array.push_back(file_name[i]);
+        // Trim whitespace and non-printable characters from ends
+        while ((file_name_array.size() > 0) && !(file_name_array[$] inside {[33:126]})) begin $info(file_name_array[$]); void'(file_name_array.pop_back()); end
+        while ((file_name_array.size() > 0) && !(file_name_array[0] inside {[33:126]})) begin $info(file_name_array[0]); void'(file_name_array.pop_front()); end
 
         // Handle the special cases first
         if (file_name_array.size() == 0) begin : filename_is_empty
@@ -105,7 +108,8 @@ program \vip-spec ();
                 sep_indices = file_name_array.find_first_index(c) with (c == sep);
                 if (sep_indices.size() == 0) begin : filename_has_no_slashes
                     dir_name = "."; // This is what GNU `dirname` does.
-                    base_name = file_name;
+                    base_name = "";
+                    foreach (file_name_array[i]) base_name = {base_name, file_name_array[i]};
                 end
                 else begin : normal_case
                     while (file_name_array[$] == sep) void'(file_name_array.pop_back()); // Trim trailing slashes
@@ -130,6 +134,9 @@ program \vip-spec ();
         static string test_data[][] = '{
             '{"file_name", "expected_dir_name", "expected_base_name", "notes"},
             '{"/a/b/c", "/a/b", "c"},
+            '{" /a/b/c", "/a/b", "c"},
+            '{"/a/b/c  ", "/a/b", "c"},
+            '{"   /a/b/c   ", "/a/b", "c"},
             '{"/aa/bbb/cccc", "/aa/bbb", "cccc"},
             '{"/a/b/c/", "/a/b", "c"},
             '{"/a/b/c///", "/a/b", "c"},
@@ -138,13 +145,17 @@ program \vip-spec ();
             '{"a/b/c///", "a/b", "c"},
             '{"c", ".", "c", "If there is no slash, dir_name should be '.'"},
             '{"cccc", ".", "cccc"},
+            '{"  cccc", ".", "cccc"},
+            '{"cccc   ", ".", "cccc"},
+            '{"     cccc   ", ".", "cccc"},
             '{"./c", ".", "c"},
             '{"./cccc", ".", "cccc"},
             '{"a//b//c", "a//b", "c"},
             '{"//a//b//c//", "//a//b", "c"},
             '{"/", "/", "/", "Curiously this is what the GNU utils do"},
             '{"///", "/", "/", "Curiously this is what the GNU utils do"},
-            '{"", ".", "", "Degenerate case; make sure it doesn't crash"}
+            '{"", ".", "", "Degenerate case; make sure it doesn't crash"},
+            '{"       ", ".", ""}
         };
         file_name_t actual;
         string file_name, expected_dir_name, expected_base_name;
