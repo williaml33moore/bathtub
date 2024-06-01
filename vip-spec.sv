@@ -82,16 +82,47 @@ program \vip-spec ();
         string base_name;
         string dir_name;
         byte file_name_array[$];
+        byte dir_name_array[$];
+        byte base_name_array[$];
         int sep_indices[$];
         int sep_index;
         
         file_name_array.delete();
         foreach (file_name[i]) file_name_array.push_back(file_name[i]);
-        while (file_name_array[$] == sep) void'(file_name_array.pop_back());
-        sep_indices = file_name_array.find_last_index(c) with (c == sep);
-        sep_index = (sep_indices.size() > 0) ? sep_indices[0] : -1;
-        dir_name = (sep_index >= 0) ? file_name.substr(0, sep_index - 1) : ".";
-        base_name = file_name.substr(sep_index + 1, file_name_array.size() - 1);
+
+        // Handle the special cases first
+        if (file_name_array.size() == 0) begin : filename_is_empty
+            dir_name = ".";
+            base_name = "";
+        end
+        else begin
+            sep_indices = file_name_array.find_first_index(c) with (c != sep);
+            if (sep_indices.size() == 0) begin : filename_is_all_slashes
+                dir_name = "/";
+                base_name = "/"; // This is what GNU `basename` does.
+            end
+            else begin
+                sep_indices = file_name_array.find_first_index(c) with (c == sep);
+                if (sep_indices.size() == 0) begin : filename_has_no_slashes
+                    dir_name = "."; // This is what GNU `dirname` does.
+                    base_name = file_name;
+                end
+                else begin : normal_case
+                    while (file_name_array[$] == sep) void'(file_name_array.pop_back()); // Trim trailing slashes
+                    sep_indices = file_name_array.find_last_index(c) with (c == sep);
+                    sep_index = (sep_indices.size() > 0) ? sep_indices[0] : -1;
+                    dir_name_array.delete();
+                    dir_name_array = file_name_array[0:sep_index - 1];
+                    while (dir_name_array[$] == sep) void'(dir_name_array.pop_back()); // Trim trailing slashes
+                    base_name_array.delete();
+                    base_name_array = file_name_array[sep_index + 1:$];
+                    dir_name = "";
+                    foreach (dir_name_array[i]) dir_name = {dir_name, dir_name_array[i]};
+                    base_name = "";
+                    foreach (base_name_array[i]) base_name = {base_name, base_name_array[i]};
+                end
+            end
+        end
         parse_file_name = '{dir_name: dir_name, base_name: base_name};
     endfunction : parse_file_name
 
@@ -109,6 +140,10 @@ program \vip-spec ();
             '{"cccc", ".", "cccc"},
             '{"./c", ".", "c"},
             '{"./cccc", ".", "cccc"},
+            '{"a//b//c", "a//b", "c"},
+            '{"//a//b//c//", "//a//b", "c"},
+            '{"/", "/", "/", "Curiously this is what the GNU utils do"},
+            '{"///", "/", "/", "Curiously this is what the GNU utils do"},
             '{"", ".", "", "Degenerate case; make sure it doesn't crash"}
         };
         file_name_t actual;
