@@ -183,15 +183,15 @@ program bathtub_$vip_init();
     endfunction : test_parse_file_name
 
     function void gen_args_file(bathtub_$vip_spec::spec_schema spec, string dir_name, string base_name);
-        string args_file_name;
-        bit[31:0] args_fd;
+        string file_name;
+        bit[31:0] fd;
         string buffer[$];
 
-        args_file_name = {spec.name, ".f"};
+        file_name = {spec.name, "_vip.f"};
         
-        args_fd = $fopen(args_file_name, "w");
-        if (args_fd == 0)
-            $fatal(0, "Could not open file '%s' for writing.", args_file_name);
+        fd = $fopen(file_name, "w");
+        if (fd == 0)
+            $fatal(0, "Could not open file '%s' for writing.", file_name);
 
         buffer.delete();
         buffer.push_back({"// Automatically generated from VIP spec ", spec.path});
@@ -205,11 +205,67 @@ program bathtub_$vip_init();
 
         foreach(buffer[i]) begin
             $display(buffer[i]);
-            $fdisplay(args_fd, buffer[i]);
+            $fdisplay(fd, buffer[i]);
         end
 
-        $fclose(args_fd);
+        $fclose(fd);
     endfunction : gen_args_file
+
+    function string gen_env_var(bathtub_$vip_spec::spec_schema spec);
+        gen_env_var = {spec.name.toupper(), "_VIP_DIR"};
+    endfunction : gen_env_var
+
+    function void gen_setup_csh(bathtub_$vip_spec::spec_schema spec, string dir_name, string base_name);
+        string file_name;
+        string env_var;
+        bit[31:0] fd;
+        string buffer[$];
+
+        file_name = {spec.name, "_vip.csh"};
+        env_var = gen_env_var(spec);
+        
+        fd = $fopen(file_name, "w");
+        if (fd == 0)
+            $fatal(0, "Could not open file '%s' for writing.", file_name);
+
+        buffer.delete();
+        buffer.push_back({"# Automatically generated from VIP spec ", spec.path});
+        buffer.push_back("");
+        buffer.push_back({"setenv", " ", env_var, " ", dir_name});
+
+        foreach(buffer[i]) begin
+            $display(buffer[i]);
+            $fdisplay(fd, buffer[i]);
+        end
+
+        $fclose(fd);
+    endfunction : gen_setup_csh
+
+    function void gen_setup_sh(bathtub_$vip_spec::spec_schema spec, string dir_name, string base_name);
+        string file_name;
+        string env_var;
+        bit[31:0] fd;
+        string buffer[$];
+
+        file_name = {spec.name, "_vip.sh"};
+        env_var = gen_env_var(spec);
+        
+        fd = $fopen(file_name, "w");
+        if (fd == 0)
+            $fatal(0, "Could not open file '%s' for writing.", file_name);
+
+        buffer.delete();
+        buffer.push_back({"# Automatically generated from VIP spec ", spec.path});
+        buffer.push_back("");
+        buffer.push_back({"export", " ", env_var, "=", dir_name});
+
+        foreach(buffer[i]) begin
+            $display(buffer[i]);
+            $fdisplay(fd, buffer[i]);
+        end
+
+        $fclose(fd);
+    endfunction : gen_setup_sh
     
     function void main(bathtub_$vip_spec::spec_schema spec);
         file_name_t parsed_file_name;
@@ -223,6 +279,8 @@ program bathtub_$vip_init();
         if (base_name != file_name)
             $fatal(0, "Spec file must be called '%s'. Actual spec file is called '%s'.", file_name, spec.path);
         gen_args_file(spec, dir_name, base_name);
+        gen_setup_csh(spec, dir_name, base_name);
+        gen_setup_sh(spec, dir_name, base_name);
     endfunction : main
 
 `ifdef UNIT_TEST
