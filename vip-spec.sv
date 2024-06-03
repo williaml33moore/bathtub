@@ -41,7 +41,6 @@ Usage:
 
     If you give the simulator an absolute path to `vip-spec.sv`, e.g. `<simulator> /absolute/path/to/vip-spec.sv`, then the generated files will contain the absolute path `/absolute/path/to/`.
 
-
     Set up your simulation shell with the generated shell scripts, e.g.:
     ```
     source <name>_vip.csh # csh
