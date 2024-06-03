@@ -23,17 +23,31 @@ SOFTWARE.
 */
 
 /*****************************************
-Generate a ".f" argument file that points to this VIP's source files and directories. 
+Generate a ".f" argument file and shell setup scripts that point to this VIP's source files and directories. 
 
 Usage:
     Run this file stand-alone in your simulator from the directory in which you will run your eventual simulation, e.g.:
     ```
-        <simulator> vip-spec.sv
+        <simulator> /absolute/path/to/vip-spec.sv
     ```
  
-    This program generates the argument file `<name>.f` in the current working directory.
+    This program generates the argument file `<name>_vip.f`, a csh script `<name>_vip.csh`, and a bash script `<name>_vip.sh` in the current working directory.
  
-    Overwrites any existing file with the same name.
+    Overwrites any existing files with the same names.
+
+    The generated files generally contain the `vip-spec.sv` path you gave to the simulator.
+
+    If you give the simulator a relative path to `vip-spec.sv`, e.g., `<simulator> ../../vip-spec.sv`, then the generated files will contain the relative path `../../`.
+
+    If you give the simulator an absolute path to `vip-spec.sv`, e.g. `<simulator> /absolute/path/to/vip-spec.sv`, then the generated files will contain the absolute path `/absolute/path/to/`.
+
+
+    Set up your simulation shell with the generated shell scripts, e.g.:
+    ```
+    source <name>_vip.csh # csh
+    or
+    source <name>_vip.sh # bash
+    ```
  
     Run your simulation with the generated argument file, e.g.:
     ```
