@@ -281,6 +281,7 @@ program bathtub_$vip_init();
         gen_args_file(spec, dir_name, base_name);
         gen_setup_csh(spec, dir_name, base_name);
         gen_setup_sh(spec, dir_name, base_name);
+        $fflush();
     endfunction : main
 
 `ifdef UNIT_TEST
