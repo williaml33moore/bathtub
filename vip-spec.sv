@@ -43,7 +43,7 @@ Usage:
 
 `timescale 1s/1ms
 
-program \vip-spec ();
+package bathtub_$vip_spec;
 
     /*
      * Specifier schema
@@ -51,12 +51,12 @@ program \vip-spec ();
     typedef struct {
         string name, description, version, repository, author, license, bugs,
         homepage, path, incdirs[], files[];
-    } spec_schema_t;
+    } spec_schema;
     
     /*
      * VIP specifier
      */
-     static spec_schema_t spec = '{
+     const var static spec_schema spec = '{
         name: "bathtub",
         description: "BDD for SystemVerilog and UVM",
         version: "0.1.0",
@@ -76,6 +76,10 @@ program \vip-spec ();
         string: ""
     };
 
+endpackage : bathtub_$vip_spec
+
+
+program bathtub_$vip_init();
     typedef struct{string dir_name, base_name;} file_name_t;
 
     function file_name_t parse_file_name(string file_name, byte sep="/");
@@ -90,8 +94,8 @@ program \vip-spec ();
         file_name_array.delete();
         foreach (file_name[i]) file_name_array.push_back(file_name[i]);
         // Trim whitespace and non-printable characters from ends
-        while ((file_name_array.size() > 0) && !(file_name_array[$] inside {[33:126]})) begin $info(file_name_array[$]); void'(file_name_array.pop_back()); end
-        while ((file_name_array.size() > 0) && !(file_name_array[0] inside {[33:126]})) begin $info(file_name_array[0]); void'(file_name_array.pop_front()); end
+        while ((file_name_array.size() > 0) && !(file_name_array[$] inside {[33:126]})) void'(file_name_array.pop_back());
+        while ((file_name_array.size() > 0) && !(file_name_array[0] inside {[33:126]})) void'(file_name_array.pop_front());
 
         // Handle the special cases first
         if (file_name_array.size() == 0) begin : filename_is_empty
@@ -177,35 +181,48 @@ program \vip-spec ();
                 $fatal(0, "file_name=%s, expected=%s, actual=%s", file_name, expected_base_name, actual.base_name);
         end
     endfunction : test_parse_file_name
+
+    function void gen_args_file(bathtub_$vip_spec::spec_schema spec, string dir_name, string base_name);
+        string args_file_name;
+        bit[31:0] args_fd;
+        string buffer[$];
+
+        args_file_name = {spec.name, ".f"};
+        
+        args_fd = $fopen(args_file_name, "w");
+        if (args_fd == 0)
+            $fatal(0, "Could not open file '%s' for writing.", args_file_name);
+
+        buffer.delete();
+        buffer.push_back({"// Automatically generated from VIP spec ", spec.path});
+        buffer.push_back("");
+        foreach (spec.incdirs[i]) begin
+            buffer.push_back({"-incdir", " ", dir_name, "/", spec.incdirs[i]});
+        end
+        foreach (spec.files[i]) begin
+            buffer.push_back({dir_name, "/", spec.files[i]});
+        end
+
+        foreach(buffer[i]) begin
+            $display(buffer[i]);
+            $fdisplay(args_fd, buffer[i]);
+        end
+
+        $fclose(args_fd);
+    endfunction : gen_args_file
     
-    function void main();
-        static string file_name = "vip-spec.sv";
-        static string base_name;
-        string dir_name;
-        string files_file_name;
-        bit[31:0] files_fd;
+    function void main(bathtub_$vip_spec::spec_schema spec);
         file_name_t parsed_file_name;
+        string dir_name;
+        string base_name;
+        const static string file_name = "vip-spec.sv";
 
         parsed_file_name = parse_file_name(spec.path);
         dir_name = parsed_file_name.dir_name;
         base_name = parsed_file_name.base_name; 
         if (base_name != file_name)
             $fatal(0, "Spec file must be called '%s'. Actual spec file is called '%s'.", file_name, spec.path);
-        files_file_name = {spec.name, ".f"};
-        
-        files_fd = $fopen(files_file_name, "w");
-        if (files_fd == 0)
-            $fatal(0, "Could not open file '%s' for writing.", files_file_name);
-
-        $fdisplay(files_fd, {"// Automatically generated from VIP spec ", spec.path});
-        $fdisplay(files_fd);
-        foreach (spec.incdirs[i]) begin
-            $fdisplay(files_fd, {"-incdir", " ", dir_name, "/", spec.incdirs[i]});
-        end
-        foreach (spec.files[i]) begin
-            $fdisplay(files_fd, {dir_name, "/", spec.files[i]});
-        end
-        $fclose(files_fd);
+        gen_args_file(spec, dir_name, base_name);
     endfunction : main
 
 `ifdef UNIT_TEST
@@ -214,8 +231,9 @@ program \vip-spec ();
 
 `else // UNIT_TEST
 
-    initial main();
+    initial main(bathtub_$vip_spec::spec);
 
 `endif // UNIT_TEST
 
-endprogram : \vip-spec 
+endprogram : bathtub_$vip_init
+
