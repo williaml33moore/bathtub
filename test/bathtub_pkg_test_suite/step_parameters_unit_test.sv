@@ -84,7 +84,7 @@ module step_parameters_unit_test;
 	`SVUNIT_TESTS_BEGIN
 
 
-	`SVTEST(\One_real_number_step_parameter )
+	`SVTEST(One_real_number_step_parameter)
 	// ====================================
 	struct {
 		string step_text;
@@ -126,7 +126,7 @@ module step_parameters_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Extracting_values_from_a_step_parameters_object )
+	`SVTEST(Extracting_values_from_a_step_parameters_object)
 	// =====================================================
 	int actual_int_value;
 	real actual_real_value;
@@ -161,7 +161,7 @@ module step_parameters_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Step_parameters_class_behaves_like_$sscanf() )
+	`SVTEST(Step_parameters_class_behaves_like_$sscanf)
 	// ==================================================
 	struct {
 		string step_text;

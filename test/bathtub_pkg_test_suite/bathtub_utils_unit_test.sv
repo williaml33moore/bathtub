@@ -87,7 +87,7 @@ module bathtub_utils_unit_test;
 	`SVUNIT_TESTS_BEGIN
 
 
-	`SVTEST(\split_string()_should_split_strings_on_white_space )
+	`SVTEST(split_string_should_split_strings_on_white_space)
 	// ========================================================
 	string str;
 	string tokens[$];
@@ -103,7 +103,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Get_conversion_spec()_extracts_the_conversion_spec_from_a_string )
+	`SVTEST(Get_conversion_spec_extracts_the_conversion_spec_from_a_string)
 	// ======================================================================
 	struct {
 		string str;
@@ -170,7 +170,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Get_conversion_code()_extracts_the_conversion_code_from_a_token )
+	`SVTEST(Get_conversion_code_extracts_the_conversion_code_from_a_token)
 	// =====================================================================
 	struct {
 		string token;
@@ -221,7 +221,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Is_regex()_tests_whether_a_string_is_a_regular_expression )
+	`SVTEST(Is_regex_tests_whether_a_string_is_a_regular_expression)
 	// ===============================================================
 	struct {
 		string str;
@@ -258,7 +258,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Bathtub_to_regexp()_converts_a_bathtub_expression_to_a_regular_expression )
+	`SVTEST(Bathtub_to_regexp_converts_a_bathtub_expression_to_a_regular_expression)
 	// ===============================================================================
 	localparam
 		binary_re = "([0-1XxZz?_]+)",
@@ -323,7 +323,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Integer_regular_expression_matches_$sscanf()_result )
+	`SVTEST(Integer_regular_expression_matches_$sscanf_result)
 	// =========================================================
 	struct {
 		string format;
@@ -376,7 +376,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Real_number_regular_expression_matches_$sscanf()_result )
+	`SVTEST(Real_number_regular_expression_matches_$sscanf_result)
 	// =============================================================
 	struct {
 		string format;
@@ -417,7 +417,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\String_regular_expression_matches_$sscanf()_result )
+	`SVTEST(String_regular_expression_matches_$sscanf_result )
 	// ========================================================
 	struct {
 		string format;
