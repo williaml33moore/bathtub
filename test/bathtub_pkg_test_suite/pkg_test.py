@@ -12,7 +12,7 @@ import pytest
 def test(tmp_path):
     vip_cmd = "xrun $BATHTUB_VIP_DIR/vip-spec.sv"
     assert subprocess.run(vip_cmd, shell=True, cwd=tmp_path).returncode == 0
-    svunit_cmd = "xrun $BATHTUB_VIP_DIR/vip-spec.sv && runSVUnit -U -o " + str(tmp_path)
+    svunit_cmd = "runSVUnit -U -o " + str(tmp_path)
     assert subprocess.run(svunit_cmd, shell=True).returncode == 0
 
 if __name__ == "__main__":
