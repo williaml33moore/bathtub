@@ -67,40 +67,7 @@ package bathtub_pkg;
 	`include "scenario_sequence.svh"
 	`include "step_parameter_arg.svh"
 	`include "step_parameters.svh"
-	
-	
-	interface class step_static_attributes_interface;
-		
-		// Set keyword
-		pure virtual function void set_keyword(step_keyword_t keyword);
-
-		// Get keyword
-		pure virtual function step_keyword_t get_keyword();
-
-		// Set regexp
-		pure virtual function void set_regexp(string regexp);
-
-		// Get regexp
-		pure virtual function string get_regexp();
-
-		// Get expression
-		pure virtual function string get_expression();
-
-		// Set expression
-		pure virtual function void set_expression(string expression);
-
-		// Get step_obj
-		pure virtual function uvm_object_wrapper get_step_obj();
-
-		// Set obj_name
-		pure virtual function void set_step_obj(uvm_object_wrapper step_obj);
-		
-		// Get step_obj_name
-		pure virtual function string get_step_obj_name();
-		
-		pure virtual function void print_attributes(uvm_verbosity verbosity);
-		
-	endclass : step_static_attributes_interface
+	`include "step_static_attributes_interface.svh"
 
 
 	class step_nature extends uvm_object implements step_static_attributes_interface;
