@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2024 William L. Moore
+Copyright (c) 2023 Everactive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv
+`ifndef __GHERKIN_PARSER_INTERFACE_SVH
+`define __GHERKIN_PARSER_INTERFACE_SVH
+
+typedef class gherkin_doc_bundle;
+
+interface class gherkin_parser_interface;
+	pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
+endclass : gherkin_parser_interface;
+
+`endif // __GHERKIN_PARSER_INTERFACE_SVH

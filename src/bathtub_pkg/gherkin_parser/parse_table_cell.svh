@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2024 William L. Moore
+Copyright (c) 2023 Everactive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv
+task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
+	string cell_value;
+	gherkin_pkg::table_cell_value table_cell_value;
+
+	cell_mbox.get(cell_value);
+
+	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell enter", UVM_HIGH)
+	`uvm_message_add_string(cell_value)
+	`uvm_info_end
+	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+
+	table_cell_value.value = cell_value;
+	table_cell = new("table_cell", table_cell_value);
+	`push_onto_parser_stack(table_cell)
+
+	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell exit", UVM_HIGH)
+	`uvm_message_add_tag("status", status.name())
+	`uvm_message_add_object(table_cell)
+	`uvm_info_end
+	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+endtask : parse_table_cell

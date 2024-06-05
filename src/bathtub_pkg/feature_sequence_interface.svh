@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2024 William L. Moore
+Copyright (c) 2023 Everactive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv
+`ifndef __FEATURE_SEQUENCE_INTERFACE_SVH
+`define __FEATURE_SEQUENCE_INTERFACE_SVH
+
+`include "pool_provider_interface.svh"
+
+interface class feature_sequence_interface extends pool_provider_interface;
+endclass : feature_sequence_interface
+
+`endif // __FEATURE_SEQUENCE_INTERFACE_SVH

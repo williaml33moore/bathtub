@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2024 William L. Moore
+Copyright (c) 2023 Everactive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv
+class line_value;
+	string text;
+	string file_name;
+	int line_number;
+	bit eof;
+
+	function new(string text, string file_name, int line_number=0, bit eof=0);
+		this.text = text;
+		this.file_name = file_name;
+		this.line_number = line_number;
+		this.eof = eof;
+	endfunction : new
+endclass : line_value

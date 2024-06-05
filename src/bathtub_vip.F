@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir .
-./gherkin_pkg.sv
-./bathtub_pkg.sv
+-incdir ./gherkin_pkg
+-incdir ./bathtub_pkg
+-incdir ./bathtub_pkg/gherkin_parser
+./gherkin_pkg/gherkin_pkg.sv
+./bathtub_pkg/bathtub_pkg.sv
