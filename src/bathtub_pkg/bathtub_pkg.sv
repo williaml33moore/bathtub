@@ -79,11 +79,8 @@ package bathtub_pkg;
 	`include "gherkin_parser/parse_background.svh"
 	`include "gherkin_parser/parse_comment.svh"
 	`include "gherkin_parser/parse_data_table.svh"
+	`include "gherkin_parser/parse_doc_string.svh"
 	
-
-	task gherkin_parser::parse_doc_string(ref gherkin_pkg::doc_string doc_string);
-		`uvm_fatal("PENDING", "")
-	endtask : parse_doc_string
 
 	task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 		line_value line_obj;
