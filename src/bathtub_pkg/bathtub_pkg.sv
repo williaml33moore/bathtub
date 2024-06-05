@@ -69,32 +69,7 @@ package bathtub_pkg;
 	`include "step_parameters.svh"
 	`include "step_static_attributes_interface.svh"
 	`include "step_nature.svh"
-	
-
-	interface class step_attributes_interface;
-		pure virtual function string get_runtime_keyword();
-		pure virtual function void set_runtime_keyword(string runtime_keyword);
-		pure virtual function string get_text();
-		pure virtual function void set_text(string step_text);
-		pure virtual function gherkin_pkg::step_argument get_argument();
-		pure virtual function void set_argument(gherkin_pkg::step_argument step_argument);
-		pure virtual function step_static_attributes_interface get_static_attributes();
-		pure virtual function void set_static_attributes(step_static_attributes_interface static_attributes);
-		pure virtual function string get_format();
-				
-		pure virtual function step_keyword_t get_static_keyword();
-		pure virtual function string get_expression();
-		pure virtual function string get_regexp();
-		pure virtual function uvm_object_wrapper get_step_obj();
-		pure virtual function string get_step_obj_name();
-		
-		pure virtual function feature_sequence_interface get_current_feature_sequence();
-		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
-		pure virtual function scenario_sequence_interface get_current_scenario_sequence();
-		pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
-
-		pure virtual function void print_attributes(uvm_verbosity verbosity);
-	endclass : step_attributes_interface
+	`include "step_attributes_interface.svh"
 	
 	
 	class step_nurture extends uvm_object implements step_attributes_interface;
