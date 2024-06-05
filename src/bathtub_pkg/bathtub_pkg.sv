@@ -72,20 +72,7 @@ package bathtub_pkg;
 	`include "step_attributes_interface.svh"
 	`include "step_nurture.svh"
 	`include "step_definition_interface.svh"
-
-
-	// Bundle the document with its file name externally.
-	// The AST doesn't provide a place for the file name inside the document.
-	class gherkin_doc_bundle;
-		string file_name;
-		gherkin_pkg::gherkin_document document;
-		
-		function new(string file_name, gherkin_pkg::gherkin_document document);
-			this.file_name = file_name;
-			this.document = document;
-		endfunction : new
-		
-	endclass : gherkin_doc_bundle
+	`include "gherkin_doc_bundle.svh"
 	
 
 	class bathtub extends uvm_object;
