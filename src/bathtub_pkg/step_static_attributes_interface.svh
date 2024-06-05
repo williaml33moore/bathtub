@@ -25,37 +25,37 @@ SOFTWARE.
 `ifndef __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 
-	interface class step_static_attributes_interface;
-		
-		// Set keyword
-		pure virtual function void set_keyword(step_keyword_t keyword);
+interface class step_static_attributes_interface;
+	
+	// Set keyword
+	pure virtual function void set_keyword(step_keyword_t keyword);
 
-		// Get keyword
-		pure virtual function step_keyword_t get_keyword();
+	// Get keyword
+	pure virtual function step_keyword_t get_keyword();
 
-		// Set regexp
-		pure virtual function void set_regexp(string regexp);
+	// Set regexp
+	pure virtual function void set_regexp(string regexp);
 
-		// Get regexp
-		pure virtual function string get_regexp();
+	// Get regexp
+	pure virtual function string get_regexp();
 
-		// Get expression
-		pure virtual function string get_expression();
+	// Get expression
+	pure virtual function string get_expression();
 
-		// Set expression
-		pure virtual function void set_expression(string expression);
+	// Set expression
+	pure virtual function void set_expression(string expression);
 
-		// Get step_obj
-		pure virtual function uvm_object_wrapper get_step_obj();
+	// Get step_obj
+	pure virtual function uvm_object_wrapper get_step_obj();
 
-		// Set obj_name
-		pure virtual function void set_step_obj(uvm_object_wrapper step_obj);
-		
-		// Get step_obj_name
-		pure virtual function string get_step_obj_name();
-		
-		pure virtual function void print_attributes(uvm_verbosity verbosity);
-		
-	endclass : step_static_attributes_interface
+	// Set obj_name
+	pure virtual function void set_step_obj(uvm_object_wrapper step_obj);
+	
+	// Get step_obj_name
+	pure virtual function string get_step_obj_name();
+	
+	pure virtual function void print_attributes(uvm_verbosity verbosity);
+	
+endclass : step_static_attributes_interface
 
 `endif // __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH

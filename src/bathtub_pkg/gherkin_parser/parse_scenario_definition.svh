@@ -22,43 +22,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-	task gherkin_parser::parse_scenario_definition(ref gherkin_pkg::scenario_definition scenario_definition);
-		line_value line_obj;
-		line_analysis_result_t line_analysis_result;
+task gherkin_parser::parse_scenario_definition(ref gherkin_pkg::scenario_definition scenario_definition);
+	line_value line_obj;
+	line_analysis_result_t line_analysis_result;
 
-		line_mbox.peek(line_obj);
+	line_mbox.peek(line_obj);
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition enter", UVM_HIGH)
-		`uvm_message_add_string(line_obj.file_name)
-		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
-		`uvm_message_add_int(line_obj.eof, UVM_BIN)
-		if (!line_obj.eof) begin
-			`uvm_message_add_string(line_obj.text)
-		end
-		`uvm_info_end
+	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition enter", UVM_HIGH)
+	`uvm_message_add_string(line_obj.file_name)
+	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
+	if (!line_obj.eof) begin
+		`uvm_message_add_string(line_obj.text)
+	end
+	`uvm_info_end
 
-		if (!line_obj.eof) begin
+	if (!line_obj.eof) begin
 
-			analyze_line(line_obj.text, line_analysis_result);
+		analyze_line(line_obj.text, line_analysis_result);
 
-			case (line_analysis_result.token_before_colon)
-			"Background",
-			"Scenario",
-			"Example",
-			"Scenario Outline",
-			"Scenario Template":
-				; // Nothing to do
+		case (line_analysis_result.token_before_colon)
+		"Background",
+		"Scenario",
+		"Example",
+		"Scenario Outline",
+		"Scenario Template":
+			; // Nothing to do
 
-				default : begin
-					status = ERROR;
-					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-						". Expecting \"Background:\", \"Scenario\", \"Example\", \"Scenario Outline\", or \"Scenario Template\""})
-				end
-			endcase
-		end
+			default : begin
+				status = ERROR;
+				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+					". Expecting \"Background:\", \"Scenario\", \"Example\", \"Scenario Outline\", or \"Scenario Template\""})
+			end
+		endcase
+	end
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition exit", UVM_HIGH)
-		`uvm_message_add_tag("status", status.name())
-		`uvm_message_add_object(scenario_definition)
-		`uvm_info_end
-	endtask : parse_scenario_definition
+	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition exit", UVM_HIGH)
+	`uvm_message_add_tag("status", status.name())
+	`uvm_message_add_object(scenario_definition)
+	`uvm_info_end
+endtask : parse_scenario_definition

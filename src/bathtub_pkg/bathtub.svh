@@ -21,84 +21,84 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-	typedef class gherkin_parser;
-	typedef class gherkin_document_printer;
-	typedef class gherkin_document_runner;
-	typedef class gherkin_doc_bundle;
+typedef class gherkin_parser;
+typedef class gherkin_document_printer;
+typedef class gherkin_document_runner;
+typedef class gherkin_doc_bundle;
 
-	class bathtub extends uvm_object;
+class bathtub extends uvm_object;
 
-		string feature_files[$];
+	string feature_files[$];
 
-		gherkin_doc_bundle gherkin_docs[$];
-		uvm_sequencer_base sequencer;
-		uvm_sequence_base parent_sequence;
-		int sequence_priority;
-		bit sequence_call_pre_post;
-		bit dry_run;
-		int starting_scenario_number;
-		int stopping_scenario_number;
+	gherkin_doc_bundle gherkin_docs[$];
+	uvm_sequencer_base sequencer;
+	uvm_sequence_base parent_sequence;
+	int sequence_priority;
+	bit sequence_call_pre_post;
+	bit dry_run;
+	int starting_scenario_number;
+	int stopping_scenario_number;
 
-		`uvm_object_utils_begin(bathtub)
-			`uvm_field_queue_string(feature_files, UVM_ALL_ON)
-			`uvm_field_int(dry_run, UVM_ALL_ON)
-			`uvm_field_int(starting_scenario_number, UVM_ALL_ON)
-			`uvm_field_int(stopping_scenario_number, UVM_ALL_ON)
-		`uvm_object_utils_end
+	`uvm_object_utils_begin(bathtub)
+		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
+		`uvm_field_int(dry_run, UVM_ALL_ON)
+		`uvm_field_int(starting_scenario_number, UVM_ALL_ON)
+		`uvm_field_int(stopping_scenario_number, UVM_ALL_ON)
+	`uvm_object_utils_end
 
-		function new(string name = "bathtub");
-			super.new(name);
+	function new(string name = "bathtub");
+		super.new(name);
 
-			feature_files.delete();
-			sequencer = null;
-			parent_sequence = null;
-			sequence_priority = -1;
-			sequence_call_pre_post = 1;
-			dry_run = 0;
-			starting_scenario_number = 0;
-			stopping_scenario_number = 0;
-		endfunction : new
-
-
-		virtual function void configure(
-				uvm_sequencer_base sequencer,
-				uvm_sequence_base parent_sequence = null,
-				int sequence_priority = -1,
-				bit sequence_call_pre_post = 1
-			);
-			this.sequencer = sequencer;
-			this.parent_sequence = parent_sequence;
-			this.sequence_priority = sequence_priority;
-			this.sequence_call_pre_post = sequence_call_pre_post;
-		endfunction : configure
+		feature_files.delete();
+		sequencer = null;
+		parent_sequence = null;
+		sequence_priority = -1;
+		sequence_call_pre_post = 1;
+		dry_run = 0;
+		starting_scenario_number = 0;
+		stopping_scenario_number = 0;
+	endfunction : new
 
 
-      virtual task run_test(uvm_phase phase);
-			gherkin_doc_bundle gherkin_doc_bundle;
-			gherkin_parser parser;
-			gherkin_document_printer printer;
-			gherkin_document_runner runner;
+	virtual function void configure(
+			uvm_sequencer_base sequencer,
+			uvm_sequence_base parent_sequence = null,
+			int sequence_priority = -1,
+			bit sequence_call_pre_post = 1
+		);
+		this.sequencer = sequencer;
+		this.parent_sequence = parent_sequence;
+		this.sequence_priority = sequence_priority;
+		this.sequence_call_pre_post = sequence_call_pre_post;
+	endfunction : configure
 
-			foreach (feature_files[i]) begin : iterate_over_feature_files
-				
-				`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
 
-				parser = gherkin_parser::type_id::create("parser");
-				parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
+	virtual task run_test(uvm_phase phase);
+		gherkin_doc_bundle gherkin_doc_bundle;
+		gherkin_parser parser;
+		gherkin_document_printer printer;
+		gherkin_document_runner runner;
 
-				assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
+		foreach (feature_files[i]) begin : iterate_over_feature_files
+			
+			`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
 
-				if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
-					printer = gherkin_document_printer::create_new("printer", gherkin_doc_bundle.document);
-					printer.print();
-				end
+			parser = gherkin_parser::type_id::create("parser");
+			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
 
-				runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
-              runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number);
-              runner.run();
+			assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
 
+			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
+				printer = gherkin_document_printer::create_new("printer", gherkin_doc_bundle.document);
+				printer.print();
 			end
 
-		endtask : run_test
+			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
+			runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number);
+			runner.run();
 
-	endclass : bathtub
+		end
+
+	endtask : run_test
+
+endclass : bathtub

@@ -22,6 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-	task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_argument);
-		`uvm_fatal("PENDING", "")
-	endtask : parse_step_argument
+task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_argument);
+	`uvm_fatal("PENDING", "")
+endtask : parse_step_argument

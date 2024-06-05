@@ -22,16 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-	class line_value;
-		string text;
-		string file_name;
-		int line_number;
-		bit eof;
+class line_value;
+	string text;
+	string file_name;
+	int line_number;
+	bit eof;
 
-		function new(string text, string file_name, int line_number=0, bit eof=0);
-			this.text = text;
-			this.file_name = file_name;
-			this.line_number = line_number;
-			this.eof = eof;
-		endfunction : new
-	endclass : line_value
+	function new(string text, string file_name, int line_number=0, bit eof=0);
+		this.text = text;
+		this.file_name = file_name;
+		this.line_number = line_number;
+		this.eof = eof;
+	endfunction : new
+endclass : line_value

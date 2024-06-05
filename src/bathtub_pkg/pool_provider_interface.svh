@@ -25,18 +25,18 @@ SOFTWARE.
 `ifndef __POOL_PROVIDER_INTERFACE_SVH
 `define __POOL_PROVIDER_INTERFACE_SVH
 
-	interface class pool_provider_interface;
-		pure virtual function uvm_pool#(string, shortint) get_shortint_pool();
-		pure virtual function uvm_pool#(string, int) get_int_pool();
-		pure virtual function uvm_pool#(string, longint) get_longint_pool();
-		pure virtual function uvm_pool#(string, byte) get_byte_pool();
-		pure virtual function uvm_pool#(string, integer) get_integer_pool();
-		pure virtual function uvm_pool#(string, time) get_time_pool();
-		pure virtual function uvm_pool#(string, real) get_real_pool();
-		pure virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
-		pure virtual function uvm_pool#(string, realtime) get_realtime_pool();
-		pure virtual function uvm_pool#(string, string) get_string_pool();
-		pure virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
-	endclass : pool_provider_interface
+interface class pool_provider_interface;
+	pure virtual function uvm_pool#(string, shortint) get_shortint_pool();
+	pure virtual function uvm_pool#(string, int) get_int_pool();
+	pure virtual function uvm_pool#(string, longint) get_longint_pool();
+	pure virtual function uvm_pool#(string, byte) get_byte_pool();
+	pure virtual function uvm_pool#(string, integer) get_integer_pool();
+	pure virtual function uvm_pool#(string, time) get_time_pool();
+	pure virtual function uvm_pool#(string, real) get_real_pool();
+	pure virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
+	pure virtual function uvm_pool#(string, realtime) get_realtime_pool();
+	pure virtual function uvm_pool#(string, string) get_string_pool();
+	pure virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
+endclass : pool_provider_interface
 
 `endif // __POOL_PROVIDER_INTERFACE_SVH
