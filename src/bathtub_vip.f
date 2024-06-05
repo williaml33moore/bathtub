@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
--incdir $BATHTUB_VIP_DIR/src
-$BATHTUB_VIP_DIR/src/gherkin_pkg.sv
-$BATHTUB_VIP_DIR/src/bathtub_pkg.sv
+-incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
+-incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
+$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
+$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv

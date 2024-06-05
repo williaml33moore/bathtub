@@ -80,11 +80,12 @@ package bathtub_$vip_spec;
         homepage: "https://bathtubbdd.dev",
         path: `__FILE__,
         incdirs: '{
-            "src"
+            "src/gherkin_pkg",
+            "src/bathtub_pkg"
         },
         files: '{
-            "src/gherkin_pkg.sv",
-            "src/bathtub_pkg.sv"
+            "src/gherkin_pkg/gherkin_pkg.sv",
+            "src/bathtub_pkg/bathtub_pkg.sv"
         },
         string: ""
     };
