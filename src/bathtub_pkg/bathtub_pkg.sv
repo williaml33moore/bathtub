@@ -63,12 +63,7 @@ package bathtub_pkg;
 	`include "pool_provider.svh"
 	`include "feature_sequence_interface.svh"
 	`include "feature_sequence.svh"
-	
-
-	interface class scenario_sequence_interface extends pool_provider_interface;
-		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
-		pure virtual function feature_sequence_interface get_current_feature_sequence();
-	endclass : scenario_sequence_interface
+	`include "scenario_sequence_interface.svh"
 
 
 	class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
