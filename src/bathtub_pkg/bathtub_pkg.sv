@@ -74,11 +74,7 @@ package bathtub_pkg;
 	`include "step_definition_interface.svh"
 	`include "gherkin_doc_bundle.svh"
 	`include "bathtub.svh"
-
-
-	interface class gherkin_parser_interface;
-	    pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
-	endclass : gherkin_parser_interface;
+	`include "gherkin_parser_interface.svh"
 
 
 	class gherkin_parser extends uvm_object implements gherkin_parser_interface;
