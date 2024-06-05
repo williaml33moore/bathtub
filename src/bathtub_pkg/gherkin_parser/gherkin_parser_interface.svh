@@ -22,6 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __GHERKIN_PARSER_INTERFACE_SVH
+`define __GHERKIN_PARSER_INTERFACE_SVH
+
+typedef class gherkin_doc_bundle;
+
 	interface class gherkin_parser_interface;
 	    pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
 	endclass : gherkin_parser_interface;
+
+`endif // __GHERKIN_PARSER_INTERFACE_SVH

@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "scenario_sequence_interface.svh"
+
+typedef class gherkin_document_runner;
+typedef class pool_provider;
+
 	class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
 		gherkin_pkg::scenario scenario;
 		gherkin_document_runner runner;

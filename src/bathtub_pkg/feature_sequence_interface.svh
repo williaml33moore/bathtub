@@ -22,5 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __FEATURE_SEQUENCE_INTERFACE_SVH
+`define __FEATURE_SEQUENCE_INTERFACE_SVH
+
+`include "pool_provider_interface.svh"
+
 	interface class feature_sequence_interface extends pool_provider_interface;
 	endclass : feature_sequence_interface
+
+`endif // __FEATURE_SEQUENCE_INTERFACE_SVH

@@ -22,6 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "step_definition_interface.svh"
+
+typedef class feature_sequence;
+typedef class scenario_sequence;
+typedef class step_nurture;
+
 	class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
 		gherkin_pkg::gherkin_document document;

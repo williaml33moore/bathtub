@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "step_static_attributes_interface.svh"
+
+typedef class bathtub_utils;
+
 	class step_nature extends uvm_object implements step_static_attributes_interface;
 
 		protected step_keyword_t keyword;

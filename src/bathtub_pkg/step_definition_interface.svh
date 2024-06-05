@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __STEP_DEFINITION_INTERFACE_SVH
+`define __STEP_DEFINITION_INTERFACE_SVH
+
+`include "step_attributes_interface.svh"
+
 	interface class step_definition_interface;
 		pure virtual function step_attributes_interface get_step_attributes();
 		pure virtual function void set_step_attributes(step_attributes_interface step_attributes);
@@ -31,3 +36,5 @@ SOFTWARE.
 		pure virtual function scenario_sequence_interface get_current_scenario_sequence();
 		pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
 	endclass : step_definition_interface
+
+`endif // __STEP_DEFINITION_INTERFACE_SVH

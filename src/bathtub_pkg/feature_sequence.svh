@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "feature_sequence_interface.svh"
+typedef class pool_provider;
+
 	typedef class gherkin_document_runner;
 	
 		class feature_sequence extends uvm_sequence implements feature_sequence_interface;

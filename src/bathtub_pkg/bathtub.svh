@@ -24,6 +24,7 @@ SOFTWARE.
 	typedef class gherkin_parser;
 	typedef class gherkin_document_printer;
 	typedef class gherkin_document_runner;
+	typedef class gherkin_doc_bundle;
 
 	class bathtub extends uvm_object;
 

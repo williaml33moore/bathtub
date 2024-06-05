@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "step_attributes_interface.svh"
+
 	class step_nurture extends uvm_object implements step_attributes_interface;
 
 		string runtime_keyword;

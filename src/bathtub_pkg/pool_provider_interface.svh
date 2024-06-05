@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __POOL_PROVIDER_INTERFACE_SVH
+`define __POOL_PROVIDER_INTERFACE_SVH
+
 	interface class pool_provider_interface;
 		pure virtual function uvm_pool#(string, shortint) get_shortint_pool();
 		pure virtual function uvm_pool#(string, int) get_int_pool();
@@ -35,3 +38,5 @@ SOFTWARE.
 		pure virtual function uvm_pool#(string, string) get_string_pool();
 		pure virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
 	endclass : pool_provider_interface
+
+`endif // __POOL_PROVIDER_INTERFACE_SVH

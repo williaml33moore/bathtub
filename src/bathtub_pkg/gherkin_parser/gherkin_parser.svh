@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "gherkin_parser_interface.svh"
+
 `define push_onto_parser_stack(o) parser_stack.push_front(o);
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
@@ -37,6 +39,9 @@ end
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
 `define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal(`get_scope_name(), "Visitor stack is empty") end else begin uvm_object obj = parser_stack.pop_front(); end
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
+
+typedef class line_value;
+typedef class bathtub_utils;
 
 	class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 

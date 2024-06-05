@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
+`define __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
+
 	interface class step_static_attributes_interface;
 		
 		// Set keyword
@@ -54,3 +57,5 @@ SOFTWARE.
 		pure virtual function void print_attributes(uvm_verbosity verbosity);
 		
 	endclass : step_static_attributes_interface
+
+`endif // __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH

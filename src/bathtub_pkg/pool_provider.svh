@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`include "pool_provider_interface.svh"
+
 	class pool_provider implements pool_provider_interface;
 		uvm_pool#(string, shortint) shortint_pool;
 		uvm_pool#(string, int) int_pool;

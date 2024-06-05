@@ -22,6 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
+`define __STEP_ATTRIBUTES_INTERFACE_SVH
+
+`include "feature_sequence_interface.svh"
+`include "scenario_sequence_interface.svh"
+`include "step_static_attributes_interface.svh"
+
 	interface class step_attributes_interface;
 		pure virtual function string get_runtime_keyword();
 		pure virtual function void set_runtime_keyword(string runtime_keyword);
@@ -46,3 +53,5 @@ SOFTWARE.
 
 		pure virtual function void print_attributes(uvm_verbosity verbosity);
 	endclass : step_attributes_interface
+
+`endif // __STEP_ATTRIBUTES_INTERFACE_SVH
