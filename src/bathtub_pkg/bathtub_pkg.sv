@@ -89,76 +89,8 @@ package bathtub_pkg;
 	`include "gherkin_parser/parse_step.svh"
 	`include "gherkin_parser/parse_step_argument.svh"
 	`include "gherkin_parser/parse_table_cell.svh"
-	
-
-	task gherkin_parser::parse_table_row(ref gherkin_pkg::table_row table_row);
-		line_value line_obj;
-		line_analysis_result_t line_analysis_result;
-		gherkin_pkg::table_row_value table_row_value;
-
-		line_mbox.peek(line_obj);
-
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_row enter", UVM_HIGH)
-		`uvm_message_add_string(line_obj.file_name)
-		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
-		`uvm_message_add_int(line_obj.eof, UVM_BIN)
-		if (!line_obj.eof) begin
-			`uvm_message_add_string(line_obj.text)
-		end
-		`uvm_info_end
-		`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
-
-		if (!line_obj.eof) begin
-
-			analyze_line(line_obj.text, line_analysis_result);
-
-			case (line_analysis_result.secondary_keyword)
-				"|" : begin : configure_table_row
-					string cell_values[$];
-
-					split_table_row(cell_values, bathtub_utils::trim_white_space(line_obj.text));
-					get_next_line(line_obj);
-
-					foreach (cell_values[i]) begin : construct_table_cell
-						gherkin_pkg::table_cell table_cell;
-
-						fork
-							cell_mbox.put(cell_values[i]);
-							begin
-								parse_table_cell(table_cell);
-								`pop_from_parser_stack(table_cell)
-							end
-						join
-
-						if (status == OK) begin
-							table_row_value.cells.push_back(table_cell);
-						end
-					end
-				end
-
-				default : begin
-					status = ERROR;
-					`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-						". Expecting a table row beginning with \"|\""})
-				end
-			endcase
-
-		end
-
-		table_row = new("table_row", table_row_value);
-		`push_onto_parser_stack(table_row)
-		
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_row exit", UVM_HIGH)
-		`uvm_message_add_tag("status", status.name())
-		`uvm_message_add_object(table_row)
-		`uvm_info_end
-		`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
-	endtask : parse_table_row
-
-
-	task gherkin_parser::parse_tag(ref gherkin_pkg::tag tag);
-		`uvm_fatal("PENDING", "")
-	endtask : parse_tag
+	`include "gherkin_parser/parse_table_row.svh"
+	`include "gherkin_parser/parse_tag.svh"
 
 
 	class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;
