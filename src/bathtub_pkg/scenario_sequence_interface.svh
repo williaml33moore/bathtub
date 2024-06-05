@@ -26,7 +26,8 @@ SOFTWARE.
 `define __SCENARIO_SEQUENCE_INTERFACE_SVH
 
 `include "pool_provider_interface.svh"
-`include "feature_sequence_interface.svh"
+
+typedef class feature_sequence_interface;
 
 	interface class scenario_sequence_interface extends pool_provider_interface;
 		pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);

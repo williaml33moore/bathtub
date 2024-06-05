@@ -22,11 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`include "step_definition_interface.svh"
-
 typedef class feature_sequence;
 typedef class scenario_sequence;
 typedef class step_nurture;
+typedef class step_definition_interface;
 
 	class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
@@ -39,7 +38,7 @@ typedef class step_nurture;
 		scenario_sequence current_scenario_seq;
 		int sequence_priority;
 		bit sequence_call_pre_post;
-      uvm_phase starting_phase;
+      	uvm_phase starting_phase;
 		string example_values[string];
 		string current_step_keyword;
 		bit dry_run;

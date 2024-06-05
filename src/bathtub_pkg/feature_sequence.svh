@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 `include "feature_sequence_interface.svh"
+
 typedef class pool_provider;
 
 	typedef class gherkin_document_runner;
