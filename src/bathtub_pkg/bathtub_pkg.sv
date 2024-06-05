@@ -87,11 +87,8 @@ package bathtub_pkg;
 	`include "gherkin_parser/parse_scenario_definition.svh"
 	`include "gherkin_parser/parse_scenario_outline.svh"
 	`include "gherkin_parser/parse_step.svh"
-	
+	`include "gherkin_parser/parse_step_argument.svh"
 
-	task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_argument);
-		`uvm_fatal("PENDING", "")
-	endtask : parse_step_argument
 
 	task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
 		string cell_value;
