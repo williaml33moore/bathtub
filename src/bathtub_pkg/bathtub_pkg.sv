@@ -88,29 +88,8 @@ package bathtub_pkg;
 	`include "gherkin_parser/parse_scenario_outline.svh"
 	`include "gherkin_parser/parse_step.svh"
 	`include "gherkin_parser/parse_step_argument.svh"
-
-
-	task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
-		string cell_value;
-		gherkin_pkg::table_cell_value table_cell_value;
-
-		cell_mbox.get(cell_value);
-
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell enter", UVM_HIGH)
-		`uvm_message_add_string(cell_value)
-		`uvm_info_end
-		`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
-
-		table_cell_value.value = cell_value;
-		table_cell = new("table_cell", table_cell_value);
-		`push_onto_parser_stack(table_cell)
-
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell exit", UVM_HIGH)
-		`uvm_message_add_tag("status", status.name())
-		`uvm_message_add_object(table_cell)
-		`uvm_info_end
-		`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
-	endtask : parse_table_cell
+	`include "gherkin_parser/parse_table_cell.svh"
+	
 
 	task gherkin_parser::parse_table_row(ref gherkin_pkg::table_row table_row);
 		line_value line_obj;
