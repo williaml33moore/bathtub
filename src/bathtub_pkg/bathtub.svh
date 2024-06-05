@@ -21,6 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+	typedef class gherkin_parser;
+	typedef class gherkin_document_printer;
+	typedef class gherkin_document_runner;
 
 	class bathtub extends uvm_object;
 

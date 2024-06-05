@@ -81,7 +81,8 @@ package bathtub_$vip_spec;
         path: `__FILE__,
         incdirs: '{
             "src/gherkin_pkg",
-            "src/bathtub_pkg"
+            "src/bathtub_pkg",
+            "src/bathtub_pkg/gherkin_parser"
         },
         files: '{
             "src/gherkin_pkg/gherkin_pkg.sv",

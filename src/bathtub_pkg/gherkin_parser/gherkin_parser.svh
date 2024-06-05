@@ -1,3 +1,43 @@
+/*
+MIT License
+
+Copyright (c) 2023 Everactive
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+`define push_onto_parser_stack(o) parser_stack.push_front(o);
+
+`ifdef BATHTUB__MULTILINE_MACRO_IS_OK
+
+`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin \
+status = ERROR; \
+`uvm_fatal(`get_scope_name(), "Visitor stack is empty") \
+end \
+else begin \
+uvm_object obj = parser_stack.pop_front(); \
+end
+
+`else // BATHTUB__MULTILINE_MACRO_IS_OK
+`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal(`get_scope_name(), "Visitor stack is empty") end else begin uvm_object obj = parser_stack.pop_front(); end
+`endif // BATHTUB__MULTILINE_MACRO_IS_OK
+
 	class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		typedef struct {
@@ -306,3 +346,19 @@
 		extern virtual task parse_tag(ref gherkin_pkg::tag tag);
 
 	endclass : gherkin_parser
+
+	`include "parse_background.svh"
+	`include "parse_comment.svh"
+	`include "parse_data_table.svh"
+	`include "parse_doc_string.svh"
+	`include "parse_examples.svh"
+	`include "parse_feature.svh"
+	`include "parse_gherkin_document.svh"
+	`include "parse_scenario.svh"
+	`include "parse_scenario_definition.svh"
+	`include "parse_scenario_outline.svh"
+	`include "parse_step.svh"
+	`include "parse_step_argument.svh"
+	`include "parse_table_cell.svh"
+	`include "parse_table_row.svh"
+	`include "parse_tag.svh"
