@@ -23,8 +23,11 @@ SOFTWARE.
 */
 
 `include "step_static_attributes_interface.svh"
+`include "bathtub_macros.sv"
+`include "uvm_macros.svh"
 
 typedef class bathtub_utils;
+`include "bathtub_utils.svh"
 
 class step_nature extends uvm_object implements step_static_attributes_interface;
 

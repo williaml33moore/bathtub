@@ -22,10 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
+`define __GHERKIN_DOCUMENT_RUNNER_SVH
+
+`include "uvm_macros.svh"
+`include "bathtub_macros.sv"
+
+import gherkin_pkg::gherkin_document;
+import uvm_pkg::*;
+
 typedef class feature_sequence;
+`include "feature_sequence.svh"
+
 typedef class scenario_sequence;
+`include "scenario_sequence.svh"
+
 typedef class step_nurture;
-typedef class step_definition_interface;
+`include "step_nurture.svh"
+
+typedef interface class step_definition_interface;
+`include "step_definition_interface.svh"
 
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
@@ -78,7 +94,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			uvm_sequence_base parent_sequence = null,
 			int sequence_priority = -1,
 			bit sequence_call_pre_post = 1,
-		uvm_phase starting_phase,
+			uvm_phase starting_phase,
 			bit dry_run = 0,
 			int starting_scenario_number = 0,
 			int stopping_scenario_number = 0
@@ -444,6 +460,6 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	endtask : visit_tag
 
-
-
 endclass : gherkin_document_runner
+
+`endif // __GHERKIN_DOCUMENT_RUNNER_SVH

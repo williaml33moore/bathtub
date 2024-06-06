@@ -25,6 +25,10 @@ SOFTWARE.
 `ifndef __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 
+`include "bathtub_pkg.svh"
+
+import uvm_pkg::*;
+
 interface class step_static_attributes_interface;
 	
 	// Set keyword

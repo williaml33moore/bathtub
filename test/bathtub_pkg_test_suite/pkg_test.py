@@ -13,5 +13,3 @@ def test_qrun(tmp_path):
     svunit_cmd = "runSVUnit --sim qrun --uvm --out " + str(tmp_path)
     assert subprocess.run(svunit_cmd, shell=True).returncode == 0
 
-if __name__ == "__main__":
-    test()

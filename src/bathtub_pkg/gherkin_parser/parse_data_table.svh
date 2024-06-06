@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __PARSE_DATA_TABLE_SVH
+`define __PARSE_DATA_TABLE_SVH
+
 task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
 	`uvm_fatal("PENDING", "")
 endtask : parse_data_table
+
+`endif // __PARSE_DATA_TABLE_SVH

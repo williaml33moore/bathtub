@@ -24,6 +24,8 @@ SOFTWARE.
 
 -incdir $BATHTUB_VIP_DIR/src/gherkin_pkg
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg
+-incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer
+-incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_runner
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv
 $BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv

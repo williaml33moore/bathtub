@@ -22,8 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import uvm_pkg::*;
+
 typedef class bathtub_utils;
+`include "bathtub_utils.svh"
+
 typedef class step_parameter_arg;
+`include "step_parameter_arg.svh"
+
+`include "bathtub_macros.sv"
 
 class step_parameters extends uvm_object;
 	protected step_parameter_arg argv[$];

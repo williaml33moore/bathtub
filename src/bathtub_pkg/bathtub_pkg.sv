@@ -22,19 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`include "uvm_macros.svh"
-`include "bathtub_macros.sv"
+//`include "uvm_macros.svh"
+//`include "bathtub_macros.sv"
 
 // ===================================================================
 package bathtub_pkg;
 // ===================================================================
 
-	import uvm_pkg::*;
-	
-	typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
-	
-	parameter byte CR = 13; // ASCII carriage return
-	parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
+	`include "bathtub_pkg.svh"
 	
 	`include "bathtub_utils.svh"
 	`include "line_value.svh"

@@ -26,6 +26,7 @@ SOFTWARE.
 `define __GHERKIN_PARSER_INTERFACE_SVH
 
 typedef class gherkin_doc_bundle;
+`include "gherkin_doc_bundle.svh"
 
 interface class gherkin_parser_interface;
 	pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);

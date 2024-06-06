@@ -24,6 +24,8 @@ SOFTWARE.
 
 -incdir ./gherkin_pkg
 -incdir ./bathtub_pkg
+-incdir ./bathtub_pkg/gherkin_document_printer
+-incdir ./bathtub_pkg/gherkin_document_runner
 -incdir ./bathtub_pkg/gherkin_parser
 ./gherkin_pkg/gherkin_pkg.sv
 ./bathtub_pkg/bathtub_pkg.sv

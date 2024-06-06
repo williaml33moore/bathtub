@@ -22,6 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __STEP_PARAMETER_ARG_SVH
+`define __STEP_PARAMETER_ARG_SVH
+
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
 class step_parameter_arg extends uvm_object;
 	typedef enum {INVALID, INT, REAL, STRING} arg_type_t;
 	protected int int_arg;
@@ -98,3 +104,5 @@ class step_parameter_arg extends uvm_object;
 	endfunction : as_string
 	
 endclass : step_parameter_arg
+
+`endif // __STEP_PARAMETER_ARG_SVH
