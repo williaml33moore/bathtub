@@ -22,6 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __GHERKIN_DOCUMENT_PRINTER_SVH
+`define __GHERKIN_DOCUMENT_PRINTER_SVH
+
+import uvm_pkg::*;
+import gherkin_pkg::gherkin_document;
+
+`include "bathtub_pkg.svh"
+`include "uvm_macros.svh"
+
 class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;
 
 	gherkin_pkg::gherkin_document document;
@@ -250,3 +259,5 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_tag
 
 endclass : gherkin_document_printer
+
+`endif // __GHERKIN_DOCUMENT_PRINTER_SVH

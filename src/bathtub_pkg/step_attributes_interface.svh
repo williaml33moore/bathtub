@@ -25,9 +25,14 @@ SOFTWARE.
 `ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_ATTRIBUTES_INTERFACE_SVH
 
-typedef class feature_sequence_interface;
-typedef class scenario_sequence_interface;
-typedef class step_static_attributes_interface;
+typedef interface class feature_sequence_interface;
+`include "feature_sequence_interface.svh"
+
+typedef interface class scenario_sequence_interface;
+`include "scenario_sequence_interface.svh"
+
+typedef interface class step_static_attributes_interface;
+`include "step_static_attributes_interface.svh"
 
 interface class step_attributes_interface;
 	pure virtual function string get_runtime_keyword();

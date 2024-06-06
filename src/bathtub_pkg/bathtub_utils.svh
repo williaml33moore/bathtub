@@ -22,6 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __BATHTUB_UTILS_SVH
+`define __BATHTUB_UTILS_SVH
+
+`include "bathtub_pkg.svh"
+
+import uvm_pkg::*;
+
 virtual class bathtub_utils;
 // ===================================================================
 	static function bit split_string;
@@ -307,3 +314,5 @@ virtual class bathtub_utils;
 	endfunction : trim_white_space
 
 endclass : bathtub_utils
+
+`endif // __BATHTUB_UTILS_SVH

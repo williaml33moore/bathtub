@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __POOL_PROVIDER_SVH
+`define __POOL_PROVIDER_SVH
+
 `include "pool_provider_interface.svh"
 
 class pool_provider implements pool_provider_interface;
@@ -107,3 +110,5 @@ class pool_provider implements pool_provider_interface;
 	endfunction : get_uvm_object_pool
 
 endclass : pool_provider
+
+`endif // __POOL_PROVIDER_SVH

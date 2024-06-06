@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __LINE_VALUE_SVH
+`define __LINE_VALUE_SVH
+
 class line_value;
 	string text;
 	string file_name;
@@ -35,3 +38,5 @@ class line_value;
 		this.eof = eof;
 	endfunction : new
 endclass : line_value
+
+`endif // __LINE_VALUE_SVH

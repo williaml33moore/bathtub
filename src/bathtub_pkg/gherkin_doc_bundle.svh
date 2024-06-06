@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __GHERKIN_DOC_BUNDLE_SVH
+`define __GHERKIN_DOC_BUNDLE_SVH
+
 // Bundle the document with its file name externally.
 // The AST doesn't provide a place for the file name inside the document.
 class gherkin_doc_bundle;
@@ -34,3 +37,5 @@ class gherkin_doc_bundle;
 	endfunction : new
 	
 endclass : gherkin_doc_bundle
+
+`endif // __GHERKIN_DOC_BUNDLE_SVH

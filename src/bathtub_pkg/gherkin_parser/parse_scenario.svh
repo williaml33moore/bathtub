@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __PARSE_SCENARIO_SVH
+`define __PARSE_SCENARIO_SVH
+
 task gherkin_parser::parse_scenario(ref gherkin_pkg::scenario scenario);
 	line_value line_obj;
 	line_analysis_result_t line_analysis_result;
@@ -140,3 +143,5 @@ task gherkin_parser::parse_scenario(ref gherkin_pkg::scenario scenario);
 	`uvm_info_end
 	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_scenario
+
+`endif // __PARSE_SCENARIO_SVH

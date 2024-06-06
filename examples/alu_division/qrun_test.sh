@@ -2,7 +2,7 @@
 
 
 qrun $BATHTUB_VIP_DIR/vip-spec.sv &&
-cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature .
+cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
 qrun \
 -uvm \
 -uvmhome $UVM_HOME \

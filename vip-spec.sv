@@ -82,6 +82,8 @@ package bathtub_$vip_spec;
         incdirs: '{
             "src/gherkin_pkg",
             "src/bathtub_pkg",
+            "src/bathtub_pkg/gherkin_document_printer",
+            "src/bathtub_pkg/gherkin_document_runner",
             "src/bathtub_pkg/gherkin_parser"
         },
         files: '{

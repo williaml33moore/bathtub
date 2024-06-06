@@ -21,10 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+import uvm_pkg::*;
+
 typedef class gherkin_parser;
+`include "gherkin_parser.svh"
+
 typedef class gherkin_document_printer;
+`include "gherkin_document_printer.svh"
+
 typedef class gherkin_document_runner;
+`include "gherkin_document_runner.svh"
+
 typedef class gherkin_doc_bundle;
+`include "gherkin_doc_bundle.svh"
 
 class bathtub extends uvm_object;
 

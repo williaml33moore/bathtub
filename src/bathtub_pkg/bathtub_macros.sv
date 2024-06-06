@@ -98,12 +98,12 @@ endfunction : set_current_scenario_sequence
 
 `define step_parameter_get_args_begin(f=get_step_attributes().get_expression())\
 begin : step_parameter_get_args\
-    step_parameters __step_params;\
+    bathtub_pkg::step_parameters __step_params;\
     int __next = 0;\
-	__step_params = step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
+	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define step_parameter_get_args_begin(f=get_step_attributes().get_expression()) begin : step_parameter_get_args    step_parameters __step_params;    int __next = 0;	__step_params = step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
+`define step_parameter_get_args_begin(f=get_step_attributes().get_expression()) begin : step_parameter_get_args    bathtub_pkg::step_parameters __step_params;    int __next = 0;	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 `define step_parameter_get_arg_object(i) __step_params.get_arg(i)

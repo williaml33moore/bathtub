@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __PARSE_TABLE_CELL_SVH
+`define __PARSE_TABLE_CELL_SVH
+
 task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
 	string cell_value;
 	gherkin_pkg::table_cell_value table_cell_value;
@@ -43,3 +46,5 @@ task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
 	`uvm_info_end
 	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_table_cell
+
+`endif // __PARSE_TABLE_CELL_SVH

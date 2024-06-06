@@ -22,7 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __STEP_NURTURE_SVH
+`define __STEP_NURTURE_SVH
+
 `include "step_attributes_interface.svh"
+`include "uvm_macros.svh"
 
 class step_nurture extends uvm_object implements step_attributes_interface;
 
@@ -127,3 +131,5 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	endfunction : set_current_scenario_sequence
 
 endclass : step_nurture
+
+`endif // __STEP_NURTURE_SVH

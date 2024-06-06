@@ -25,7 +25,8 @@ SOFTWARE.
 `ifndef __STEP_DEFINITION_INTERFACE_SVH
 `define __STEP_DEFINITION_INTERFACE_SVH
 
-typedef class step_attributes_interface;
+typedef interface class step_attributes_interface;
+`include "step_attributes_interface.svh"
 
 interface class step_definition_interface;
 	pure virtual function step_attributes_interface get_step_attributes();
