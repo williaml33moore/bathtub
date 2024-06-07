@@ -2,27 +2,27 @@ import subprocess
 import pytest
 
 classes_under_test = [
-    "bathtub_pkg.svh",
-    "bathtub.svh",
-    "bathtub_utils.svh",
-    "feature_sequence_interface.svh",
-    "feature_sequence.svh",
-    "gherkin_doc_bundle.svh",
-    "line_value.svh",
-    "pool_provider_interface.svh",
-    "pool_provider.svh",
-    "scenario_sequence_interface.svh",
-    "scenario_sequence.svh",
-    "step_attributes_interface.svh",
-    "step_definition_interface.svh",
-    "step_nature.svh",
-    "step_nurture.svh",
-    "step_parameter_arg.svh",
-    "step_parameters.svh",
-    "step_static_attributes_interface.svh",
-    "gherkin_document_printer.svh",
-    "gherkin_document_runner.svh",
-    "gherkin_parser.svh",
+    "bathtub_pkg/bathtub_pkg.svh",
+    "bathtub_pkg/bathtub.svh",
+    "bathtub_pkg/bathtub_utils.svh",
+    "bathtub_pkg/feature_sequence_interface.svh",
+    "bathtub_pkg/feature_sequence.svh",
+    "bathtub_pkg/gherkin_doc_bundle.svh",
+    "bathtub_pkg/line_value.svh",
+    "bathtub_pkg/pool_provider_interface.svh",
+    "bathtub_pkg/pool_provider.svh",
+    "bathtub_pkg/scenario_sequence_interface.svh",
+    "bathtub_pkg/scenario_sequence.svh",
+    "bathtub_pkg/step_attributes_interface.svh",
+    "bathtub_pkg/step_definition_interface.svh",
+    "bathtub_pkg/step_nature.svh",
+    "bathtub_pkg/step_nurture.svh",
+    "bathtub_pkg/step_parameter_arg.svh",
+    "bathtub_pkg/step_parameters.svh",
+    "bathtub_pkg/step_static_attributes_interface.svh",
+    "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh",
+    "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh",
+    "bathtub_pkg/gherkin_parser/gherkin_parser.svh",
 ]
 
 @pytest.fixture(params=classes_under_test)
@@ -49,11 +49,6 @@ def test_class_dependencies(tmp_path, simulator, class_under_test):
 -uvmhome $UVM_HOME \
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
 -incdir $BATHTUB_VIP_DIR/src \
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_runner \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser \
 testbench.sv \
 #
 """
@@ -76,11 +71,6 @@ def test_macro_dependencies(tmp_path, simulator):
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
 $BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
 -incdir $BATHTUB_VIP_DIR/src \
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_runner \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser \
 testbench.sv \
 #
 """
@@ -102,11 +92,6 @@ $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
 $BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
 $BATHTUB_VIP_DIR/src/bathtub_macros.sv \
 -incdir $BATHTUB_VIP_DIR/src \
--incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_runner \
--incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_parser \
 testbench.sv \
 #
 """

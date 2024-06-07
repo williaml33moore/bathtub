@@ -25,7 +25,7 @@ SOFTWARE.
 `ifndef __STEP_NURTURE_SVH
 `define __STEP_NURTURE_SVH
 
-`include "step_attributes_interface.svh"
+`include "bathtub_pkg/step_attributes_interface.svh"
 `include "uvm_macros.svh"
 
 class step_nurture extends uvm_object implements step_attributes_interface;

@@ -28,7 +28,7 @@ SOFTWARE.
 import uvm_pkg::*;
 import gherkin_pkg::gherkin_document;
 
-`include "bathtub_pkg.svh"
+`include "bathtub_pkg/bathtub_pkg.svh"
 `include "uvm_macros.svh"
 
 class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;

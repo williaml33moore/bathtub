@@ -25,7 +25,7 @@ SOFTWARE.
 `ifndef __POOL_PROVIDER_SVH
 `define __POOL_PROVIDER_SVH
 
-`include "pool_provider_interface.svh"
+`include "bathtub_pkg/pool_provider_interface.svh"
 
 class pool_provider implements pool_provider_interface;
 	uvm_pool#(string, shortint) shortint_pool;

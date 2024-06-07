@@ -25,7 +25,7 @@ SOFTWARE.
 `ifndef __FEATURE_SEQUENCE_INTERFACE_SVH
 `define __FEATURE_SEQUENCE_INTERFACE_SVH
 
-`include "pool_provider_interface.svh"
+`include "bathtub_pkg/pool_provider_interface.svh"
 
 interface class feature_sequence_interface extends pool_provider_interface;
 endclass : feature_sequence_interface

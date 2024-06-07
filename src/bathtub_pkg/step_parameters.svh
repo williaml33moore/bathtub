@@ -25,10 +25,10 @@ SOFTWARE.
 import uvm_pkg::*;
 
 typedef class bathtub_utils;
-`include "bathtub_utils.svh"
+`include "bathtub_pkg/bathtub_utils.svh"
 
 typedef class step_parameter_arg;
-`include "step_parameter_arg.svh"
+`include "bathtub_pkg/step_parameter_arg.svh"
 
 `include "bathtub_macros.sv"
 

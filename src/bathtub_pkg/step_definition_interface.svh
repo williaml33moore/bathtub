@@ -26,7 +26,7 @@ SOFTWARE.
 `define __STEP_DEFINITION_INTERFACE_SVH
 
 typedef interface class step_attributes_interface;
-`include "step_attributes_interface.svh"
+`include "bathtub_pkg/step_attributes_interface.svh"
 
 interface class step_definition_interface;
 	pure virtual function step_attributes_interface get_step_attributes();

@@ -25,7 +25,7 @@ SOFTWARE.
 `ifndef __BATHTUB_UTILS_SVH
 `define __BATHTUB_UTILS_SVH
 
-`include "bathtub_pkg.svh"
+`include "bathtub_pkg/bathtub_pkg.svh"
 
 import uvm_pkg::*;
 

@@ -32,16 +32,16 @@ import gherkin_pkg::gherkin_document;
 import uvm_pkg::*;
 
 typedef class feature_sequence;
-`include "feature_sequence.svh"
+`include "bathtub_pkg/feature_sequence.svh"
 
 typedef class scenario_sequence;
-`include "scenario_sequence.svh"
+`include "bathtub_pkg/scenario_sequence.svh"
 
 typedef class step_nurture;
-`include "step_nurture.svh"
+`include "bathtub_pkg/step_nurture.svh"
 
 typedef interface class step_definition_interface;
-`include "step_definition_interface.svh"
+`include "bathtub_pkg/step_definition_interface.svh"
 
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 

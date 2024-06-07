@@ -25,15 +25,15 @@ SOFTWARE.
 `ifndef __GHERKIN_PARSER_SVH
 `define __GHERKIN_PARSER_SVH
 
-`include "gherkin_parser_interface.svh"
+`include "bathtub_pkg/gherkin_parser/gherkin_parser_interface.svh"
 `include "bathtub_macros.sv"
 `include "uvm_macros.svh"
 
 typedef class line_value;
-`include "line_value.svh"
+`include "bathtub_pkg/line_value.svh"
 
 typedef class bathtub_utils;
-`include "bathtub_utils.svh"
+`include "bathtub_pkg/bathtub_utils.svh"
 
 import gherkin_pkg::gherkin_document;
 
@@ -417,20 +417,20 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 endclass : gherkin_parser
 
-`include "parse_background.svh"
-`include "parse_comment.svh"
-`include "parse_data_table.svh"
-`include "parse_doc_string.svh"
-`include "parse_examples.svh"
-`include "parse_feature.svh"
-`include "parse_gherkin_document.svh"
-`include "parse_scenario.svh"
-`include "parse_scenario_definition.svh"
-`include "parse_scenario_outline.svh"
-`include "parse_step.svh"
-`include "parse_step_argument.svh"
-`include "parse_table_cell.svh"
-`include "parse_table_row.svh"
-`include "parse_tag.svh"
+`include "bathtub_pkg/gherkin_parser/parse_background.svh"
+`include "bathtub_pkg/gherkin_parser/parse_comment.svh"
+`include "bathtub_pkg/gherkin_parser/parse_data_table.svh"
+`include "bathtub_pkg/gherkin_parser/parse_doc_string.svh"
+`include "bathtub_pkg/gherkin_parser/parse_examples.svh"
+`include "bathtub_pkg/gherkin_parser/parse_feature.svh"
+`include "bathtub_pkg/gherkin_parser/parse_gherkin_document.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario_definition.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario_outline.svh"
+`include "bathtub_pkg/gherkin_parser/parse_step.svh"
+`include "bathtub_pkg/gherkin_parser/parse_step_argument.svh"
+`include "bathtub_pkg/gherkin_parser/parse_table_cell.svh"
+`include "bathtub_pkg/gherkin_parser/parse_table_row.svh"
+`include "bathtub_pkg/gherkin_parser/parse_tag.svh"
 
 `endif // __GHERKIN_PARSER_SVH

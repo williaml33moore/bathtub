@@ -25,13 +25,13 @@ SOFTWARE.
 `ifndef __SCENARIO_SEQUENCE_SVH
 `define __SCENARIO_SEQUENCE_SVH
 
-`include "scenario_sequence_interface.svh"
+`include "bathtub_pkg/scenario_sequence_interface.svh"
 
 typedef class gherkin_document_runner;
-`include "gherkin_document_runner.svh"
+`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 
 typedef class pool_provider;
-`include "pool_provider.svh"
+`include "bathtub_pkg/pool_provider.svh"
 
 class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
 	gherkin_pkg::scenario scenario;

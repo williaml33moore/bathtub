@@ -25,10 +25,10 @@ SOFTWARE.
 `ifndef __SCENARIO_SEQUENCE_INTERFACE_SVH
 `define __SCENARIO_SEQUENCE_INTERFACE_SVH
 
-`include "pool_provider_interface.svh"
+`include "bathtub_pkg/pool_provider_interface.svh"
 
 typedef interface class feature_sequence_interface;
-`include "feature_sequence_interface.svh"
+`include "bathtub_pkg/feature_sequence_interface.svh"
 
 interface class scenario_sequence_interface extends pool_provider_interface;
 	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
