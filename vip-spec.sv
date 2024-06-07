@@ -80,6 +80,7 @@ package bathtub_$vip_spec;
         homepage: "https://bathtubbdd.dev",
         path: `__FILE__,
         incdirs: '{
+            "src",
             "src/gherkin_pkg",
             "src/bathtub_pkg",
             "src/bathtub_pkg/gherkin_document_printer",

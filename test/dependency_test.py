@@ -48,6 +48,7 @@ def test_class_dependencies(tmp_path, simulator, class_under_test):
 -uvm \
 -uvmhome $UVM_HOME \
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
+-incdir $BATHTUB_VIP_DIR/src \
 -incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
@@ -74,6 +75,7 @@ def test_macro_dependencies(tmp_path, simulator):
 -uvmhome $UVM_HOME \
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
 $BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
+-incdir $BATHTUB_VIP_DIR/src \
 -incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
@@ -98,7 +100,8 @@ def test_macro_command_line_dependencies(tmp_path, simulator):
 -uvmhome $UVM_HOME \
 $BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
 $BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_macros.sv \
+$BATHTUB_VIP_DIR/src/bathtub_macros.sv \
+-incdir $BATHTUB_VIP_DIR/src \
 -incdir $BATHTUB_VIP_DIR/src/gherkin_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg \
 -incdir $BATHTUB_VIP_DIR/src/bathtub_pkg/gherkin_document_printer \
