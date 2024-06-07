@@ -49,7 +49,7 @@ virtual class bathtub_utils;
 */
 		// Parameters:
 
-		input string str;           // Incoming string of white space-separated tokans
+		input string str;           // Incoming string of white space-separated tokens
 
 		ref string tokens[$];   // Fills given queue with individual tokens
 
@@ -117,6 +117,53 @@ virtual class bathtub_utils;
 		end
 		return ok;
 	endfunction : split_string
+
+// ===================================================================
+	static function void split_lines;
+// ===================================================================
+/*			`FUNCTION_METADATA('{
+
+				description:
+				"Take a string containing lines separated by newlines, extract the lines, and return them in the supplied SystemVerilog queue.",
+
+				details:
+				"",
+
+				categories:
+				"utility",
+
+				string: ""
+			})
+*/
+		// Parameters:
+
+		input string str;           // Incoming string of newline-separated lines
+
+		ref string lines[$];   // Fills given queue with individual lines
+
+// ===================================================================
+		byte c;
+		string line;
+
+		lines.delete();
+		line = "";
+		foreach (str[i]) begin
+			c = str.getc(i);
+			case (c)
+				"\n", CR : begin
+					lines.push_back(line);
+					line = "";
+				end
+				default : begin
+					line = {line, c};
+				end
+			endcase
+		end
+
+		if (line.len() > 0) begin
+			lines.push_back(line);
+		end
+	endfunction : split_lines
 	
 	
 	static function string get_conversion_spec(string str);

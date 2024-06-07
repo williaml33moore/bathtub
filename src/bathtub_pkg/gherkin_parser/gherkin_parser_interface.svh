@@ -31,6 +31,7 @@ typedef class gherkin_doc_bundle;
 interface class gherkin_parser_interface;
 	pure virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
 	pure virtual task parse_feature_lines(const ref string feature_array[], output gherkin_doc_bundle gherkin_doc_bndl);
+	pure virtual task parse_feature_string(input string feature, output gherkin_doc_bundle gherkin_doc_bndl);
 endclass : gherkin_parser_interface;
 
 `endif // __GHERKIN_PARSER_INTERFACE_SVH

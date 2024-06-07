@@ -208,6 +208,63 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 	endtask : parse_feature_lines
 
+	
+	virtual task parse_feature_string(input string feature, output gherkin_doc_bundle gherkin_doc_bndl);
+		line_value line_obj;
+		int line_number;
+		gherkin_pkg::gherkin_document gherkin_doc;
+		static string feature_file_name = "";
+		string feature_array[$];
+			
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string enter", UVM_HIGH);
+		`uvm_message_add_string(feature_file_name)
+		`uvm_info_end
+
+		status = OK;
+
+		fork
+			begin : start_gherkin_document_parser
+				parse_gherkin_document(gherkin_doc);
+				`pop_from_parser_stack(gherkin_doc)
+			end
+
+			begin : read_feature_lines_and_feed_lines_to_parser
+
+				bathtub_utils::split_lines(feature, feature_array);
+
+				line_number = 1;
+				foreach (feature_array[i]) begin
+					string line_buf;
+
+					line_buf = feature_array[i];
+					line_obj = new(line_buf, feature_file_name, line_number);
+					line_number++;
+					line_mbox.put(line_obj);
+				end
+
+				line_obj = new(.eof (1),
+					.text (""),
+					.file_name (feature_file_name)
+				); // Special signal that lines are done
+				line_mbox.put(line_obj);
+			end
+		join
+
+		gherkin_doc_bndl = null;
+		if (status == OK) begin
+			gherkin_doc_bndl = new(
+				.document (gherkin_doc),
+				.file_name (feature_file_name)
+			);
+		end
+		
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string exit", UVM_HIGH);
+		`uvm_message_add_tag("status", status.name)
+		`uvm_message_add_object(gherkin_doc)
+		`uvm_info_end
+
+	endtask : parse_feature_string
+
 
 	function void analyze_line(string line_buf, ref line_analysis_result_t result);
 		int start_of_keyword;

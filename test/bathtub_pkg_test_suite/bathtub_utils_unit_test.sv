@@ -88,7 +88,7 @@ module bathtub_utils_unit_test;
 
 
 	`SVTEST(split_string_should_split_strings_on_white_space)
-	// ========================================================
+	// ======================================================
 	string str;
 	string tokens[$];
 
@@ -100,6 +100,55 @@ module bathtub_utils_unit_test;
 	`FAIL_UNLESS_STR_EQUAL(tokens[0], "alpha")
 	`FAIL_UNLESS_STR_EQUAL(tokens[1], "bravo")
 	`FAIL_UNLESS_STR_EQUAL(tokens[2], "charlie")
+	`SVTEST_END
+
+
+	`SVTEST(split_lines_should_split_strings_on_newlines)
+	// ==================================================
+	struct {
+		string str;
+		string expected_lines[];
+	} examples[];
+	string str;
+	string actual_lines[$];
+
+	examples = '{
+		'{
+			str : "alpha\nbravo\ncharlie\ndelta\necho\n",
+			expected_lines : {"alpha", "bravo", "charlie", "delta", "echo"}
+		},
+		'{
+			str : "alpha\nbravo\ncharlie\ndelta\necho",
+			expected_lines : {"alpha", "bravo", "charlie", "delta", "echo"}
+		},
+		'{
+			str : "\nalpha\n\ncharlie\ndelta\n",
+			expected_lines : {"", "alpha", "", "charlie", "delta"}
+		},
+		'{
+			str : "\nalpha\n\ncharlie\n\n",
+			expected_lines : {"", "alpha", "", "charlie", ""}
+		},
+		'{
+			str : "\n",
+			expected_lines : {""}
+		},
+		'{
+			str : "",
+			expected_lines : {}
+		}
+	};
+
+	foreach (examples[i]) begin
+		str = examples[i].str;
+		bathtub_pkg::bathtub_utils::split_lines(str, actual_lines);
+
+		`FAIL_UNLESS_EQUAL(actual_lines.size(), examples[i].expected_lines.size())
+
+		foreach (examples[i].expected_lines[j]) begin
+			`FAIL_UNLESS_STR_EQUAL(actual_lines[j], examples[i].expected_lines[j])
+		end
+	end
 	`SVTEST_END
 
 
