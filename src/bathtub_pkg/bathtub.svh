@@ -91,7 +91,7 @@ class bathtub extends uvm_object;
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			
-			`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
+			`uvm_info(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
 
 			parser = gherkin_parser::type_id::create("parser");
 			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);

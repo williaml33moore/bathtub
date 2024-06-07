@@ -32,7 +32,7 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_outline enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_outline enter", UVM_HIGH)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -40,7 +40,7 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 		`uvm_message_add_string(line_obj.text)
 	end
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 
 	if (!line_obj.eof) begin
 
@@ -82,7 +82,7 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 								end
 								else begin
 									status = ERROR;
-									`uvm_error(`get_scope_name(), "Can't have a step after a scenario outline example")
+									`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "Can't have a step after a scenario outline example")
 								end
 							end
 							// Can't have a description after steps
@@ -133,7 +133,7 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 											end
 											else begin
 												status = ERROR;
-												`uvm_error(`get_scope_name(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
+												`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
 											end
 										end
 									endcase
@@ -146,7 +146,7 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
 					". Expecting \"Scenario:\" or \"Example\""})
 			end
 		endcase
@@ -155,11 +155,11 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 	scenario_outline = new("scenario_outline", scenario_outline_value);
 	`push_onto_parser_stack(scenario_outline)
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_outline exit", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_outline exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(scenario_outline)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_scenario_outline
 
 `endif // __PARSE_SCENARIO_OUTLINE_SVH

@@ -25,8 +25,8 @@ SOFTWARE.
 `ifndef __BATHTUB_MACROS_SV
 `define __BATHTUB_MACROS_SV
 
-// Macros for use in step definitions
-// ==================================
+// Step Definition Macros
+// ======================
 `define Given `BATHTUB__GIVEN
 `define When `BATHTUB__WHEN
 `define Then `BATHTUB__THEN
@@ -38,6 +38,8 @@ SOFTWARE.
 `define step_parameter_get_next_arg_as `BATHTUB__STEP_PARAMETER_GET_NEXT_ARG_AS
 `define step_parameter_num_args `BATHTUB__STEP_PARAMETER_NUM_ARGS
 `define step_parameter_get_args_end `BATHTUB__STEP_PARAMETER_GET_ARGS_END
+
+// ---
 
 `ifdef EDAPG
 `undef BATHTUB__MULTILINE_MACRO_IS_OK
@@ -132,6 +134,6 @@ begin : step_parameter_get_args\
 
 `define BATHTUB__STEP_PARAMETER_GET_ARGS_END end : step_parameter_get_args
 
-`define get_scope_name(d) ($sformatf("%m")) // TODO - Extract the last segment
+`define BATHTUB__GET_SCOPE_NAME(d) ($sformatf("%m")) // TODO - Extract the last segment
 
 `endif // __BATHTUB_MACROS_SV

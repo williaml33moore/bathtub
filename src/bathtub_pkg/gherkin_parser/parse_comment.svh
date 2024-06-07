@@ -32,7 +32,7 @@ task gherkin_parser::parse_comment(ref gherkin_pkg::comment comment);
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_comment enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_comment enter", UVM_HIGH)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -40,7 +40,7 @@ task gherkin_parser::parse_comment(ref gherkin_pkg::comment comment);
 		`uvm_message_add_string(line_obj.text)
 	end
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 
 	if (!line_obj.eof) begin
 		analyze_line(line_obj.text, line_analysis_result);
@@ -54,7 +54,7 @@ task gherkin_parser::parse_comment(ref gherkin_pkg::comment comment);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
 				". Expecting \"#\""})
 			end
 		endcase
@@ -63,11 +63,11 @@ task gherkin_parser::parse_comment(ref gherkin_pkg::comment comment);
 	comment = new("comment", comment_value);
 	`push_onto_parser_stack(comment)
 
-	`uvm_info_begin(`get_scope_name(), "parse_comment exit", UVM_HIGH);
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_comment exit", UVM_HIGH);
 	`uvm_message_add_tag("status", status.name)
 	`uvm_message_add_object(comment)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_comment
 
 `endif // __PARSE_COMMENT_SVH

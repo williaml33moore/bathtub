@@ -31,7 +31,7 @@ task gherkin_parser::parse_scenario_definition(ref gherkin_pkg::scenario_definit
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_definition enter", UVM_HIGH)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -54,13 +54,13 @@ task gherkin_parser::parse_scenario_definition(ref gherkin_pkg::scenario_definit
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
 					". Expecting \"Background:\", \"Scenario\", \"Example\", \"Scenario Outline\", or \"Scenario Template\""})
 			end
 		endcase
 	end
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_definition exit", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_definition exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(scenario_definition)
 	`uvm_info_end

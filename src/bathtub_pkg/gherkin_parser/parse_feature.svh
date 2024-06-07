@@ -32,7 +32,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature enter", UVM_HIGH)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -40,7 +40,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 		`uvm_message_add_string(line_obj.text)
 	end
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 
 	if (!line_obj.eof) begin
 
@@ -78,7 +78,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 								end
 								else begin
 									status = ERROR;
-									`uvm_error(`get_scope_name(), "A feature can have only one background")
+									`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A feature can have only one background")
 								end
 							end
 						end
@@ -121,7 +121,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
 					". Expecting \"Feature:\"."})
 			end
 		endcase
@@ -130,11 +130,11 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 	feature = new("feature", feature_value);
 	`push_onto_parser_stack(feature)
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature exit", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(feature)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_feature
 
 `endif // __PARSE_FEATURE_SVH

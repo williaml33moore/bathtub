@@ -31,20 +31,20 @@ task gherkin_parser::parse_table_cell(ref gherkin_pkg::table_cell table_cell);
 
 	cell_mbox.get(cell_value);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_table_cell enter", UVM_HIGH)
 	`uvm_message_add_string(cell_value)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 
 	table_cell_value.value = cell_value;
 	table_cell = new("table_cell", table_cell_value);
 	`push_onto_parser_stack(table_cell)
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_table_cell exit", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_table_cell exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(table_cell)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_table_cell
 
 `endif // __PARSE_TABLE_CELL_SVH
