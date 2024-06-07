@@ -25,13 +25,13 @@ SOFTWARE.
 `ifndef __FEATURE_SEQUENCE_SVH
 `define __FEATURE_SEQUENCE_SVH
 
-`include "feature_sequence_interface.svh"
+`include "bathtub_pkg/feature_sequence_interface.svh"
 
 typedef class pool_provider;
-`include "pool_provider.svh"
+`include "bathtub_pkg/pool_provider.svh"
 
 typedef class gherkin_document_runner;
-`include "gherkin_document_runner.svh"
+`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 
 class feature_sequence extends uvm_sequence implements feature_sequence_interface;
 	gherkin_pkg::feature feature;

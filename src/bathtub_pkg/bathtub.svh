@@ -25,16 +25,16 @@ SOFTWARE.
 import uvm_pkg::*;
 
 typedef class gherkin_parser;
-`include "gherkin_parser.svh"
+`include "bathtub_pkg/gherkin_parser/gherkin_parser.svh"
 
 typedef class gherkin_document_printer;
-`include "gherkin_document_printer.svh"
+`include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
 
 typedef class gherkin_document_runner;
-`include "gherkin_document_runner.svh"
+`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 
 typedef class gherkin_doc_bundle;
-`include "gherkin_doc_bundle.svh"
+`include "bathtub_pkg/gherkin_doc_bundle.svh"
 
 class bathtub extends uvm_object;
 
@@ -91,7 +91,7 @@ class bathtub extends uvm_object;
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			
-			`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
+			`uvm_info(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
 
 			parser = gherkin_parser::type_id::create("parser");
 			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);

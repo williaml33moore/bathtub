@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+-incdir .
 -incdir ./gherkin_pkg
 -incdir ./bathtub_pkg
 -incdir ./bathtub_pkg/gherkin_document_printer

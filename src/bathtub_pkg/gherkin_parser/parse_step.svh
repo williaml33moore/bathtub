@@ -32,7 +32,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_step enter", UVM_HIGH)
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_step enter", UVM_HIGH)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -40,7 +40,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 		`uvm_message_add_string(line_obj.text)
 	end
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 
 	if (!line_obj.eof) begin
 
@@ -81,7 +81,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 								end
 								else begin
 									status = ERROR;
-									`uvm_error(`get_scope_name(), "A step can have only one argument")
+									`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A step can have only one argument")
 								end
 							end
 						end
@@ -99,7 +99,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 								end
 								else begin
 									status = ERROR;
-									`uvm_error(`get_scope_name(), "A step can have only one argument")
+									`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A step can have only one argument")
 								end
 							end
 						end
@@ -114,7 +114,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`get_scope_name(), {"Unexpected keyword: ", line_analysis_result.token_before_space,
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_space,
 					". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""})
 			end
 		endcase
@@ -123,11 +123,11 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 	step = new("step", step_value);
 	`push_onto_parser_stack(step)
 
-	`uvm_info_begin(`get_scope_name(), "parse_step exit", UVM_HIGH);
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step exit", UVM_HIGH);
 	`uvm_message_add_tag("status", status.name)
 	`uvm_message_add_object(step)
 	`uvm_info_end
-	`uvm_info(`get_scope_name(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_step
 
 `endif // __PARSE_STEP_SVH

@@ -29,15 +29,15 @@ package bathtub_pkg;
 // ===================================================================
 
 	// Main entry point
-	`include "bathtub.svh"
+	`include "bathtub_pkg/bathtub.svh"
 
 	// Resources for step definitions
-	`include "step_definition_interface.svh"
-	`include "step_static_attributes_interface.svh"
-	`include "step_attributes_interface.svh"
-	`include "step_nature.svh"
-	`include "step_parameters.svh"
-	`include "feature_sequence_interface.svh"
-	`include "scenario_sequence_interface.svh"
+	`include "bathtub_pkg/step_definition_interface.svh"
+	`include "bathtub_pkg/step_static_attributes_interface.svh"
+	`include "bathtub_pkg/step_attributes_interface.svh"
+	`include "bathtub_pkg/step_nature.svh"
+	`include "bathtub_pkg/step_parameters.svh"
+	`include "bathtub_pkg/feature_sequence_interface.svh"
+	`include "bathtub_pkg/scenario_sequence_interface.svh"
 
 endpackage : bathtub_pkg

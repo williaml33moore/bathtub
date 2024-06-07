@@ -25,15 +25,15 @@ SOFTWARE.
 `ifndef __GHERKIN_PARSER_SVH
 `define __GHERKIN_PARSER_SVH
 
-`include "gherkin_parser_interface.svh"
+`include "bathtub_pkg/gherkin_parser/gherkin_parser_interface.svh"
 `include "bathtub_macros.sv"
 `include "uvm_macros.svh"
 
 typedef class line_value;
-`include "line_value.svh"
+`include "bathtub_pkg/line_value.svh"
 
 typedef class bathtub_utils;
-`include "bathtub_utils.svh"
+`include "bathtub_pkg/bathtub_utils.svh"
 
 import gherkin_pkg::gherkin_document;
 
@@ -44,14 +44,14 @@ import gherkin_pkg::gherkin_document;
 
 `define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin \
 status = ERROR; \
-`uvm_fatal(`get_scope_name(), "Visitor stack is empty") \
+`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty") \
 end \
 else begin \
 uvm_object obj = parser_stack.pop_front(); \
 end
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal(`get_scope_name(), "Visitor stack is empty") end else begin uvm_object obj = parser_stack.pop_front(); end
+`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty") end else begin uvm_object obj = parser_stack.pop_front(); end
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 class gherkin_parser extends uvm_object implements gherkin_parser_interface;
@@ -93,11 +93,11 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		int line_number;
 		gherkin_pkg::gherkin_document gherkin_doc;
 			
-		`uvm_info_begin(`get_scope_name(), "parse_feature_file enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file enter", UVM_HIGH);
 		`uvm_message_add_string(feature_file_name)
 		`uvm_info_end
 
-		`uvm_info(`get_scope_name(-2), {"Feature file: ", feature_file_name}, UVM_LOW)
+		`uvm_info(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_file_name}, UVM_LOW)
 
 		status = OK;
 
@@ -116,7 +116,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 					errno = $ferror(fd, ferror_msg);
 					status = ERROR;
-					`uvm_fatal(`get_scope_name(-2), ferror_msg)
+					`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(-2), ferror_msg)
 				end
 
 				line_number = 1;
@@ -147,7 +147,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`get_scope_name(), "parse_feature_file exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file exit", UVM_HIGH);
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
 		`uvm_info_end
@@ -161,7 +161,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		gherkin_pkg::gherkin_document gherkin_doc;
 		static string feature_file_name = "";
 			
-		`uvm_info_begin(`get_scope_name(), "parse_feature_lines enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines enter", UVM_HIGH);
 		`uvm_message_add_string(feature_file_name)
 		`uvm_info_end
 
@@ -201,7 +201,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`get_scope_name(), "parse_feature_lines exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines exit", UVM_HIGH);
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
 		`uvm_info_end
@@ -303,10 +303,10 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		line_buf = bathtub_utils::trim_white_space(line_buf);
 
 		assert_table_row_starts_with_separator : assert (line_buf[0] == "|") else
-			`uvm_fatal(`get_scope_name(-2), $sformatf("%s\nTable row must start with \"|\" separator character", line_buf))
+			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(-2), $sformatf("%s\nTable row must start with \"|\" separator character", line_buf))
 
 		assert_table_row_ends_with_separator : assert (line_buf[line_buf.len() - 1] == "|") else
-			`uvm_fatal(`get_scope_name(-2), $sformatf("%s\nTable row must end with \"|\" separator character", line_buf))
+			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(-2), $sformatf("%s\nTable row must end with \"|\" separator character", line_buf))
 
 		start_pos = -1;
 		end_pos = -1;
@@ -328,7 +328,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		line_mbox.peek(line_obj);
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_description enter", UVM_HIGH)
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_description enter", UVM_HIGH)
 		`uvm_message_add_string(line_obj.file_name)
 		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 		`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -355,7 +355,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		end
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_scenario_description exit", UVM_HIGH)
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_description exit", UVM_HIGH)
 		`uvm_message_add_string(description)
 		`uvm_info_end
 	endtask : parse_scenario_description
@@ -366,7 +366,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		line_mbox.peek(line_obj);
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature_description enter", UVM_HIGH)
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature_description enter", UVM_HIGH)
 		`uvm_message_add_string(line_obj.file_name)
 		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 		`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -393,7 +393,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		end
 
-		`uvm_info_begin(`get_scope_name(), "gherkin_parser::parse_feature_description exit", UVM_HIGH)
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature_description exit", UVM_HIGH)
 		`uvm_message_add_string(description)
 		`uvm_info_end
 	endtask : parse_feature_description
@@ -417,20 +417,20 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 endclass : gherkin_parser
 
-`include "parse_background.svh"
-`include "parse_comment.svh"
-`include "parse_data_table.svh"
-`include "parse_doc_string.svh"
-`include "parse_examples.svh"
-`include "parse_feature.svh"
-`include "parse_gherkin_document.svh"
-`include "parse_scenario.svh"
-`include "parse_scenario_definition.svh"
-`include "parse_scenario_outline.svh"
-`include "parse_step.svh"
-`include "parse_step_argument.svh"
-`include "parse_table_cell.svh"
-`include "parse_table_row.svh"
-`include "parse_tag.svh"
+`include "bathtub_pkg/gherkin_parser/parse_background.svh"
+`include "bathtub_pkg/gherkin_parser/parse_comment.svh"
+`include "bathtub_pkg/gherkin_parser/parse_data_table.svh"
+`include "bathtub_pkg/gherkin_parser/parse_doc_string.svh"
+`include "bathtub_pkg/gherkin_parser/parse_examples.svh"
+`include "bathtub_pkg/gherkin_parser/parse_feature.svh"
+`include "bathtub_pkg/gherkin_parser/parse_gherkin_document.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario_definition.svh"
+`include "bathtub_pkg/gherkin_parser/parse_scenario_outline.svh"
+`include "bathtub_pkg/gherkin_parser/parse_step.svh"
+`include "bathtub_pkg/gherkin_parser/parse_step_argument.svh"
+`include "bathtub_pkg/gherkin_parser/parse_table_cell.svh"
+`include "bathtub_pkg/gherkin_parser/parse_table_row.svh"
+`include "bathtub_pkg/gherkin_parser/parse_tag.svh"
 
 `endif // __GHERKIN_PARSER_SVH

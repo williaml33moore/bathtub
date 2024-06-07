@@ -26,13 +26,13 @@ SOFTWARE.
 `define __STEP_ATTRIBUTES_INTERFACE_SVH
 
 typedef interface class feature_sequence_interface;
-`include "feature_sequence_interface.svh"
+`include "bathtub_pkg/feature_sequence_interface.svh"
 
 typedef interface class scenario_sequence_interface;
-`include "scenario_sequence_interface.svh"
+`include "bathtub_pkg/scenario_sequence_interface.svh"
 
 typedef interface class step_static_attributes_interface;
-`include "step_static_attributes_interface.svh"
+`include "bathtub_pkg/step_static_attributes_interface.svh"
 
 interface class step_attributes_interface;
 	pure virtual function string get_runtime_keyword();

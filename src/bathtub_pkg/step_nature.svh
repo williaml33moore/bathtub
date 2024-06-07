@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`include "step_static_attributes_interface.svh"
+`include "bathtub_pkg/step_static_attributes_interface.svh"
 `include "bathtub_macros.sv"
 `include "uvm_macros.svh"
 
 typedef class bathtub_utils;
-`include "bathtub_utils.svh"
+`include "bathtub_pkg/bathtub_utils.svh"
 
 class step_nature extends uvm_object implements step_static_attributes_interface;
 
@@ -67,7 +67,7 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 		
 		uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, STEP_DEF_RESOURCE_NAME, step_obj);
 		
-		`uvm_info(`get_scope_name(), {"\n", new_obj.sprint()}, UVM_HIGH)
+		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), {"\n", new_obj.sprint()}, UVM_HIGH)
 		return new_obj;
 	endfunction
 	

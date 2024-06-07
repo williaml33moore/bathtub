@@ -25,10 +25,10 @@ SOFTWARE.
 import uvm_pkg::*;
 
 typedef class bathtub_utils;
-`include "bathtub_utils.svh"
+`include "bathtub_pkg/bathtub_utils.svh"
 
 typedef class step_parameter_arg;
-`include "step_parameter_arg.svh"
+`include "bathtub_pkg/step_parameter_arg.svh"
 
 `include "bathtub_macros.sv"
 
@@ -86,7 +86,7 @@ class step_parameters extends uvm_object;
 		string format_tokens[$];
 		bit ok;
 		
-		`uvm_info_begin(`get_scope_name(-2), "", UVM_HIGH)
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(-2), "", UVM_HIGH)
 			`uvm_message_add_string(step_text)
 			`uvm_message_add_string(scanf_format)
 		`uvm_info_end
@@ -157,7 +157,7 @@ class step_parameters extends uvm_object;
 		end
 
 		foreach (step_argv[i]) begin
-			`uvm_info(`get_scope_name(), {"\n", step_argv[i].sprint()}, UVM_HIGH)
+			`uvm_info(`BATHTUB__GET_SCOPE_NAME(), {"\n", step_argv[i].sprint()}, UVM_HIGH)
 		end
 
 		return step_argv.size();

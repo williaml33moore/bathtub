@@ -32,16 +32,16 @@ import gherkin_pkg::gherkin_document;
 import uvm_pkg::*;
 
 typedef class feature_sequence;
-`include "feature_sequence.svh"
+`include "bathtub_pkg/feature_sequence.svh"
 
 typedef class scenario_sequence;
-`include "scenario_sequence.svh"
+`include "bathtub_pkg/scenario_sequence.svh"
 
 typedef class step_nurture;
-`include "step_nurture.svh"
+`include "bathtub_pkg/step_nurture.svh"
 
 typedef interface class step_definition_interface;
-`include "step_definition_interface.svh"
+`include "bathtub_pkg/step_definition_interface.svh"
 
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
@@ -133,7 +133,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		int success;
 		string search_keyword;
 
-		`uvm_info(`get_scope_name(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM)
+		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM)
 
 		if (step.keyword inside {"Given", "When", "Then"}) begin
 			// Look for a simple exact match for keyword.
@@ -158,7 +158,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
 				uvm_resource_db#(uvm_object_wrapper)::dump();
 			end
-			`uvm_fatal(`get_scope_name(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text))
+			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text))
 		end
 
 		// Success. Update current keyword.
@@ -172,7 +172,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		success = $cast(seq ,obj);
 		assert_step_object_is_sequence : assert (success) else begin
-			`uvm_fatal(`get_scope_name(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."))
+			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."))
 		end
 
 		if ($cast(step_seq, obj)) begin
@@ -186,7 +186,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin
-			`uvm_fatal(`get_scope_name(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."))
+			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."))
 		end
 
 		`uvm_info(get_name(), {"Executing sequence ", seq.get_name(),
