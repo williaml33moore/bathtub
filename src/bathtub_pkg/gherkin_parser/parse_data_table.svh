@@ -26,7 +26,74 @@ SOFTWARE.
 `define __PARSE_DATA_TABLE_SVH
 
 task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
-	`uvm_fatal("PENDING", "")
+	line_value line_obj;
+	line_analysis_result_t line_analysis_result;
+	gherkin_pkg::data_table_value data_table_value;
+
+	line_mbox.peek(line_obj);
+
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_data_table enter", UVM_HIGH)
+	`uvm_message_add_string(line_obj.file_name)
+	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
+	if (!line_obj.eof) begin
+		`uvm_message_add_string(line_obj.text)
+	end
+	`uvm_info_end
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+
+	if (!line_obj.eof) begin
+
+		analyze_line(line_obj.text, line_analysis_result);
+
+		case (line_analysis_result.secondary_keyword)
+			"|" : begin : configure_data_table
+
+				while (status == OK) begin : rows
+					line_mbox.peek(line_obj);
+
+					if (line_obj.eof) break;
+
+					analyze_line(line_obj.text, line_analysis_result);
+
+					case (line_analysis_result.secondary_keyword)
+						"|" : begin : construct_table_row
+							gherkin_pkg::table_row table_row;
+
+							parse_table_row(table_row);
+							`pop_from_parser_stack(table_row)
+
+							if (status == OK) begin
+								data_table_value.rows.push_back(table_row);
+							end
+						end
+
+						default : begin
+							// Anything else terminates the data table
+							break;
+						end
+					endcase
+				end
+			end
+
+			default : begin
+				status = ERROR;
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting \"|\""})
+			end
+		endcase
+
+	end
+
+	data_table = new("data_table", data_table_value);
+	`push_onto_parser_stack(data_table)
+
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_data_table exit", UVM_HIGH)
+	`uvm_message_add_tag("status", status.name())
+	`uvm_message_add_object(data_table)
+	`uvm_info_end
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+
 endtask : parse_data_table
 
 `endif // __PARSE_DATA_TABLE_SVH
