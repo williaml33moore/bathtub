@@ -49,6 +49,8 @@ task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
 		case (line_analysis_result.secondary_keyword)
 			"|" : begin : configure_data_table
 
+				data_table_value.rows.delete();
+
 				while (status == OK) begin : rows
 					line_mbox.peek(line_obj);
 

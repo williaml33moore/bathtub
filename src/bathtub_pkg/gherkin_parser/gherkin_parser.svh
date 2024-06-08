@@ -323,7 +323,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 	endfunction : analyze_line
 
 
-	virtual task get_next_line(ref line_value line_obj);
+	virtual task get_next_line(ref line_value line_obj, input bit preserve_white_space=1'b0);
 		line_mbox.get(line_obj);
 		// $write("%s [%4d]: %s", line_obj.file_name, line_obj.line_number, line_obj.text);
 
@@ -334,7 +334,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 				if (!line_obj.eof) begin
 
-					if (bathtub_utils::trim_white_space(line_obj.text) == "") begin
+					if (!preserve_white_space && bathtub_utils::trim_white_space(line_obj.text) == "") begin
 						// Discard empty lines
 						line_mbox.get(line_obj);
 						// $write("%s [%4d]: %s", line_obj.file_name, line_obj.line_number, line_obj.text);
