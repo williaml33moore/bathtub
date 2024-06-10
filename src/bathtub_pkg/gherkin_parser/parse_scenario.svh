@@ -53,6 +53,9 @@ task gherkin_parser::parse_scenario(ref gherkin_pkg::scenario scenario);
 
 				scenario_value.base.keyword = line_analysis_result.token_before_colon;
 				scenario_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
+				while (floating_tags.size() > 0) begin
+					scenario_value.tags.push_back(floating_tags.pop_front());
+				end
 				
 				get_next_line(line_obj);
 
