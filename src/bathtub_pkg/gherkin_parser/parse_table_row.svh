@@ -76,7 +76,6 @@ task gherkin_parser::parse_table_row(ref gherkin_pkg::table_row table_row);
 					". Expecting a table row beginning with \"|\""})
 			end
 		endcase
-
 	end
 
 	table_row = new("table_row", table_row_value);

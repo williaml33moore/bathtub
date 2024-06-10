@@ -53,6 +53,9 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 
 				examples_value.keyword = line_analysis_result.token_before_colon;
 				examples_value.examples_name = line_analysis_result.remainder_after_colon;
+				while (floating_tags.size() > 0) begin
+					examples_value.tags.push_back(floating_tags.pop_front());
+				end
 
 				get_next_line(line_obj);
 
@@ -91,7 +94,7 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 
 				if (num_headers != 1) begin
 					status = ERROR;
-					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "An examples table must have exactly only one header row")
+					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "An examples table must have exactly one header row")
 				end
 
 			end

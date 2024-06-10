@@ -26,7 +26,43 @@ SOFTWARE.
 `define __PARSE_TAG_SVH
 
 task gherkin_parser::parse_tag(ref gherkin_pkg::tag tag);
-	`uvm_fatal("PENDING", "")
+	string tag_name;
+	gherkin_pkg::tag_value tag_value;
+
+	tag_mbox.get(tag_name);
+
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag enter", UVM_HIGH)
+	`uvm_message_add_string(tag_name)
+	`uvm_info_end
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+
+	if (tag_name[0] != "@") begin
+		status = ERROR;
+		`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
+			". Tag name must begin with \"@\""})
+	end
+	else begin
+		foreach(tag_name[i]) begin
+			if (tag_name[i] inside {" ", "\t", "\n", CR}) begin
+				status = ERROR;
+				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
+					". Tag name must not contain white space"})
+				break;
+			end
+		end
+	end
+
+	if (status == OK) begin
+		tag_value.tag_name = tag_name;
+		tag = new("table_cell", tag_value);
+		`push_onto_parser_stack(tag)
+	end
+
+	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag exit", UVM_HIGH)
+	`uvm_message_add_tag("status", status.name())
+	`uvm_message_add_object(tag)
+	`uvm_info_end
+	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_tag
 
 `endif // __PARSE_TAG_SVH

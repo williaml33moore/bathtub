@@ -55,6 +55,9 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 
 				feature_value.keyword = line_analysis_result.token_before_colon;
 				feature_value.feature_name = line_analysis_result.remainder_after_colon;
+				while (floating_tags.size() > 0) begin
+					feature_value.tags.push_back(floating_tags.pop_front());
+				end
 				get_next_line(line_obj);
 
 				while (status == OK) begin : feature_elements
@@ -104,17 +107,34 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 						end
 
 						default : begin
-							if (can_receive_description) begin
-								string description;
-								parse_feature_description(description, line_obj);
-								feature_value.description = description;
-								can_receive_description = 0;
-							end
-							else begin
-								break;
-							end
-						end
 
+							case (line_analysis_result.secondary_keyword)
+
+								"@" : begin : construct_tags
+									gherkin_pkg::tag tags[$];
+
+									parse_tags(tags);
+									if (status == OK) begin
+										while (tags.size() > 0) begin
+											floating_tags.push_back(tags.pop_front());
+										end
+									end
+									can_receive_description = 0;
+								end
+
+								default : begin
+									if (can_receive_description) begin
+										string description;
+										parse_feature_description(description, line_obj);
+										feature_value.description = description;
+										can_receive_description = 0;
+									end
+									else begin
+										break;
+									end
+								end
+							endcase
+						end
 					endcase
 				end
 			end

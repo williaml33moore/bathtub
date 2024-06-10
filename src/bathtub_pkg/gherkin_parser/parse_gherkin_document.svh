@@ -100,6 +100,17 @@ task gherkin_parser::parse_gherkin_document(ref gherkin_pkg::gherkin_document gh
 						end
 					end
 
+					"@" : begin : construct_tags
+						gherkin_pkg::tag tags[$];
+
+						parse_tags(tags);
+						if (status == OK) begin
+							while (tags.size() > 0) begin
+								floating_tags.push_back(tags.pop_front());
+							end
+						end
+					end
+
 					default : begin
 						status = ERROR;
 						`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Syntax error. Expecting \"Feature:\" or \"#\".",

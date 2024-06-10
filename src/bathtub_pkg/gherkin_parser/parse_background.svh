@@ -53,6 +53,10 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 
 				background_value.base.keyword = line_analysis_result.token_before_colon;
 				background_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
+				if (floating_tags.size() > 0) begin
+					status = ERROR;
+					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A background can not have tags")
+				end
 
 				get_next_line(line_obj);
 
