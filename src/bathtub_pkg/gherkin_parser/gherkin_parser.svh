@@ -37,7 +37,6 @@ typedef class bathtub_utils;
 
 import gherkin_pkg::gherkin_document;
 
-
 `define push_onto_parser_stack(o) parser_stack.push_front(o);
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
@@ -71,8 +70,10 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 	mailbox line_mbox;
 	mailbox cell_mbox; // For table row cells
+	mailbox tag_mbox; // For tags
 	uvm_object parser_stack[$]; // For bread crumbs
 	status_t status;
+	gherkin_pkg::tag floating_tags[$]; // Collect tags to be applied to blocks
 
 	`uvm_object_utils_begin(gherkin_parser)
 	`uvm_object_utils_end
@@ -82,7 +83,9 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		line_mbox = new(1);
 		cell_mbox = new(1);
+		tag_mbox = new(1);
 		parser_stack.delete();
+		floating_tags.delete();
 	endfunction : new
 
 
@@ -454,6 +457,66 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_message_add_string(description)
 		`uvm_info_end
 	endtask : parse_feature_description
+
+
+	task parse_tags(ref gherkin_pkg::tag tags[$]);
+		line_value line_obj;
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tags enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+
+		if (!line_obj.eof) begin
+
+			analyze_line(line_obj.text, line_analysis_result);
+
+			case (line_analysis_result.secondary_keyword)
+				"@" : begin : configure_tags
+					string tag_names[$];
+
+					bathtub_utils::split_string(line_obj.text, tag_names);
+					get_next_line(line_obj);
+
+					foreach (tag_names[i]) begin : construct_tag
+						gherkin_pkg::tag tag;
+
+						fork
+							tag_mbox.put(tag_names[i]);
+							begin
+								parse_tag(tag);
+								`pop_from_parser_stack(tag)
+							end
+						join
+
+						if (status == OK) begin
+							tags.push_back(tag);
+						end
+					end
+				end
+
+				default : begin
+					status = ERROR;
+					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+						". Expecting a tag beginning with \"@\""})
+				end
+			endcase
+		end
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tags exit", UVM_HIGH)
+		`uvm_message_add_tag("status", status.name())
+		`uvm_message_add_tag("tags", $sformatf("%p", tags))
+		`uvm_info_end
+		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	endtask : parse_tags
 
 
 	extern virtual task parse_background(ref gherkin_pkg::background background);

@@ -127,6 +127,9 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 		endcase
 	end
 
+	while (floating_tags.size() > 0) begin
+		feature_value.tags.push_back(floating_tags.pop_front());
+	end
 	feature = new("feature", feature_value);
 	`push_onto_parser_stack(feature)
 
