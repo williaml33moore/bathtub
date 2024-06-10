@@ -342,6 +342,31 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_as_value().tag_name, "@alpha")
   `SVTEST_END
 
+  `SVTEST(Parse_multiple_tags_on_a_scenario)
+    // =============================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::scenario actual_scenario;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "@alpha @bravo   @charlie\n",
+      "   @delta\n",
+      "Scenario: This is a scenario\n",
+      "* This is a step\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.get_as_value().feature;
+    void'($cast(actual_scenario, actual_feature.get_as_value().scenario_definitions[0]));
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_as_value().tags.size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_as_value().tags[0].get_as_value().tag_name, "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_as_value().tags[1].get_as_value().tag_name, "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_as_value().tags[2].get_as_value().tag_name, "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_as_value().tags[3].get_as_value().tag_name, "@delta")
+  `SVTEST_END
+
   `SVTEST(Parse_a_tag_on_a_scenario_outline)
     // =============================
     string feature;
