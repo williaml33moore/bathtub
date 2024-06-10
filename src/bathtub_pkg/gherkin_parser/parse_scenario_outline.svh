@@ -126,6 +126,18 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 											get_next_line(line_obj);
 										end
 
+										"@" : begin : construct_tags
+											gherkin_pkg::tag tags[$];
+
+											parse_tags(tags);
+											if (status == OK) begin
+												while (tags.size() > 0) begin
+													floating_tags.push_back(tags.pop_front());
+												end
+											end
+											can_receive_description = 0;
+										end
+
 										default : begin
 
 											if (can_receive_description) begin
