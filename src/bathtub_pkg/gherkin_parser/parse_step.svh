@@ -68,33 +68,15 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 					analyze_line(line_obj.text, line_analysis_result);
 
 					case (line_analysis_result.secondary_keyword)
-						"|" : begin : construct_data_table
-							gherkin_pkg::data_table data_table;
+						"|", "\"\"\"", "```" : begin : construct_step_argument
+							gherkin_pkg::step_argument step_argument;
 
-							parse_data_table(data_table);
-							`pop_from_parser_stack(data_table)
-
-							if (status == OK) begin
-								if (num_step_arguments == 0) begin
-									step_value.argument = data_table;
-									num_step_arguments++;
-								end
-								else begin
-									status = ERROR;
-									`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A step can have only one argument")
-								end
-							end
-						end
-
-						"\"\"\"" : begin : construct_doc_string
-							gherkin_pkg::doc_string doc_string;
-
-							parse_doc_string(doc_string);
-							`pop_from_parser_stack(doc_string)
+							parse_step_argument(step_argument);
+							`pop_from_parser_stack(step_argument)
 
 							if (status == OK) begin
 								if (num_step_arguments == 0) begin
-									step_value.argument = doc_string;
+									step_value.argument = step_argument;
 									num_step_arguments++;
 								end
 								else begin
