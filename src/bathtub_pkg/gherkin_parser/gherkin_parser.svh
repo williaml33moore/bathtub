@@ -274,7 +274,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		int first_space_after_keyword;
 		int first_colon_after_keyword;
 		byte c;
-		static string secondary_strings[] = {"\"\"\"", "|", "@", "#"};
+		static string secondary_strings[] = {"\"\"\"", "```", "|", "@", "#"};
 
 		start_of_keyword = -1;
 		first_space_after_keyword = -1;
@@ -457,6 +457,47 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_message_add_string(description)
 		`uvm_info_end
 	endtask : parse_feature_description
+
+
+	virtual task parse_examples_description(ref string description, ref line_value line_obj);
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_examples_description enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			description = "";
+
+			while (status == OK) begin
+				if (line_obj.eof) break;
+				analyze_line(line_obj.text, line_analysis_result);
+				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+					break;
+				end
+				else if (line_analysis_result.secondary_keyword inside {"|"}) begin
+					break;
+				end
+				else begin
+					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+					get_next_line(line_obj);
+				end
+			end
+
+		end
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_examples_description exit", UVM_HIGH)
+		`uvm_message_add_string(description)
+		`uvm_info_end
+	endtask : parse_examples_description
 
 
 	task parse_tags(ref gherkin_pkg::tag tags[$]);

@@ -108,6 +108,11 @@ task gherkin_parser::parse_scenario(ref gherkin_pkg::scenario scenario);
 											get_next_line(line_obj);
 										end
 
+										"@" : begin : break_on_secondary_keyword
+											// Any legal secondary keyword terminates the background
+											break;
+										end
+
 										default : begin
 
 											if (can_receive_description) begin
@@ -118,7 +123,8 @@ task gherkin_parser::parse_scenario(ref gherkin_pkg::scenario scenario);
 											end
 											else begin
 												status = ERROR;
-												`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description"})
+												`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description:\n",
+													line_obj.text})
 											end
 										end
 									endcase

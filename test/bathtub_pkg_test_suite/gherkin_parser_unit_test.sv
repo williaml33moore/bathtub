@@ -441,7 +441,7 @@ module gherkin_parser_unit_test;
   `SVTEST_END
 
   `SVTEST(Parse_multiple_tags_on_a_scenario_outline_examples_block)
-    // ==============================================
+  // ==============================================================
     string feature;
     gherkin_doc_bundle actual_doc_bundle;
     gherkin_pkg::feature actual_feature;
@@ -467,6 +467,90 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_as_value().tags[1].get_as_value().tag_name, "@bravo")
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_as_value().tags[2].get_as_value().tag_name, "@charlie")
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_as_value().tags[3].get_as_value().tag_name, "@delta")
+  `SVTEST_END
+
+  `SVTEST(Test_that_parser_can_handle_comments_anywhere_in_the_document)
+  // ===================================================================
+    string feature[];
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+
+    feature = '{
+      "# This is a comment",
+      "",
+      "@tag_one",
+      "@tag_two",
+      "Feature: This is a feature",
+      "This is a description.",
+      "This is more description",
+      "",
+      "  Background: This is background",
+      "    This is a description.",
+      "    This is more description.",
+      "    Given some initialization",
+      "    And some setup",
+      "    But no errors",
+      "",
+      "  @tag_one",
+      "  @tag_two",
+      "  Scenario: This is a scenario",
+      "    This is a description.",
+      "    This is more description.",
+      "    Given some initial state",
+      "    When somebody does something",
+      "    Then the system should be in this final state",
+      "",
+      "  @tag_one",
+      "  @tag_two",
+      "  Scenario Outline: This is a scenario outline",
+      "    This is a description",
+      "    Given some <initial> state",
+      "    When somebody does <something>",
+      "    Then the system should be in this <final> state",
+      "",
+      "    @tag_one",
+      "    @tag_two",
+      "    Examples:",
+      "      This is a description.",
+      "      This is more description.",
+      "      | initial   | something  | final    |",
+      "      | starting  | stuff      | finished |",
+      "      | beginning | procedures | ending   |",
+      "",
+      "    @tag_one",
+      "    @tag_two",
+      "    Examples:",
+      "      This is a description.",
+      "      This is more description.",
+      "      | initial   | something  | final    |",
+      "      | neutral   | activities | happy    |",
+      "      | beginning | procedures | ending   |",
+      "",
+      "  Scenario: This is another scenario",
+      "    This is a description.",
+      "    This is more description.",
+      "    Given some initial state",
+      "    When somebody does something with the following docstring",
+      "    ```",
+      "    This is the aforementioned docstring.",
+      "    This is more docstring.",
+      "    ```",
+      "    Then the system should be in this final docstringstate",
+      "",
+      "  Scenario: This is yet another scenario",
+      "    This is a description.",
+      "    This is more description.",
+      "    Given some initial state",
+      "    When somebody does something with the following data table",
+      "    | A1 | B1 | C1 |",
+      "    | A2 | B2 | C2 |",
+      "    | A3 | B3 | C3 |",
+      "    Then the system should be in this final data table state"
+    };
+
+    parser.parse_feature_lines(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.get_as_value().feature;
+    `FAIL_UNLESS(actual_feature)
   `SVTEST_END
 
   `SVUNIT_TESTS_END

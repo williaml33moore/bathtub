@@ -84,7 +84,6 @@ class step_parameters extends uvm_object;
 // ===================================================================
 		string text_tokens[$];
 		string format_tokens[$];
-		bit ok;
 		
 		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(-2), "", UVM_HIGH)
 			`uvm_message_add_string(step_text)
@@ -93,8 +92,8 @@ class step_parameters extends uvm_object;
 
 		step_argv.delete();
 
-		ok = bathtub_utils::split_string(scanf_format, format_tokens);
-		ok = bathtub_utils::split_string(step_text, text_tokens);
+		bathtub_utils::split_string(scanf_format, format_tokens);
+		bathtub_utils::split_string(step_text, text_tokens);
 
 		for (int i = 0; i < format_tokens.size(); i++) begin
 			int sscanf_code;
