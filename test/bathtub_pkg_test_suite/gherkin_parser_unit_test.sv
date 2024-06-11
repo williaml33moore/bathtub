@@ -474,6 +474,7 @@ module gherkin_parser_unit_test;
     string feature[];
     gherkin_doc_bundle actual_doc_bundle;
     gherkin_pkg::feature actual_feature;
+    string comment;
 
     feature = '{
       "# This is a comment",
@@ -491,8 +492,8 @@ module gherkin_parser_unit_test;
       "    And some setup",
       "    But no errors",
       "",
-      "  @tag_one",
-      "  @tag_two",
+      "  @tag_three",
+      "  @tag_four",
       "  Scenario: This is a scenario",
       "    This is a description.",
       "    This is more description.",
@@ -500,16 +501,16 @@ module gherkin_parser_unit_test;
       "    When somebody does something",
       "    Then the system should be in this final state",
       "",
-      "  @tag_one",
-      "  @tag_two",
+      "  @tag_five",
+      "  @tag_six",
       "  Scenario Outline: This is a scenario outline",
       "    This is a description",
       "    Given some <initial> state",
       "    When somebody does <something>",
       "    Then the system should be in this <final> state",
       "",
-      "    @tag_one",
-      "    @tag_two",
+      "    @tag_seven",
+      "    @tag_eight",
       "    Examples:",
       "      This is a description.",
       "      This is more description.",
@@ -517,8 +518,8 @@ module gherkin_parser_unit_test;
       "      | starting  | stuff      | finished |",
       "      | beginning | procedures | ending   |",
       "",
-      "    @tag_one",
-      "    @tag_two",
+      "    @tag_nine",
+      "    @tag_ten",
       "    Examples:",
       "      This is a description.",
       "      This is more description.",
@@ -526,6 +527,8 @@ module gherkin_parser_unit_test;
       "      | neutral   | activities | happy    |",
       "      | beginning | procedures | ending   |",
       "",
+      "  @tag_eleven",
+      "  @tag_twelve",
       "  Scenario: This is another scenario",
       "    This is a description.",
       "    This is more description.",
@@ -535,8 +538,10 @@ module gherkin_parser_unit_test;
       "    This is the aforementioned docstring.",
       "    This is more docstring.",
       "    ```",
-      "    Then the system should be in this final docstringstate",
+      "    Then the system should be in this final docstring state",
       "",
+      "  @tag_thirteen",
+      "  @tag_fourteen",
       "  Scenario: This is yet another scenario",
       "    This is a description.",
       "    This is more description.",
@@ -548,9 +553,24 @@ module gherkin_parser_unit_test;
       "    Then the system should be in this final data table state"
     };
 
-    parser.parse_feature_lines(feature, actual_doc_bundle);
-    actual_feature = actual_doc_bundle.document.get_as_value().feature;
-    `FAIL_UNLESS(actual_feature)
+    comment = feature[0];
+
+    foreach (feature[i]) begin : loop
+      // Ripple the comment through every line in the document.
+      if (i > 0) begin
+        feature[i - 1] = feature[i];
+      end
+      feature[i] = comment;
+
+      // $info($sformatf("DEBUG %0d", i));
+      // foreach (feature[j]) begin
+      //   $display("%2d %s", j, feature[j]);
+      // end
+
+      parser.parse_feature_lines(feature, actual_doc_bundle);
+      actual_feature = actual_doc_bundle.document.get_as_value().feature;
+      `FAIL_UNLESS(actual_feature)
+    end
   `SVTEST_END
 
   `SVUNIT_TESTS_END

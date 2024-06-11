@@ -105,8 +105,15 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 								default : begin
 
 									case (line_analysis_result.secondary_keyword)
-										"#" : begin : ignore_comment
-											get_next_line(line_obj);
+
+										"#" : begin : construct_comment
+											gherkin_pkg::comment comment;
+
+											parse_comment(comment);
+											`pop_from_parser_stack(comment)
+											if (status == OK) begin
+												; // Discard comment
+											end
 										end
 
 										"@" : begin : break_on_secondary_keyword
@@ -150,6 +157,7 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_background exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(background)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_background
