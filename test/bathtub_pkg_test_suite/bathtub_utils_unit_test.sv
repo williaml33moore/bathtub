@@ -38,7 +38,6 @@ module bathtub_utils_unit_test;
 	//===================================
 
 	// Miscellaneous variables
-	bit ok;
 
 
 	//===================================
@@ -93,9 +92,7 @@ module bathtub_utils_unit_test;
 	string tokens[$];
 
 	str = "alpha bravo charlie";
-	ok = bathtub_pkg::bathtub_utils::split_string(str, tokens);
-
-	`FAIL_UNLESS_LOG(ok, "should return OK")
+	bathtub_pkg::bathtub_utils::split_string(str, tokens);
 
 	`FAIL_UNLESS_STR_EQUAL(tokens[0], "alpha")
 	`FAIL_UNLESS_STR_EQUAL(tokens[1], "bravo")

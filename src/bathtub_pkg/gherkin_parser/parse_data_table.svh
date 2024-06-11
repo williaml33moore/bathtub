@@ -59,6 +59,17 @@ task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
 					analyze_line(line_obj.text, line_analysis_result);
 
 					case (line_analysis_result.secondary_keyword)
+
+						"#" : begin : construct_comment
+							gherkin_pkg::comment comment;
+
+							parse_comment(comment);
+							`pop_from_parser_stack(comment)
+							if (status == OK) begin
+								; // Discard comment
+							end
+						end
+						
 						"|" : begin : construct_table_row
 							gherkin_pkg::table_row table_row;
 
@@ -93,6 +104,7 @@ task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_data_table exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(data_table)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 

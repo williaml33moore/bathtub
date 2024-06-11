@@ -31,7 +31,7 @@ import uvm_pkg::*;
 
 virtual class bathtub_utils;
 // ===================================================================
-	static function bit split_string;
+	static function void split_string;
 // ===================================================================
 /*			`FUNCTION_METADATA('{
 
@@ -58,9 +58,7 @@ virtual class bathtub_utils;
 		lex_state_t state;
 		byte c;
 		string token;
-		bit ok;
 
-		ok = 1;
 		tokens.delete();
 		state = START;
 		foreach (str[i]) begin
@@ -115,7 +113,6 @@ virtual class bathtub_utils;
 			tokens.push_back(token);
 			state = FINISH;
 		end
-		return ok;
 	endfunction : split_string
 
 // ===================================================================

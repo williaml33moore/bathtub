@@ -29,8 +29,9 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 	line_value line_obj;
 	line_analysis_result_t line_analysis_result;
 	gherkin_pkg::examples_value examples_value;
+	int num_headers;
 
-	int num_headers = 0;
+	num_headers = 0;
 
 	line_mbox.peek(line_obj);
 
@@ -50,6 +51,8 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 		
 		case (line_analysis_result.token_before_colon)
 			"Examples", "Scenarios" : begin : configure_examples
+				int description_count = 0;
+				bit can_receive_description = 1;
 
 				examples_value.keyword = line_analysis_result.token_before_colon;
 				examples_value.examples_name = line_analysis_result.remainder_after_colon;
@@ -68,6 +71,17 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 					analyze_line(line_obj.text, line_analysis_result);
 
 					case (line_analysis_result.secondary_keyword)
+
+						"#" : begin : construct_comment
+							gherkin_pkg::comment comment;
+
+							parse_comment(comment);
+							`pop_from_parser_stack(comment)
+							if (status == OK) begin
+								; // Discard comment
+							end
+						end
+
 						"|" : begin : construct_examples_row
 							gherkin_pkg::table_row row;
 
@@ -85,8 +99,15 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 						end
 
 						default: begin
-							// Any other keyword terminates the examples table
-							break;
+							if (can_receive_description) begin
+								string description;
+								parse_examples_description(description, line_obj);
+								examples_value.description = description;
+								can_receive_description = 0;
+							end
+							else begin
+								break;
+							end
 						end
 					endcase
 
@@ -114,6 +135,7 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_examples exit", UVM_HIGH);
 	`uvm_message_add_tag("status", status.name)
 	`uvm_message_add_object(examples)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_examples

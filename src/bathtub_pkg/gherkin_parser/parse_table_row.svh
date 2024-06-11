@@ -84,6 +84,7 @@ task gherkin_parser::parse_table_row(ref gherkin_pkg::table_row table_row);
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_table_row exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(table_row)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_table_row

@@ -63,6 +63,7 @@ task gherkin_parser::parse_scenario_definition(ref gherkin_pkg::scenario_definit
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_definition exit", UVM_HIGH)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(scenario_definition)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 endtask : parse_scenario_definition
 

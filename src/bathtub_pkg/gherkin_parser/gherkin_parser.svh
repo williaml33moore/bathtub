@@ -108,6 +108,10 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			begin : start_gherkin_document_parser
 				parse_gherkin_document(gherkin_doc);
 				`pop_from_parser_stack(gherkin_doc)
+				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+				get_next_line(line_obj);
+				assert_last_message_is_eof : assert(line_obj.eof);
+				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
 			end
 
 			begin : read_feature_file_and_feed_lines_to_parser
@@ -172,8 +176,13 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		fork
 			begin : start_gherkin_document_parser
+				line_value temp_line_obj;
 				parse_gherkin_document(gherkin_doc);
 				`pop_from_parser_stack(gherkin_doc)
+				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+				get_next_line(line_obj);
+				assert_last_message_is_eof : assert(line_obj.eof);
+				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
 			end
 
 			begin : read_feature_lines_and_feed_lines_to_parser
@@ -207,6 +216,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines exit", UVM_HIGH);
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
 		`uvm_info_end
 
 	endtask : parse_feature_lines
@@ -229,6 +239,10 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			begin : start_gherkin_document_parser
 				parse_gherkin_document(gherkin_doc);
 				`pop_from_parser_stack(gherkin_doc)
+				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+				get_next_line(line_obj);
+				assert_last_message_is_eof : assert(line_obj.eof);
+				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
 			end
 
 			begin : read_feature_lines_and_feed_lines_to_parser
@@ -274,7 +288,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		int first_space_after_keyword;
 		int first_colon_after_keyword;
 		byte c;
-		static string secondary_strings[] = {"\"\"\"", "|", "@", "#"};
+		static string secondary_strings[] = {"\"\"\"", "```", "|", "@", "#"};
 
 		start_of_keyword = -1;
 		first_space_after_keyword = -1;
@@ -417,6 +431,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_scenario_description exit", UVM_HIGH)
 		`uvm_message_add_string(description)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
 		`uvm_info_end
 	endtask : parse_scenario_description
 
@@ -455,8 +470,51 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature_description exit", UVM_HIGH)
 		`uvm_message_add_string(description)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
 		`uvm_info_end
 	endtask : parse_feature_description
+
+
+	virtual task parse_examples_description(ref string description, ref line_value line_obj);
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_examples_description enter", UVM_HIGH)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_end
+
+		if (!line_obj.eof) begin
+
+			description = "";
+
+			while (status == OK) begin
+				if (line_obj.eof) break;
+				analyze_line(line_obj.text, line_analysis_result);
+				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+					break;
+				end
+				else if (line_analysis_result.secondary_keyword inside {"|"}) begin
+					break;
+				end
+				else begin
+					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+					get_next_line(line_obj);
+				end
+			end
+
+		end
+
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_examples_description exit", UVM_HIGH)
+		`uvm_message_add_string(description)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		`uvm_info_end
+	endtask : parse_examples_description
 
 
 	task parse_tags(ref gherkin_pkg::tag tags[$]);
@@ -514,6 +572,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tags exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name())
 		`uvm_message_add_tag("tags", $sformatf("%p", tags))
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
 		`uvm_info_end
 		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 	endtask : parse_tags

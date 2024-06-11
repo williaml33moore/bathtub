@@ -68,6 +68,17 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 					analyze_line(line_obj.text, line_analysis_result);
 
 					case (line_analysis_result.secondary_keyword)
+
+						"#" : begin : construct_comment
+							gherkin_pkg::comment comment;
+
+							parse_comment(comment);
+							`pop_from_parser_stack(comment)
+							if (status == OK) begin
+								; // Discard comment
+							end
+						end
+						
 						"|", "\"\"\"", "```" : begin : construct_step_argument
 							gherkin_pkg::step_argument step_argument;
 
@@ -108,6 +119,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step exit", UVM_HIGH);
 	`uvm_message_add_tag("status", status.name)
 	`uvm_message_add_object(step)
+	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_end
 	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
 endtask : parse_step
