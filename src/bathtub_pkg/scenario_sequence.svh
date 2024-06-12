@@ -73,7 +73,7 @@ class scenario_sequence extends uvm_sequence implements scenario_sequence_interf
 			foreach (scenario.steps[i]) begin
 				scenario.steps[i].accept(runner); // runner.visit_step(scenario.steps[i])
 			end
-;
+
 		end
 	endtask : body
 
