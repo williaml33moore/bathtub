@@ -1,4 +1,3 @@
-import subprocess
 import pytest
 
 classes_under_test = [
@@ -27,10 +26,7 @@ classes_under_test = [
 
 @pytest.fixture(params=classes_under_test)
 def class_under_test(request):
-    return request.param
-
-@pytest.fixture(params=['xrun -uvmnocdnsextra', 'qrun'])
-def simulator(request):
+    """Return a class to test from the list of classes_under_test."""
     return request.param
 
 def test_class_dependencies(tmp_path, simulator, class_under_test):
@@ -44,15 +40,13 @@ def test_class_dependencies(tmp_path, simulator, class_under_test):
                         'endprogram : test'
                         ])
     f.write_text(content, encoding="utf-8")
-    run_cmd = simulator + " " + """\
--uvm \
--uvmhome $UVM_HOME \
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
--incdir $BATHTUB_VIP_DIR/src \
-testbench.sv \
-#
-"""
-    assert subprocess.run(run_cmd, shell=True, cwd=tmp_path).returncode == 0
+    simulator.uvm()
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv',
+        '-incdir $BATHTUB_VIP_DIR/src',
+        'testbench.sv',
+        ])
+    assert simulator.run(tmp_path).passed()
 
 def test_macro_dependencies(tmp_path, simulator):
     """Test that bathtub_macros dependencies are satisfied by bathtub_pkg"""
@@ -65,16 +59,14 @@ def test_macro_dependencies(tmp_path, simulator):
                         'endprogram : test'
                         ])
     f.write_text(content, encoding="utf-8")
-    run_cmd = simulator + " " + """\
--uvm \
--uvmhome $UVM_HOME \
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
--incdir $BATHTUB_VIP_DIR/src \
-testbench.sv \
-#
-"""
-    assert subprocess.run(run_cmd, shell=True, cwd=tmp_path).returncode == 0
+    simulator.uvm()
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv',
+        '$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv',
+        '-incdir $BATHTUB_VIP_DIR/src',
+        'testbench.sv',
+        ])
+    assert simulator.run(tmp_path).passed()
 
 def test_macro_command_line_dependencies(tmp_path, simulator):
     """Test that bathtub_macros can be compiled from the command line"""
@@ -85,14 +77,12 @@ def test_macro_command_line_dependencies(tmp_path, simulator):
                         'endprogram : test'
                         ])
     f.write_text(content, encoding="utf-8")
-    run_cmd = simulator + " " + """\
--uvm \
--uvmhome $UVM_HOME \
-$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv \
-$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv \
-$BATHTUB_VIP_DIR/src/bathtub_macros.sv \
--incdir $BATHTUB_VIP_DIR/src \
-testbench.sv \
-#
-"""
-    assert subprocess.run(run_cmd, shell=True, cwd=tmp_path).returncode == 0
+    simulator.uvm()
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv',
+        '$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv',
+        '$BATHTUB_VIP_DIR/src/bathtub_macros.sv',
+        '-incdir $BATHTUB_VIP_DIR/src',
+        'testbench.sv',
+        ])
+    assert simulator.run(tmp_path).passed()
