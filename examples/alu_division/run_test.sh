@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-xrun $BATHTUB_VIP_DIR/vip-spec.sv &&
+xrun $BATHTUB_VIP_DIR/vip-spec.sv $BATHTUB_VIP_DIR/vip_setup.sv &&
 cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
 xrun \
 -uvm \
