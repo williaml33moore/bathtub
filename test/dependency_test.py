@@ -29,6 +29,7 @@ classes_under_test = [
     "bathtub_pkg/feature_sequence_interface.svh",
     "bathtub_pkg/feature_sequence.svh",
     "bathtub_pkg/gherkin_doc_bundle.svh",
+    "bathtub_pkg/gherkin_step_bundle.svh",
     "bathtub_pkg/line_value.svh",
     "bathtub_pkg/pool_provider_interface.svh",
     "bathtub_pkg/pool_provider.svh",
