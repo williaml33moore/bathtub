@@ -35,6 +35,12 @@ typedef class line_value;
 typedef class bathtub_utils;
 `include "bathtub_pkg/bathtub_utils.svh"
 
+typedef class gherkin_doc_bundle;
+`include "bathtub_pkg/gherkin_doc_bundle.svh"
+
+typedef class gherkin_step_bundle;
+`include "bathtub_pkg/gherkin_step_bundle.svh"
+
 import gherkin_pkg::gherkin_document;
 
 `define push_onto_parser_stack(o) parser_stack.push_front(o);
@@ -281,6 +287,67 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_info_end
 
 	endtask : parse_feature_string
+
+	
+	virtual task parse_step_string(input string step, output gherkin_step_bundle gherkin_step_bndl);
+		line_value line_obj;
+		int line_number;
+		gherkin_pkg::step gherkin_step;
+		static string step_file_name = "";
+		string step_array[$];
+			
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string enter", UVM_HIGH);
+		`uvm_message_add_string(step_file_name)
+		`uvm_info_end
+
+		status = OK;
+
+		fork
+			begin : start_gherkin_step_parser
+				parse_step(gherkin_step);
+				`pop_from_parser_stack(gherkin_step)
+				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+				get_next_line(line_obj);
+				assert_last_message_is_eof : assert(line_obj.eof);
+				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
+			end
+
+			begin : read_step_lines_and_feed_lines_to_parser
+
+				bathtub_utils::split_lines(step, step_array);
+
+				line_number = 1;
+				foreach (step_array[i]) begin
+					string line_buf;
+
+					line_buf = step_array[i];
+					line_obj = new(line_buf, step_file_name, line_number);
+					line_number++;
+					line_mbox.put(line_obj);
+				end
+
+				line_obj = new(.eof (1),
+					.text (""),
+					.file_name (step_file_name)
+				); // Special signal that lines are done
+				line_mbox.put(line_obj);
+			end
+		join
+
+		gherkin_step_bndl = null;
+		if (status == OK) begin
+			gherkin_step_bndl = new(
+				.step (gherkin_step),
+				.file_name (step_file_name)
+			);
+		end
+		
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string exit", UVM_HIGH);
+		`uvm_message_add_tag("status", status.name)
+		`uvm_message_add_object(gherkin_step)
+		`uvm_info_end
+
+	endtask : parse_step_string
 
 
 	function void analyze_line(string line_buf, ref line_analysis_result_t result);
