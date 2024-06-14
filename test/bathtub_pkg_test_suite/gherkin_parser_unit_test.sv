@@ -664,6 +664,98 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_step.text, "Parse this step")
   `SVTEST_END
 
+  `SVTEST(Parse_simple_step_lines)
+    // ==============================
+    string step[];
+    gherkin_step_bundle actual_step_bndl;
+    string actual_file_name, expected_file_name;
+    gherkin_pkg::step actual_step;
+
+    step = '{"Given a simple step string"};
+
+    parser.parse_step_lines(step, actual_step_bndl);
+
+    `FAIL_UNLESS(actual_step_bndl)
+
+    actual_file_name = actual_step_bndl.file_name;
+    expected_file_name = "";
+    `FAIL_UNLESS_STR_EQUAL(actual_file_name, expected_file_name)
+
+    actual_step = actual_step_bndl.step;
+    `FAIL_UNLESS_STR_EQUAL(actual_step.keyword, "Given")
+    `FAIL_UNLESS_STR_EQUAL(actual_step.text, "a simple step string")
+    `FAIL_UNLESS_EQUAL(actual_step.argument, null)
+  `SVTEST_END
+
+  `SVTEST(Parse_step_lines_with_a_data_table)
+    // =========================================
+    string step[];
+    gherkin_step_bundle actual_step_bndl;
+    gherkin_pkg::step actual_step;
+    gherkin_pkg::data_table actual_data_table;
+    gherkin_pkg::table_cell actual_cell;
+
+    step = '{
+      "When a step string has a data table",
+      "# And a comment",
+      "| A1 | B1 | C1 |",
+      "| A2 | B2 | C2 |"
+    };
+
+    parser.parse_step_lines(step, actual_step_bndl);
+    
+    actual_step = actual_step_bndl.step;
+    `FAIL_UNLESS($cast(actual_data_table, actual_step.argument))
+    `FAIL_UNLESS_EQUAL(actual_data_table.rows.size(), 2)
+    `FAIL_UNLESS_EQUAL(actual_data_table.rows[1].cells.size(), 3)
+    
+    actual_cell = actual_data_table.rows[1].cells[2];
+    `FAIL_UNLESS_STR_EQUAL(actual_cell.value, "C2")
+  `SVTEST_END
+
+  `SVTEST(Parse_step_lines_with_a_doc_string)
+    // =========================================
+    string step[];
+    gherkin_step_bundle actual_step_bndl;
+    gherkin_pkg::step actual_step;
+    gherkin_pkg::doc_string actual_doc_string;
+
+    step = '{
+      "Then the step string doc string should follow",
+      "\"\"\"markdown",
+      "This is a _doc string_",
+      "\"\"\"",
+      "# This comment marks the end of the step"
+    };
+
+    parser.parse_step_lines(step, actual_step_bndl);
+    
+    actual_step = actual_step_bndl.step;
+    `FAIL_UNLESS($cast(actual_doc_string, actual_step.argument))
+    `FAIL_UNLESS_STR_EQUAL(actual_doc_string.content_type, "markdown")
+    `FAIL_UNLESS_STR_EQUAL(actual_doc_string.content, "This is a _doc string_\n")
+  `SVTEST_END
+
+  `SVTEST(Parse_step_lines_with_white_space_and_comment)
+    // ============================================================
+    string step[];
+    gherkin_step_bundle actual_step_bndl;
+    gherkin_pkg::step actual_step;
+    
+    step = '{
+      "   ",
+      "# This is a comment",
+      "* Parse this step",
+      "   "
+    };
+
+    parser.parse_step_lines(step, actual_step_bndl);
+    
+    actual_step = actual_step_bndl.step;
+    `FAIL_UNLESS_STR_EQUAL(actual_step.keyword, "*")
+    `FAIL_UNLESS_STR_EQUAL(actual_step.text, "Parse this step")
+  `SVTEST_END
+
   `SVUNIT_TESTS_END
 
 endmodule
