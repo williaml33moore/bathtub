@@ -88,6 +88,7 @@ class SVUnit:
         self.args = []
         self.script = 'runSVUnit'
         self.returncode = -1
+        self.compile_arg = None
 
     def sim(self, simulator):
         """Set the script's --sim option based on given simulator class."""
@@ -97,6 +98,12 @@ class SVUnit:
         }
         self.simulator = simulator
         self.args.append('--sim ' + sim_arg_values[self.simulator.name()])
+        return self
+    
+    def c_arg(self, compile_arg):
+        """Set the script's --c_arg option to given compiler options."""
+        self.compile_arg = compile_arg
+        self.args.append('--c_arg ' + self.compile_arg)
         return self
     
     def uvm(self, uvm_flag=True):

@@ -323,6 +323,10 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 					line_buf = step_array[i];
 					line_obj = new(line_buf, step_file_name, line_number);
 					line_number++;
+					if (bathtub_utils::trim_white_space(line_obj.text) == "") begin
+						// Don't process blank lines
+						continue;
+					end
 					line_mbox.put(line_obj);
 				end
 

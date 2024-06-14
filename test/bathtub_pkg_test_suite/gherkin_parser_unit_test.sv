@@ -644,6 +644,26 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_doc_string.content, "This is a _doc string_\n")
   `SVTEST_END
 
+  `SVTEST(Parse_a_step_string_with_white_space_and_comment)
+    // ============================================================
+    string step;
+    gherkin_step_bundle actual_step_bndl;
+    gherkin_pkg::step actual_step;
+    
+    step = {
+      "   \n",
+      "# This is a comment\n",
+      "* Parse this step\n",
+      "\n   "
+    };
+
+    parser.parse_step_string(step, actual_step_bndl);
+    
+    actual_step = actual_step_bndl.step;
+    `FAIL_UNLESS_STR_EQUAL(actual_step.keyword, "*")
+    `FAIL_UNLESS_STR_EQUAL(actual_step.text, "Parse this step")
+  `SVTEST_END
+
   `SVUNIT_TESTS_END
 
 endmodule
