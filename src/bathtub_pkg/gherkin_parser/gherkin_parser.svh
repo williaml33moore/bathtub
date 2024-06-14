@@ -96,6 +96,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 
 	// Read and parse lines from mailbox and block until EOF message is seen.
+	// Return a new `gherkin_document` object.
 	virtual task run_gherkin_document_parser(ref gherkin_pkg::gherkin_document gherkin_doc);
 		line_value line_obj;
 		
@@ -283,6 +284,20 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 	endtask : parse_feature_string
 
+
+	// Read and parse lines from mailbox and block until EOF message is seen.
+	// Return a new `step` object.
+	virtual task run_gherkin_step_parser(ref gherkin_pkg::step gherkin_step);
+		line_value line_obj;
+
+		parse_step(gherkin_step);
+		`pop_from_parser_stack(gherkin_step)
+		assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+		get_next_line(line_obj);
+		assert_last_message_is_eof : assert(line_obj.eof);
+		assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
+	endtask : run_gherkin_step_parser
+
 	
 	virtual task parse_step_string(input string step, output gherkin_step_bundle gherkin_step_bndl);
 		line_value line_obj;
@@ -298,14 +313,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		status = OK;
 
 		fork
-			begin : start_gherkin_step_parser
-				parse_step(gherkin_step);
-				`pop_from_parser_stack(gherkin_step)
-				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
-				get_next_line(line_obj);
-				assert_last_message_is_eof : assert(line_obj.eof);
-				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
-			end
+			run_gherkin_step_parser(gherkin_step);
 
 			begin : read_step_lines_and_feed_lines_to_parser
 
@@ -362,14 +370,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		status = OK;
 
 		fork
-			begin : start_gherkin_step_parser
-				parse_step(gherkin_step);
-				`pop_from_parser_stack(gherkin_step)
-				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
-				get_next_line(line_obj);
-				assert_last_message_is_eof : assert(line_obj.eof);
-				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
-			end
+			run_gherkin_step_parser(gherkin_step);
 
 			begin : read_step_lines_and_feed_lines_to_parser
 
