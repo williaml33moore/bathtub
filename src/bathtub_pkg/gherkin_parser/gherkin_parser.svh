@@ -95,6 +95,19 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 	endfunction : new
 
 
+	// Read and parse lines from mailbox and block until EOF message is seen.
+	virtual task run_gherkin_document_parser(ref gherkin_pkg::gherkin_document gherkin_doc);
+		line_value line_obj;
+		
+		parse_gherkin_document(gherkin_doc);
+		`pop_from_parser_stack(gherkin_doc)
+		assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
+		get_next_line(line_obj);
+		assert_last_message_is_eof : assert(line_obj.eof);
+		assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
+	endtask : run_gherkin_document_parser
+
+
 	virtual task parse_feature_file(input string feature_file_name, output gherkin_doc_bundle gherkin_doc_bndl);
 		integer fd;
 		integer code;
@@ -111,14 +124,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		status = OK;
 
 		fork
-			begin : start_gherkin_document_parser
-				parse_gherkin_document(gherkin_doc);
-				`pop_from_parser_stack(gherkin_doc)
-				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
-				get_next_line(line_obj);
-				assert_last_message_is_eof : assert(line_obj.eof);
-				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
-			end
+			run_gherkin_document_parser(gherkin_doc);
 
 			begin : read_feature_file_and_feed_lines_to_parser
 
@@ -181,14 +187,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		status = OK;
 
 		fork
-			begin : start_gherkin_document_parser
-				parse_gherkin_document(gherkin_doc);
-				`pop_from_parser_stack(gherkin_doc)
-				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
-				get_next_line(line_obj);
-				assert_last_message_is_eof : assert(line_obj.eof);
-				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
-			end
+			run_gherkin_document_parser(gherkin_doc);
 
 			begin : read_feature_lines_and_feed_lines_to_parser
 
@@ -245,14 +244,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		status = OK;
 
 		fork
-			begin : start_gherkin_document_parser
-				parse_gherkin_document(gherkin_doc);
-				`pop_from_parser_stack(gherkin_doc)
-				assert_mailbox_contains_last_message : assert(line_mbox.try_peek(line_obj));
-				get_next_line(line_obj);
-				assert_last_message_is_eof : assert(line_obj.eof);
-				assert_mailbox_is_empty_after_eof : assert(!line_mbox.try_peek(line_obj));
-			end
+			run_gherkin_document_parser(gherkin_doc);
 
 			begin : read_feature_lines_and_feed_lines_to_parser
 
