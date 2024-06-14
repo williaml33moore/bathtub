@@ -29,6 +29,7 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 	line_value line_obj;
 	line_analysis_result_t line_analysis_result;
 	gherkin_pkg::step_value step_value;
+	int unsigned num_steps = 0;
 
 	line_mbox.peek(line_obj);
 
@@ -50,29 +51,71 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 
 			analyze_line(line_obj.text, line_analysis_result);
 
-			case (line_analysis_result.token_before_space)
-				"Given",
-				"When",
-				"Then",
-				"And",
-				"But",
-				"*": begin : configure_step
-					int num_step_arguments = 0;
+			if (num_steps == 0) begin
 
-					step_value.keyword = line_analysis_result.token_before_space;
-					step_value.text = line_analysis_result.remainder_after_space;
+				case (line_analysis_result.token_before_space)
+					"Given",
+					"When",
+					"Then",
+					"And",
+					"But",
+					"*": begin : configure_step
+						int num_step_arguments = 0;
 
-					get_next_line(line_obj);
+						step_value.keyword = line_analysis_result.token_before_space;
+						step_value.text = line_analysis_result.remainder_after_space;
+						num_steps++;
 
-					while (status == OK) begin : step_elements
-						line_mbox.peek(line_obj);
+						get_next_line(line_obj);
 
-						if (line_obj.eof) break;
+						while (status == OK) begin : step_elements
+							line_mbox.peek(line_obj);
 
-						analyze_line(line_obj.text, line_analysis_result);
+							if (line_obj.eof) break;
+
+							analyze_line(line_obj.text, line_analysis_result);
+
+							case (line_analysis_result.secondary_keyword)
+
+								"#" : begin : construct_comment
+									gherkin_pkg::comment comment;
+
+									parse_comment(comment);
+									`pop_from_parser_stack(comment)
+									if (status == OK) begin
+										; // Discard comment
+									end
+								end
+								
+								"|", "\"\"\"", "```" : begin : construct_step_argument
+									gherkin_pkg::step_argument step_argument;
+
+									parse_step_argument(step_argument);
+									`pop_from_parser_stack(step_argument)
+
+									if (status == OK) begin
+										if (num_step_arguments == 0) begin
+											step_value.argument = step_argument;
+											num_step_arguments++;
+										end
+										else begin
+											status = ERROR;
+											`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A step can have only one argument")
+										end
+									end
+								end
+
+								default: begin
+									// Anything else terminates the step
+									break;
+								end
+							endcase
+						end
+					end
+
+					default : begin
 
 						case (line_analysis_result.secondary_keyword)
-
 							"#" : begin : construct_comment
 								gherkin_pkg::comment comment;
 
@@ -82,59 +125,25 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 									; // Discard comment
 								end
 							end
-							
-							"|", "\"\"\"", "```" : begin : construct_step_argument
-								gherkin_pkg::step_argument step_argument;
 
-								parse_step_argument(step_argument);
-								`pop_from_parser_stack(step_argument)
-
-								if (status == OK) begin
-									if (num_step_arguments == 0) begin
-										step_value.argument = step_argument;
-										num_step_arguments++;
-									end
-									else begin
-										status = ERROR;
-										`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A step can have only one argument")
-									end
-								end
+							"@" : begin : break_on_secondary_keyword
+								// Any legal secondary keyword terminates the step
+								break;
 							end
 
-							default: begin
-								// Anything else terminates the step
-								break;
+							default : begin
+								status = ERROR;
+								`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_space, line_analysis_result.secondary_keyword,
+									". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""})
 							end
 						endcase
 					end
-				end
-
-				default : begin
-
-					case (line_analysis_result.secondary_keyword)
-						"#" : begin : construct_comment
-							gherkin_pkg::comment comment;
-
-							parse_comment(comment);
-							`pop_from_parser_stack(comment)
-							if (status == OK) begin
-								; // Discard comment
-							end
-						end
-
-						"@" : begin : break_on_secondary_keyword
-							// Any legal secondary keyword terminates the step
-							break;
-						end
-
-						default : begin
-							status = ERROR;
-							`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_space, line_analysis_result.secondary_keyword,
-								". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""})
-						end
-					endcase
-				end
-			endcase
+				endcase
+			end
+			else begin
+				// We have our step; terminate the loop
+				break;
+			end
 		end
 		else begin
 			// EOF terminates the loop
