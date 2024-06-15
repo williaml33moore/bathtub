@@ -2,6 +2,7 @@
 
 module step_definitions_unit_test;
   import svunit_pkg::svunit_testcase;
+  import bathtub_pkg::step_nurture;
 
   typedef class hello_world_vseq;
   `include "step_definitions.svh"
@@ -15,6 +16,7 @@ module step_definitions_unit_test;
   // running the Unit Tests on
   //===================================
   hello_world_vseq my_hello_world_vseq;
+  hello_parameters_vseq my_hello_parameters_vseq;
 
 
   //===================================
@@ -32,6 +34,7 @@ module step_definitions_unit_test;
     svunit_ut.setup();
     /* Place Setup Code Here */
     my_hello_world_vseq = hello_world_vseq::type_id::create("my_hello_world_vseq");
+    my_hello_parameters_vseq = hello_parameters_vseq::type_id::create("my_hello_parameters_vseq");
   endtask
 
 
@@ -72,6 +75,23 @@ module step_definitions_unit_test;
       my_hello_world_vseq.start(null);
       `FAIL_UNLESS(1'b1)
     `SVTEST_END
+
+    `SVTEST(Hello_parameters)
+      // ====================
+      bathtub_pkg::step_nurture step_attributes;
+			step_attributes = step_nurture::type_id::create("step_attributes");
+			step_attributes.set_runtime_keyword("Given");
+			step_attributes.set_text(hello_parameters_vseq::magic_step_text);
+			step_attributes.set_argument(null);
+			step_attributes.set_static_attributes(my_hello_parameters_vseq.get_step_static_attributes());
+			step_attributes.set_current_feature_sequence(null);
+			step_attributes.set_current_scenario_sequence(null);
+			my_hello_parameters_vseq.set_step_attributes(step_attributes);
+
+      my_hello_parameters_vseq.start(null);
+      `FAIL_UNLESS(1'b1)
+    `SVTEST_END
+
 
   `SVUNIT_TESTS_END
 

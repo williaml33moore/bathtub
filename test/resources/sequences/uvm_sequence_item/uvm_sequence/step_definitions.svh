@@ -7,6 +7,9 @@ import uvm_pkg::*;
 import bathtub_pkg::step_definition_interface;
 `include "bathtub_macros.sv"
 
+/*
+Checks its own static attributes.
+*/
 class hello_world_vseq extends uvm_sequence implements step_definition_interface;
     `Given("a step definition with no parameters")
 
@@ -27,5 +30,34 @@ class hello_world_vseq extends uvm_sequence implements step_definition_interface
             `uvm_error(get_name(), get_step_static_attributes().get_regexp())
     endtask : body
 endclass : hello_world_vseq
+
+
+class hello_parameters_vseq extends uvm_sequence implements step_definition_interface;
+    `Given("a step definition with parameters %d, %f, and %s")
+
+    static string magic_step_text = "a step definition with parameters 42, 98.6, and Gherkin";
+
+    `uvm_object_utils(hello_parameters_vseq)
+    function new (string name="hello_parameters_vseq");
+        super.new(name);
+    endfunction : new
+    
+    virtual task body();
+        int i;
+        real f;
+        string s;
+        `step_parameter_get_args_begin()
+        i = `step_parameter_get_next_arg_as(int);
+        f = `step_parameter_get_next_arg_as(real);
+        s = `step_parameter_get_next_arg_as(string);
+        `step_parameter_get_args_end
+        assert (i == 42) `uvm_info(get_name(), $sformatf("i=%0d", i), UVM_HIGH) else
+            `uvm_error(get_name(), $sformatf("i=%0d", i))
+        assert (f == 98.6) `uvm_info(get_name(), $sformatf("f=%f", f), UVM_HIGH) else
+            `uvm_error(get_name(), $sformatf("f=%f", f))
+        assert (s == "Gherkin") `uvm_info(get_name(), $sformatf("s='%s'", s), UVM_HIGH) else
+            `uvm_error(get_name(), $sformatf("s='%s'", s))
+    endtask : body
+endclass : hello_parameters_vseq
 
 `endif // STEP_DEFINITIONS_SVH
