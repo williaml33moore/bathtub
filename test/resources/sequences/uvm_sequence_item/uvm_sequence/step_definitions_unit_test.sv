@@ -3,8 +3,11 @@
 module step_definitions_unit_test;
   import svunit_pkg::svunit_testcase;
   import bathtub_pkg::step_nurture;
+  import bathtub_pkg::scenario_sequence;
 
   typedef class hello_world_vseq;
+  typedef class hello_parameters_vseq;
+  typedef class hello_parameters_pool_vseq;
   `include "step_definitions.svh"
 
   string name = "step_definitions_ut";
@@ -15,9 +18,6 @@ module step_definitions_unit_test;
   // This is the UUT that we're 
   // running the Unit Tests on
   //===================================
-  hello_world_vseq my_hello_world_vseq;
-  hello_parameters_vseq my_hello_parameters_vseq;
-
 
   //===================================
   // Build
@@ -33,8 +33,6 @@ module step_definitions_unit_test;
   task setup();
     svunit_ut.setup();
     /* Place Setup Code Here */
-    my_hello_world_vseq = hello_world_vseq::type_id::create("my_hello_world_vseq");
-    my_hello_parameters_vseq = hello_parameters_vseq::type_id::create("my_hello_parameters_vseq");
   endtask
 
 
@@ -66,19 +64,32 @@ module step_definitions_unit_test;
 
     `SVTEST(Hello_world_run_direct)
       // ==========================
+      hello_world_vseq my_hello_world_vseq;
+
+      my_hello_world_vseq = hello_world_vseq::type_id::create("my_hello_world_vseq");
+
       my_hello_world_vseq.body();
+
       `FAIL_UNLESS(1'b1)
     `SVTEST_END
 
     `SVTEST(Hello_world_start)
       // =====================
+      hello_world_vseq my_hello_world_vseq;
+
+      my_hello_world_vseq = hello_world_vseq::type_id::create("my_hello_world_vseq");
+
       my_hello_world_vseq.start(null);
+
       `FAIL_UNLESS(1'b1)
     `SVTEST_END
 
     `SVTEST(Hello_parameters)
       // ====================
+      hello_parameters_vseq my_hello_parameters_vseq;
       bathtub_pkg::step_nurture step_attributes;
+
+      my_hello_parameters_vseq = hello_parameters_vseq::type_id::create("my_hello_parameters_vseq");
 			step_attributes = step_nurture::type_id::create("step_attributes");
 			step_attributes.set_runtime_keyword("Given");
 			step_attributes.set_text(hello_parameters_vseq::magic_step_text);
@@ -89,7 +100,39 @@ module step_definitions_unit_test;
 			my_hello_parameters_vseq.set_step_attributes(step_attributes);
 
       my_hello_parameters_vseq.start(null);
+
       `FAIL_UNLESS(1'b1)
+    `SVTEST_END
+
+    `SVTEST(Hello_pool)
+      // ==============
+      hello_parameters_pool_vseq my_hello_parameters_pool_vseq;
+      bathtub_pkg::step_nurture step_attributes;
+      bathtub_pkg::scenario_sequence pools;
+      int actual_i;
+      real actual_f;
+      string actual_s;
+    
+      my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
+      pools = scenario_sequence::type_id::create("pool");
+			step_attributes = step_nurture::type_id::create("step_attributes");
+			step_attributes.set_runtime_keyword("Given");
+			step_attributes.set_text({hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"});
+			step_attributes.set_static_attributes(my_hello_parameters_pool_vseq.get_step_static_attributes());
+			step_attributes.set_current_scenario_sequence(pools);
+			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+
+      my_hello_parameters_pool_vseq.start(null);
+      
+      actual_i = pools.get_int_pool().get("i");
+      `FAIL_UNLESS_EQUAL(actual_i, 42)
+
+      actual_f = pools.get_real_pool().get("f");
+      `FAIL_UNLESS_EQUAL(actual_f, 98.6)
+
+      actual_s = pools.get_string_pool().get("s");
+      `FAIL_UNLESS_STR_EQUAL(actual_s, "Gherkin")
+
     `SVTEST_END
 
 
