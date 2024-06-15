@@ -20,7 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+
 def test_all(tmp_path, svunit, simulator):
     """Run all unit tests with runSVUnit."""
     assert simulator.extend_args(['$BATHTUB_VIP_DIR/vip-spec.sv', '$BATHTUB_VIP_DIR/vip_setup.sv']).run(tmp_path).passed()
-    assert svunit.sim(simulator).uvm().out(tmp_path).run().passed()
+    assert svunit.sim(simulator).uvm().out(tmp_path).run(os.path.dirname(__file__)).passed()
