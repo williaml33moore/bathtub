@@ -135,6 +135,44 @@ module step_definitions_unit_test;
 
     `SVTEST_END
 
+    `SVTEST(Hello_pool_from_step_string)
+      // ==============
+      string step_string;
+      bathtub_pkg::gherkin_step_bundle step_bundle;
+      bathtub_pkg::gherkin_parser parser;
+      hello_parameters_pool_vseq my_hello_parameters_pool_vseq;
+      bathtub_pkg::step_nurture step_attributes;
+      bathtub_pkg::scenario_sequence pools;
+      int actual_i;
+      real actual_f;
+      string actual_s;
+    
+      parser = new("parser");
+      step_string = {"Given ", hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"};
+      parser.parse_step_string(step_string, step_bundle);
+      my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
+      pools = scenario_sequence::type_id::create("pool");
+			step_attributes = step_nurture::type_id::create("step_attributes");
+			step_attributes.set_runtime_keyword(step_bundle.step.keyword);
+			step_attributes.set_text(step_bundle.step.text);
+			step_attributes.set_argument(step_bundle.step.argument);
+			step_attributes.set_static_attributes(my_hello_parameters_pool_vseq.get_step_static_attributes());
+			step_attributes.set_current_scenario_sequence(pools);
+			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+
+      my_hello_parameters_pool_vseq.start(null);
+      
+      actual_i = pools.get_int_pool().get("i");
+      `FAIL_UNLESS_EQUAL(actual_i, 42)
+
+      actual_f = pools.get_real_pool().get("f");
+      `FAIL_UNLESS_EQUAL(actual_f, 98.6)
+
+      actual_s = pools.get_string_pool().get("s");
+      `FAIL_UNLESS_STR_EQUAL(actual_s, "Gherkin")
+
+    `SVTEST_END
+
 
   `SVUNIT_TESTS_END
 
