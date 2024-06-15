@@ -23,4 +23,4 @@
 def test_all(tmp_path, svunit, simulator):
     """Run all unit tests with runSVUnit."""
     assert simulator.extend_args(['$BATHTUB_VIP_DIR/vip-spec.sv', '$BATHTUB_VIP_DIR/vip_setup.sv']).run(tmp_path).passed()
-    assert svunit.sim(simulator).uvm().out(tmp_path).run().passed()
+    assert svunit.sim(simulator).uvm().out(tmp_path).append_arg('-t step_definitions_unit_test.sv').run('./test/resources/sequences/uvm_sequence_item/uvm_sequence/').passed()

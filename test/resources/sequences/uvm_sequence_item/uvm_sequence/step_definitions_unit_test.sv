@@ -1,12 +1,12 @@
 `include "svunit_defines.svh"
 
-module hello_world_vseq_unit_test;
+module step_definitions_unit_test;
   import svunit_pkg::svunit_testcase;
 
   typedef class hello_world_vseq;
   `include "step_definitions.svh"
 
-  string name = "hello_world_vseq_ut";
+  string name = "step_definitions_ut";
   svunit_testcase svunit_ut;
 
 
@@ -22,8 +22,6 @@ module hello_world_vseq_unit_test;
   //===================================
   function void build();
     svunit_ut = new(name);
-
-    my_hello_world_vseq = new(/* New arguments if needed */);
   endfunction
 
 

@@ -89,6 +89,16 @@ class SVUnit:
         self.script = 'runSVUnit'
         self.returncode = -1
         self.compile_arg = None
+    
+    def append_arg(self, arg):
+        """Append a single argument to script command-line arguments."""
+        self.args.append(arg)
+        return self
+    
+    def extend_args(self, args):
+        """Extend script command-line arguments with a list of new arguments."""
+        self.args.extend(args)
+        return self
 
     def sim(self, simulator):
         """Set the script's --sim option based on given simulator class."""
