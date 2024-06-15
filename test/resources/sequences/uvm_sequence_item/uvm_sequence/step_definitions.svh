@@ -50,6 +50,7 @@ class hello_parameters_vseq extends uvm_sequence implements step_definition_inte
         int i;
         real f;
         string s;
+
         `step_parameter_get_args_begin()
         i = `step_parameter_get_next_arg_as(int);
         f = `step_parameter_get_next_arg_as(real);
@@ -84,6 +85,7 @@ class hello_parameters_pool_vseq extends uvm_sequence implements step_definition
         int i;
         real f;
         string s;
+
         `step_parameter_get_args_begin()
         i = `step_parameter_get_next_arg_as(int);
         f = `step_parameter_get_next_arg_as(real);
@@ -95,5 +97,46 @@ class hello_parameters_pool_vseq extends uvm_sequence implements step_definition
         pools.get_string_pool().add("s", s);
     endtask : body
 endclass : hello_parameters_pool_vseq
+
+
+/*
+Sends its own parameters out as sequence items so they can be checked externally.
+*/
+class hello_parameters_seq_item_vseq extends uvm_sequence implements step_definition_interface;
+    `Given("a step definition with parameters %d, %f, and %s")
+
+    // Partial magic string; the caller supplies the rest of the string with parameters.
+    static string magic_step_text = "a step definition with parameters ";
+
+    `uvm_object_utils(hello_parameters_seq_item_vseq)
+    function new (string name="hello_parameters_seq_item_vseq");
+        super.new(name);
+    endfunction : new
+    
+    virtual task body();
+        int i;
+        real f;
+        string s;
+
+        `step_parameter_get_args_begin()
+        i = `step_parameter_get_next_arg_as(int);
+        f = `step_parameter_get_next_arg_as(real);
+        s = `step_parameter_get_next_arg_as(string);
+        `step_parameter_get_args_end
+
+        // Stash data in the req name as a string; use the name as storage for payload.
+        req = new($sformatf("i: %0d", i));
+        start_item(req);
+        finish_item(req);
+        
+        req = new($sformatf("f: %f", f));
+        start_item(req);
+        finish_item(req);
+        
+        req = new($sformatf("s: %s", s));
+        start_item(req);
+        finish_item(req);
+    endtask : body
+endclass : hello_parameters_seq_item_vseq
 
 `endif // STEP_DEFINITIONS_SVH
