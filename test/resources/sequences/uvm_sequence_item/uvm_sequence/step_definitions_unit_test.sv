@@ -61,8 +61,15 @@ module step_definitions_unit_test;
   //===================================
   `SVUNIT_TESTS_BEGIN
 
-    `SVTEST(Hello_world)
+    `SVTEST(Hello_world_run_direct)
+      // ==========================
       my_hello_world_vseq.body();
+      `FAIL_UNLESS(1'b1)
+    `SVTEST_END
+
+    `SVTEST(Hello_world_start)
+      // =====================
+      my_hello_world_vseq.start(null);
       `FAIL_UNLESS(1'b1)
     `SVTEST_END
 
