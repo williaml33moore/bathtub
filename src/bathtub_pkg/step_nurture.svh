@@ -138,10 +138,15 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	virtual function void configure(
 		gherkin_pkg::step step,
 		step_definition_interface step_seq,
-		feature_sequence_interface current_feature_seq,
-		scenario_sequence_interface current_scenario_seq
-	);
-		;
+		scenario_sequence_interface current_scenario_seq = null,
+		feature_sequence_interface current_feature_seq = null
+		);
+		set_runtime_keyword(step.keyword);
+		set_text(step.text);
+		set_argument(step.argument);
+		set_static_attributes(step_seq.get_step_static_attributes());
+		set_current_scenario_sequence(current_scenario_seq);
+		set_current_feature_sequence(current_feature_seq);
 	endfunction : configure
 
 endclass : step_nurture

@@ -158,11 +158,7 @@ module step_definitions_unit_test;
       my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
       pools = scenario_sequence::type_id::create("pool");
 			step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.set_runtime_keyword(step_bundle.step.keyword);
-			step_attributes.set_text(step_bundle.step.text);
-			step_attributes.set_argument(step_bundle.step.argument);
-			step_attributes.set_static_attributes(my_hello_parameters_pool_vseq.get_step_static_attributes());
-			step_attributes.set_current_scenario_sequence(pools);
+      step_attributes.configure(step_bundle.step, my_hello_parameters_pool_vseq, pools);
 			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
 
       my_hello_parameters_pool_vseq.start(null);
