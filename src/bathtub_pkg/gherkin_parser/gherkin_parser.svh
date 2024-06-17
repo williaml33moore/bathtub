@@ -41,7 +41,7 @@ typedef class gherkin_doc_bundle;
 typedef class gherkin_step_bundle;
 `include "bathtub_pkg/gherkin_step_bundle.svh"
 
-import gherkin_pkg::gherkin_document;
+import gherkin_pkg::gherkin_pkg_metadata;
 
 `define push_onto_parser_stack(o) parser_stack.push_front(o);
 

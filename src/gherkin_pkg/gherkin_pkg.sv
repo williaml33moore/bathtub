@@ -30,6 +30,13 @@ package gherkin_pkg;
 
 	import uvm_pkg::*;
 
+	const struct {
+		string file;
+	} gherkin_pkg_metadata = '{
+		file : "`__FILE__",
+		string : ""
+	};
+
 	typedef class background;
 	typedef class comment;
 	typedef class data_table;

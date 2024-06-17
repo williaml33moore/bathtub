@@ -28,14 +28,20 @@ SOFTWARE.
 `include "uvm_macros.svh"
 `include "bathtub_macros.sv"
 
-import gherkin_pkg::gherkin_document;
+import gherkin_pkg::gherkin_pkg_metadata;
 import uvm_pkg::*;
 
 typedef class feature_sequence;
+`ifndef __FEATURE_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/feature_sequence.svh"
+`endif // __FEATURE_SEQUENCE_SVH
 
 typedef class scenario_sequence;
+`ifndef __SCENARIO_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/scenario_sequence.svh"
+`endif // __SCENARIO_SEQUENCE_SVH
 
 typedef class step_nurture;
 `include "bathtub_pkg/step_nurture.svh"

@@ -25,8 +25,13 @@ SOFTWARE.
 `ifndef __STEP_NURTURE_SVH
 `define __STEP_NURTURE_SVH
 
-`include "bathtub_pkg/step_attributes_interface.svh"
+import gherkin_pkg::gherkin_pkg_metadata;
+
 `include "uvm_macros.svh"
+`include "bathtub_pkg/step_attributes_interface.svh"
+`include "bathtub_pkg/step_definition_interface.svh"
+`include "bathtub_pkg/feature_sequence_interface.svh"
+`include "bathtub_pkg/scenario_sequence_interface.svh"
 
 class step_nurture extends uvm_object implements step_attributes_interface;
 
@@ -129,6 +134,15 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
 		this.current_scenario_seq = seq;
 	endfunction : set_current_scenario_sequence
+
+	virtual function void configure(
+		gherkin_pkg::step step,
+		step_definition_interface step_seq,
+		feature_sequence_interface current_feature_seq,
+		scenario_sequence_interface current_scenario_seq
+	);
+		;
+	endfunction : configure
 
 endclass : step_nurture
 

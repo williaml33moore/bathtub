@@ -26,7 +26,7 @@ SOFTWARE.
 `define __GHERKIN_DOCUMENT_PRINTER_SVH
 
 import uvm_pkg::*;
-import gherkin_pkg::gherkin_document;
+import gherkin_pkg::gherkin_pkg_metadata;
 
 `include "bathtub_pkg/bathtub_pkg.svh"
 `include "uvm_macros.svh"
