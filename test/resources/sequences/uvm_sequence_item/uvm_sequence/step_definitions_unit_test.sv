@@ -141,7 +141,7 @@ module step_definitions_unit_test;
     `SVTEST_END
 
     `SVTEST(Hello_pool_from_step_string)
-      // ==============
+      // ===============================
       string step_string;
       bathtub_pkg::gherkin_step_bundle step_bundle;
       bathtub_pkg::gherkin_parser parser;
@@ -175,7 +175,7 @@ module step_definitions_unit_test;
     `SVTEST_END
 
     `SVTEST(Hello_seq_item_from_step_string)
-      // ==============
+      // ===================================
       string step_string;
       bathtub_pkg::gherkin_step_bundle step_bundle;
       bathtub_pkg::gherkin_parser parser;
@@ -191,10 +191,7 @@ module step_definitions_unit_test;
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_seq_item_vseq = hello_parameters_seq_item_vseq::type_id::create("my_hello_parameters_seq_item_vseq");
 			step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.set_runtime_keyword(step_bundle.step.keyword);
-			step_attributes.set_text(step_bundle.step.text);
-			step_attributes.set_argument(step_bundle.step.argument);
-			step_attributes.set_static_attributes(my_hello_parameters_seq_item_vseq.get_step_static_attributes());
+      step_attributes.configure(step_bundle.step, my_hello_parameters_seq_item_vseq);
 			my_hello_parameters_seq_item_vseq.set_step_attributes(step_attributes);
 
       fork
