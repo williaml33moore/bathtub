@@ -30,4 +30,12 @@ typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
 parameter byte CR = 13; // ASCII carriage return
 parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
 
+// Metadata object
+const struct {
+    string file;
+} bathtub_pkg_metadata = '{
+    file : "`__FILE__",
+    string : ""
+};
+
 `endif // __BATHTUB_PKG_SVH
