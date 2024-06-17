@@ -30,9 +30,11 @@ typedef class bathtub_utils;
 typedef class step_parameter_arg;
 `include "bathtub_pkg/step_parameter_arg.svh"
 
+`include "bathtub_pkg/step_parameters_interface.svh"
+
 `include "bathtub_macros.sv"
 
-class step_parameters extends uvm_object;
+class step_parameters extends uvm_object implements step_parameters_interface;
 	protected step_parameter_arg argv[$];
 	protected string step_text;
 	protected string format;

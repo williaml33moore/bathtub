@@ -22,32 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`include "bathtub_macros.sv"
+`ifndef __STEP_PARAMETERS_INTERFACE_SVH
+`define __STEP_PARAMETERS_INTERFACE_SVH
 
-// ===================================================================
-package bathtub_pkg;
-// ===================================================================
+import uvm_pkg::*;
 
-	// Classes
-	typedef class bathtub;
-	typedef class bathtub_utils;
-	typedef class feature_sequence;
-	typedef class gherkin_doc_bundle;
-	typedef class gherkin_document_printer;
-	typedef class gherkin_document_runner;
-	typedef class gherkin_parser;
-	typedef class gherkin_step_bundle;
-	typedef class line_value;
-	typedef class pool_provider;
-	typedef class scenario_sequence;
-	typedef class step_definition_seq;
-	typedef class step_nature;
-	typedef class step_nurture;
-	typedef class step_parameter_arg;
-	typedef class step_parameters;
+typedef class step_parameter_arg;
+`include "bathtub_pkg/step_parameter_arg.svh"
 
-	// Main entry points
-	`include "bathtub_pkg/bathtub.svh"
-	`include "bathtub_pkg/step_definition_seq.svh"
+interface class step_parameters_interface;
+	pure virtual function step_parameter_arg get_arg(int i);
+	pure virtual function int num_args();
+endclass : step_parameters_interface
 
-endpackage : bathtub_pkg
+`endif // __STEP_PARAMETERS_INTERFACE_SVH
