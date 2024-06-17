@@ -139,4 +139,42 @@ class hello_parameters_seq_item_vseq extends uvm_sequence implements step_defini
     endtask : body
 endclass : hello_parameters_seq_item_vseq
 
+
+/*
+Sends its own parameters out as sequence items with `uvm_do macros so they can be checked externally.
+*/
+class hello_parameters_seq_item_uvm_do_vseq extends uvm_sequence implements step_definition_interface;
+    `Given("a step definition with parameters %d, %f, and %s")
+
+    // Partial magic string; the caller supplies the rest of the string with parameters.
+    static string magic_step_text = "a step definition with parameters ";
+
+    `uvm_object_utils(hello_parameters_seq_item_uvm_do_vseq)
+    function new (string name="hello_parameters_seq_item_uvm_do_vseq");
+        super.new(name);
+    endfunction : new
+    
+    virtual task body();
+        int i;
+        real f;
+        string s;
+
+        `step_parameter_get_args_begin()
+        i = `step_parameter_get_next_arg_as(int);
+        f = `step_parameter_get_next_arg_as(real);
+        s = `step_parameter_get_next_arg_as(string);
+        `step_parameter_get_args_end
+
+        // Stash data in the req name as a string; use the name as storage for payload.
+        req = new($sformatf("i: %0d", i));
+        `uvm_do(req)
+        
+        req = new($sformatf("f: %f", f));
+        `uvm_do(req)
+        
+        req = new($sformatf("s: %s", s));
+        `uvm_do(req)
+    endtask : body
+endclass : hello_parameters_seq_item_uvm_do_vseq
+
 `endif // STEP_DEFINITIONS_SVH

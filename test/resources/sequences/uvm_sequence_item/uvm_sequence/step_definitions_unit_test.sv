@@ -223,6 +223,55 @@ module step_definitions_unit_test;
 
     `SVTEST_END
 
+    `SVTEST(Hello_seq_item_uvm_do)
+      // =========================
+      string step_string;
+      bathtub_pkg::gherkin_step_bundle step_bundle;
+      bathtub_pkg::gherkin_parser parser;
+      hello_parameters_seq_item_uvm_do_vseq my_sequence;
+      bathtub_pkg::step_nurture step_attributes;
+      int actual_i;
+      real actual_f;
+      string actual_s;
+      uvm_sequence_item item;
+    
+      parser = new("parser");
+      step_string = {"Given ", my_sequence.magic_step_text, "42, 98.6, and Gherkin"};
+      parser.parse_step_string(step_string, step_bundle);
+      my_sequence = hello_parameters_seq_item_uvm_do_vseq::type_id::create("my_sequence");
+			step_attributes = step_nurture::type_id::create("step_attributes");
+      step_attributes.configure(step_bundle.step, my_sequence);
+			my_sequence.set_step_attributes(step_attributes);
+
+      fork
+        begin
+          // Run the sequence-under-test.
+          my_sequence.start(sequencer);
+        end
+        begin
+          // The sequencer receives three sequence items from the sequence-under-test.
+          // The payload is stored as a string in the name of each sequence item.
+          integer code;
+
+          sequencer.get_next_item(item);
+          sequencer.item_done();
+          code = $sscanf(item.get_name(), "i: %0d", actual_i);
+          `FAIL_UNLESS_EQUAL(actual_i, 42)
+          
+          sequencer.get_next_item(item);
+          sequencer.item_done();
+          code = $sscanf(item.get_name(), "f: %f", actual_f);
+          `FAIL_UNLESS(actual_f * actual_f - 98.6 * 98.6 < 1.0e-6)
+          
+          sequencer.get_next_item(item);
+          sequencer.item_done();
+          code = $sscanf(item.get_name(), "s: %s", actual_s);
+          `FAIL_UNLESS_STR_EQUAL(actual_s, "Gherkin")
+        end
+      join
+
+    `SVTEST_END
+
 
   `SVUNIT_TESTS_END
 
