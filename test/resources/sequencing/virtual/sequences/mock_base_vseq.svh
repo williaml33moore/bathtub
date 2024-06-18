@@ -35,7 +35,7 @@ typedef class mock_object_sequencer;
 `include "mock_sequencers.svh"
 
 typedef class mock_object_sequence_item;
-`include "mock_sequence_item.svh"
+`include "mock_sequence_items.svh"
 
 /*
  * Virtual sequence base class.
