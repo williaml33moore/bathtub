@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __MOCK_STEP_DEFINITIONS_SVH
-`define __MOCK_STEP_DEFINITIONS_SVH
+`ifndef __MOCK_STEP_DEFINITION_VSEQS_SVH
+`define __MOCK_STEP_DEFINITION_VSEQS_SVH
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
@@ -80,26 +80,4 @@ class mock_step_def_vseq extends mock_base_vseq implements bathtub_pkg::step_def
     endtask : body
 endclass : mock_step_def_vseq
 
-/*
- * Driver sequence sends sequence items
- */
-class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
-    // Catches every step
-    `Given("/^.*$/")
-
-    `uvm_object_utils(mock_step_def_seq)
-    function new (string name="mock_step_def_seq");
-        super.new(name);
-    endfunction : new
-
-    virtual task body();
-
-        req = mock_object_sequence_item::type_id::create("req");
-        start_item(req);
-        // Sends itself as payload to the sequencer
-        req.set_payload(this);
-        finish_item(req);
-    endtask : body
-endclass : mock_step_def_seq
-
-`endif // __MOCK_STEP_DEFINITIONS_SVH
+`endif // __MOCK_STEP_DEFINITION_VSEQS_SVH

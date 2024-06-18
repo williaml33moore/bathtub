@@ -32,7 +32,7 @@ typedef class mock_int_sequencer;
 typedef class mock_real_sequencer;
 typedef class mock_string_sequencer;
 typedef class mock_object_sequencer;
-`include "mock_sequencer.svh"
+`include "mock_sequencers.svh"
 
 class mock_vsequencer extends uvm_sequencer;
 

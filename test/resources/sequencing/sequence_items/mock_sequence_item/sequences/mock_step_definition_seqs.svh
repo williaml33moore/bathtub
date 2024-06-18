@@ -22,46 +22,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __MOCK_BASE_VSEQ_SVH
-`define __MOCK_BASE_VSEQ_SVH
+`ifndef __MOCK_STEP_DEFINITION_SEQS_SVH
+`define __MOCK_STEP_DEFINITION_SEQS_SVH
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 
-typedef class mock_vsequencer;
-`include "mock_vsequencer.svh"
+`include "bathtub_macros.sv"
+import bathtub_pkg::bathtub_pkg_metadata;
 
-typedef class mock_object_sequencer;
-`include "mock_sequencer.svh"
+typedef class mock_base_vseq;
+`include "mock_base_vseq.svh"
 
+typedef class mock_base_seq;
+`include "mock_base_seq.svh"
+
+typedef class mock_int_sequence_item;
+typedef class mock_real_sequence_item;
+typedef class mock_string_sequence_item;
 typedef class mock_object_sequence_item;
 `include "mock_sequence_item.svh"
 
 /*
- * Virtual sequence base class.
+ * Driver sequence sends sequence items
  */
-class mock_base_vseq extends uvm_sequence;
+class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
+    // Catches every step
+    `Given("/^.*$/")
 
-    `uvm_object_utils(mock_base_vseq)
-    `uvm_declare_p_sequencer(mock_vsequencer)
-
-    function new (string name="mock_base_vseq");
+    `uvm_object_utils(mock_step_def_seq)
+    function new (string name="mock_step_def_seq");
         super.new(name);
     endfunction : new
-endclass : mock_base_vseq
 
+    virtual task body();
 
-/*
- * Driver sequence base class sets the sequence item type.
- */
-class mock_base_seq extends uvm_sequence#(mock_object_sequence_item);
+        req = mock_object_sequence_item::type_id::create("req");
+        start_item(req);
+        // Sends itself as payload to the sequencer
+        req.set_payload(this);
+        finish_item(req);
+    endtask : body
+endclass : mock_step_def_seq
 
-    `uvm_object_utils(mock_base_seq)
-    `uvm_declare_p_sequencer(mock_object_sequencer)
-
-    function new (string name="mock_base_seq");
-        super.new(name);
-    endfunction : new
-endclass : mock_base_seq
-
-`endif // __MOCK_BASE_VSEQ_SVH
+`endif // __MOCK_STEP_DEFINITION_SEQS_SVH

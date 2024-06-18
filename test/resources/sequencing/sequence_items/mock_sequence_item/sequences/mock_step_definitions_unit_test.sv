@@ -4,13 +4,13 @@ module mock_step_def_vseq_unit_test;
   import svunit_pkg::svunit_testcase;
 
   import bathtub_pkg::bathtub_pkg_metadata;
-  `include "mock_step_definitions.svh"
+  `include "mock_step_definition_seqs.svh"
 
   typedef class mock_int_sequencer;
   typedef class mock_real_sequencer;
   typedef class mock_string_sequencer;
   typedef class mock_object_sequencer;
-  `include "mock_sequencer.svh"
+  `include "mock_sequencers.svh"
 
   typedef class mock_vsequencer;
   `include "mock_vsequencer.svh"
@@ -20,6 +20,9 @@ module mock_step_def_vseq_unit_test;
   typedef class mock_string_sequence_item;
   typedef class mock_object_sequence_item;
   `include "mock_sequence_item.svh"
+
+  typedef class mock_step_def_vseq;
+  `include "mock_step_definition_vseqs.svh"
 
   string name = "mock_step_def_vseq_ut";
   svunit_testcase svunit_ut;
@@ -34,7 +37,6 @@ module mock_step_def_vseq_unit_test;
   // This is the UUT that we're 
   // running the Unit Tests on
   //===================================
-  mock_step_def_vseq my_mock_step_def_vseq;
 
 
   //===================================

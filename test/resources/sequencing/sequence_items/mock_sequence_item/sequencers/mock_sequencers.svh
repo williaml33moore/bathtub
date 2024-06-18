@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __MOCK_SEQUENCER_SVH
-`define __MOCK_SEQUENCER_SVH
+`ifndef __MOCK_SEQUENCERS_SVH
+`define __MOCK_SEQUENCERS_SVH
 
 typedef class mock_base_sequencer;
 typedef class mock_param_sequencer;
@@ -97,4 +97,4 @@ class mock_object_sequencer extends mock_param_sequencer#(uvm_object, "uvm_objec
     endfunction : new
 endclass : mock_object_sequencer
 
-`endif // __MOCK_SEQUENCER_SVH
+`endif // __MOCK_SEQUENCERS_SVH
