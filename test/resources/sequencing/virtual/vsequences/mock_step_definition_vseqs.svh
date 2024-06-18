@@ -32,7 +32,6 @@ import uvm_pkg::*;
 import bathtub_pkg::bathtub_pkg_metadata;
 
 typedef class mock_base_vseq;
-typedef class mock_base_seq;
 `include "mock_base_vseq.svh"
 
 typedef class mock_int_sequence_item;
