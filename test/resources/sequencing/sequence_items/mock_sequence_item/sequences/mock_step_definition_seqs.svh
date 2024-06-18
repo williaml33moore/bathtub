@@ -41,7 +41,7 @@ typedef class mock_int_sequence_item;
 typedef class mock_real_sequence_item;
 typedef class mock_string_sequence_item;
 typedef class mock_object_sequence_item;
-`include "mock_sequence_item.svh"
+`include "mock_sequence_items.svh"
 
 /*
  * Driver sequence sends sequence items

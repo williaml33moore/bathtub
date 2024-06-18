@@ -19,7 +19,7 @@ module mock_step_def_vseq_unit_test;
   typedef class mock_real_sequence_item;
   typedef class mock_string_sequence_item;
   typedef class mock_object_sequence_item;
-  `include "mock_sequence_item.svh"
+  `include "mock_sequence_items.svh"
 
   typedef class mock_step_def_vseq;
   `include "mock_step_definition_vseqs.svh"

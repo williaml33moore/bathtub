@@ -32,6 +32,11 @@ typedef class mock_real_sequencer;
 typedef class mock_string_sequencer;
 typedef class mock_object_sequencer;
 
+typedef class mock_int_sequence_item;
+typedef class mock_real_sequence_item;
+typedef class mock_string_sequence_item;
+typedef class mock_object_sequence_item;
+`include "mock_sequence_items.svh"
 
 import uvm_pkg::*;
 
@@ -46,19 +51,17 @@ class mock_base_sequencer extends uvm_sequencer;
 endclass : mock_base_sequencer
 
 
-class mock_param_sequencer#(type T=uvm_object, string type_name="uvm_object") extends mock_base_sequencer;
-
-    local T payload;
+class mock_param_sequencer#(type T=uvm_sequence_item, string type_name="uvm_sequence_item") extends mock_base_sequencer;
 
     `uvm_component_param_utils(mock_param_sequencer)
 
-    function new (string name={"mock_param_sequence_item#(", type_name, ")"}, uvm_component parent);
+    function new (string name={"mock_param_sequencer#(", type_name, ")"}, uvm_component parent);
         super.new(name, parent);
     endfunction : new
 endclass : mock_param_sequencer
 
 
-class mock_int_sequencer extends mock_param_sequencer#(int, "int");
+class mock_int_sequencer extends mock_param_sequencer#(mock_int_sequence_item, "mock_int_sequence_item");
 
     `uvm_component_param_utils(mock_int_sequencer)
 
@@ -68,7 +71,7 @@ class mock_int_sequencer extends mock_param_sequencer#(int, "int");
 endclass : mock_int_sequencer
 
 
-class mock_real_sequencer extends mock_param_sequencer#(real, "real");
+class mock_real_sequencer extends mock_param_sequencer#(mock_real_sequence_item, "mock_real_sequence_item");
 
     `uvm_component_param_utils(mock_real_sequencer)
 
@@ -78,7 +81,7 @@ class mock_real_sequencer extends mock_param_sequencer#(real, "real");
 endclass : mock_real_sequencer
 
 
-class mock_string_sequencer extends mock_param_sequencer#(string, "string");
+class mock_string_sequencer extends mock_param_sequencer#(mock_string_sequence_item, "mock_string_sequence_item");
 
     `uvm_component_param_utils(mock_string_sequencer)
 
@@ -88,7 +91,7 @@ class mock_string_sequencer extends mock_param_sequencer#(string, "string");
 endclass : mock_string_sequencer
 
 
-class mock_object_sequencer extends mock_param_sequencer#(uvm_object, "uvm_object");
+class mock_object_sequencer extends mock_param_sequencer#(mock_object_sequence_item, "mock_object_sequence_item");
 
     `uvm_component_param_utils(mock_object_sequencer)
 
