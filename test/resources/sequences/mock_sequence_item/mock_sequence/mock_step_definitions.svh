@@ -36,7 +36,7 @@ typedef class mock_base_vseq;
 
 
 class mock_step_def_vseq extends mock_base_vseq implements bathtub_pkg::step_definition_interface;
-    `Given("a step")
+    `Given("a step definition with parameters %d, %f, and %s")
 
     `uvm_object_utils(mock_step_def_vseq)
     function new (string name="mock_step_def_vseq");
@@ -44,7 +44,30 @@ class mock_step_def_vseq extends mock_base_vseq implements bathtub_pkg::step_def
     endfunction : new
 
     virtual task body();
-        assert (1'b0) else `uvm_error(get_name(), "Placeholder")
+        int d;
+        real f;
+        string s;
+        mock_int_sequence_item d_item;
+        mock_real_sequence_item f_item;
+        mock_string_sequence_item s_item;
+
+        `step_parameter_get_args_begin()
+        d = `step_parameter_get_next_arg_as(int);
+        f = `step_parameter_get_next_arg_as(real);
+        s = `step_parameter_get_next_arg_as(string);
+        `step_parameter_get_args_end
+
+        `uvm_create_on(d_item, p_sequencer.mock_int_sqr)
+        d_item.set_payload(d);
+        `uvm_send(d_item)
+
+        `uvm_create_on(f_item, p_sequencer.mock_real_sqr)
+        f_item.set_payload(f);
+        `uvm_send(f_item)
+
+        `uvm_create_on(s_item, p_sequencer.mock_string_sqr)
+        s_item.set_payload(s);
+        `uvm_send(s_item)
     endtask : body
 endclass : mock_step_def_vseq
 

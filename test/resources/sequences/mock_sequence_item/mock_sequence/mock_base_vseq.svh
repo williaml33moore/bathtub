@@ -31,9 +31,14 @@ import uvm_pkg::*;
 typedef class mock_int_sequence_item;
 `include "mock_sequence_item.svh"
 
+typedef class mock_vsequencer;
+`include "mock_vsequencer.svh"
+
 class mock_base_vseq extends uvm_sequence#(mock_int_sequence_item);
 
     `uvm_object_utils(mock_base_vseq)
+    `uvm_declare_p_sequencer(mock_vsequencer)
+    
     function new (string name="mock_base_vseq");
         super.new(name);
     endfunction : new

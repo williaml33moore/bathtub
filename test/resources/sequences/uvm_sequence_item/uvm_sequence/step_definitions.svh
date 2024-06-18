@@ -148,16 +148,31 @@ class hello_parameters_seq_item_uvm_do_vseq extends uvm_sequence implements step
 
     // Partial magic string; the caller supplies the rest of the string with parameters.
     static string magic_step_text = "a step definition with parameters ";
+    int i;
+    real f;
+    string s;
 
     `uvm_object_utils(hello_parameters_seq_item_uvm_do_vseq)
     function new (string name="hello_parameters_seq_item_uvm_do_vseq");
         super.new(name);
     endfunction : new
     
+    virtual function void mid_do(uvm_sequence_item this_item);
+        static int count = 0;
+        
+        // Stash data in the req name as a string; use the name as storage for payload.
+        // Change the payload each time the function is called.
+        // Bit of a kludge.
+        case (count)
+            0 : req.set_name($sformatf("i: %0d", i));
+            1 : req.set_name($sformatf("f: %f", f));
+            2 : req.set_name($sformatf("s: %s", s));
+            default : ;
+        endcase
+        count++;
+    endfunction : mid_do
+    
     virtual task body();
-        int i;
-        real f;
-        string s;
 
         `step_parameter_get_args_begin()
         i = `step_parameter_get_next_arg_as(int);
@@ -165,14 +180,8 @@ class hello_parameters_seq_item_uvm_do_vseq extends uvm_sequence implements step
         s = `step_parameter_get_next_arg_as(string);
         `step_parameter_get_args_end
 
-        // Stash data in the req name as a string; use the name as storage for payload.
-        req = new($sformatf("i: %0d", i));
         `uvm_do(req)
-        
-        req = new($sformatf("f: %f", f));
         `uvm_do(req)
-        
-        req = new($sformatf("s: %s", s));
         `uvm_do(req)
     endtask : body
 endclass : hello_parameters_seq_item_uvm_do_vseq

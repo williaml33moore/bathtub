@@ -44,6 +44,10 @@ module mock_step_def_vseq_unit_test;
       real_sqr = mock_real_sequencer::type_id::create("real_sqr", null);
       string_sqr = mock_string_sequencer::type_id::create("string_sqr", null);
       vsequencer = mock_vsequencer::type_id::create("vsequencer", null);
+
+      vsequencer.mock_int_sqr = int_sqr;
+      vsequencer.mock_real_sqr = real_sqr;
+      vsequencer.mock_string_sqr = string_sqr;
   endfunction
 
 
@@ -94,7 +98,7 @@ module mock_step_def_vseq_unit_test;
       bathtub_pkg::step_nurture step_attributes;
     
       parser = new("parser");
-      step_string = {"Given a step"};
+      step_string = $sformatf("%s a step definition with parameters %d, %f, and %s", "Given", 42, 98.6, "Gherkin");
       parser.parse_step_string(step_string, step_bundle);
       my_step_def_vseq = mock_step_def_vseq::type_id::create("my_step_def_vseq");
 			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");
