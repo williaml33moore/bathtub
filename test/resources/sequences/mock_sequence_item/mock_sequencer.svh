@@ -25,6 +25,14 @@ SOFTWARE.
 `ifndef __MOCK_SEQUENCER_SVH
 `define __MOCK_SEQUENCER_SVH
 
+typedef class mock_base_sequencer;
+typedef class mock_param_sequencer;
+typedef class mock_int_sequencer;
+typedef class mock_real_sequencer;
+typedef class mock_string_sequencer;
+typedef class mock_object_sequencer;
+
+
 import uvm_pkg::*;
 
 class mock_base_sequencer extends uvm_sequencer;
@@ -78,5 +86,15 @@ class mock_string_sequencer extends mock_param_sequencer#(string, "string");
         super.new(name, parent);
     endfunction : new
 endclass : mock_string_sequencer
+
+
+class mock_object_sequencer extends mock_param_sequencer#(uvm_object, "uvm_object");
+
+    `uvm_component_param_utils(mock_object_sequencer)
+
+    function new (string name = "mock_object_sequencer", uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+endclass : mock_object_sequencer
 
 `endif // __MOCK_SEQUENCER_SVH

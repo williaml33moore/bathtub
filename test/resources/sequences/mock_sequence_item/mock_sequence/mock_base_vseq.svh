@@ -28,20 +28,40 @@ SOFTWARE.
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 
-typedef class mock_int_sequence_item;
-`include "mock_sequence_item.svh"
-
 typedef class mock_vsequencer;
 `include "mock_vsequencer.svh"
 
-class mock_base_vseq extends uvm_sequence#(mock_int_sequence_item);
+typedef class mock_object_sequencer;
+`include "mock_sequencer.svh"
+
+typedef class mock_object_sequence_item;
+`include "mock_sequence_item.svh"
+
+/*
+ * Virtual sequence base class.
+ */
+class mock_base_vseq extends uvm_sequence;
 
     `uvm_object_utils(mock_base_vseq)
     `uvm_declare_p_sequencer(mock_vsequencer)
-    
+
     function new (string name="mock_base_vseq");
         super.new(name);
     endfunction : new
 endclass : mock_base_vseq
+
+
+/*
+ * Driver sequence base class sets the sequence item type.
+ */
+class mock_base_seq extends uvm_sequence#(mock_object_sequence_item);
+
+    `uvm_object_utils(mock_base_seq)
+    `uvm_declare_p_sequencer(mock_object_sequencer)
+
+    function new (string name="mock_base_seq");
+        super.new(name);
+    endfunction : new
+endclass : mock_base_seq
 
 `endif // __MOCK_BASE_VSEQ_SVH

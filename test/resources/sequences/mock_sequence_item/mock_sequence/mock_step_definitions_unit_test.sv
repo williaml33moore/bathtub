@@ -9,6 +9,7 @@ module mock_step_def_vseq_unit_test;
   typedef class mock_int_sequencer;
   typedef class mock_real_sequencer;
   typedef class mock_string_sequencer;
+  typedef class mock_object_sequencer;
   `include "mock_sequencer.svh"
 
   typedef class mock_vsequencer;
@@ -17,6 +18,7 @@ module mock_step_def_vseq_unit_test;
   typedef class mock_int_sequence_item;
   typedef class mock_real_sequence_item;
   typedef class mock_string_sequence_item;
+  typedef class mock_object_sequence_item;
   `include "mock_sequence_item.svh"
 
   string name = "mock_step_def_vseq_ut";
@@ -25,6 +27,7 @@ module mock_step_def_vseq_unit_test;
   mock_int_sequencer int_sqr;
   mock_real_sequencer real_sqr;
   mock_string_sequencer string_sqr;
+  mock_object_sequencer object_sqr;
   mock_vsequencer vsequencer;
 
   //===================================
@@ -43,11 +46,13 @@ module mock_step_def_vseq_unit_test;
       int_sqr = mock_int_sequencer::type_id::create("int_sqr", null);
       real_sqr = mock_real_sequencer::type_id::create("real_sqr", null);
       string_sqr = mock_string_sequencer::type_id::create("string_sqr", null);
+      object_sqr = mock_object_sequencer::type_id::create("object_sqr", null);
       vsequencer = mock_vsequencer::type_id::create("vsequencer", null);
 
       vsequencer.mock_int_sqr = int_sqr;
       vsequencer.mock_real_sqr = real_sqr;
       vsequencer.mock_string_sqr = string_sqr;
+      vsequencer.mock_object_sqr = object_sqr;
   endfunction
 
 
@@ -142,6 +147,45 @@ module mock_step_def_vseq_unit_test;
           `FAIL_UNLESS($cast(string_item, item))
           actual_string = string_item.get_payload();
           `FAIL_UNLESS_STR_EQUAL(actual_string, "Gherkin")
+        end
+      join
+
+    `SVTEST_END
+
+
+
+    `SVTEST(Mock_step_definition_sends_itself)
+      // =====================================
+      string step_string;
+      bathtub_pkg::gherkin_step_bundle step_bundle;
+      bathtub_pkg::gherkin_parser parser;
+      mock_step_def_seq my_step_def_seq;
+      bathtub_pkg::step_nurture step_attributes;
+    
+      parser = new("parser");
+      step_string = $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin");
+      parser.parse_step_string(step_string, step_bundle);
+      my_step_def_seq = mock_step_def_seq::type_id::create("my_step_def_seq");
+			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");
+      step_attributes.configure(step_bundle.step, my_step_def_seq);
+			my_step_def_seq.set_step_attributes(step_attributes);
+
+      fork
+        begin
+          // Run the sequence-under-test.
+          my_step_def_seq.start(object_sqr);
+        end
+        begin
+          uvm_sequence_item item;
+          mock_object_sequence_item obj_item;
+          bathtub_pkg::step_definition_interface actual_step_def;
+
+          object_sqr.get_next_item(item);
+          object_sqr.item_done();
+          `FAIL_UNLESS($cast(obj_item, item))
+          `FAIL_UNLESS($cast(actual_step_def, obj_item.get_payload()));
+          `FAIL_UNLESS_STR_EQUAL({actual_step_def.get_step_attributes().get_runtime_keyword(), " ", actual_step_def.get_step_attributes().get_text()},
+            $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin"))
         end
       join
 

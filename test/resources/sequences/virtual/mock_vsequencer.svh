@@ -28,21 +28,21 @@ SOFTWARE.
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 
-typedef class mock_int_sequence_item;
-`include "mock_sequence_item.svh"
-
 typedef class mock_int_sequencer;
 typedef class mock_real_sequencer;
 typedef class mock_string_sequencer;
+typedef class mock_object_sequencer;
+`include "mock_sequencer.svh"
 
 class mock_vsequencer extends uvm_sequencer;
 
     mock_int_sequencer mock_int_sqr;
     mock_real_sequencer mock_real_sqr;
     mock_string_sequencer mock_string_sqr;
+    mock_object_sequencer mock_object_sqr;
 
     `uvm_component_utils(mock_vsequencer)
-    function new (string name="mock_base_vseq", uvm_component parent);
+    function new (string name="mock_vsequencer", uvm_component parent);
         super.new(name, parent);
     endfunction : new
 endclass : mock_vsequencer

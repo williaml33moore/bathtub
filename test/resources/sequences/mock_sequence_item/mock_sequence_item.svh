@@ -87,4 +87,14 @@ class mock_string_sequence_item extends mock_param_sequence_item#(string, "strin
     endfunction : new
 endclass : mock_string_sequence_item
 
+
+class mock_object_sequence_item extends mock_param_sequence_item#(uvm_object, "uvm_object");
+
+    `uvm_object_utils(mock_object_sequence_item)
+
+    function new (string name = "mock_object_sequence_item");
+        super.new(name);
+    endfunction : new
+endclass : mock_object_sequence_item
+
 `endif // __MOCK_SEQUENCE_ITEM_SVH

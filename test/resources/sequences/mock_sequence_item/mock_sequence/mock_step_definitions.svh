@@ -32,9 +32,18 @@ import uvm_pkg::*;
 import bathtub_pkg::bathtub_pkg_metadata;
 
 typedef class mock_base_vseq;
+typedef class mock_base_seq;
 `include "mock_base_vseq.svh"
 
+typedef class mock_int_sequence_item;
+typedef class mock_real_sequence_item;
+typedef class mock_string_sequence_item;
+typedef class mock_object_sequence_item;
+`include "mock_sequence_item.svh"
 
+/*
+ * Virtual sequence sends sub-sequences
+ */
 class mock_step_def_vseq extends mock_base_vseq implements bathtub_pkg::step_definition_interface;
     `Given("a step definition with parameters %d, %f, and %s")
 
@@ -70,5 +79,27 @@ class mock_step_def_vseq extends mock_base_vseq implements bathtub_pkg::step_def
         `uvm_send(s_item)
     endtask : body
 endclass : mock_step_def_vseq
+
+/*
+ * Driver sequence sends sequence items
+ */
+class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
+    // Catches every step
+    `Given("/^.*$/")
+
+    `uvm_object_utils(mock_step_def_seq)
+    function new (string name="mock_step_def_seq");
+        super.new(name);
+    endfunction : new
+
+    virtual task body();
+
+        req = mock_object_sequence_item::type_id::create("req");
+        start_item(req);
+        // Sends itself as payload to the sequencer
+        req.set_payload(this);
+        finish_item(req);
+    endtask : body
+endclass : mock_step_def_seq
 
 `endif // __MOCK_STEP_DEFINITIONS_SVH
