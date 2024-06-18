@@ -6,12 +6,25 @@ module mock_step_def_vseq_unit_test;
   import bathtub_pkg::bathtub_pkg_metadata;
   `include "mock_step_definitions.svh"
 
+  typedef class mock_int_sequencer;
+  typedef class mock_real_sequencer;
+  typedef class mock_string_sequencer;
+  `include "mock_sequencer.svh"
+
   typedef class mock_vsequencer;
   `include "mock_vsequencer.svh"
+
+  typedef class mock_int_sequence_item;
+  typedef class mock_real_sequence_item;
+  typedef class mock_string_sequence_item;
+  `include "mock_sequence_item.svh"
 
   string name = "mock_step_def_vseq_ut";
   svunit_testcase svunit_ut;
 
+  mock_int_sequencer int_sqr;
+  mock_real_sequencer real_sqr;
+  mock_string_sequencer string_sqr;
   mock_vsequencer vsequencer;
 
   //===================================
@@ -27,6 +40,9 @@ module mock_step_def_vseq_unit_test;
   function void build();
     svunit_ut = new(name);
 
+      int_sqr = mock_int_sequencer::type_id::create("int_sqr", null);
+      real_sqr = mock_real_sequencer::type_id::create("real_sqr", null);
+      string_sqr = mock_string_sequencer::type_id::create("string_sqr", null);
       vsequencer = mock_vsequencer::type_id::create("vsequencer", null);
   endfunction
 
@@ -76,10 +92,6 @@ module mock_step_def_vseq_unit_test;
       bathtub_pkg::gherkin_parser parser;
       mock_step_def_vseq my_step_def_vseq;
       bathtub_pkg::step_nurture step_attributes;
-      int actual_i;
-      real actual_f;
-      string actual_s;
-      uvm_sequence_item item;
     
       parser = new("parser");
       step_string = {"Given a step"};
@@ -95,7 +107,37 @@ module mock_step_def_vseq_unit_test;
           my_step_def_vseq.start(vsequencer);
         end
         begin
-          `FAIL_UNLESS(1'b0)
+          uvm_sequence_item item;
+          mock_int_sequence_item int_item;
+          int actual_int;
+
+          int_sqr.get_next_item(item);
+          int_sqr.item_done();
+          `FAIL_UNLESS($cast(int_item, item))
+          actual_int = int_item.get_payload();
+          `FAIL_UNLESS_EQUAL(actual_int, 42)
+        end
+        begin
+          uvm_sequence_item item;
+          mock_real_sequence_item real_item;
+          real actual_real;
+          
+          real_sqr.get_next_item(item);
+          real_sqr.item_done();
+          `FAIL_UNLESS($cast(real_item, item))
+          actual_real = real_item.get_payload();
+          `FAIL_UNLESS(actual_real * actual_real - 98.6 * 98.6 < 1.0e-6)
+        end
+        begin
+          uvm_sequence_item item;
+          mock_string_sequence_item string_item;
+          string actual_string;
+          
+          string_sqr.get_next_item(item);
+          string_sqr.item_done();
+          `FAIL_UNLESS($cast(string_item, item))
+          actual_string = string_item.get_payload();
+          `FAIL_UNLESS_STR_EQUAL(actual_string, "Gherkin")
         end
       join
 

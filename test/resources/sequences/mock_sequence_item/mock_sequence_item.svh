@@ -40,11 +40,21 @@ endclass : mock_base_sequence_item
 
 class mock_param_sequence_item#(type T=uvm_object, string type_name="uvm_object") extends mock_base_sequence_item;
 
+    local T payload;
+
     `uvm_object_param_utils(mock_param_sequence_item#(T, type_name))
 
     function new (string name={"mock_param_sequence_item#(", type_name, ")"});
         super.new(name);
     endfunction : new
+
+    function void set_payload(T payload);
+        this.payload = payload;
+    endfunction : set_payload
+
+    function T get_payload();
+        return this.payload;
+    endfunction : get_payload
 endclass : mock_param_sequence_item
 
 
@@ -56,5 +66,25 @@ class mock_int_sequence_item extends mock_param_sequence_item#(int, "int");
         super.new(name);
     endfunction : new
 endclass : mock_int_sequence_item
+
+
+class mock_real_sequence_item extends mock_param_sequence_item#(real, "real");
+
+    `uvm_object_utils(mock_real_sequence_item)
+
+    function new (string name = "mock_real_sequence_item");
+        super.new(name);
+    endfunction : new
+endclass : mock_real_sequence_item
+
+
+class mock_string_sequence_item extends mock_param_sequence_item#(string, "string");
+
+    `uvm_object_utils(mock_string_sequence_item)
+
+    function new (string name = "mock_string_sequence_item");
+        super.new(name);
+    endfunction : new
+endclass : mock_string_sequence_item
 
 `endif // __MOCK_SEQUENCE_ITEM_SVH
