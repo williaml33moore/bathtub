@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,20 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __BATHTUB_PKG_SVH
-`define __BATHTUB_PKG_SVH
+`ifndef __MOCK_BASE_SEQ_SVH
+`define __MOCK_BASE_SEQ_SVH
 
-typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
+`include "uvm_macros.svh"
+import uvm_pkg::*;
 
-parameter byte CR = 13; // ASCII carriage return
-parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
+typedef class mock_object_sequencer;
+`include "mock_sequencers.svh"
 
-// Metadata object
-const struct {
-    string file;
-} bathtub_pkg_metadata = '{
-    file : "`__FILE__",
-    string : ""
-};
+typedef class mock_object_sequence_item;
+`include "mock_sequence_items.svh"
 
-`endif // __BATHTUB_PKG_SVH
+
+/*
+ * Driver sequence base class sets the sequence item type.
+ */
+class mock_base_seq extends uvm_sequence#(mock_object_sequence_item);
+
+    `uvm_object_utils(mock_base_seq)
+    `uvm_declare_p_sequencer(mock_object_sequencer)
+
+    function new (string name="mock_base_seq");
+        super.new(name);
+    endfunction : new
+endclass : mock_base_seq
+
+`endif // __MOCK_BASE_SEQ_SVH

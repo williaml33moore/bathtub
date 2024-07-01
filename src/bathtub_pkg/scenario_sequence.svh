@@ -28,7 +28,10 @@ SOFTWARE.
 `include "bathtub_pkg/scenario_sequence_interface.svh"
 
 typedef class gherkin_document_runner;
+`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
+`endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
 typedef class pool_provider;
 `include "bathtub_pkg/pool_provider.svh"

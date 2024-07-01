@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,20 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __BATHTUB_PKG_SVH
-`define __BATHTUB_PKG_SVH
+`ifndef __MOCK_VSEQUENCER_SVH
+`define __MOCK_VSEQUENCER_SVH
 
-typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
+`include "uvm_macros.svh"
+import uvm_pkg::*;
 
-parameter byte CR = 13; // ASCII carriage return
-parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
+typedef class mock_int_sequencer;
+typedef class mock_real_sequencer;
+typedef class mock_string_sequencer;
+typedef class mock_object_sequencer;
+`include "mock_sequencers.svh"
 
-// Metadata object
-const struct {
-    string file;
-} bathtub_pkg_metadata = '{
-    file : "`__FILE__",
-    string : ""
-};
+class mock_vsequencer extends uvm_sequencer;
 
-`endif // __BATHTUB_PKG_SVH
+    mock_int_sequencer mock_int_sqr;
+    mock_real_sequencer mock_real_sqr;
+    mock_string_sequencer mock_string_sqr;
+    mock_object_sequencer mock_object_sqr;
+
+    `uvm_component_utils(mock_vsequencer)
+    function new (string name="mock_vsequencer", uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+endclass : mock_vsequencer
+
+`endif // __MOCK_VSEQUENCER_SVH

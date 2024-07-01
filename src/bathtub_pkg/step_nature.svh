@@ -50,7 +50,7 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 	`uvm_object_utils_end
 
 	
-	static function step_static_attributes_interface register_step(step_keyword_t keyword, string expression, uvm_object_wrapper step_obj);
+	static function step_static_attributes_interface register_step(step_keyword_t keyword, string expression, uvm_object_wrapper step_obj, bit store_in_db=1'b1);
 		step_nature new_obj;
 
 		new_obj = new("static_step_object");
@@ -65,7 +65,9 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 			new_obj.regexp = bathtub_utils::bathtub_to_regexp(expression);
 		end
 		
-		uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, STEP_DEF_RESOURCE_NAME, step_obj);
+		if (store_in_db) begin
+			uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, STEP_DEF_RESOURCE_NAME, step_obj);
+		end
 		
 		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), {"\n", new_obj.sprint()}, UVM_HIGH)
 		return new_obj;

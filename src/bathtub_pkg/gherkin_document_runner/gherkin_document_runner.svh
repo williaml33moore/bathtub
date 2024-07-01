@@ -28,14 +28,20 @@ SOFTWARE.
 `include "uvm_macros.svh"
 `include "bathtub_macros.sv"
 
-import gherkin_pkg::gherkin_document;
+import gherkin_pkg::gherkin_pkg_metadata;
 import uvm_pkg::*;
 
 typedef class feature_sequence;
+`ifndef __FEATURE_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/feature_sequence.svh"
+`endif // __FEATURE_SEQUENCE_SVH
 
 typedef class scenario_sequence;
+`ifndef __SCENARIO_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/scenario_sequence.svh"
+`endif // __SCENARIO_SEQUENCE_SVH
 
 typedef class step_nurture;
 `include "bathtub_pkg/step_nurture.svh"
@@ -170,19 +176,14 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		obj = factory.create_object_by_type(step_seq_object_wrapper, get_full_name(), step_seq_object_wrapper.get_type_name());
 
-		success = $cast(seq ,obj);
+		success = $cast(seq, obj);
 		assert_step_object_is_sequence : assert (success) else begin
 			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."))
 		end
 
 		if ($cast(step_seq, obj)) begin
 			step_nurture step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.set_runtime_keyword(step.keyword);
-			step_attributes.set_text(step.text);
-			step_attributes.set_argument(step.argument);
-			step_attributes.set_static_attributes(step_seq.get_step_static_attributes());
-			step_attributes.set_current_feature_sequence(current_feature_seq);
-			step_attributes.set_current_scenario_sequence(current_scenario_seq);
+			step_attributes.configure(step, step_seq, current_scenario_seq, current_feature_seq);
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin

@@ -28,16 +28,26 @@ SOFTWARE.
 package bathtub_pkg;
 // ===================================================================
 
-	// Main entry point
-	`include "bathtub_pkg/bathtub.svh"
+	// Classes
+	typedef class bathtub;
+	typedef class bathtub_utils;
+	typedef class feature_sequence;
+	typedef class gherkin_doc_bundle;
+	typedef class gherkin_document_printer;
+	typedef class gherkin_document_runner;
+	typedef class gherkin_parser;
+	typedef class gherkin_step_bundle;
+	typedef class line_value;
+	typedef class pool_provider;
+	typedef class scenario_sequence;
+	typedef class step_definition_seq;
+	typedef class step_nature;
+	typedef class step_nurture;
+	typedef class step_parameter_arg;
+	typedef class step_parameters;
 
-	// Resources for step definitions
-	`include "bathtub_pkg/step_definition_interface.svh"
-	`include "bathtub_pkg/step_static_attributes_interface.svh"
-	`include "bathtub_pkg/step_attributes_interface.svh"
-	`include "bathtub_pkg/step_nature.svh"
-	`include "bathtub_pkg/step_parameters.svh"
-	`include "bathtub_pkg/feature_sequence_interface.svh"
-	`include "bathtub_pkg/scenario_sequence_interface.svh"
+	// Main entry points
+	`include "bathtub_pkg/bathtub.svh"
+	`include "bathtub_pkg/step_definition_seq.svh"
 
 endpackage : bathtub_pkg
