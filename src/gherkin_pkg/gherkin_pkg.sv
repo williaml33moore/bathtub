@@ -30,6 +30,13 @@ package gherkin_pkg;
 
 	import uvm_pkg::*;
 
+	const struct {
+		string file;
+	} gherkin_pkg_metadata = '{
+		file : "`__FILE__",
+		string : ""
+	};
+
 	typedef class background;
 	typedef class comment;
 	typedef class data_table;
@@ -104,6 +111,7 @@ package gherkin_pkg;
 		string description="";
 		table_row header;
 		table_row rows[$];
+		tag tags[$];
 	} examples_value;
 
 	(* value_object *)
@@ -503,6 +511,7 @@ package gherkin_pkg;
 		string description;
 		table_row header;
 		table_row rows[$];
+		tag tags[$];
 
 		`uvm_object_utils_begin(examples)
 		`uvm_field_string(keyword, UVM_ALL_ON)
@@ -510,15 +519,17 @@ package gherkin_pkg;
 		`uvm_field_string(description, UVM_ALL_ON)
 		`uvm_field_object(header, UVM_ALL_ON)
 		`uvm_field_queue_object(rows, UVM_ALL_ON)
+		`uvm_field_queue_object(tags, UVM_ALL_ON)
 		`uvm_object_utils_end
 
 		function new(string name="examples", examples_value value='{
-			"", // keyword
-			"", // examples_name
-			"", // description
-			null, // header
-			'{} // rows
-		});
+				"", // keyword
+				"", // examples_name
+				"", // description
+				null, // header
+				'{}, // rows
+				'{} // tags
+			});
 			super.new(name);
 
 			this.keyword = value.keyword;
@@ -531,6 +542,12 @@ package gherkin_pkg;
 			foreach (value.rows[i]) begin
 				table_row new_obj = new value.rows[i]; // TODO - deep copy
 				this.rows.push_back(new_obj);
+			end
+
+			this.tags.delete();
+			foreach (value.tags[i]) begin
+				tag new_obj = new value.tags[i]; // TODO - deep copy
+				this.tags.push_back(new_obj);
 			end
 		endfunction : new
 
@@ -545,6 +562,10 @@ package gherkin_pkg;
 			foreach (this.rows[i]) begin
 				table_row new_obj = new this.rows[i]; // TODO - deep copy
 				get_as_value.rows.push_back(new_obj);
+			end
+			foreach (this.tags[i]) begin
+				tag new_obj = new this.tags[i]; // TODO - deep copy
+				get_as_value.tags.push_back(new_obj);
 			end
 		endfunction : get_as_value
 

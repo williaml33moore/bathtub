@@ -1,6 +1,6 @@
+/*
 MIT License
 
-Copyright (c) 2023 Everactive
 Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +20,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+`ifndef __MOCK_VSEQUENCER_SVH
+`define __MOCK_VSEQUENCER_SVH
+
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+typedef class mock_int_sequencer;
+typedef class mock_real_sequencer;
+typedef class mock_string_sequencer;
+typedef class mock_object_sequencer;
+`include "mock_sequencers.svh"
+
+class mock_vsequencer extends uvm_sequencer;
+
+    mock_int_sequencer mock_int_sqr;
+    mock_real_sequencer mock_real_sqr;
+    mock_string_sequencer mock_string_sqr;
+    mock_object_sequencer mock_object_sqr;
+
+    `uvm_component_utils(mock_vsequencer)
+    function new (string name="mock_vsequencer", uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+endclass : mock_vsequencer
+
+`endif // __MOCK_VSEQUENCER_SVH

@@ -1,6 +1,6 @@
+/*
 MIT License
 
-Copyright (c) 2023 Everactive
 Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +20,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+-incdir .
+-incdir ./gherkin_pkg
+-incdir ./bathtub_pkg
+-incdir ./bathtub_pkg/gherkin_document_printer
+-incdir ./bathtub_pkg/gherkin_document_runner
+-incdir ./bathtub_pkg/gherkin_parser
+./gherkin_pkg/gherkin_pkg.sv
+./bathtub_pkg/bathtub_pkg.sv

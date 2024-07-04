@@ -1,7 +1,7 @@
+/*
 MIT License
 
 Copyright (c) 2023 Everactive
-Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,3 +20,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+`ifndef __SCENARIO_SEQUENCE_INTERFACE_SVH
+`define __SCENARIO_SEQUENCE_INTERFACE_SVH
+
+`include "bathtub_pkg/pool_provider_interface.svh"
+
+typedef interface class feature_sequence_interface;
+`include "bathtub_pkg/feature_sequence_interface.svh"
+
+interface class scenario_sequence_interface extends pool_provider_interface;
+	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+	pure virtual function feature_sequence_interface get_current_feature_sequence();
+endclass : scenario_sequence_interface
+
+`endif // __SCENARIO_SEQUENCE_INTERFACE_SVH
