@@ -3,7 +3,7 @@ layout: post
 author: Bill
 title: "Keeping It Real"
 date: 2024-04-26 06:00:00 -0700
-tags: 
+tags: verification soc
 ---
 So far the only working Bathtub code I have shared is for my arithmetic logic unit (ALU) example.
 I've gotten a lot of mileage out of it.
