@@ -1,9 +1,9 @@
 ---
 layout: post
 author: Bill
-title: "One Mock Step to Test Them All"
+title: "One Mock Step, One Giant Leap"
 date: 2024-06-30 06:00:00 -0700
-tags: 
+tags: uvm testing
 ---
 I'm having a good time writing unit tests for the Bathtub Gherkin parser.
 Now I'm at the point where I want to use SVUnit to test the Bathtub Gherkin runner.
@@ -33,7 +33,7 @@ That's straightforward: a full step definition is a UVM sequence class that impl
 Therefore, my mock step will also be a UVM sequence class that implements the `step_definition_interface.`
 Which is to say, the mock step will in fact _be_ a step definition.
 It's not a mock in the traditional sense.
-It's more a concrete implementation that provides some special functionality.
+It's more a concrete implementation that provides some minimal special functionality.
 
 A bathtub step definition uses the `Given`, `When`, and `Then` macros to implement the required `step_definition_interface` methods, and to specify the step string that triggers this step.
 Since I only want to use one mock step, it needs to match every possible step string.
@@ -65,8 +65,9 @@ If the step I parse and run matches the step the sequencer receives, then all is
 
 Here is a working version of my mock step and a SVUnit unit test that exercises it.  
 
-[](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs.svh)
-[](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs_unit_test.sv)
+[mock step](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs.svh)
+
+[unit test](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs_unit_test.sv)
 
 ```sv
 class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
@@ -90,6 +91,41 @@ endclass : mock_step_def_seq
 ```
 
 The `body()` task simply creates a sequence item, packs the mock step instance, "`this`," into the sequence item, and sends it off to any sequencer that requests it.
+```mermaid
+info
+```
+
+```mermaid
+sequenceDiagram
+    participant UnitTest as unit_test
+    participant Parser as gherkin_parser
+    participant Sequencer as uvm_sequencer#35;(mock_object_sequence_item)
+    participant MockStep as mock_step_def_seq
+
+    UnitTest->>+Parser: parseStepString(step_string)
+    Parser--)-UnitTest: gherkin_step_bundle
+    UnitTest->>MockStep: <<create>>
+    UnitTest->>MockStep: configure(gherkin_step_bundle)
+
+    UnitTest-)+MockStep: start(uvm_sequencer)
+    MockStep->>+MockStep: body()
+
+    create participant SequenceItem as mock_object_sequence_item
+    MockStep->>SequenceItem: <<create>>
+    MockStep->>SequenceItem: start_item()
+    MockStep->>SequenceItem: set_payload(mock_step_def_seq)
+    Note right of MockStep: Mock step definition stores a<br>reference to itself in the<br>sequence item payload
+    MockStep->>SequenceItem: finish_item()
+    MockStep--)-Sequencer: mock_object_sequence_item
+
+    UnitTest->>+Sequencer: get_next_item()
+    Sequencer--)UnitTest: mock_object_sequence_item
+    UnitTest->>Sequencer: item_done()
+    deactivate Sequencer
+
+    UnitTest->>UnitTest: compare(step_string, mock_object_sequence_item)
+    Note right of UnitTest: Compare original step string to<br>MockStep attributes sequence item
+```
 
 The unit test creates a mock step sequence instance from scratch, and configures it with all the attributes we want.
 Then the unit test forks off two threads, one for the sequence and one for the sequencer.
