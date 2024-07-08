@@ -2,6 +2,7 @@
 `define ALU_STEP_DEFINITION_SVH
 
 import bathtub_pkg::*;
+`include "bathtub_macros.sv"
 
 class set_operand_A_and_B_vseq extends alu_base_vsequence implements bathtub_pkg::step_definition_interface;
     `Given("operand A is %d and operand B is %d")

@@ -1,6 +1,6 @@
+/*
 MIT License
 
-Copyright (c) 2023 Everactive
 Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+`ifndef __MOCK_BASE_VSEQ_SVH
+`define __MOCK_BASE_VSEQ_SVH
+
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+typedef class mock_vsequencer;
+`include "mock_vsequencer.svh"
+
+typedef class mock_object_sequencer;
+`include "mock_sequencers.svh"
+
+typedef class mock_object_sequence_item;
+`include "mock_sequence_items.svh"
+
+/*
+ * Virtual sequence base class.
+ */
+class mock_base_vseq extends uvm_sequence;
+
+    `uvm_object_utils(mock_base_vseq)
+    `uvm_declare_p_sequencer(mock_vsequencer)
+
+    function new (string name="mock_base_vseq");
+        super.new(name);
+    endfunction : new
+endclass : mock_base_vseq
+
+`endif // __MOCK_BASE_VSEQ_SVH

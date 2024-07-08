@@ -1,6 +1,6 @@
+/*
 MIT License
 
-Copyright (c) 2023 Everactive
 Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,3 +20,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+`ifndef __GHERKIN_STEP_BUNDLE_SVH
+`define __GHERKIN_STEP_BUNDLE_SVH
+
+// Bundle the step with its file name externally.
+class gherkin_step_bundle;
+	string file_name;
+	gherkin_pkg::step step;
+	
+	function new(string file_name, gherkin_pkg::step step);
+		this.file_name = file_name;
+		this.step = step;
+	endfunction : new
+	
+endclass : gherkin_step_bundle
+
+`endif // __GHERKIN_STEP_BUNDLE_SVH

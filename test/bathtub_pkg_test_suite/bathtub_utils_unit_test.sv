@@ -38,7 +38,6 @@ module bathtub_utils_unit_test;
 	//===================================
 
 	// Miscellaneous variables
-	bit ok;
 
 
 	//===================================
@@ -87,15 +86,13 @@ module bathtub_utils_unit_test;
 	`SVUNIT_TESTS_BEGIN
 
 
-	`SVTEST(\split_string()_should_split_strings_on_white_space )
-	// ========================================================
+	`SVTEST(split_string_should_split_strings_on_white_space)
+	// ======================================================
 	string str;
 	string tokens[$];
 
 	str = "alpha bravo charlie";
-	ok = bathtub_pkg::bathtub_utils::split_string(str, tokens);
-
-	`FAIL_UNLESS_LOG(ok, "should return OK")
+	bathtub_pkg::bathtub_utils::split_string(str, tokens);
 
 	`FAIL_UNLESS_STR_EQUAL(tokens[0], "alpha")
 	`FAIL_UNLESS_STR_EQUAL(tokens[1], "bravo")
@@ -103,7 +100,56 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Get_conversion_spec()_extracts_the_conversion_spec_from_a_string )
+	`SVTEST(split_lines_should_split_strings_on_newlines)
+	// ==================================================
+	struct {
+		string str;
+		string expected_lines[];
+	} examples[];
+	string str;
+	string actual_lines[$];
+
+	examples = '{
+		'{
+			str : "alpha\nbravo\ncharlie\ndelta\necho\n",
+			expected_lines : {"alpha", "bravo", "charlie", "delta", "echo"}
+		},
+		'{
+			str : "alpha\nbravo\ncharlie\ndelta\necho",
+			expected_lines : {"alpha", "bravo", "charlie", "delta", "echo"}
+		},
+		'{
+			str : "\nalpha\n\ncharlie\ndelta\n",
+			expected_lines : {"", "alpha", "", "charlie", "delta"}
+		},
+		'{
+			str : "\nalpha\n\ncharlie\n\n",
+			expected_lines : {"", "alpha", "", "charlie", ""}
+		},
+		'{
+			str : "\n",
+			expected_lines : {""}
+		},
+		'{
+			str : "",
+			expected_lines : {}
+		}
+	};
+
+	foreach (examples[i]) begin
+		str = examples[i].str;
+		bathtub_pkg::bathtub_utils::split_lines(str, actual_lines);
+
+		`FAIL_UNLESS_EQUAL(actual_lines.size(), examples[i].expected_lines.size())
+
+		foreach (examples[i].expected_lines[j]) begin
+			`FAIL_UNLESS_STR_EQUAL(actual_lines[j], examples[i].expected_lines[j])
+		end
+	end
+	`SVTEST_END
+
+
+	`SVTEST(Get_conversion_spec_extracts_the_conversion_spec_from_a_string)
 	// ======================================================================
 	struct {
 		string str;
@@ -170,7 +216,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Get_conversion_code()_extracts_the_conversion_code_from_a_token )
+	`SVTEST(Get_conversion_code_extracts_the_conversion_code_from_a_token)
 	// =====================================================================
 	struct {
 		string token;
@@ -221,7 +267,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Is_regex()_tests_whether_a_string_is_a_regular_expression )
+	`SVTEST(Is_regex_tests_whether_a_string_is_a_regular_expression)
 	// ===============================================================
 	struct {
 		string str;
@@ -258,7 +304,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Bathtub_to_regexp()_converts_a_bathtub_expression_to_a_regular_expression )
+	`SVTEST(Bathtub_to_regexp_converts_a_bathtub_expression_to_a_regular_expression)
 	// ===============================================================================
 	localparam
 		binary_re = "([0-1XxZz?_]+)",
@@ -323,7 +369,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Integer_regular_expression_matches_$sscanf()_result )
+	`SVTEST(Integer_regular_expression_matches_$sscanf_result)
 	// =========================================================
 	struct {
 		string format;
@@ -376,7 +422,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\Real_number_regular_expression_matches_$sscanf()_result )
+	`SVTEST(Real_number_regular_expression_matches_$sscanf_result)
 	// =============================================================
 	struct {
 		string format;
@@ -417,7 +463,7 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
-	`SVTEST(\String_regular_expression_matches_$sscanf()_result )
+	`SVTEST(String_regular_expression_matches_$sscanf_result )
 	// ========================================================
 	struct {
 		string format;
