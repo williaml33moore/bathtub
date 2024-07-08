@@ -63,11 +63,7 @@ My unit tests don't really care what the step does.
 All the tests care about is that the steps run, and my mock step can confirm that.
 If the step I parse and run matches the step the sequencer receives, then all is well and the test passes.
 
-Here is a working version of my mock step and a SVUnit unit test that exercises it.  
-
-[mock step](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs.svh)
-
-[unit test](/Users/wlmoore/Git/bathtub_pages/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs_unit_test.sv)
+Here is a working version of my [mock step](https://github.com/williaml33moore/bathtub/blob/d352757848d7756188d3cd4efb01f2873610c168/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs.svh).
 
 ```sv
 class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
@@ -91,46 +87,16 @@ endclass : mock_step_def_seq
 ```
 
 The `body()` task simply creates a sequence item, packs the mock step instance, "`this`," into the sequence item, and sends it off to any sequencer that requests it.
-```mermaid
-info
-```
 
-```mermaid
-sequenceDiagram
-    participant UnitTest as unit_test
-    participant Parser as gherkin_parser
-    participant Sequencer as uvm_sequencer#35;(mock_object_sequence_item)
-    participant MockStep as mock_step_def_seq
+I have a SVUnit [unit test](https://github.com/williaml33moore/bathtub/blob/d352757848d7756188d3cd4efb01f2873610c168/test/resources/sequencing/sequence_items/mock_sequence_item/sequences/mock_step_definition_seqs_unit_test.sv) called `Mock_step_definition_sends_itself` that exercises the mock step. This sequence diagram illustrates the flow.
 
-    UnitTest->>+Parser: parseStepString(step_string)
-    Parser--)-UnitTest: gherkin_step_bundle
-    UnitTest->>MockStep: <<create>>
-    UnitTest->>MockStep: configure(gherkin_step_bundle)
+[![](https://mermaid.ink/img/pako:eNqFVMuOnDAQ_BXLuYBm5hTlQkZckksOiSJNckNCxm7AWbCJH6uMVvvvaWNeI2Z3OIFd3VXlavNCuRZAM2rhrwfF4atkjWF9oQg-AzNOcjkw5chvJd0vsI4wS75r_lRaB0MpoJa4IbUqLShhS-ksdPW-_CczFkwoblowT1KVw7iyR14mJSPYP_flLM18-Pjpc9IHbl39Ae6WHWSFPi1UbDYrPeX5IdJmZCS7oOKLM1I1ySjeju9prIrI0yk9zfXZInVEV16JDiKYG2AObmSHMwkEQXW_PZ-gcidsRmfkfI7N8vwdENeqlo03kNyRtDeeHtZS61BkcnOOk-MZc8NUaXFNlo53fM7xfMMjX7zey2NHsq3c-94AD7fI0cHYMkkfNLXgcK6unWYi2YUwFf_Q6MjIpnVE12R1Ht5IwJN1qPFbG7CEnSuTG6jBBC7iNIlzTqQiroWwO3snQSiZRDyQG2hsu1jbj-9yF3AW0ZqCf28cBI7tBvsgkwWJZeuwPyjayNowhf1SaAWzIgGMO_kcpmaB3XG20nLd43jB9kYeyXuXfJ_h2uxLbEY07knFuphn7IqphZzWe-pwufIO48UUb-ILgumR9mB6JgX-HV8CbUEx6h4KmuErzgjznStooV4RyrzTl6viNHPGw5Ea7ZuWZjXrLH75QeCBTL_WafX1P0VA9Tk?type=png)](https://mermaid.live/edit#pako:eNqFVMuOnDAQ_BXLuYBm5hTlQkZckksOiSJNckNCxm7AWbCJH6uMVvvvaWNeI2Z3OIFd3VXlavNCuRZAM2rhrwfF4atkjWF9oQg-AzNOcjkw5chvJd0vsI4wS75r_lRaB0MpoJa4IbUqLShhS-ksdPW-_CczFkwoblowT1KVw7iyR14mJSPYP_flLM18-Pjpc9IHbl39Ae6WHWSFPi1UbDYrPeX5IdJmZCS7oOKLM1I1ySjeju9prIrI0yk9zfXZInVEV16JDiKYG2AObmSHMwkEQXW_PZ-gcidsRmfkfI7N8vwdENeqlo03kNyRtDeeHtZS61BkcnOOk-MZc8NUaXFNlo53fM7xfMMjX7zey2NHsq3c-94AD7fI0cHYMkkfNLXgcK6unWYi2YUwFf_Q6MjIpnVE12R1Ht5IwJN1qPFbG7CEnSuTG6jBBC7iNIlzTqQiroWwO3snQSiZRDyQG2hsu1jbj-9yF3AW0ZqCf28cBI7tBvsgkwWJZeuwPyjayNowhf1SaAWzIgGMO_kcpmaB3XG20nLd43jB9kYeyXuXfJ_h2uxLbEY07knFuphn7IqphZzWe-pwufIO48UUb-ILgumR9mB6JgX-HV8CbUEx6h4KmuErzgjznStooV4RyrzTl6viNHPGw5Ea7ZuWZjXrLH75QeCBTL_WafX1P0VA9Tk)
 
-    UnitTest-)+MockStep: start(uvm_sequencer)
-    MockStep->>+MockStep: body()
-
-    create participant SequenceItem as mock_object_sequence_item
-    MockStep->>SequenceItem: <<create>>
-    MockStep->>SequenceItem: start_item()
-    MockStep->>SequenceItem: set_payload(mock_step_def_seq)
-    Note right of MockStep: Mock step definition stores a<br>reference to itself in the<br>sequence item payload
-    MockStep->>SequenceItem: finish_item()
-    MockStep--)-Sequencer: mock_object_sequence_item
-
-    UnitTest->>+Sequencer: get_next_item()
-    Sequencer--)UnitTest: mock_object_sequence_item
-    UnitTest->>Sequencer: item_done()
-    deactivate Sequencer
-
-    UnitTest->>UnitTest: compare(step_string, mock_object_sequence_item)
-    Note right of UnitTest: Compare original step string to<br>MockStep attributes sequence item
-```
-
-The unit test creates a mock step sequence instance from scratch, and configures it with all the attributes we want.
-Then the unit test forks off two threads, one for the sequence and one for the sequencer.
+First the unit test parses a Gherkin step from a string.
+Then it creates a mock step sequence instance from scratch, and configures it with  attributes from the parsed Gherkin step string.
+Next the unit test forks off two threads, one for the sequence and one for the sequencer.
 The sequence thread starts the sequence, which throws the sequence item.
-The sequencer thread catches the thrown sequence item, unpacks the step definition and its attributes, and checks them.
+The sequencer thread catches the thrown sequence item, unpacks the step definition and its attributes, and compares them to the original step string.
 
 I can use this mock step to verify changes to the Gherkin parser and runner.
 An important feature I will add soon is Gherkin rules.
