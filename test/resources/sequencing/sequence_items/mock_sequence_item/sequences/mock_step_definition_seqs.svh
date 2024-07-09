@@ -44,6 +44,39 @@ typedef class mock_object_sequence_item;
 `include "mock_sequence_items.svh"
 
 /*
+ * Example of a virtual step definition
+ */
+virtual class virtual_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
+    `virtual_step_definition("Any text goes here")
+
+    function new (string name="virtual_step_def_seq");
+        super.new(name);
+    endfunction : new
+
+    function void a();
+    ;
+    endfunction : a
+endclass : virtual_step_def_seq
+
+
+/*
+ * Concrete extension of the virtual step definition
+ */
+class concrete_step_def_seq extends virtual_step_def_seq;
+    `Given("AaAaA step text goes here BbBbB")
+
+    `uvm_object_utils(concrete_step_def_seq)
+    function new (string name="concrete_step_def_seq");
+        super.new(name);
+    endfunction : new
+
+    function void b();
+        a();
+    endfunction : b
+endclass : concrete_step_def_seq
+
+
+/*
  * Driver sequence sends sequence items
  */
 class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_definition_interface;
@@ -56,7 +89,6 @@ class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_defin
     endfunction : new
 
     virtual task body();
-
         req = mock_object_sequence_item::type_id::create("req");
         start_item(req);
         // Sends itself as payload to the sequencer
