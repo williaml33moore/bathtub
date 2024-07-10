@@ -47,5 +47,6 @@ def test_plusarg_bathtub_features(tmp_path, simulator):
     simulator.extend_args([
         '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
         '+bathtub_features="a.feature b.feature"',
+        '+UVM_TESTNAME=plusarg_bathtub_features_test',
         ])
     assert simulator.run(tmp_path).passed()
