@@ -50,3 +50,35 @@ def test_plusarg_bathtub_features(tmp_path, simulator):
         '+UVM_TESTNAME=plusarg_bathtub_features_test',
         ])
     assert simulator.run(tmp_path).passed()
+
+
+def test_plusarg_multiple_bathtub_features(tmp_path, simulator):
+    """Test that multiple +bathtub_features plusargs provides a list of feature files to run"""
+
+    f = tmp_path / 'a.feature'
+    content = \
+    """
+    Feature: A
+    Scenario: AA
+    Given AAA
+    """
+    f.write_text(content, encoding="utf-8")
+
+    f = tmp_path / 'b.feature'
+    content = \
+    """
+    Feature: B
+    Scenario: BB
+    Given BBB
+    """
+    f.write_text(content, encoding="utf-8")
+
+    simulator.uvm()
+    simulator.extend_args([
+        '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
+        '+bathtub_features=a.feature',
+        '+bathtub_features=b.feature',
+        '+UVM_TESTNAME=plusarg_bathtub_features_test',
+        ])
+    assert simulator.run(tmp_path).passed()
+    

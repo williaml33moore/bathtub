@@ -83,11 +83,27 @@ class bathtub extends uvm_object;
 	endfunction : configure
 
 
+	virtual function void parse_plusargs();
+		string plusarg_values[$];
+		string plusarg_feature_files[$];
+
+		uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
+		foreach (plusarg_values[i]) begin
+			bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
+			foreach (plusarg_feature_files[j]) begin
+				feature_files.push_back(plusarg_feature_files[j]);
+			end
+		end
+	endfunction : parse_plusargs
+
+
 	virtual task run_test(uvm_phase phase);
 		gherkin_doc_bundle gherkin_doc_bundle;
 		gherkin_parser parser;
 		gherkin_document_printer printer;
 		gherkin_document_runner runner;
+
+		parse_plusargs();
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			
