@@ -25,6 +25,8 @@ SOFTWARE.
 `ifndef __PLUSARG_OPTIONS_SVH
 `define __PLUSARG_OPTIONS_SVH
 
+import uvm_pkg::*;
+
 class plusarg_options;
     string bathtub_features[$];
     uvm_verbosity bathtub_verbosity;

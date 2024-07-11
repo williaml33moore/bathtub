@@ -36,6 +36,7 @@ typedef class gherkin_document_runner;
 typedef class gherkin_doc_bundle;
 `include "bathtub_pkg/gherkin_doc_bundle.svh"
 
+typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
 
 class bathtub extends uvm_object;
