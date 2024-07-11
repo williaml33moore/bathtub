@@ -36,6 +36,8 @@ typedef class gherkin_document_runner;
 typedef class gherkin_doc_bundle;
 `include "bathtub_pkg/gherkin_doc_bundle.svh"
 
+`include "bathtub_pkg/plusarg_options.svh"
+
 class bathtub extends uvm_object;
 
 	string feature_files[$];
@@ -48,6 +50,7 @@ class bathtub extends uvm_object;
 	bit dry_run;
 	int starting_scenario_number;
 	int stopping_scenario_number;
+	plusarg_options plusarg_opts;
 
 	`uvm_object_utils_begin(bathtub)
 		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
@@ -67,6 +70,8 @@ class bathtub extends uvm_object;
 		dry_run = 0;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
+
+		plusarg_opts = new();
 	endfunction : new
 
 
