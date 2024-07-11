@@ -94,7 +94,11 @@ class bathtub extends uvm_object;
 		gherkin_document_printer printer;
 		gherkin_document_runner runner;
 
-		feature_files = {feature_files, plusarg_opts.bathtub_features};
+		// Process plusarg overrides
+		if (plusarg_opts.num_bathtub_features) feature_files = {feature_files, plusarg_opts.bathtub_features}; // Append
+		if (plusarg_opts.has_bathtub_dryrun) dry_run = plusarg_opts.bathtub_dryrun;
+		if (plusarg_opts.has_bathtub_start) starting_scenario_number = plusarg_opts.bathtub_start;
+		if (plusarg_opts.has_bathtub_stop) stopping_scenario_number = plusarg_opts.bathtub_stop;
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			

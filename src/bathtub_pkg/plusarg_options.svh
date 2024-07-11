@@ -40,6 +40,16 @@ class plusarg_options;
     int bathtub_start;
     int bathtub_stop;
     bit bathtub_help;
+    
+    int unsigned num_bathtub_features;
+    bit has_bathtub_verbosity;
+    bit has_bathtub_dryrun;
+    bit has_bathtub_errormax;
+    int unsigned num_bathtub_include;
+    int unsigned num_bathtub_exclude;
+    bit has_bathtub_start;
+    bit has_bathtub_stop;
+    bit has_bathtub_help;
 
     function new(
         string bathtub_features[$]='{},
@@ -61,6 +71,16 @@ class plusarg_options;
         this.bathtub_start = bathtub_start;
         this.bathtub_stop = bathtub_stop;
         this.bathtub_help = bathtub_help;
+    
+        num_bathtub_features = 0;
+        has_bathtub_verbosity = 1'b0;
+        has_bathtub_dryrun = 1'b0;
+        has_bathtub_errormax = 1'b0;
+        num_bathtub_include = 0;
+        num_bathtub_exclude = 0;
+        has_bathtub_start = 1'b0;
+        has_bathtub_stop = 1'b0;
+        has_bathtub_help = 1'b0;
     endfunction : new
 
 
@@ -95,12 +115,11 @@ class plusarg_options;
 		string plusarg_values[$];
 		string plusarg_feature_files[$];
 
-		if (uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values)) begin
-            foreach (plusarg_values[i]) begin
-                bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
-                foreach (plusarg_feature_files[j]) begin
-                    bathtub_features.push_back(plusarg_feature_files[j]);
-                end
+		num_bathtub_features = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
+        foreach (plusarg_values[i]) begin
+            bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
+            foreach (plusarg_feature_files[j]) begin
+                bathtub_features.push_back(plusarg_feature_files[j]);
             end
         end
 
