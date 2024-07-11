@@ -4,4 +4,6 @@
 -incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item/sequencers
 -incdir $BATHTUB_VIP_DIR/test/resources/sequencing/virtual/vsequences
 -incdir $BATHTUB_VIP_DIR/test/resources/sequencing/virtual/vsequencers
+-incdir $BATHTUB_VIP_DIR/test/e2e/plusargs
+-incdir $BATHTUB_VIP_DIR/test/resources/callbacks
 $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs_tb_top.sv

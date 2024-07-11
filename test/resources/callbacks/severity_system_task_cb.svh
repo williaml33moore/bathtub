@@ -22,34 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`timescale 1s/1ms
+`ifndef __SEVERITY_SYSTEM_TASK_CB_SVH
+`define __SEVERITY_SYSTEM_TASK_CB_SVH
 
-`include "uvm_macros.svh"
+import uvm_pkg::*;
 
-module plusargs_tb_top();
+class severity_system_task_cb extends uvm_report_catcher;
+    function new (string name="severity_system_task_cb");
+        super.new(name);
+    endfunction : new
 
-  import uvm_pkg::*;
+    function action_e catch();
+        if (get_severity() == UVM_ERROR) $error;
+        if (get_severity() == UVM_FATAL) begin
+        set_action(get_action() & ~UVM_EXIT);
+        issue();
+        $fatal;
+        end
+        return THROW;
+    endfunction : catch
+endclass : severity_system_task_cb
 
-  `include "mock_sequencers.svh"
-
-  `include "mock_step_definition_seqs.svh"
-
-  typedef class plusargs_env;
-  `include "plusargs_env.svh"
-
-  typedef class severity_system_task_cb;
-  `include "severity_system_task_cb.svh"
-
-  typedef class plusarg_bathtub_features_test;
-  `include "plusarg_bathtub_features_test.svh"
-
-  severity_system_task_cb my_severity_system_task_cb = new;
-
-  initial begin
-    $timeformat(0, 3, "s", 20);
-    uvm_report_cb::add(null, my_severity_system_task_cb);
-    run_test();
-  end
-
-
-endmodule : plusargs_tb_top
+  `endif // __SEVERITY_SYSTEM_TASK_CB_SVH
+  

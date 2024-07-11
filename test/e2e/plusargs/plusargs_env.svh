@@ -22,34 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`timescale 1s/1ms
+`ifndef __PLUSARGS_ENV_SVH
+`define __PLUSARGS_ENV_SVH
 
-`include "uvm_macros.svh"
+class plusargs_env extends uvm_env;
+    `uvm_component_utils(plusargs_env)
 
-module plusargs_tb_top();
+    mock_object_sequencer mock_seqr;
 
-  import uvm_pkg::*;
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
 
-  `include "mock_sequencers.svh"
+    virtual function void build_phase(uvm_phase phase);
+        mock_seqr = mock_object_sequencer::type_id::create("mock_seqr", this);
+    endfunction : build_phase
 
-  `include "mock_step_definition_seqs.svh"
+    virtual function void connect_phase(uvm_phase phase);
+        ; // Placeholder
+    endfunction : connect_phase
 
-  typedef class plusargs_env;
-  `include "plusargs_env.svh"
+endclass : plusargs_env
 
-  typedef class severity_system_task_cb;
-  `include "severity_system_task_cb.svh"
-
-  typedef class plusarg_bathtub_features_test;
-  `include "plusarg_bathtub_features_test.svh"
-
-  severity_system_task_cb my_severity_system_task_cb = new;
-
-  initial begin
-    $timeformat(0, 3, "s", 20);
-    uvm_report_cb::add(null, my_severity_system_task_cb);
-    run_test();
-  end
-
-
-endmodule : plusargs_tb_top
+`endif // __PLUSARGS_ENV_SVH

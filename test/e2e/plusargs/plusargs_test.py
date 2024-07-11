@@ -22,10 +22,11 @@
 
 import pytest
 
-def test_plusarg_bathtub_features(tmp_path, simulator):
-    """Test that +bathtub_features provides a list of feature files to run"""
-
-    f = tmp_path / 'a.feature'
+@pytest.fixture
+def feature_file_a(tmp_path):
+    """Create a feature file and return its filename"""
+    file_name = 'a.feature'
+    f = tmp_path / file_name
     content = \
     """
     Feature: A
@@ -33,8 +34,13 @@ def test_plusarg_bathtub_features(tmp_path, simulator):
     Given AAA
     """
     f.write_text(content, encoding="utf-8")
+    return file_name
 
-    f = tmp_path / 'b.feature'
+@pytest.fixture
+def feature_file_b(tmp_path):
+    """Create a feature file and return its filename"""
+    file_name = 'b.feature'
+    f = tmp_path / file_name
     content = \
     """
     Feature: B
@@ -42,43 +48,40 @@ def test_plusarg_bathtub_features(tmp_path, simulator):
     Given BBB
     """
     f.write_text(content, encoding="utf-8")
+    return file_name
+
+def test_plusarg_bathtub_features(tmp_path, feature_file_a, feature_file_b, simulator):
+    """Test that +bathtub_features provides a list of feature files to run"""
 
     simulator.uvm()
     simulator.extend_args([
         '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
-        '+bathtub_features="a.feature b.feature"',
+        '+bathtub_features="' + feature_file_a + ' ' + feature_file_b + '"',
         '+UVM_TESTNAME=plusarg_bathtub_features_test',
         ])
     assert simulator.run(tmp_path).passed()
 
 
-def test_plusarg_multiple_bathtub_features(tmp_path, simulator):
+def test_plusarg_multiple_bathtub_features(tmp_path, feature_file_a, feature_file_b, simulator):
     """Test that multiple +bathtub_features plusargs provides a list of feature files to run"""
-
-    f = tmp_path / 'a.feature'
-    content = \
-    """
-    Feature: A
-    Scenario: AA
-    Given AAA
-    """
-    f.write_text(content, encoding="utf-8")
-
-    f = tmp_path / 'b.feature'
-    content = \
-    """
-    Feature: B
-    Scenario: BB
-    Given BBB
-    """
-    f.write_text(content, encoding="utf-8")
 
     simulator.uvm()
     simulator.extend_args([
         '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
-        '+bathtub_features=a.feature',
-        '+bathtub_features=b.feature',
+        '+bathtub_features=' + feature_file_a,
+        '+bathtub_features=' + feature_file_b,
         '+UVM_TESTNAME=plusarg_bathtub_features_test',
         ])
     assert simulator.run(tmp_path).passed()
     
+
+def test_plusarg_bathtub_dryrun(tmp_path, feature_file_a, simulator):
+    """Test that +bathtub_dryrun parses the feature file without running it"""
+
+    simulator.uvm()
+    simulator.extend_args([
+        '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
+        '+bathtub_features=' + feature_file_a,
+        '+UVM_TESTNAME=plusarg_bathtub_dryrun_test',
+        ])
+    assert simulator.run(tmp_path).passed()
