@@ -51,7 +51,8 @@ class bathtub extends uvm_object;
 	bit dry_run;
 	int starting_scenario_number;
 	int stopping_scenario_number;
-	plusarg_options plusarg_opts;
+	
+	static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
 	`uvm_object_utils_begin(bathtub)
 		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
@@ -71,8 +72,6 @@ class bathtub extends uvm_object;
 		dry_run = 0;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
-
-		plusarg_opts = new();
 	endfunction : new
 
 
@@ -89,27 +88,13 @@ class bathtub extends uvm_object;
 	endfunction : configure
 
 
-	virtual function void parse_plusargs();
-		string plusarg_values[$];
-		string plusarg_feature_files[$];
-
-		uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
-		foreach (plusarg_values[i]) begin
-			bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
-			foreach (plusarg_feature_files[j]) begin
-				feature_files.push_back(plusarg_feature_files[j]);
-			end
-		end
-	endfunction : parse_plusargs
-
-
 	virtual task run_test(uvm_phase phase);
 		gherkin_doc_bundle gherkin_doc_bundle;
 		gherkin_parser parser;
 		gherkin_document_printer printer;
 		gherkin_document_runner runner;
 
-		parse_plusargs();
+		feature_files = {feature_files, plusarg_opts.bathtub_features};
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			

@@ -27,6 +27,9 @@ SOFTWARE.
 
 import uvm_pkg::*;
 
+typedef class bathtub_utils;
+`include "bathtub_pkg/bathtub_utils.svh"
+
 class plusarg_options;
     string bathtub_features[$];
     uvm_verbosity bathtub_verbosity;
@@ -59,6 +62,50 @@ class plusarg_options;
         this.bathtub_stop = bathtub_stop;
         this.bathtub_help = bathtub_help;
     endfunction : new
+
+
+    (* fluent *)
+    static function plusarg_options create(
+        string bathtub_features[$]='{},
+        uvm_verbosity bathtub_verbosity=UVM_MEDIUM,
+        bit bathtub_dryrun=1'b0,
+        int bathtub_errormax=0,
+        string bathtub_include[$]='{},
+        string bathtub_exclude[$]='{},
+        int bathtub_start=0,
+        int bathtub_stop=0,
+        bit bathtub_help=1'b0
+    );
+        create = new(
+            .bathtub_features (bathtub_features),
+            .bathtub_verbosity (bathtub_verbosity),
+            .bathtub_dryrun (bathtub_dryrun),
+            .bathtub_errormax (bathtub_errormax),
+            .bathtub_include (bathtub_include),
+            .bathtub_exclude (bathtub_exclude),
+            .bathtub_start (bathtub_start),
+            .bathtub_stop (bathtub_stop),
+            .bathtub_help (bathtub_help)
+        );
+    endfunction : create
+
+
+    (* fluent *)
+	virtual function plusarg_options populate();
+		string plusarg_values[$];
+		string plusarg_feature_files[$];
+
+		if (uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values)) begin
+            foreach (plusarg_values[i]) begin
+                bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
+                foreach (plusarg_feature_files[j]) begin
+                    bathtub_features.push_back(plusarg_feature_files[j]);
+                end
+            end
+        end
+
+        return this;
+	endfunction : populate
 
 endclass : plusarg_options
 
