@@ -82,6 +82,7 @@ def test_plusarg_bathtub_dryrun(tmp_path, feature_file_a, simulator):
     simulator.extend_args([
         '-f $BATHTUB_VIP_DIR/test/e2e/plusargs/plusargs.f',
         '+bathtub_features=' + feature_file_a,
+        '+bathtub_dryrun',
         '+UVM_TESTNAME=plusarg_bathtub_dryrun_test',
         ])
     assert simulator.run(tmp_path).passed()

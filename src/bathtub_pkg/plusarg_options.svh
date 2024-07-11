@@ -113,6 +113,7 @@ class plusarg_options;
     (* fluent *)
 	virtual function plusarg_options populate();
 		string plusarg_values[$];
+		string plusarg_value;
 		string plusarg_feature_files[$];
 
 		num_bathtub_features = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
@@ -121,6 +122,11 @@ class plusarg_options;
             foreach (plusarg_feature_files[j]) begin
                 bathtub_features.push_back(plusarg_feature_files[j]);
             end
+        end
+
+        has_bathtub_dryrun = $test$plusargs("bathtub_dryrun") ? 1'b1 : 1'b0;
+        if (has_bathtub_dryrun) begin
+            bathtub_dryrun = 1'b1;
         end
 
         return this;
