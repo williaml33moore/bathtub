@@ -50,6 +50,7 @@ class severity_system_task_cb extends uvm_report_catcher;
     (* fluent *)
     virtual function severity_system_task_cb add(uvm_report_object obj=null);
         uvm_report_cb::add(obj, this);
+        return this;
     endfunction : add
 endclass : severity_system_task_cb
 

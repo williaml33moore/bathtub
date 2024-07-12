@@ -68,6 +68,7 @@ class Xcelium(Simulator):
     def __init__(self):
         super().__init__()
         self.binary = 'xrun'
+        self.log = 'xrun.log'
     
     def uvm(self, uvm_home='$UVM_HOME'):
         super().uvm(uvm_home)
@@ -80,6 +81,7 @@ class Questa(Simulator):
     def __init__(self):
         super().__init__()
         self.binary = 'qrun'
+        self.log = 'qrun.log'
 
     def run(self, cwd='.'):
         """Run the simulator then do additional result checks."""

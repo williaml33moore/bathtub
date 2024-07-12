@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import pytest
+import subprocess
 
 def test_compile_error(tmp_path, simulator):
     """Test that compilation error returns in nonzero exit code"""
@@ -72,3 +73,32 @@ def test_uvm_fatal(tmp_path, simulator):
     simulator.uvm().run(tmp_path)
     print("Exited with return code {}".format(simulator.returncode))
     assert not simulator.passed(), "Expected nonzero return code"
+
+def test_uvm_fatal(tmp_path, simulator):
+    """Test that `uvm_fatal results in nonzero exit code"""
+
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/test/simulators/test_uvm_fatal.sv',
+        '-incdir $BATHTUB_VIP_DIR/test/resources/callbacks',
+        ])
+    simulator.uvm().run(tmp_path)
+    print("Exited with return code {}".format(simulator.returncode))
+    assert not simulator.passed(), "Expected nonzero return code"
+
+def test_uvm_error(tmp_path, simulator):
+    """Test that `uvm_error results in nonzero exit code"""
+
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/test/simulators/test_uvm_error.sv',
+        '-incdir $BATHTUB_VIP_DIR/test/resources/callbacks',
+        ])
+    simulator.uvm().run(tmp_path)
+    print("Exited with return code {}".format(simulator.returncode))
+    assert not simulator.passed(), "Expected nonzero return code"
+
+    # Check the log file for the magic string
+    magic_string = 'test_uvm_error_12321'
+    run_cmd = "grep {} {}".format(magic_string, simulator.log)
+    cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+    assert cp.returncode==0, "Magic string '{}' not found in log file".format(magic_string)
+    
