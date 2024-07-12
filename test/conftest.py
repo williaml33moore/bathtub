@@ -46,6 +46,7 @@ class Simulator:
         self.uvm_flag = True
         self.append_arg('-uvm')
         self.append_arg('-uvmhome ' + uvm_home)
+        return self
 
     def run(self, cwd='.'):
         """Run the simulator and store the process' return code (0=success)."""
@@ -72,6 +73,7 @@ class Xcelium(Simulator):
         super().uvm(uvm_home)
         # Xcelium requires additional arg when not using built-in UVM installation.
         self.append_arg('-uvmnocdnsextra')
+        return self
 
 class Questa(Simulator):
     """Abstraction of Questa simulator"""

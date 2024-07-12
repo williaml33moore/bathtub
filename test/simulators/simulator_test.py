@@ -61,3 +61,14 @@ def test_assert_failure(tmp_path, simulator):
     simulator.run(tmp_path)
     print("Exited with return code {}".format(simulator.returncode))
     assert not simulator.passed(), "Expected nonzero return code"
+
+def test_uvm_fatal(tmp_path, simulator):
+    """Test that `uvm_fatal results in nonzero exit code"""
+
+    simulator.extend_args([
+        '$BATHTUB_VIP_DIR/test/simulators/test_uvm_fatal.sv',
+        '-incdir $BATHTUB_VIP_DIR/test/resources/callbacks',
+        ])
+    simulator.uvm().run(tmp_path)
+    print("Exited with return code {}".format(simulator.returncode))
+    assert not simulator.passed(), "Expected nonzero return code"

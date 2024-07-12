@@ -28,7 +28,7 @@ SOFTWARE.
 import uvm_pkg::*;
 
 class severity_system_task_cb extends uvm_report_catcher;
-    function new (string name="severity_system_task_cb");
+    function new(string name="severity_system_task_cb");
         super.new(name);
     endfunction : new
 
@@ -41,7 +41,16 @@ class severity_system_task_cb extends uvm_report_catcher;
         end
         return THROW;
     endfunction : catch
+
+    (* fluent *)
+    static function severity_system_task_cb instantiate(string name="severity_system_task_cb");
+        instantiate = new(name);
+    endfunction : instantiate
+    
+    (* fluent *)
+    virtual function severity_system_task_cb add(uvm_report_object obj=null);
+        uvm_report_cb::add(obj, this);
+    endfunction : add
 endclass : severity_system_task_cb
 
   `endif // __SEVERITY_SYSTEM_TASK_CB_SVH
-  
