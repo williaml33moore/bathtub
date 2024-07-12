@@ -79,6 +79,18 @@ class Questa(Simulator):
         super().__init__()
         self.binary = 'qrun'
 
+    def run(self, cwd='.'):
+        """Run the simulator then do additional result checks."""
+        super().run(cwd)
+        if self.returncode != 0:
+            # Simulator returned nonzero, indicating a problem
+            return self
+        
+        # Simulator returned, so do additional log checks
+        run_cmd = "perl $BATHTUB_VIP_DIR/test/scripts/qrun_result.pl"
+        self.returncode = subprocess.run(run_cmd, shell=True, cwd=cwd).returncode
+        return self
+
 class SVUnit:
     """Abstraction of runSVUnit script"""
     def __init__(self):
