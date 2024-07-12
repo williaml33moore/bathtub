@@ -3,7 +3,8 @@
 program test_system_error();
 
 function void main();
-    $error;
+    static string magic_string = "test_system_error_97531";
+    $error(magic_string);
 endfunction : main
 
 initial main();

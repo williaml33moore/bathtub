@@ -11,7 +11,8 @@ typedef class severity_system_task_cb;
 
 function void main();
     static severity_system_task_cb cb = severity_system_task_cb::instantiate("cb").add();
-    `uvm_fatal("", "");
+    static string magic_string = "test_uvm_fatal_55572";
+    `uvm_fatal("", magic_string);
 endfunction : main
 
 initial main();

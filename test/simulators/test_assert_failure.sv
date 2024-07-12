@@ -3,7 +3,7 @@
 program test_assert_failure();
 
 function void main();
-    assert(0);
+    test_assert_failure_24680 : assert(0);
 endfunction : main
 
 initial main();
