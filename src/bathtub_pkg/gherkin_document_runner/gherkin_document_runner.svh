@@ -87,11 +87,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 
 	static function gherkin_document_runner create_new(string name = "gherkin_document_runner", gherkin_pkg::gherkin_document document);
-		gherkin_document_runner new_printer;
+		gherkin_document_runner new_runner;
 
-		new_printer = new(name);
-		new_printer.document = document;
-		return new_printer;
+		new_runner = new(name);
+		new_runner.document = document;
+		return new_runner;
 	endfunction : create_new
 
 
@@ -211,35 +211,23 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	endtask : visit_background
 
-	/**
-		* @param comment -
-		*/
 	virtual task visit_comment(gherkin_pkg::comment comment);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_comment
 
-	/**
-		* @param data_table -
-		*/
 	virtual task visit_data_table(gherkin_pkg::data_table data_table);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_data_table
 
-	/**
-		* @param doc_string -
-		*/
 	virtual task visit_doc_string(gherkin_pkg::doc_string doc_string);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_doc_string
 
-	/**
-		* @param examples -
-		*/
 	virtual task visit_examples(gherkin_pkg::examples examples);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_examples
 
