@@ -21,6 +21,10 @@
 # SOFTWARE.
 
 import pytest
+import os.path
+from pathlib import Path
+
+test_path = Path(os.path.dirname(__file__))
 
 @pytest.fixture
 def feature_file_a(tmp_path):
@@ -84,5 +88,45 @@ def test_plusarg_bathtub_dryrun(tmp_path, feature_file_a, simulator):
         '+bathtub_features=' + feature_file_a,
         '+bathtub_dryrun',
         '+UVM_TESTNAME=plusarg_bathtub_dryrun_test',
+        ])
+    assert simulator.run(tmp_path).passed()
+
+
+@pytest.mark.parametrize("start_value", [0, 2, 4])
+def test_plusarg_bathtub_start(tmp_path, simulator, start_value):
+    """Test that +bathtub_start selects the scenario to start with"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
+        '+bathtub_start=' + str(start_value),
+        ])
+    assert simulator.run(tmp_path).passed()
+
+
+@pytest.mark.parametrize("stop_value", [2, 4])
+def test_plusarg_bathtub_stop(tmp_path, simulator, stop_value):
+    """Test that +bathtub_stop selects the scenario to stop on"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
+        '+bathtub_stop=' + str(stop_value),
+        ])
+    assert simulator.run(tmp_path).passed()
+
+
+@pytest.mark.parametrize("start_value,stop_value", [(0, 2), (1, 3), (3, 5)])
+def test_plusarg_bathtub_start_stop(tmp_path, simulator, start_value, stop_value):
+    """Test that +bathtun_start and +bathtub_stop select the scenarios to start and stop on"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
+        '+bathtub_start=' + str(start_value),
+        '+bathtub_stop=' + str(stop_value),
         ])
     assert simulator.run(tmp_path).passed()

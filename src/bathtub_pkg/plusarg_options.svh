@@ -129,6 +129,12 @@ class plusarg_options;
             bathtub_dryrun = 1'b1;
         end
 
+		has_bathtub_start = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_start=", plusarg_value) ? 1'b1 : 1'b0;
+        bathtub_start = plusarg_value.atoi();
+
+		has_bathtub_stop = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_stop=", plusarg_value) ? 1'b1 : 1'b0;
+        bathtub_stop = plusarg_value.atoi();
+
         return this;
 	endfunction : populate
 

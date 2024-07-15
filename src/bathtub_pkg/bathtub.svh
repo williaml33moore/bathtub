@@ -122,4 +122,9 @@ class bathtub extends uvm_object;
 
 	endtask : run_test
 
+
+	function plusarg_options get_plusarg_opts();
+		return plusarg_opts;
+	endfunction : get_plusarg_opts
+
 endclass : bathtub

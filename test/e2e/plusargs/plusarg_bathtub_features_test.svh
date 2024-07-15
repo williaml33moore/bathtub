@@ -58,14 +58,14 @@ class plusarg_bathtub_features_test extends uvm_test;
             bathtub_pkg::step_definition_interface actual_step_def;
 
             for (int i = 0; i < 2; i++) begin
-            phase.raise_objection(this);
-            my_plusargs_env.mock_seqr.get_next_item(item);
-            my_plusargs_env.mock_seqr.item_done();
+                phase.raise_objection(this);
+                my_plusargs_env.mock_seqr.get_next_item(item);
+                my_plusargs_env.mock_seqr.item_done();
 
-            `uvm_info(get_name(), "Got one!", UVM_NONE)
-            check_item_received : assert ($cast(obj_item, item));
-            check_item_is_a_step : assert ($cast(actual_step_def, obj_item.get_payload()));
-            phase.drop_objection(this);
+                `uvm_info(get_name(), "Got one!", UVM_NONE)
+                check_item_received : assert ($cast(obj_item, item));
+                check_item_is_a_step : assert ($cast(actual_step_def, obj_item.get_payload()));
+                phase.drop_objection(this);
             end
         end
         join
