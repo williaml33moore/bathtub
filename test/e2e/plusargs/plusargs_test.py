@@ -23,8 +23,18 @@
 import pytest
 import os.path
 from pathlib import Path
+import subprocess
 
 test_path = Path(os.path.dirname(__file__))
+
+uvm_verbosity_map = {
+    'UVM_NONE'   : 0,
+    'UVM_LOW'    : 100,
+    'UVM_MEDIUM' : 200,
+    'UVM_HIGH'   : 300,
+    'UVM_FULL'   : 400,
+    'UVM_DEBUG'  : 500
+}
 
 @pytest.fixture
 def feature_file_a(tmp_path):
@@ -137,7 +147,25 @@ def test_plusarg_bathtub_start_stop(tmp_path, simulator, feature, start_value, s
 
 @pytest.mark.parametrize("uvm_verbosity", ['UVM_NONE', 'UVM_LOW', 'UVM_MEDIUM', 'UVM_HIGH', 'UVM_FULL'])
 @pytest.mark.parametrize("bathtub_verbosity", ['UVM_NONE', 'UVM_LOW', 'UVM_MEDIUM', 'UVM_HIGH', 'UVM_FULL'])
-def test_plusarg_bathtub_verbosity(tmp_path, uvm_verbosity, bathtub_verbosity):
-    """Test that +bathtub_verbosity controlls bathtub reports independently of +uvm_verbosity"""
-    print({'uvm_verbosity': uvm_verbosity, 'bathtub_verbosity': bathtub_verbosity})
-    assert True
+def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_verbosity):
+    """Test that +bathtub_verbosity controls bathtub reports independently of +uvm_verbosity"""
+
+    feature = 'simple.feature'
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '+UVM_TESTNAME=plusarg_bathtub_verbosity_test',
+        '+UVM_VERBOSITY=' + uvm_verbosity,
+        '+bathtub_verbosity=' + bathtub_verbosity,
+        ])
+    assert simulator.run(tmp_path).passed()
+
+    # Check UVM_VERBOSITY messages
+    for verbosity_name, verbosity_value in uvm_verbosity_map.items():
+        run_cmd = "grep '[plusarg_bathtub_verbosity_test].*{},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
+        cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+        if uvm_verbosity_map[uvm_verbosity] >= verbosity_value:
+            assert cp.returncode == 0, "Did not find expected message '{},{}' in {} log".format(verbosity_name, verbosity_value, uvm_verbosity)
+        else:
+            assert cp.returncode != 0, "Found unexpected message '{},{}' in {} log".format(verbosity_name, verbosity_value, uvm_verbosity)

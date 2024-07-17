@@ -49,6 +49,9 @@ module plusargs_tb_top();
   typedef class plusarg_bathtub_start_stop_test;
   `include "plusarg_bathtub_start_stop_test.svh"
 
+  typedef class plusarg_bathtub_verbosity_test;
+  `include "plusarg_bathtub_verbosity_test.svh"
+
   severity_system_task_cb my_severity_system_task_cb = new;
 
   initial begin
