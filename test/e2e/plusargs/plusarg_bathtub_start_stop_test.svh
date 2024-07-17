@@ -88,19 +88,26 @@ class plusarg_bathtub_start_stop_test extends uvm_test;
                 `uvm_info_end
 
                 for (int i = start_index; i < stop_index; i++) begin
-                    exp_step_index = i;
-                    phase.raise_objection(this);
-                    my_plusargs_env.mock_seqr.get_next_item(item);
-                    my_plusargs_env.mock_seqr.item_done();
+                    forever begin
+                        exp_step_index = i;
+                        phase.raise_objection(this);
+                        my_plusargs_env.mock_seqr.get_next_item(item);
+                        my_plusargs_env.mock_seqr.item_done();
 
-                    `uvm_info(get_name(), "Got one!", UVM_NONE)
-                    assert ($cast(obj_item, item));
-                    assert ($cast(actual_step_def, obj_item.get_payload()));
-                    step_text = actual_step_def.get_step_attributes().get_text();
-                    act_step_index = step_text.atoi();
-                    check_step_index : assert (act_step_index == exp_step_index * 10);
-                    exp_step_index++;
-                    phase.drop_objection(this);
+                        `uvm_info(get_name(), "Got one!", UVM_NONE)
+                        assert ($cast(obj_item, item));
+                        assert ($cast(actual_step_def, obj_item.get_payload()));
+                        step_text = actual_step_def.get_step_attributes().get_text();
+                        if (step_text == "background") begin
+                            phase.drop_objection(this);
+                            continue; // Ignore background steps
+                        end
+                        act_step_index = step_text.atoi();
+                        check_step_index : assert (act_step_index == exp_step_index * 10);
+                        exp_step_index++;
+                        phase.drop_objection(this);
+                        break;
+                    end
                 end
             end
         join

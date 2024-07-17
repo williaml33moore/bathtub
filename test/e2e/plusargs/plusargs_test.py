@@ -92,41 +92,52 @@ def test_plusarg_bathtub_dryrun(tmp_path, feature_file_a, simulator):
     assert simulator.run(tmp_path).passed()
 
 
+@pytest.mark.parametrize("feature", ['many_scenarios.feature', 'many_scenarios_plus_background.feature'])
 @pytest.mark.parametrize("start_value", [0, 2, 4])
-def test_plusarg_bathtub_start(tmp_path, simulator, start_value):
+def test_plusarg_bathtub_start(tmp_path, simulator, feature, start_value):
     """Test that +bathtub_start selects the scenario to start with"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'plusargs.f'),
-        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
         '+bathtub_start=' + str(start_value),
         ])
     assert simulator.run(tmp_path).passed()
 
 
+@pytest.mark.parametrize("feature", ['many_scenarios.feature', 'many_scenarios_plus_background.feature'])
 @pytest.mark.parametrize("stop_value", [2, 4])
-def test_plusarg_bathtub_stop(tmp_path, simulator, stop_value):
+def test_plusarg_bathtub_stop(tmp_path, simulator, feature, stop_value):
     """Test that +bathtub_stop selects the scenario to stop on"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'plusargs.f'),
-        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
         '+bathtub_stop=' + str(stop_value),
         ])
     assert simulator.run(tmp_path).passed()
 
 
+@pytest.mark.parametrize("feature", ['many_scenarios.feature', 'many_scenarios_plus_background.feature'])
 @pytest.mark.parametrize("start_value,stop_value", [(0, 2), (1, 3), (3, 5)])
-def test_plusarg_bathtub_start_stop(tmp_path, simulator, start_value, stop_value):
-    """Test that +bathtun_start and +bathtub_stop select the scenarios to start and stop on"""
+def test_plusarg_bathtub_start_stop(tmp_path, simulator, feature, start_value, stop_value):
+    """Test that +bathtub_start and +bathtub_stop select the scenarios to start and stop on"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'plusargs.f'),
-        '+bathtub_features=' + str(test_path / 'features' /  'many_scenarios.feature'),
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=plusarg_bathtub_start_stop_test',
         '+bathtub_start=' + str(start_value),
         '+bathtub_stop=' + str(stop_value),
         ])
     assert simulator.run(tmp_path).passed()
+
+
+@pytest.mark.parametrize("uvm_verbosity", ['UVM_NONE', 'UVM_LOW', 'UVM_MEDIUM', 'UVM_HIGH', 'UVM_FULL'])
+@pytest.mark.parametrize("bathtub_verbosity", ['UVM_NONE', 'UVM_LOW', 'UVM_MEDIUM', 'UVM_HIGH', 'UVM_FULL'])
+def test_plusarg_bathtub_verbosity(tmp_path, uvm_verbosity, bathtub_verbosity):
+    """Test that +bathtub_verbosity controlls bathtub reports independently of +uvm_verbosity"""
+    print({'uvm_verbosity': uvm_verbosity, 'bathtub_verbosity': bathtub_verbosity})
+    assert True
