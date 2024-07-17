@@ -156,6 +156,7 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
         '-f ' + str(test_path / 'plusargs.f'),
         '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=plusarg_bathtub_verbosity_test',
+        '+define+BATHTUB_VERBOSITY_TEST+',
         '+UVM_VERBOSITY=' + uvm_verbosity,
         '+bathtub_verbosity=' + bathtub_verbosity,
         ])
@@ -163,9 +164,18 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
 
     # Check UVM_VERBOSITY messages
     for verbosity_name, verbosity_value in uvm_verbosity_map.items():
-        run_cmd = "grep '[plusarg_bathtub_verbosity_test].*{},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
+        run_cmd = "grep '\\[uvm_verbosity_test\\] {},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
         cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
         if uvm_verbosity_map[uvm_verbosity] >= verbosity_value:
-            assert cp.returncode == 0, "Did not find expected message '{},{}' in {} log".format(verbosity_name, verbosity_value, uvm_verbosity)
+            assert cp.returncode == 0, "Did not find expected message '{},{}' in +UVM_VERBOSITY={} log".format(verbosity_name, verbosity_value, uvm_verbosity)
         else:
-            assert cp.returncode != 0, "Found unexpected message '{},{}' in {} log".format(verbosity_name, verbosity_value, uvm_verbosity)
+            assert cp.returncode != 0, "Found unexpected message '{},{}' in +UVM_VERBOSITY={} log".format(verbosity_name, verbosity_value, uvm_verbosity)
+
+    # Check bathtub_verbosity messages
+    for verbosity_name, verbosity_value in uvm_verbosity_map.items():
+        run_cmd = "grep '\\[bathtub_verbosity_test\\] {},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
+        cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+        if uvm_verbosity_map[bathtub_verbosity] >= verbosity_value:
+            assert cp.returncode == 0, "Did not find expected message '{},{}' in +bathtub_verbosity={} log".format(verbosity_name, verbosity_value, bathtub_verbosity)
+        else:
+            assert cp.returncode != 0, "Found unexpected message '{},{}' in +bathtub_verbosity={} log".format(verbosity_name, verbosity_value, bathtub_verbosity)

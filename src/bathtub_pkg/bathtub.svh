@@ -39,7 +39,7 @@ typedef class gherkin_doc_bundle;
 typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
 
-class bathtub extends uvm_object;
+class bathtub extends uvm_report_object;
 
 	string feature_files[$];
 
@@ -51,6 +51,7 @@ class bathtub extends uvm_object;
 	bit dry_run;
 	int starting_scenario_number;
 	int stopping_scenario_number;
+	uvm_verbosity bathtub_verbosity;
 	
 	static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -72,6 +73,7 @@ class bathtub extends uvm_object;
 		dry_run = 0;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
+		bathtub_verbosity = UVM_MEDIUM;
 	endfunction : new
 
 
@@ -99,6 +101,18 @@ class bathtub extends uvm_object;
 		if (plusarg_opts.has_bathtub_dryrun) dry_run = plusarg_opts.bathtub_dryrun;
 		if (plusarg_opts.has_bathtub_start) starting_scenario_number = plusarg_opts.bathtub_start;
 		if (plusarg_opts.has_bathtub_stop) stopping_scenario_number = plusarg_opts.bathtub_stop;
+		if (plusarg_opts.has_bathtub_verbosity) bathtub_verbosity = plusarg_opts.bathtub_verbosity;
+
+		set_report_verbosity_level(bathtub_verbosity);
+
+`ifdef BATHTUB_VERBOSITY_TEST
+		// Test messages for testing the +bathtub_verbosity plusarg
+		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE)
+		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW)
+		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM)
+		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH)
+		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL)
+`endif // BATHTUB_VERBOSITY_TEST
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			

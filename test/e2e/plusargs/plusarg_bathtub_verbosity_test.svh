@@ -47,11 +47,11 @@ class plusarg_bathtub_verbosity_test extends uvm_test;
 
         bathtub.configure(my_plusargs_env.mock_seqr);
 
-        `uvm_info("plusarg_bathtub_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE)
-        `uvm_info("plusarg_bathtub_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW)
-        `uvm_info("plusarg_bathtub_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM)
-        `uvm_info("plusarg_bathtub_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH)
-        `uvm_info("plusarg_bathtub_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL)
+        `uvm_info("uvm_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE)
+        `uvm_info("uvm_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW)
+        `uvm_info("uvm_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM)
+        `uvm_info("uvm_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH)
+        `uvm_info("uvm_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL)
 
         fork
             begin

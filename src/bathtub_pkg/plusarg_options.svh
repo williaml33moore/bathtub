@@ -135,9 +135,49 @@ class plusarg_options;
 		has_bathtub_stop = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_stop=", plusarg_value) ? 1'b1 : 1'b0;
         bathtub_stop = plusarg_value.atoi();
 
+        has_bathtub_verbosity = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_verbosity=", plusarg_value) ? 1'b1 : 1'b0;
+        bathtub_verbosity = str_to_verbosity(plusarg_value);
+
         return this;
 	endfunction : populate
 
+
+    // Convert string to uvm_verbosity value.
+    // Code adapted from uvm_root::m_check_verbosity().
+
+    static function uvm_verbosity str_to_verbosity(string verb_string);
+        int verbosity;
+
+        case(verb_string)
+            "UVM_NONE"    : verbosity = UVM_NONE;
+            "NONE"        : verbosity = UVM_NONE;
+            "UVM_LOW"     : verbosity = UVM_LOW;
+            "LOW"         : verbosity = UVM_LOW;
+            "UVM_MEDIUM"  : verbosity = UVM_MEDIUM;
+            "MEDIUM"      : verbosity = UVM_MEDIUM;
+            "UVM_HIGH"    : verbosity = UVM_HIGH;
+            "HIGH"        : verbosity = UVM_HIGH;
+            "UVM_FULL"    : verbosity = UVM_FULL;
+            "FULL"        : verbosity = UVM_FULL;
+            "UVM_DEBUG"   : verbosity = UVM_DEBUG;
+            "DEBUG"       : verbosity = UVM_DEBUG;
+            default       : begin
+                verbosity = verb_string.atoi();
+                if(verbosity > 0)
+                    uvm_report_info("NSTVERB", $sformatf("Non-standard verbosity value, using provided '%0d'.", verbosity), UVM_NONE);
+                if(verbosity == 0) begin
+                    verbosity = UVM_MEDIUM;
+                    uvm_report_warning("ILLVERB", "Illegal verbosity value, using default of UVM_MEDIUM.", UVM_NONE);
+                end
+            end
+        endcase
+        return uvm_verbosity'(verbosity);
+    endfunction : str_to_verbosity
+
+
 endclass : plusarg_options
+
+
+
 
 `endif // __PLUSARG_OPTIONS_SVH
