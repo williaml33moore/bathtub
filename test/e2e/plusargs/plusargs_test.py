@@ -173,7 +173,7 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
             assert cp.returncode != 0, "Found unexpected message '{},{}' in +UVM_VERBOSITY={} log".format(verbosity_name, verbosity_value, uvm_verbosity)
 
     # Check bathtub_verbosity messages
-    for message_id in ["bathtub_verbosity_test", "gherkin_parser_verbosity_test"]:
+    for message_id in ["bathtub_verbosity_test", "gherkin_parser_verbosity_test", "gherkin_document_runner_verbosity_test"]:
         for verbosity_name, verbosity_value in uvm_verbosity_map.items():
             run_cmd = "grep '\\[{}\\] {},{}' {}".format(message_id, verbosity_name, verbosity_value, simulator.log)
             cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)

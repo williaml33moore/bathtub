@@ -128,11 +128,12 @@ class bathtub extends uvm_report_object;
 			end
 
 			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
-			runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number);
+			runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number, report_object);
 			runner.run();
 			
 `ifdef BATHTUB_VERBOSITY_TEST
 			parser.test_verbosity();
+			runner.test_verbosity();
 `endif // BATHTUB_VERBOSITY_TEST
 		end
 			

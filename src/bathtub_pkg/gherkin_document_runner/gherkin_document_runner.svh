@@ -66,6 +66,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	bit dry_run;
 	int starting_scenario_number;
 	int stopping_scenario_number;
+	uvm_report_object report_object;
 
 	`uvm_object_utils_begin(gherkin_document_runner)
 		`uvm_field_object(document, UVM_ALL_ON)
@@ -83,6 +84,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		feature_background = null;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
+		report_object = null;
 	endfunction : new
 
 
@@ -103,7 +105,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			uvm_phase starting_phase,
 			bit dry_run = 0,
 			int starting_scenario_number = 0,
-			int stopping_scenario_number = 0
+			int stopping_scenario_number = 0,
+			uvm_report_object report_object = null
 		);
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
@@ -113,12 +116,14 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		this.dry_run = dry_run;
 		this.starting_scenario_number = starting_scenario_number;
 		this.stopping_scenario_number = stopping_scenario_number;
+		this.report_object = report_object;
+		if (report_object == null) report_object = uvm_get_report_object();
 	endfunction : configure
 
 
 	virtual task run();
 		`uvm_info(get_name(), {"\n", sprint()}, UVM_MEDIUM)
-		document.accept(this); // visit_gherkin_docment(document)
+		document.accept(this); // visit_gherkin_document(document)
 	endtask : run
 
 	/*
@@ -448,6 +453,12 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	// TODO Auto-generated task stub
 
 	endtask : visit_tag
+
+`ifdef BATHTUB_VERBOSITY_TEST
+	function void test_verbosity();
+		`BATHTUB___TEST_VERBOSITY("gherkin_document_runner_verbosity_test")
+	endfunction : test_verbosity
+`endif // BATHTUB_VERBOSITY_TEST
 
 endclass : gherkin_document_runner
 
