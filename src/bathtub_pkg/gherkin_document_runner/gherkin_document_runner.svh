@@ -122,7 +122,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 
 	virtual task run();
-		`uvm_info(get_name(), {"\n", sprint()}, UVM_MEDIUM)
+		`uvm_info_context(get_name(), {"\n", sprint()}, UVM_MEDIUM, report_object)
 		document.accept(this); // visit_gherkin_document(document)
 	endtask : run
 
@@ -144,7 +144,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		int success;
 		string search_keyword;
 
-		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM)
+		`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM, report_object)
 
 		if (step.keyword inside {"Given", "When", "Then"}) begin
 			// Look for a simple exact match for keyword.
@@ -155,13 +155,13 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			search_keyword = current_step_keyword;
 		end
 		else begin
-			`uvm_fatal(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword))
+			`uvm_fatal_context(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword), report_object)
 		end
 
-		`uvm_info_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH)
+		`uvm_info_context_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH, report_object)
 		`uvm_message_add_string(step.text)
 		`uvm_message_add_string(search_keyword)
-		`uvm_info_end
+		`uvm_info_context_end
 				
 		step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, STEP_DEF_RESOURCE_NAME, 1);
 
@@ -169,7 +169,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
 				uvm_resource_db#(uvm_object_wrapper)::dump();
 			end
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text), report_object)
 		end
 
 		// Success. Update current keyword.
@@ -183,7 +183,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		success = $cast(seq, obj);
 		assert_step_object_is_sequence : assert (success) else begin
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
 		end
 
 		if ($cast(step_seq, obj)) begin
@@ -192,7 +192,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
 		end
 
 		`uvm_info(get_name(), {"Executing sequence ", seq.get_name(),
@@ -208,7 +208,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	virtual task visit_background(gherkin_pkg::background background);
 
-		`uvm_info(get_name(), $sformatf("%s: %s", background.keyword, background.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", background.keyword, background.scenario_definition_name), UVM_MEDIUM, report_object)
 
 		foreach (background.steps[i]) begin
 			background.steps[i].accept(this); // visit_step(background.steps[i])
@@ -249,10 +249,10 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		foreach (feature.scenario_definitions[i]) begin
 			if ($cast(feature_background, feature.scenario_definitions[i])) begin
 				assert_only_one_background : assert (this.feature_background == null) else
-					`uvm_fatal_begin(get_name(), "Found more than one background definition")
+					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", report_object)
 					`uvm_message_add_string(this.feature_background.scenario_definition_name, "Existing background")
 					`uvm_message_add_string(feature_background.scenario_definition_name, "Conflicting background")
-					`uvm_fatal_end
+					`uvm_fatal_context_end
 				this.feature_background = feature_background;
 			end
 			else begin
@@ -286,7 +286,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
 
-		`uvm_info(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM, report_object)
 
 		current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
 		current_scenario_seq.set_parent_sequence(current_feature_seq);
@@ -306,7 +306,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
 
-		`uvm_info(get_name(), $sformatf("%s: %s", scenario_outline.keyword, scenario_outline.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario_outline.keyword, scenario_outline.scenario_definition_name), UVM_MEDIUM, report_object)
 
 		foreach (scenario_outline.examples[k]) begin
 
@@ -314,7 +314,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				gherkin_pkg::scenario scenario;
 				gherkin_pkg::scenario scenario_definition;
 			
-				`uvm_info(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM)
+				`uvm_info_context(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM, report_object)
 
 				example_values.delete();
 
@@ -374,7 +374,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		gherkin_pkg::doc_string doc_string;
 		gherkin_pkg::doc_string replaced_doc_string;
 
-		`uvm_info(get_name(), $sformatf("Before replacement: %s %s", step.keyword, step.text), UVM_HIGH)
+		`uvm_info_context(get_name(), $sformatf("Before replacement: %s %s", step.keyword, step.text), UVM_HIGH, report_object)
 
 		if (example_values.first(example_parameter)) do
 				replaced_text = replace_string(replaced_text, example_parameter, example_values[example_parameter]);
@@ -414,11 +414,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			else if ($cast(doc_string, step.argument)) begin
 			end
 			else
-				`uvm_fatal(get_name(), "Unexpected type of step argument")
+				`uvm_fatal_context(get_name(), "Unexpected type of step argument", report_object)
 		end
 
 
-		`uvm_info(get_name(), $sformatf("%s %s", replaced_step.keyword, replaced_step.text), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s %s", replaced_step.keyword, replaced_step.text), UVM_MEDIUM, report_object)
 		start_step(replaced_step);
 	endtask : visit_step
 
