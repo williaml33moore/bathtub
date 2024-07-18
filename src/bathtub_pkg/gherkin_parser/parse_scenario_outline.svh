@@ -168,8 +168,8 @@ task gherkin_parser::parse_scenario_outline(ref gherkin_pkg::scenario_outline sc
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-					". Expecting \"Scenario:\" or \"Example\""})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+					". Expecting \"Scenario:\" or \"Example\""}, report_object)
 			end
 		endcase
 	end

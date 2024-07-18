@@ -54,8 +54,8 @@ task gherkin_parser::parse_comment(ref gherkin_pkg::comment comment);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-				". Expecting \"#\""})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+				". Expecting \"#\""}, report_object)
 			end
 		endcase
 	end

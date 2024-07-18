@@ -133,8 +133,8 @@ task gherkin_parser::parse_step(ref gherkin_pkg::step step);
 
 							default : begin
 								status = ERROR;
-								`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_space, line_analysis_result.secondary_keyword,
-									". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""})
+								`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_space, line_analysis_result.secondary_keyword,
+									". Expecting \"Given\", \"When\", \"Then\", \"And\", \"But\", or \"*\""}, report_object)
 							end
 						endcase
 					end

@@ -72,8 +72,8 @@ task gherkin_parser::parse_table_row(ref gherkin_pkg::table_row table_row);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-					". Expecting a table row beginning with \"|\""})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting a table row beginning with \"|\""}, report_object)
 			end
 		endcase
 	end

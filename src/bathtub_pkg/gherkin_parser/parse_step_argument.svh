@@ -70,8 +70,8 @@ task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_arg
 
 			default: begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-					". Expecting |, \"\"\", or ```"})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting |, \"\"\", or ```"}, report_object)
 			end
 		endcase
 	end

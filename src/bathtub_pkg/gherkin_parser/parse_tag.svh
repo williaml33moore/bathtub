@@ -38,15 +38,15 @@ task gherkin_parser::parse_tag(ref gherkin_pkg::tag tag);
 
 	if (tag_name[0] != "@") begin
 		status = ERROR;
-		`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
-			". Tag name must begin with \"@\""})
+		`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
+			". Tag name must begin with \"@\""}, report_object)
 	end
 	else begin
 		foreach(tag_name[i]) begin
 			if (tag_name[i] inside {" ", "\t", "\n", CR}) begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
-					". Tag name must not contain white space"})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Illegal tag name: ", tag_name,
+					". Tag name must not contain white space"}, report_object)
 				break;
 			end
 		end

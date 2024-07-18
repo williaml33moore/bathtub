@@ -113,8 +113,8 @@ task gherkin_parser::parse_gherkin_document(ref gherkin_pkg::gherkin_document gh
 
 					default : begin
 						status = ERROR;
-						`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Syntax error. Expecting \"Feature:\" or \"#\".",
-							"\n", line_obj.text})
+						`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Syntax error. Expecting \"Feature:\" or \"#\".",
+							"\n", line_obj.text}, report_object)
 						get_next_line(line_obj);
 						break;
 					end

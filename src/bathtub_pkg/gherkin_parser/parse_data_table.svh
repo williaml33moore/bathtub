@@ -91,8 +91,8 @@ task gherkin_parser::parse_data_table(ref gherkin_pkg::data_table data_table);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-					". Expecting \"|\""})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting \"|\""}, report_object)
 			end
 		endcase
 

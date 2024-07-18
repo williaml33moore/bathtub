@@ -151,8 +151,8 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-					". Expecting \"Feature:\"."})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+					". Expecting \"Feature:\"."}, report_object)
 			end
 		endcase
 	end

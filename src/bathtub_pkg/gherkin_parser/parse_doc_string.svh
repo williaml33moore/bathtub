@@ -69,8 +69,8 @@ task gherkin_parser::parse_doc_string(ref gherkin_pkg::doc_string doc_string);
 
 							if (line_analysis_result.remainder_after_secondary_keyword.len() != 0) begin
 								status = ERROR;
-								`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected content type after closing delimiter: ", line_analysis_result.remainder_after_secondary_keyword,
-									". Expecting nothing."})
+								`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected content type after closing delimiter: ", line_analysis_result.remainder_after_secondary_keyword,
+									". Expecting nothing."}, report_object)
 							end
 
 							get_next_line(line_obj);
@@ -89,8 +89,8 @@ task gherkin_parser::parse_doc_string(ref gherkin_pkg::doc_string doc_string);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-					". Expecting \"\"\" or ```"})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting \"\"\" or ```"}, report_object)
 			end
 		endcase
 	end
