@@ -31,10 +31,10 @@ task gherkin_parser::parse_tag(ref gherkin_pkg::tag tag);
 
 	tag_mbox.get(tag_name);
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag enter", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag enter", UVM_HIGH, report_object)
 	`uvm_message_add_string(tag_name)
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 
 	if (tag_name[0] != "@") begin
 		status = ERROR;
@@ -58,11 +58,11 @@ task gherkin_parser::parse_tag(ref gherkin_pkg::tag tag);
 		`push_onto_parser_stack(tag)
 	end
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag exit", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_tag exit", UVM_HIGH, report_object)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(tag)
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 endtask : parse_tag
 
 `endif // __PARSE_TAG_SVH

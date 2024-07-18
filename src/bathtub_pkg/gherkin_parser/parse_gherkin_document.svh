@@ -49,15 +49,15 @@ task gherkin_parser::parse_gherkin_document(ref gherkin_pkg::gherkin_document gh
 		end
 	end
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_gherkin_document enter", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_gherkin_document enter", UVM_HIGH, report_object)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	if (!line_obj.eof) begin
 		`uvm_message_add_string(line_obj.text)
 	end
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 
 	while (status == OK) begin : document_elements
 		line_mbox.peek(line_obj);
@@ -81,7 +81,7 @@ task gherkin_parser::parse_gherkin_document(ref gherkin_pkg::gherkin_document gh
 					end
 					else begin
 						status = ERROR;
-						`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A Gherkin document can have only one feature")
+						`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), "A Gherkin document can have only one feature", report_object)
 					end
 				end
 			end
@@ -126,12 +126,12 @@ task gherkin_parser::parse_gherkin_document(ref gherkin_pkg::gherkin_document gh
 	gherkin_document = new("gherkin_document", gherkin_document_value);
 	`push_onto_parser_stack(gherkin_document)
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_gherkin_document exit", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_gherkin_document exit", UVM_HIGH, report_object)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(gherkin_document)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 endtask : parse_gherkin_document
 
 `endif // __PARSE_GHERKIN_DOCUMENT_SVH
