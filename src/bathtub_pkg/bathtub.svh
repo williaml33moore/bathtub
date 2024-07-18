@@ -39,6 +39,8 @@ typedef class gherkin_doc_bundle;
 typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
 
+`include "bathtub_macros.sv"
+
 class bathtub extends uvm_report_object;
 
 	string feature_files[$];
@@ -111,12 +113,7 @@ class bathtub extends uvm_report_object;
 		set_report_verbosity_level(bathtub_verbosity);
 
 `ifdef BATHTUB_VERBOSITY_TEST
-		// Test messages for testing the +bathtub_verbosity plusarg
-		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE, report_object)
-		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW, report_object)
-		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM, report_object)
-		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH, report_object)
-		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL, report_object)
+		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
 `endif // BATHTUB_VERBOSITY_TEST
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
