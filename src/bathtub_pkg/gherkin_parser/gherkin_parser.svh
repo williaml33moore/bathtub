@@ -49,14 +49,14 @@ import gherkin_pkg::gherkin_pkg_metadata;
 
 `define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin \
 status = ERROR; \
-`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty") \
+`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty", report_object) \
 end \
 else begin \
 uvm_object obj = parser_stack.pop_front(); \
 end
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty") end else begin uvm_object obj = parser_stack.pop_front(); end
+`define pop_from_parser_stack(o) if (parser_stack.size() == 0) begin status = ERROR; `uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), "Visitor stack is empty", report_object) end else begin uvm_object obj = parser_stack.pop_front(); end
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 class gherkin_parser extends uvm_object implements gherkin_parser_interface;
@@ -707,8 +707,8 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 
 				default : begin
 					status = ERROR;
-					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-						". Expecting a tag beginning with \"@\""})
+					`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+						". Expecting a tag beginning with \"@\""}, report_object)
 				end
 			endcase
 		end
