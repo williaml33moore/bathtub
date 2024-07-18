@@ -195,8 +195,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
 		end
 
-		`uvm_info(get_name(), {"Executing sequence ", seq.get_name(),
-				" (", seq.get_type_name(), ")"}, UVM_HIGH)
+		`uvm_info_context(get_name(), {"Executing sequence ", seq.get_name(),
+				" (", seq.get_type_name(), ")"}, UVM_HIGH, report_object)
 
 		seq.print_sequence_info = 1;
 		if (!dry_run) begin
@@ -242,7 +242,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		int stop;
 		gherkin_pkg::scenario_definition only_scenarios[$];
 
-		`uvm_info(get_name(), $sformatf("%s: %s", feature.keyword, feature.feature_name), UVM_MEDIUM);
+		`uvm_info_context(get_name(), $sformatf("%s: %s", feature.keyword, feature.feature_name), UVM_MEDIUM, report_object)
 		
 		// Separate background from scenario definitions
 		only_scenarios.delete();
