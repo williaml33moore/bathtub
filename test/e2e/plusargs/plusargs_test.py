@@ -163,8 +163,9 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
     assert simulator.run(tmp_path).passed()
 
     # Check UVM_VERBOSITY messages
+    message_id = "uvm_verbosity_test"
     for verbosity_name, verbosity_value in uvm_verbosity_map.items():
-        run_cmd = "grep '\\[uvm_verbosity_test\\] {},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
+        run_cmd = "grep '\\[{}\\] {},{}' {}".format(message_id, verbosity_name, verbosity_value, simulator.log)
         cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
         if uvm_verbosity_map[uvm_verbosity] >= verbosity_value:
             assert cp.returncode == 0, "Did not find expected message '{},{}' in +UVM_VERBOSITY={} log".format(verbosity_name, verbosity_value, uvm_verbosity)
@@ -172,10 +173,11 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
             assert cp.returncode != 0, "Found unexpected message '{},{}' in +UVM_VERBOSITY={} log".format(verbosity_name, verbosity_value, uvm_verbosity)
 
     # Check bathtub_verbosity messages
-    for verbosity_name, verbosity_value in uvm_verbosity_map.items():
-        run_cmd = "grep '\\[bathtub_verbosity_test\\] {},{}' {}".format(verbosity_name, verbosity_value, simulator.log)
-        cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
-        if uvm_verbosity_map[bathtub_verbosity] >= verbosity_value:
-            assert cp.returncode == 0, "Did not find expected message '{},{}' in +bathtub_verbosity={} log".format(verbosity_name, verbosity_value, bathtub_verbosity)
-        else:
-            assert cp.returncode != 0, "Found unexpected message '{},{}' in +bathtub_verbosity={} log".format(verbosity_name, verbosity_value, bathtub_verbosity)
+    for message_id in ["bathtub_verbosity_test", "gherkin_parser_verbosity_test"]:
+        for verbosity_name, verbosity_value in uvm_verbosity_map.items():
+            run_cmd = "grep '\\[{}\\] {},{}' {}".format(message_id, verbosity_name, verbosity_value, simulator.log)
+            cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+            if uvm_verbosity_map[bathtub_verbosity] >= verbosity_value:
+                assert cp.returncode == 0, "Did not find expected '{}' message '{},{}' in +bathtub_verbosity={} log".format(message_id, verbosity_name, verbosity_value, bathtub_verbosity)
+            else:
+                assert cp.returncode != 0, "Found unexpected '{}' message '{},{}' in +bathtub_verbosity={} log".format(message_id, verbosity_name, verbosity_value, bathtub_verbosity)

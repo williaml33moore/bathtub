@@ -112,15 +112,12 @@ class bathtub extends uvm_report_object;
 		if (report_object == null) report_object = this;
 		set_report_verbosity_level(bathtub_verbosity);
 
-`ifdef BATHTUB_VERBOSITY_TEST
-		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
-`endif // BATHTUB_VERBOSITY_TEST
-
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			
 			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH, report_object)
 
-			parser = gherkin_parser::type_id::create("parser");
+			parser = gherkin_parser::type_id::create("parser").configure(report_object);
+
 			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
 
 			assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
@@ -133,8 +130,15 @@ class bathtub extends uvm_report_object;
 			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
 			runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number);
 			runner.run();
-
+			
+`ifdef BATHTUB_VERBOSITY_TEST
+			parser.test_verbosity();
+`endif // BATHTUB_VERBOSITY_TEST
 		end
+			
+`ifdef BATHTUB_VERBOSITY_TEST
+		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
+`endif // BATHTUB_VERBOSITY_TEST
 
 	endtask : run_test
 

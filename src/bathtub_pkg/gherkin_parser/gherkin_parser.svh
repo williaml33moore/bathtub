@@ -80,6 +80,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 	uvm_object parser_stack[$]; // For bread crumbs
 	status_t status;
 	gherkin_pkg::tag floating_tags[$]; // Collect tags to be applied to blocks
+	uvm_report_object report_object;
 
 	`uvm_object_utils_begin(gherkin_parser)
 	`uvm_object_utils_end
@@ -92,8 +93,22 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		tag_mbox = new(1);
 		parser_stack.delete();
 		floating_tags.delete();
+		report_object = null;
 	endfunction : new
 
+
+	(* fluent *)
+	function gherkin_parser configure(uvm_report_object report_object=null);
+		this.report_object = report_object;
+		if (report_object == null) this.report_object = uvm_get_report_object();
+		return this;
+	endfunction : configure
+
+`ifdef BATHTUB_VERBOSITY_TEST
+	function void test_verbosity();
+		`BATHTUB___TEST_VERBOSITY("gherkin_parser_verbosity_test")
+	endfunction : test_verbosity
+`endif // BATHTUB_VERBOSITY_TEST
 
 	// Read and parse lines from mailbox and block until EOF message is seen.
 	// Return a new `gherkin_document` object.
