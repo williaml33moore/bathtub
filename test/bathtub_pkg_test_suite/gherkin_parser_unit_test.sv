@@ -34,6 +34,7 @@ module gherkin_parser_unit_test;
     /* Place Setup Code Here */
 
     parser = new("parser");
+    parser = parser.configure();
   endtask
 
 
