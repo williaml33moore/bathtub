@@ -52,6 +52,7 @@ class bathtub extends uvm_report_object;
 	int starting_scenario_number;
 	int stopping_scenario_number;
 	uvm_verbosity bathtub_verbosity;
+	uvm_report_object report_object;
 	
 	static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -74,6 +75,7 @@ class bathtub extends uvm_report_object;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
 		bathtub_verbosity = UVM_MEDIUM;
+		report_object = null;
 	endfunction : new
 
 
@@ -81,12 +83,14 @@ class bathtub extends uvm_report_object;
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
 			int sequence_priority = -1,
-			bit sequence_call_pre_post = 1
+			bit sequence_call_pre_post = 1,
+			uvm_report_object report_object = null
 		);
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
 		this.sequence_priority = sequence_priority;
 		this.sequence_call_pre_post = sequence_call_pre_post;
+		this.report_object = report_object;
 	endfunction : configure
 
 
@@ -103,27 +107,28 @@ class bathtub extends uvm_report_object;
 		if (plusarg_opts.has_bathtub_stop) stopping_scenario_number = plusarg_opts.bathtub_stop;
 		if (plusarg_opts.has_bathtub_verbosity) bathtub_verbosity = plusarg_opts.bathtub_verbosity;
 
+		if (report_object == null) report_object = this;
 		set_report_verbosity_level(bathtub_verbosity);
 
 `ifdef BATHTUB_VERBOSITY_TEST
 		// Test messages for testing the +bathtub_verbosity plusarg
-		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE)
-		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW)
-		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM)
-		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH)
-		`uvm_info("bathtub_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL)
+		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_NONE,%0d", UVM_NONE), UVM_NONE, report_object)
+		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_LOW,%0d", UVM_LOW), UVM_LOW, report_object)
+		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_MEDIUM,%0d", UVM_MEDIUM), UVM_MEDIUM, report_object)
+		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_HIGH,%0d", UVM_HIGH), UVM_HIGH, report_object)
+		`uvm_info_context("bathtub_verbosity_test", $sformatf("UVM_FULL,%0d", UVM_FULL), UVM_FULL, report_object)
 `endif // BATHTUB_VERBOSITY_TEST
 
 		foreach (feature_files[i]) begin : iterate_over_feature_files
 			
-			`uvm_info(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH)
+			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH, report_object)
 
 			parser = gherkin_parser::type_id::create("parser");
 			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
 
 			assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
 
-			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
+			if (report_object.get_report_verbosity_level() >= UVM_HIGH) begin
 				printer = gherkin_document_printer::create_new("printer", gherkin_doc_bundle.document);
 				printer.print();
 			end
