@@ -131,7 +131,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		int line_number;
 		gherkin_pkg::gherkin_document gherkin_doc;
 			
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file enter", UVM_HIGH)
 		`uvm_message_add_string(feature_file_name)
 		`uvm_info_end
 
@@ -182,7 +182,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_file exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
 		`uvm_info_end
@@ -196,7 +196,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		gherkin_pkg::gherkin_document gherkin_doc;
 		static string feature_file_name = "";
 			
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines enter", UVM_HIGH)
 		`uvm_message_add_string(feature_file_name)
 		`uvm_info_end
 
@@ -237,7 +237,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_lines exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
 		`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -253,7 +253,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		static string feature_file_name = "";
 		string feature_array[$];
 			
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string enter", UVM_HIGH)
 		`uvm_message_add_string(feature_file_name)
 		`uvm_info_end
 
@@ -292,7 +292,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_feature_string exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_doc)
 		`uvm_info_end
@@ -321,7 +321,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		static string step_file_name = "";
 		string step_array[$];
 			
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string enter", UVM_HIGH)
 		`uvm_message_add_string(step_file_name)
 		`uvm_info_end
 
@@ -364,7 +364,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_string exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_step)
 		`uvm_info_end
@@ -378,7 +378,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		gherkin_pkg::step gherkin_step;
 		static string step_file_name = "";
 			
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_lines enter", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_lines enter", UVM_HIGH)
 		`uvm_message_add_string(step_file_name)
 		`uvm_info_end
 
@@ -419,7 +419,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			);
 		end
 		
-		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_lines exit", UVM_HIGH);
+		`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_lines exit", UVM_HIGH)
 		`uvm_message_add_tag("status", status.name)
 		`uvm_message_add_object(gherkin_step)
 		`uvm_info_end
