@@ -44,6 +44,7 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
     endfunction : build_phase
 
     task run_phase(uvm_phase phase);
+        string step_text_sb[$]; // Simple scoreboard
 
         bathtub.configure(my_plusargs_env.mock_seqr);
 
@@ -58,6 +59,8 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
                 `uvm_info_begin(get_name(), "", UVM_MEDIUM)
                 `uvm_info_end
 
+                step_text_sb.delete();
+
                 forever begin
                     my_plusargs_env.mock_seqr.get_next_item(item);
                     my_plusargs_env.mock_seqr.item_done();
@@ -67,16 +70,21 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
                     assert ($cast(actual_step_def, obj_item.get_payload()));
                     step_text = actual_step_def.get_step_attributes().get_text();
                     `uvm_info(get_name(), step_text, UVM_MEDIUM)
+                    step_text_sb.push_back(step_text);
                 end
             end
         join_none
 
         phase.raise_objection(this);
+
         bathtub.run_test(phase); // Run Bathtub!
-        #1s;
-        phase.drop_objection(this);
+        #1s; // Give ample time for sequences to complete
         disable fork;
 
+        $info("step_text_sb");
+        $display("%p", step_text_sb);
+
+        phase.drop_objection(this);
     endtask : run_phase
 
 endclass : plusarg_bathtub_include_exclude_test
