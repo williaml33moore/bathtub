@@ -190,6 +190,7 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
     (['@scenario_tag'], [], ['step_100']),
     (['@scenario_outline_tag'], [], ['step_200', 'step_300']),
     (['@examples_tag'], [], []), # Examples included but no scenario outline included
+    (['@scenario_outline_tag', '@examples_tag'], [], ['step_200', 'step_300']),
     ([], ['@feature_tag'], []),
     ([], ['@scenario_tag'], ['step_200', 'step_300']),
     ([], ['@scenario_outline_tag'], ['step_100']),
@@ -198,6 +199,7 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
     (['@scenario_outline_tag'], ['@scenario_tag'], ['step_200', 'step_300']),
     (['@scenario_tag'], ['@examples_tag'], ['step_100']),
     (['@examples_tag'], ['@scenario_tag'], []), # Examples included but no scenario outline included
+    (['@scenario_outline_tag', '@examples_tag'], ['@scenario_tag'], ['step_200', 'step_300']),
     ])
 def test_plusarg_bathtub_include_exclude(tmp_path, simulator, feature, include_tags, exclude_tags, expected_steps):
     """Test that +bathtub_include and +bathtub_exclude select tagged scenarios to run and skip"""
