@@ -364,33 +364,54 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario outline", tags), UVM_MEDIUM, report_object)
 
 			foreach (scenario_outline.examples[k]) begin
+				bit examples_tags_pass_tag_check;
+				string examples_tags[$];
 
-				foreach (scenario_outline.examples[k].rows[j]) begin
-					gherkin_pkg::scenario scenario;
-					gherkin_pkg::scenario scenario_definition;
+				// Local examples_tags queue includes examples tags plus any inherited tags.
+				examples_tags.delete();
+				foreach (tags[l]) begin
+					examples_tags.push_back(tags[l]);
+				end
+				foreach (scenario_outline.examples[k].tags[l]) begin
+					examples_tags.push_back(scenario_outline.examples[k].tags[l].tag_name); // All accumulated tags
+				end
 				
-					`uvm_info_context(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM, report_object)
+				examples_tags_pass_tag_check = tag_check(examples_tags);
 
-					example_values.delete();
+				if (examples_tags_pass_tag_check) begin
+					if (include_tags.size() > 0)
+						`uvm_info_context(get_name(), $sformatf("tags %p included; run examples", examples_tags), UVM_MEDIUM, report_object)
 
-					// Store the example values in a hash.
-					// Put the "<" ears ">" on the key.
-					foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
-						example_values[{"<", scenario_outline.examples[k].header.cells[i].value, ">"}] = scenario_outline.examples[k].rows[j].cells[i].value;
+					foreach (scenario_outline.examples[k].rows[j]) begin
+						gherkin_pkg::scenario scenario;
+						gherkin_pkg::scenario scenario_definition;
+					
+						`uvm_info_context(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM, report_object)
+
+						example_values.delete();
+
+						// Store the example values in a hash.
+						// Put the "<" ears ">" on the key.
+						foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
+							example_values[{"<", scenario_outline.examples[k].header.cells[i].value, ">"}] = scenario_outline.examples[k].rows[j].cells[i].value;
+						end
+
+						// Create a new scenario out of this unrolled scenario outline
+						scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.scenario_definition_name, scenario_outline.description);
+						foreach (scenario_outline.steps[l])
+							scenario.steps.push_back(scenario_outline.steps[l]);
+						foreach (scenario_outline.tags[l])
+							scenario.tags.push_back(scenario_outline.tags[l]);
+						scenario_definition = scenario;
+						// Give our new scenario the full scenario treatment
+						scenario_definition.accept(this);
+
+						example_values.delete();
+
 					end
-
-					// Create a new scenario out of this unrolled scenario outline
-					scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.scenario_definition_name, scenario_outline.description);
-					foreach (scenario_outline.steps[l])
-						scenario.steps.push_back(scenario_outline.steps[l]);
-					foreach (scenario_outline.tags[l])
-						scenario.tags.push_back(scenario_outline.tags[l]);
-					scenario_definition = scenario;
-					// Give our new scenario the full scenario treatment
-					scenario_definition.accept(this);
-
-					example_values.delete();
-
+				end
+				else begin
+					`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip examples", examples_tags), UVM_MEDIUM, report_object)
 				end
 			end
 		end
