@@ -324,8 +324,6 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario_outline.keyword, scenario_outline.scenario_definition_name), UVM_MEDIUM, report_object)
 
-		tags_pass_tag_check = (include_tags.size() == 0);
-
 		// Local tags queue includes scenario outline tags plus any inherited tags.
 		// Class' scenario_outline_tags queue is for downstream elements to inherit.
 		scenario_outline_tags.delete();
@@ -338,21 +336,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			tags.push_back(scenario_outline.tags[i].tag_name); // All accumulated tags
 		end
 
-		if (!tags_pass_tag_check) begin
-			foreach (tags[i]) begin
-				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], include_tags);
-				tags_pass_tag_check = tag_in_queue;
-				if (tags_pass_tag_check) break;
-			end
-		end
-
-		if (tags_pass_tag_check) begin
-			foreach (tags[i]) begin
-				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], exclude_tags);
-				tags_pass_tag_check = !tag_in_queue;
-				if (!tags_pass_tag_check) break;
-			end
-		end
+		tags_pass_tag_check = tag_check(tags);
 
 		if (tags_pass_tag_check) begin
 			if (include_tags.size() > 0)
@@ -389,7 +373,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				end
 			end
 		end
-		else if (!tags_pass_tag_check) begin
+		else begin
 			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario outline", tags), UVM_MEDIUM, report_object)
 		end
 
@@ -508,6 +492,28 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	// TODO Auto-generated task stub
 
 	endtask : visit_tag
+
+
+	virtual function bit tag_check(string tags[$]);
+
+		tag_check = (include_tags.size() == 0);
+
+		if (!tag_check) begin
+			foreach (tags[i]) begin
+				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], include_tags);
+				tag_check = tag_in_queue;
+				if (tag_check) break;
+			end
+		end
+
+		if (tag_check) begin
+			foreach (tags[i]) begin
+				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], exclude_tags);
+				tag_check = !tag_in_queue;
+				if (!tag_check) break;
+			end
+		end
+	endfunction : tag_check
 
 `ifdef BATHTUB_VERBOSITY_TEST
 	function void test_verbosity();
