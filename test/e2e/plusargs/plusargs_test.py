@@ -217,3 +217,18 @@ def test_plusarg_bathtub_include_exclude(tmp_path, simulator, feature, include_t
         expected_arg,
         ])
     assert simulator.run(tmp_path).passed()
+
+
+@pytest.mark.parametrize("help", [True, False])
+def test_plusarg_bathtub_help(tmp_path, simulator, help, feature_file_a):
+    """Test that +bathtub_help prints a help message and exits."""
+
+    help_arg = '+bathtub_help' if help else ''
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + feature_file_a,
+        '+UVM_TESTNAME=plusarg_bathtub_help_test',
+        help_arg,
+        ])
+    assert simulator.run(tmp_path).passed()

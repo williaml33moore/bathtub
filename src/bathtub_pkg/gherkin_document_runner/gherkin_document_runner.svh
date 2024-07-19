@@ -555,7 +555,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				if (!tag_check) break;
 			end
 		end
-		$info($sformatf("tags=%p\ninclude_tags=%p\nexclude_tags=%p\ntag_check=%b", tags, include_tags, exclude_tags, tag_check));
+		// $info($sformatf("tags=%p\ninclude_tags=%p\nexclude_tags=%p\ntag_check=%b", tags, include_tags, exclude_tags, tag_check)); // For DEBUG
 	endfunction : tag_check
 
 `ifdef BATHTUB_VERBOSITY_TEST

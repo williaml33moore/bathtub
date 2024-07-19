@@ -115,8 +115,17 @@ class plusarg_options;
 		string plusarg_values[$];
 		string plusarg_value;
 		string split_values[$];
+        uvm_cmdline_processor clp;
 
-		num_bathtub_features = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
+        clp = uvm_cmdline_processor::get_inst();
+
+        has_bathtub_help = $test$plusargs("bathtub_help") ? 1'b1 : 1'b0;
+        if (has_bathtub_help) begin
+            $info("Help!");
+            uvm_root::get().die();
+        end
+
+		num_bathtub_features = clp.get_arg_values("+bathtub_features=", plusarg_values);
         foreach (plusarg_values[i]) begin
             bathtub_utils::split_string(plusarg_values[i], split_values);
             foreach (split_values[j]) begin
@@ -129,16 +138,22 @@ class plusarg_options;
             bathtub_dryrun = 1'b1;
         end
 
-		has_bathtub_start = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_start=", plusarg_value) ? 1'b1 : 1'b0;
-        bathtub_start = plusarg_value.atoi();
+		has_bathtub_start = clp.get_arg_value("+bathtub_start=", plusarg_value) ? 1'b1 : 1'b0;
+        if (has_bathtub_start) begin
+            bathtub_start = plusarg_value.atoi();
+        end
 
-		has_bathtub_stop = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_stop=", plusarg_value) ? 1'b1 : 1'b0;
-        bathtub_stop = plusarg_value.atoi();
+		has_bathtub_stop = clp.get_arg_value("+bathtub_stop=", plusarg_value) ? 1'b1 : 1'b0;
+        if (has_bathtub_stop) begin
+            bathtub_stop = plusarg_value.atoi();
+        end
 
-        has_bathtub_verbosity = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_verbosity=", plusarg_value) ? 1'b1 : 1'b0;
-        bathtub_verbosity = str_to_verbosity(plusarg_value);
+        has_bathtub_verbosity = clp.get_arg_value("+bathtub_verbosity=", plusarg_value) ? 1'b1 : 1'b0;
+        if (has_bathtub_verbosity) begin
+            bathtub_verbosity = str_to_verbosity(plusarg_value);
+        end
 
-		num_bathtub_include = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_include=", plusarg_values);
+		num_bathtub_include = clp.get_arg_values("+bathtub_include=", plusarg_values);
         foreach (plusarg_values[i]) begin
             uvm_split_string(plusarg_values[i], ",", split_values);
             foreach (split_values[j]) begin
@@ -146,7 +161,7 @@ class plusarg_options;
             end
         end
 
-		num_bathtub_exclude = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_exclude=", plusarg_values);
+		num_bathtub_exclude = clp.get_arg_values("+bathtub_exclude=", plusarg_values);
         foreach (plusarg_values[i]) begin
             uvm_split_string(plusarg_values[i], ",", split_values);
             foreach (split_values[j]) begin

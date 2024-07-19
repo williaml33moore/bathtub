@@ -36,3 +36,6 @@ typedef class plusarg_bathtub_verbosity_test;
 
 typedef class plusarg_bathtub_include_exclude_test;
 `include "plusarg_bathtub_include_exclude_test.svh"
+
+typedef class plusarg_bathtub_help_test;
+`include "plusarg_bathtub_help_test.svh"
