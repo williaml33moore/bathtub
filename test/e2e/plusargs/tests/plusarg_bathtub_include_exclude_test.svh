@@ -47,6 +47,7 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
         string step_text_sb[$]; // Simple scoreboard
         string expected_step_string;
         string expected_steps[$];
+        string plusargs[$];
 
         bathtub.configure(my_plusargs_env.mock_seqr);
 
@@ -88,8 +89,10 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
         end
         uvm_split_string(expected_step_string, ",", expected_steps);
 
-        `uvm_info(get_name(), $sformatf("Actual steps:\n%p", step_text_sb), UVM_MEDIUM)
+        uvm_cmdline_processor::get_inst().get_plusargs(plusargs);
+        `uvm_info(get_name(), $sformatf("Plusargs:\n%p", plusargs), UVM_MEDIUM)
         `uvm_info(get_name(), $sformatf("Expected steps:\n%p", expected_steps), UVM_MEDIUM)
+        `uvm_info(get_name(), $sformatf("Actual steps:\n%p", step_text_sb), UVM_MEDIUM)
 
         // Use an associative array to compare the two queues.
         begin : compare_queues

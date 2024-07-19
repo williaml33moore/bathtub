@@ -114,13 +114,13 @@ class plusarg_options;
 	virtual function plusarg_options populate();
 		string plusarg_values[$];
 		string plusarg_value;
-		string plusarg_feature_files[$];
+		string split_values[$];
 
 		num_bathtub_features = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_features=", plusarg_values);
         foreach (plusarg_values[i]) begin
-            bathtub_utils::split_string(plusarg_values[i], plusarg_feature_files);
-            foreach (plusarg_feature_files[j]) begin
-                bathtub_features.push_back(plusarg_feature_files[j]);
+            bathtub_utils::split_string(plusarg_values[i], split_values);
+            foreach (split_values[j]) begin
+                bathtub_features.push_back(split_values[j]);
             end
         end
 
@@ -137,6 +137,22 @@ class plusarg_options;
 
         has_bathtub_verbosity = uvm_cmdline_processor::get_inst().get_arg_value("+bathtub_verbosity=", plusarg_value) ? 1'b1 : 1'b0;
         bathtub_verbosity = str_to_verbosity(plusarg_value);
+
+		num_bathtub_include = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_include=", plusarg_values);
+        foreach (plusarg_values[i]) begin
+            uvm_split_string(plusarg_values[i], ",", split_values);
+            foreach (split_values[j]) begin
+                bathtub_include.push_back(split_values[j]);
+            end
+        end
+
+		num_bathtub_exclude = uvm_cmdline_processor::get_inst().get_arg_values("+bathtub_exclude=", plusarg_values);
+        foreach (plusarg_values[i]) begin
+            uvm_split_string(plusarg_values[i], ",", split_values);
+            foreach (split_values[j]) begin
+                bathtub_exclude.push_back(split_values[j]);
+            end
+        end
 
         return this;
 	endfunction : populate
