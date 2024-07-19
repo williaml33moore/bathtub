@@ -299,17 +299,38 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	endtask : visit_gherkin_document
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
+		bit tags_pass_tag_check;
+		string tags[$];
 
 		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM, report_object)
 
-		current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
-		current_scenario_seq.set_parent_sequence(current_feature_seq);
-		current_scenario_seq.set_sequencer(sequencer);
-		current_scenario_seq.set_starting_phase(starting_phase);
-		current_scenario_seq.set_priority(sequence_priority);
+		// Local tags queue includes scenario outline tags plus any inherited tags.
+		tags.delete();
+		foreach (feature_tags[i]) begin
+			tags.push_back(feature_tags[i]);
+		end
+		foreach (scenario.tags[i]) begin
+			tags.push_back(scenario.tags[i].tag_name); // All accumulated tags
+		end
 
-		current_scenario_seq.configure(scenario, this, current_feature_seq);
-		current_scenario_seq.start(current_scenario_seq.get_sequencer());
+		tags_pass_tag_check = tag_check(tags);
+
+		if (tags_pass_tag_check) begin
+			if (include_tags.size() > 0)
+				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario", tags), UVM_MEDIUM, report_object)
+
+			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
+			current_scenario_seq.set_parent_sequence(current_feature_seq);
+			current_scenario_seq.set_sequencer(sequencer);
+			current_scenario_seq.set_starting_phase(starting_phase);
+			current_scenario_seq.set_priority(sequence_priority);
+
+			current_scenario_seq.configure(scenario, this, current_feature_seq);
+			current_scenario_seq.start(current_scenario_seq.get_sequencer());
+		end
+		else begin
+			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario", tags), UVM_MEDIUM, report_object)
+		end
 	endtask : visit_scenario
 
 	virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
@@ -513,6 +534,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				if (!tag_check) break;
 			end
 		end
+		$info($sformatf("tags=%p\ninclude_tags=%p\nexclude_tags=%p\ntag_check=%b", tags, include_tags, exclude_tags, tag_check));
 	endfunction : tag_check
 
 `ifdef BATHTUB_VERBOSITY_TEST
