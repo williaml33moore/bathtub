@@ -22,32 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`timescale 1s/1ms
+typedef class plusarg_bathtub_features_test;
+`include "plusarg_bathtub_features_test.svh"
 
-`include "uvm_macros.svh"
+typedef class plusarg_bathtub_dryrun_test;
+`include "plusarg_bathtub_dryrun_test.svh"
 
-module plusargs_tb_top();
+typedef class plusarg_bathtub_start_stop_test;
+`include "plusarg_bathtub_start_stop_test.svh"
 
-  import uvm_pkg::*;
+typedef class plusarg_bathtub_verbosity_test;
+`include "plusarg_bathtub_verbosity_test.svh"
 
-  typedef class severity_system_task_cb;
-  `include "severity_system_task_cb.svh"
-
-  // UVM Tests
-
-  `include "plusarg_tests.svh"
-
-  // Bathtub Step Definition UVM Sequences
-
-  `include "plusarg_step_def_seqs.svh"
-
-  severity_system_task_cb my_severity_system_task_cb = new;
-
-  initial begin
-    $timeformat(0, 3, "s", 20);
-    uvm_report_cb::add(null, my_severity_system_task_cb);
-    run_test();
-  end
-
-
-endmodule : plusargs_tb_top
+typedef class plusarg_bathtub_include_exclude_test;
+`include "plusarg_bathtub_include_exclude_test.svh"

@@ -181,3 +181,15 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
                 assert cp.returncode == 0, "Did not find expected '{}' message '{},{}' in +bathtub_verbosity={} log".format(message_id, verbosity_name, verbosity_value, bathtub_verbosity)
             else:
                 assert cp.returncode != 0, "Found unexpected '{}' message '{},{}' in +bathtub_verbosity={} log".format(message_id, verbosity_name, verbosity_value, bathtub_verbosity)
+
+
+@pytest.mark.parametrize("feature", ['tags.feature'])
+def test_plusarg_bathtub_include_exclude(tmp_path, simulator, feature):
+    """Test that +bathtub_include and +bathtub_exclude select tagged scenarios to run and skip"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'plusargs.f'),
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '+UVM_TESTNAME=plusarg_bathtub_include_exclude_test',
+        ])
+    assert simulator.run(tmp_path).passed()

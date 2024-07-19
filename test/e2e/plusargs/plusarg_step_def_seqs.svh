@@ -22,32 +22,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`timescale 1s/1ms
-
-`include "uvm_macros.svh"
-
-module plusargs_tb_top();
-
-  import uvm_pkg::*;
-
-  typedef class severity_system_task_cb;
-  `include "severity_system_task_cb.svh"
-
-  // UVM Tests
-
-  `include "plusarg_tests.svh"
-
-  // Bathtub Step Definition UVM Sequences
-
-  `include "plusarg_step_def_seqs.svh"
-
-  severity_system_task_cb my_severity_system_task_cb = new;
-
-  initial begin
-    $timeformat(0, 3, "s", 20);
-    uvm_report_cb::add(null, my_severity_system_task_cb);
-    run_test();
-  end
-
-
-endmodule : plusargs_tb_top
+typedef class mock_step_def_seq;
+`include "mock_step_definition_seqs.svh"

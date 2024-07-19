@@ -28,6 +28,8 @@ SOFTWARE.
 typedef class plusargs_env;
 `include "plusargs_env.svh"
 
+typedef class mock_object_sequence_item;
+
 class plusarg_bathtub_features_test extends uvm_test;
     `uvm_component_utils(plusarg_bathtub_features_test)
     plusargs_env my_plusargs_env; // uvm_env containing the virtual sequencer

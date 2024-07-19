@@ -25,6 +25,9 @@ SOFTWARE.
 `ifndef __PLUSARGS_ENV_SVH
 `define __PLUSARGS_ENV_SVH
 
+typedef class mock_object_sequencer;
+`include "mock_sequencers.svh"
+
 class plusargs_env extends uvm_env;
     `uvm_component_utils(plusargs_env)
 
