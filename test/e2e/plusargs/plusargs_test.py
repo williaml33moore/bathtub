@@ -184,12 +184,34 @@ def test_plusarg_bathtub_verbosity(tmp_path, simulator, uvm_verbosity, bathtub_v
 
 
 @pytest.mark.parametrize("feature", ['tags.feature'])
-def test_plusarg_bathtub_include_exclude(tmp_path, simulator, feature):
+@pytest.mark.parametrize("include_tags,exclude_tags,expected_steps", [
+    ([], [], ['step_100', 'step_200', 'step_300']),
+    (['@feature_tag'], [], ['step_100', 'step_200', 'step_300']),
+    (['@scenario_tag'], [], ['step_100']),
+    (['@scenario_outline_tag'], [], ['step_200', 'step_300']),
+    (['@examples_tag'], [], ['step_200', 'step_300']),
+    ([], ['@feature_tag'], []),
+    ([], ['@scenario_tag'], ['step_200', 'step_300']),
+    ([], ['@scenario_outline_tag'], ['step_200', 'step_300']),
+    ([], ['@examples_tag'], ['step_200', 'step_300']),
+    (['@scenario_tag'], ['@scenario_outline_tag'], ['step_100']),
+    (['@scenario_outline_tag'], ['@scenario_tag'], ['step_200', 'step_300']),
+    (['@scenario_tag'], ['@examples_tag'], ['step_100']),
+    (['@examples_tag'], ['@scenario_tag'], ['step_200', 'step_300']),
+    ])
+def test_plusarg_bathtub_include_exclude(tmp_path, simulator, feature, include_tags, exclude_tags, expected_steps):
     """Test that +bathtub_include and +bathtub_exclude select tagged scenarios to run and skip"""
+
+    include_args = " ".join(['+bathtub_include=' + tag for tag in include_tags])
+    exclude_args = " ".join(['+bathtub_exclude=' + tag for tag in exclude_tags])
+    expected_arg = '+expected=' + ','.join(expected_steps)
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'plusargs.f'),
         '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=plusarg_bathtub_include_exclude_test',
+        include_args,
+        exclude_args,
+        expected_arg,
         ])
     assert simulator.run(tmp_path).passed()

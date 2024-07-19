@@ -45,6 +45,8 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
 
     task run_phase(uvm_phase phase);
         string step_text_sb[$]; // Simple scoreboard
+        string expected_step_string;
+        string expected_steps[$];
 
         bathtub.configure(my_plusargs_env.mock_seqr);
 
@@ -81,8 +83,39 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
         #1s; // Give ample time for sequences to complete
         disable fork;
 
-        $info("step_text_sb");
-        $display("%p", step_text_sb);
+        assert(uvm_cmdline_processor::get_inst().get_arg_value("+expected=", expected_step_string)) else begin
+            `uvm_error(get_name(), "Missing '+expected=' plusarg")
+        end
+        uvm_split_string(expected_step_string, ",", expected_steps);
+
+        `uvm_info(get_name(), $sformatf("Actual steps:\n%p", step_text_sb), UVM_MEDIUM)
+        `uvm_info(get_name(), $sformatf("Expected steps:\n%p", expected_steps), UVM_MEDIUM)
+
+        // Use an associative array to compare the two queues.
+        begin : compare_queues
+            int set[string];
+            string a[$], b[$];
+            string element;
+
+            a = step_text_sb;
+            b = expected_steps;
+            // Add members of queue A to the set.
+            foreach (a[i]) begin
+                if (set.exists(a[i])) set[a[i]]++;
+                else set[a[i]] = 1;
+            end
+            // Subtract members of queue B from the set.
+            foreach (b[i]) begin
+                if (set.exists(b[i])) set[b[i]]--;
+                else set[b[i]] = -1;
+            end
+            // If queues are equal, set should be "empty" in that all element counts should be exactly zero.
+            if (set.first(element))
+                do
+                    check_element : assert(set[element] == 0) else
+                        `uvm_error(get_name(), $sformatf("Mismatch on step '%s'", element))
+                while (set.next(element));
+        end
 
         phase.drop_objection(this);
     endtask : run_phase
