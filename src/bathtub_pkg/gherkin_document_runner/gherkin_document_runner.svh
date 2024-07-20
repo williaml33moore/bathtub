@@ -49,6 +49,9 @@ typedef class step_nurture;
 typedef interface class step_definition_interface;
 `include "bathtub_pkg/step_definition_interface.svh"
 
+typedef class bathtub_utils;
+`include "bathtub_pkg/bathtub_utils.svh"
+
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
 	gherkin_pkg::gherkin_document document;
