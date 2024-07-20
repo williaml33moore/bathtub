@@ -35,7 +35,7 @@ def test_compile_error(tmp_path, simulator):
 
     # Check the log file for the magic string
     magic_string = 'test_compile_error_11235'
-    run_cmd = "grep '\(\*E\|\*\* Error\).*{}' {}".format(magic_string, simulator.log)
+    run_cmd = "grep '\\(\\*E\\|\\*\\* Error\\).*{}' {}".format(magic_string, simulator.log)
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Magic string '{}' not found in log file".format(magic_string)
 
