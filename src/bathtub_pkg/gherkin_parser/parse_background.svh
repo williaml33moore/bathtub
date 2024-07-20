@@ -32,15 +32,15 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_background enter", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_background enter", UVM_HIGH, report_object)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	if (!line_obj.eof) begin
 		`uvm_message_add_string(line_obj.text)
 	end
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 
 	if (!line_obj.eof) begin
 
@@ -55,7 +55,7 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 				background_value.base.scenario_definition_name = line_analysis_result.remainder_after_colon;
 				if (floating_tags.size() > 0) begin
 					status = ERROR;
-					`uvm_error(`BATHTUB__GET_SCOPE_NAME(), "A background can not have tags")
+					`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), "A background can not have tags", report_object)
 				end
 
 				get_next_line(line_obj);
@@ -131,8 +131,8 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 											end
 											else begin
 												status = ERROR;
-												`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description:\n",
-													line_obj.text})
+												`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected line does not begin with a keyword, and is not in a legal place for a description:\n",
+													line_obj.text}, report_object)
 											end
 										end
 									endcase
@@ -145,8 +145,8 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 
 			default : begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-					". Expecting \"Background:\""})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
+					". Expecting \"Background:\""}, report_object)
 			end
 		endcase
 	end
@@ -154,12 +154,12 @@ task gherkin_parser::parse_background(ref gherkin_pkg::background background);
 	background = new("background", background_value);
 	`push_onto_parser_stack(background)
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_background exit", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_background exit", UVM_HIGH, report_object)
 	`uvm_message_add_tag("status", status.name())
 	`uvm_message_add_object(background)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 endtask : parse_background
 
 `endif // __PARSE_BACKGROUND_SVH

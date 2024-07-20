@@ -83,6 +83,7 @@ module mock_sequences_unit_test;
       bathtub_pkg::step_nurture step_attributes;
     
       parser = new("parser");
+      parser = parser.configure();
       step_string = $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin");
       parser.parse_step_string(step_string, step_bundle);
 			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");

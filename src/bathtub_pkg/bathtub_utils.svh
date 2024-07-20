@@ -357,6 +357,14 @@ virtual class bathtub_utils;
 		return line_buf;
 	endfunction : trim_white_space
 
+
+	static function bit string_in_queue(string s, string q[$]);
+		string findings[$];
+
+		findings = q.find() with (item == s);
+		return findings.size() > 0;
+	endfunction : string_in_queue
+
 endclass : bathtub_utils
 
 `endif // __BATHTUB_UTILS_SVH

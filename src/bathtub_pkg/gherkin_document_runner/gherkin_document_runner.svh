@@ -49,6 +49,9 @@ typedef class step_nurture;
 typedef interface class step_definition_interface;
 `include "bathtub_pkg/step_definition_interface.svh"
 
+typedef class bathtub_utils;
+`include "bathtub_pkg/bathtub_utils.svh"
+
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
 	gherkin_pkg::gherkin_document document;
@@ -66,6 +69,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	bit dry_run;
 	int starting_scenario_number;
 	int stopping_scenario_number;
+	string include_tags[$];
+	string exclude_tags[$];
+	uvm_report_object report_object;
+	string feature_tags[$];
+	string scenario_outline_tags[$];
 
 	`uvm_object_utils_begin(gherkin_document_runner)
 		`uvm_field_object(document, UVM_ALL_ON)
@@ -83,15 +91,16 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		feature_background = null;
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
+		report_object = null;
 	endfunction : new
 
 
 	static function gherkin_document_runner create_new(string name = "gherkin_document_runner", gherkin_pkg::gherkin_document document);
-		gherkin_document_runner new_printer;
+		gherkin_document_runner new_runner;
 
-		new_printer = new(name);
-		new_printer.document = document;
-		return new_printer;
+		new_runner = new(name);
+		new_runner.document = document;
+		return new_runner;
 	endfunction : create_new
 
 
@@ -103,7 +112,10 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			uvm_phase starting_phase,
 			bit dry_run = 0,
 			int starting_scenario_number = 0,
-			int stopping_scenario_number = 0
+			int stopping_scenario_number = 0,
+			string include_tags[$] = '{},
+			string exclude_tags[$] = '{},
+			uvm_report_object report_object = null
 		);
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
@@ -113,12 +125,16 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		this.dry_run = dry_run;
 		this.starting_scenario_number = starting_scenario_number;
 		this.stopping_scenario_number = stopping_scenario_number;
+		this.include_tags = include_tags;
+		this.exclude_tags = exclude_tags;
+		this.report_object = report_object;
+		if (report_object == null) report_object = uvm_get_report_object();
 	endfunction : configure
 
 
 	virtual task run();
-		`uvm_info(get_name(), {"\n", sprint()}, UVM_MEDIUM)
-		document.accept(this); // visit_gherkin_docment(document)
+		`uvm_info_context(get_name(), {"\n", sprint()}, UVM_MEDIUM, report_object)
+		document.accept(this); // visit_gherkin_document(document)
 	endtask : run
 
 	/*
@@ -139,7 +155,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		int success;
 		string search_keyword;
 
-		`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM)
+		`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s", step.keyword, step.text), UVM_MEDIUM, report_object)
 
 		if (step.keyword inside {"Given", "When", "Then"}) begin
 			// Look for a simple exact match for keyword.
@@ -150,13 +166,13 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			search_keyword = current_step_keyword;
 		end
 		else begin
-			`uvm_fatal(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword))
+			`uvm_fatal_context(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword), report_object)
 		end
 
-		`uvm_info_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH)
+		`uvm_info_context_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH, report_object)
 		`uvm_message_add_string(step.text)
 		`uvm_message_add_string(search_keyword)
-		`uvm_info_end
+		`uvm_info_context_end
 				
 		step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, STEP_DEF_RESOURCE_NAME, 1);
 
@@ -164,7 +180,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
 				uvm_resource_db#(uvm_object_wrapper)::dump();
 			end
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text), report_object)
 		end
 
 		// Success. Update current keyword.
@@ -178,7 +194,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		success = $cast(seq, obj);
 		assert_step_object_is_sequence : assert (success) else begin
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
 		end
 
 		if ($cast(step_seq, obj)) begin
@@ -187,11 +203,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin
-			`uvm_fatal(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."))
+			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
 		end
 
-		`uvm_info(get_name(), {"Executing sequence ", seq.get_name(),
-				" (", seq.get_type_name(), ")"}, UVM_HIGH)
+		`uvm_info_context(get_name(), {"Executing sequence ", seq.get_name(),
+				" (", seq.get_type_name(), ")"}, UVM_HIGH, report_object)
 
 		seq.print_sequence_info = 1;
 		if (!dry_run) begin
@@ -203,7 +219,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	virtual task visit_background(gherkin_pkg::background background);
 
-		`uvm_info(get_name(), $sformatf("%s: %s", background.keyword, background.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", background.keyword, background.scenario_definition_name), UVM_MEDIUM, report_object)
 
 		foreach (background.steps[i]) begin
 			background.steps[i].accept(this); // visit_step(background.steps[i])
@@ -211,35 +227,23 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	endtask : visit_background
 
-	/**
-		* @param comment -
-		*/
 	virtual task visit_comment(gherkin_pkg::comment comment);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_comment
 
-	/**
-		* @param data_table -
-		*/
 	virtual task visit_data_table(gherkin_pkg::data_table data_table);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_data_table
 
-	/**
-		* @param doc_string -
-		*/
 	virtual task visit_doc_string(gherkin_pkg::doc_string doc_string);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_doc_string
 
-	/**
-		* @param examples -
-		*/
 	virtual task visit_examples(gherkin_pkg::examples examples);
-	// TODO Auto-generated task stub
+		// TODO Auto-generated task stub
 
 	endtask : visit_examples
 
@@ -249,17 +253,22 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		int stop;
 		gherkin_pkg::scenario_definition only_scenarios[$];
 
-		`uvm_info(get_name(), $sformatf("%s: %s", feature.keyword, feature.feature_name), UVM_MEDIUM);
+		`uvm_info_context(get_name(), $sformatf("%s: %s", feature.keyword, feature.feature_name), UVM_MEDIUM, report_object)
+
+		feature_tags.delete();
+		foreach (feature.tags[i]) begin
+			feature_tags.push_back(feature.tags[i].tag_name);
+		end
 		
 		// Separate background from scenario definitions
 		only_scenarios.delete();
 		foreach (feature.scenario_definitions[i]) begin
 			if ($cast(feature_background, feature.scenario_definitions[i])) begin
 				assert_only_one_background : assert (this.feature_background == null) else
-					`uvm_fatal_begin(get_name(), "Found more than one background definition")
+					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", report_object)
 					`uvm_message_add_string(this.feature_background.scenario_definition_name, "Existing background")
 					`uvm_message_add_string(feature_background.scenario_definition_name, "Conflicting background")
-					`uvm_fatal_end
+					`uvm_fatal_context_end
 				this.feature_background = feature_background;
 			end
 			else begin
@@ -278,6 +287,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			only_scenarios[i].accept(this);
 		end
 
+		feature_tags.delete();
 	endtask : visit_feature
 
 	virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
@@ -292,17 +302,38 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	endtask : visit_gherkin_document
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
+		bit tags_pass_tag_check;
+		string tags[$];
 
-		`uvm_info(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario.keyword, scenario.scenario_definition_name), UVM_MEDIUM, report_object)
 
-		current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
-		current_scenario_seq.set_parent_sequence(current_feature_seq);
-		current_scenario_seq.set_sequencer(sequencer);
-		current_scenario_seq.set_starting_phase(starting_phase);
-		current_scenario_seq.set_priority(sequence_priority);
+		// Local tags queue includes scenario outline tags plus any inherited tags.
+		tags.delete();
+		foreach (feature_tags[i]) begin
+			tags.push_back(feature_tags[i]);
+		end
+		foreach (scenario.tags[i]) begin
+			tags.push_back(scenario.tags[i].tag_name); // All accumulated tags
+		end
 
-		current_scenario_seq.configure(scenario, this, current_feature_seq);
-		current_scenario_seq.start(current_scenario_seq.get_sequencer());
+		tags_pass_tag_check = tag_check(tags);
+
+		if (tags_pass_tag_check) begin
+			if (include_tags.size() > 0)
+				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario", tags), UVM_MEDIUM, report_object)
+
+			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
+			current_scenario_seq.set_parent_sequence(current_feature_seq);
+			current_scenario_seq.set_sequencer(sequencer);
+			current_scenario_seq.set_starting_phase(starting_phase);
+			current_scenario_seq.set_priority(sequence_priority);
+
+			current_scenario_seq.configure(scenario, this, current_feature_seq);
+			current_scenario_seq.start(current_scenario_seq.get_sequencer());
+		end
+		else begin
+			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario", tags), UVM_MEDIUM, report_object)
+		end
 	endtask : visit_scenario
 
 	virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
@@ -312,40 +343,86 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	endtask : visit_scenario_definition
 
 	virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
+		bit tags_pass_tag_check;
+		string tags[$];
 
-		`uvm_info(get_name(), $sformatf("%s: %s", scenario_outline.keyword, scenario_outline.scenario_definition_name), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s: %s", scenario_outline.keyword, scenario_outline.scenario_definition_name), UVM_MEDIUM, report_object)
 
-		foreach (scenario_outline.examples[k]) begin
-
-			foreach (scenario_outline.examples[k].rows[j]) begin
-				gherkin_pkg::scenario scenario;
-				gherkin_pkg::scenario scenario_definition;
-			
-				`uvm_info(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM)
-
-				example_values.delete();
-
-				// Store the example values in a hash.
-				// Put the "<" ears ">" on the key.
-				foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
-					example_values[{"<", scenario_outline.examples[k].header.cells[i].value, ">"}] = scenario_outline.examples[k].rows[j].cells[i].value;
-				end
-
-				// Create a new scenario out of this unrolled scenario outline
-				scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.scenario_definition_name, scenario_outline.description);
-				foreach (scenario_outline.steps[l])
-					scenario.steps.push_back(scenario_outline.steps[l]);
-				foreach (scenario_outline.tags[l])
-					scenario.tags.push_back(scenario_outline.tags[l]);
-				scenario_definition = scenario;
-				// Give our new scenario the full scenario treatment
-				scenario_definition.accept(this);
-
-				example_values.delete();
-
-			end
-
+		// Local tags queue includes scenario outline tags plus any inherited tags.
+		// Class' scenario_outline_tags queue is for downstream elements to inherit.
+		scenario_outline_tags.delete();
+		tags.delete();
+		foreach (feature_tags[i]) begin
+			tags.push_back(feature_tags[i]);
 		end
+		foreach (scenario_outline.tags[i]) begin
+			scenario_outline_tags.push_back(scenario_outline.tags[i].tag_name);
+			tags.push_back(scenario_outline.tags[i].tag_name); // All accumulated tags
+		end
+
+		tags_pass_tag_check = tag_check(tags);
+
+		if (tags_pass_tag_check) begin
+			if (include_tags.size() > 0)
+				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario outline", tags), UVM_MEDIUM, report_object)
+
+			foreach (scenario_outline.examples[k]) begin
+				bit examples_tags_pass_tag_check;
+				string examples_tags[$];
+
+				// Local examples_tags queue includes examples tags plus any inherited tags.
+				examples_tags.delete();
+				foreach (tags[l]) begin
+					examples_tags.push_back(tags[l]);
+				end
+				foreach (scenario_outline.examples[k].tags[l]) begin
+					examples_tags.push_back(scenario_outline.examples[k].tags[l].tag_name); // All accumulated tags
+				end
+				
+				examples_tags_pass_tag_check = tag_check(examples_tags);
+
+				if (examples_tags_pass_tag_check) begin
+					if (include_tags.size() > 0)
+						`uvm_info_context(get_name(), $sformatf("tags %p included; run examples", examples_tags), UVM_MEDIUM, report_object)
+
+					foreach (scenario_outline.examples[k].rows[j]) begin
+						gherkin_pkg::scenario scenario;
+						gherkin_pkg::scenario scenario_definition;
+					
+						`uvm_info_context(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM, report_object)
+
+						example_values.delete();
+
+						// Store the example values in a hash.
+						// Put the "<" ears ">" on the key.
+						foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
+							example_values[{"<", scenario_outline.examples[k].header.cells[i].value, ">"}] = scenario_outline.examples[k].rows[j].cells[i].value;
+						end
+
+						// Create a new scenario out of this unrolled scenario outline
+						scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.scenario_definition_name, scenario_outline.description);
+						foreach (scenario_outline.steps[l])
+							scenario.steps.push_back(scenario_outline.steps[l]);
+						foreach (scenario_outline.tags[l])
+							scenario.tags.push_back(scenario_outline.tags[l]);
+						scenario_definition = scenario;
+						// Give our new scenario the full scenario treatment
+						scenario_definition.accept(this);
+
+						example_values.delete();
+
+					end
+				end
+				else begin
+					`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip examples", examples_tags), UVM_MEDIUM, report_object)
+				end
+			end
+		end
+		else begin
+			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario outline", tags), UVM_MEDIUM, report_object)
+		end
+
+		scenario_outline_tags.delete();
 
 	endtask : visit_scenario_outline
 
@@ -381,7 +458,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		gherkin_pkg::doc_string doc_string;
 		gherkin_pkg::doc_string replaced_doc_string;
 
-		`uvm_info(get_name(), $sformatf("Before replacement: %s %s", step.keyword, step.text), UVM_HIGH)
+		`uvm_info_context(get_name(), $sformatf("Before replacement: %s %s", step.keyword, step.text), UVM_HIGH, report_object)
 
 		if (example_values.first(example_parameter)) do
 				replaced_text = replace_string(replaced_text, example_parameter, example_values[example_parameter]);
@@ -421,11 +498,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			else if ($cast(doc_string, step.argument)) begin
 			end
 			else
-				`uvm_fatal(get_name(), "Unexpected type of step argument")
+				`uvm_fatal_context(get_name(), "Unexpected type of step argument", report_object)
 		end
 
 
-		`uvm_info(get_name(), $sformatf("%s %s", replaced_step.keyword, replaced_step.text), UVM_MEDIUM)
+		`uvm_info_context(get_name(), $sformatf("%s %s", replaced_step.keyword, replaced_step.text), UVM_MEDIUM, report_object)
 		start_step(replaced_step);
 	endtask : visit_step
 
@@ -460,6 +537,35 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	// TODO Auto-generated task stub
 
 	endtask : visit_tag
+
+
+	virtual function bit tag_check(string tags[$]);
+
+		tag_check = (include_tags.size() == 0);
+
+		if (!tag_check) begin
+			foreach (tags[i]) begin
+				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], include_tags);
+				tag_check = tag_in_queue;
+				if (tag_check) break;
+			end
+		end
+
+		if (tag_check) begin
+			foreach (tags[i]) begin
+				bit tag_in_queue = bathtub_utils::string_in_queue(tags[i], exclude_tags);
+				tag_check = !tag_in_queue;
+				if (!tag_check) break;
+			end
+		end
+		// $info($sformatf("tags=%p\ninclude_tags=%p\nexclude_tags=%p\ntag_check=%b", tags, include_tags, exclude_tags, tag_check)); // For DEBUG
+	endfunction : tag_check
+
+`ifdef BATHTUB_VERBOSITY_TEST
+	function void test_verbosity();
+		`BATHTUB___TEST_VERBOSITY("gherkin_document_runner_verbosity_test")
+	endfunction : test_verbosity
+`endif // BATHTUB_VERBOSITY_TEST
 
 endclass : gherkin_document_runner
 

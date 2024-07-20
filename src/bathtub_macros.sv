@@ -138,4 +138,19 @@ begin : step_parameter_get_args\
 
 `define BATHTUB__GET_SCOPE_NAME(d) ($sformatf("%m")) // TODO - Extract the last segment
 
+
+// Test messages for testing verbosity levels 
+`define BATHTUB___TEST_VERBOSITY(i="verbosity_test")\
+begin\
+    uvm_verbosity verbosity;\
+    string id;\
+    id = i;\
+    verbosity = verbosity.first();\
+    forever begin\
+        `uvm_info_context(id, $sformatf("%s,%0d", verbosity.name(), verbosity), verbosity, report_object)\
+        if (verbosity == verbosity.last()) break;\
+        verbosity = verbosity.next();\
+    end\
+end
+
 `endif // __BATHTUB_MACROS_SV
