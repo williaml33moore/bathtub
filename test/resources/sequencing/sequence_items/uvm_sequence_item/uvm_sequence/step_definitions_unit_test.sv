@@ -153,6 +153,7 @@ module step_definitions_unit_test;
       string actual_s;
     
       parser = new("parser");
+      parser = parser.configure();
       step_string = {"Given ", hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
@@ -187,6 +188,7 @@ module step_definitions_unit_test;
       uvm_sequence_item item;
     
       parser = new("parser");
+      parser = parser.configure();
       step_string = {"Given ", hello_parameters_seq_item_vseq::magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_seq_item_vseq = hello_parameters_seq_item_vseq::type_id::create("my_hello_parameters_seq_item_vseq");
@@ -236,6 +238,7 @@ module step_definitions_unit_test;
       uvm_sequence_item item;
     
       parser = new("parser");
+      parser = parser.configure();
       step_string = {"Given ", my_sequence.magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_sequence = hello_parameters_seq_item_uvm_do_vseq::type_id::create("my_sequence");

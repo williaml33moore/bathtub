@@ -46,6 +46,7 @@ class Simulator:
         self.uvm_flag = True
         self.append_arg('-uvm')
         self.append_arg('-uvmhome ' + uvm_home)
+        return self
 
     def run(self, cwd='.'):
         """Run the simulator and store the process' return code (0=success)."""
@@ -67,17 +68,32 @@ class Xcelium(Simulator):
     def __init__(self):
         super().__init__()
         self.binary = 'xrun'
+        self.log = 'xrun.log'
     
     def uvm(self, uvm_home='$UVM_HOME'):
         super().uvm(uvm_home)
         # Xcelium requires additional arg when not using built-in UVM installation.
         self.append_arg('-uvmnocdnsextra')
+        return self
 
 class Questa(Simulator):
     """Abstraction of Questa simulator"""
     def __init__(self):
         super().__init__()
         self.binary = 'qrun'
+        self.log = 'qrun.log'
+
+    def run(self, cwd='.'):
+        """Run the simulator then do additional result checks."""
+        super().run(cwd)
+        if self.returncode != 0:
+            # Simulator returned nonzero, indicating a problem
+            return self
+        
+        # Simulator returned, so do additional log checks
+        run_cmd = "perl $BATHTUB_VIP_DIR/test/scripts/qrun_result.pl"
+        self.returncode = subprocess.run(run_cmd, shell=True, cwd=cwd).returncode
+        return self
 
 class SVUnit:
     """Abstraction of runSVUnit script"""

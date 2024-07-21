@@ -31,6 +31,7 @@ classes_under_test = [
     "bathtub_pkg/gherkin_doc_bundle.svh",
     "bathtub_pkg/gherkin_step_bundle.svh",
     "bathtub_pkg/line_value.svh",
+    "bathtub_pkg/plusarg_options.svh",
     "bathtub_pkg/pool_provider_interface.svh",
     "bathtub_pkg/pool_provider.svh",
     "bathtub_pkg/scenario_sequence_interface.svh",

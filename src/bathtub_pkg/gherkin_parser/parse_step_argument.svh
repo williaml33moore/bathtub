@@ -31,15 +31,15 @@ task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_arg
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_step_argument enter", UVM_HIGH)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_step_argument enter", UVM_HIGH, report_object)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	if (!line_obj.eof) begin
 		`uvm_message_add_string(line_obj.text)
 	end
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 
 	if (!line_obj.eof) begin
 
@@ -70,20 +70,20 @@ task gherkin_parser::parse_step_argument(ref gherkin_pkg::step_argument step_arg
 
 			default: begin
 				status = ERROR;
-				`uvm_error(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
-					". Expecting |, \"\"\", or ```"})
+				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.secondary_keyword,
+					". Expecting |, \"\"\", or ```"}, report_object)
 			end
 		endcase
 	end
 
 	`push_onto_parser_stack(step_argument)
 
-	`uvm_info_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_argument exit", UVM_HIGH);
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "parse_step_argument exit", UVM_HIGH, report_object)
 	`uvm_message_add_tag("status", status.name)
 	`uvm_message_add_object(step_argument)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
-	`uvm_info_end
-	`uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH)
+	`uvm_info_context_end
+	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
 endtask : parse_step_argument
 
 `endif // __PARSE_STEP_ARGUMENT_SVH
