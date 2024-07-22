@@ -832,6 +832,61 @@ module gherkin_parser_unit_test;
 
   `SVTEST_END
 
+  `SVTEST(Test_that_parser_parses_rule_with_scenario_definitions)
+    // =======================================
+    string feature[];
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+    gherkin_pkg::background actual_background;
+    gherkin_pkg::scenario actual_scenario;
+    gherkin_pkg::scenario_outline actual_scenario_outline;
+    string comment;
+
+    feature = '{
+      "Feature: This is a feature",
+      "",
+      "  Rule: This is a rule",
+      "",
+      "    Background: This is a background",
+      "      Given some initial state",
+      "",
+      "    Scenario: This is a scenario",
+      "      When somebody does something",
+      "      Then the system should be in this final state",
+      "",
+      "    Scenario Outline: This is a scenario outline",
+      "      When somebody does something <adjective>",
+      "      Then the system should be in this <adjective> state",
+      "",
+      "      Examples:",
+      "        | adjective |",
+      "        | terrific  |",
+      "        | amazing   |",
+      ""
+    };
+
+    parser.parse_feature_lines(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS(actual_feature)
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.rule_name, "This is a rule")
+
+    `FAIL_UNLESS_EQUAL(actual_rule.scenario_definitions.size, 3)
+
+    `FAIL_UNLESS($cast(actual_background, actual_rule.scenario_definitions[0]))
+    `FAIL_UNLESS_STR_EQUAL(actual_background.scenario_definition_name, "This is a background")
+    
+    `FAIL_UNLESS($cast(actual_scenario, actual_rule.scenario_definitions[1]))
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.scenario_definition_name, "This is a scenario")
+    
+    `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.scenario_definitions[2]))
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.scenario_definition_name, "This is a scenario outline")
+
+  `SVTEST_END
+
   `SVUNIT_TESTS_END
 
 endmodule
