@@ -136,6 +136,7 @@ package gherkin_pkg;
 		string feature_name="";
 		string description="";
 		scenario_definition scenario_definitions[$];
+		rule rules[$];
 	} feature_value;
 
 	(* value_object *)
@@ -149,6 +150,7 @@ package gherkin_pkg;
 		string keyword="";
 		string rule_name="";
 		string description="";
+		gherkin_pkg::background background;
 		scenario_definition scenario_definitions[$];
 	} rule_value;
 
@@ -724,6 +726,7 @@ package gherkin_pkg;
 		string description;
 		tag tags[$];
 		scenario_definition scenario_definitions[$];
+		rule rules[$];
 
 		`uvm_object_utils_begin(feature)
 		`uvm_field_string(language, UVM_ALL_ON)
@@ -732,6 +735,7 @@ package gherkin_pkg;
 		`uvm_field_string(description, UVM_ALL_ON)
 		`uvm_field_queue_object(tags, UVM_ALL_ON)
 		`uvm_field_queue_object(scenario_definitions, UVM_ALL_ON)
+		`uvm_field_queue_object(rules, UVM_ALL_ON)
 		`uvm_object_utils_end
 
 		function new(string name = "feature", feature_value value='{
@@ -740,7 +744,8 @@ package gherkin_pkg;
 			"", // keyword
 			"", // feature_name
 			"", // description
-			'{} // scenario_definitions
+			'{}, // scenario_definitions
+			'{} // rules
 		});
 			super.new(name);
 
@@ -761,6 +766,12 @@ package gherkin_pkg;
 				scenario_definition new_obj = new value.scenario_definitions[i]; // TODO - deep copy
 				this.scenario_definitions.push_back(new_obj);
 			end
+
+			this.rules.delete();
+			foreach (value.rules[i]) begin
+				rule new_obj = new value.rules[i]; // TODO - deep copy
+				this.rules.push_back(new_obj);
+			end
 		endfunction : new
 
 		virtual function feature_value get_as_value();
@@ -780,6 +791,12 @@ package gherkin_pkg;
 			foreach (this.scenario_definitions[i]) begin
 				scenario_definition new_obj = new this.scenario_definitions[i]; // TODO - deep copy
 				get_as_value.scenario_definitions.push_back(new_obj);
+			end
+
+			get_as_value.rules.delete();
+			foreach (this.rules[i]) begin
+				rule new_obj = new this.rules[i]; // TODO - deep copy
+				get_as_value.rules.push_back(new_obj);
 			end
 		endfunction : get_as_value
 
@@ -846,12 +863,14 @@ package gherkin_pkg;
 		string keyword;
 		string rule_name;
 		string description;
+		gherkin_pkg::background background;
 		scenario_definition scenario_definitions[$];
 
 		`uvm_field_utils_begin(rule)
 		`uvm_field_string(keyword, UVM_ALL_ON)
 		`uvm_field_string(rule_name, UVM_ALL_ON)
 		`uvm_field_string(description, UVM_ALL_ON)
+		`uvm_field_object(background, UVM_ALL_ON)
 		`uvm_field_queue_object(scenario_definitions, UVM_ALL_ON)
 		`uvm_field_utils_end
 
@@ -859,6 +878,7 @@ package gherkin_pkg;
 				"", // keyword
 				"", // rule_name
 				"", // description
+				null, // background
 				'{} // scenario_definitions
 		});
 			super.new(name);
@@ -866,6 +886,7 @@ package gherkin_pkg;
 			this.keyword = value.keyword;
 			this.rule_name = value.rule_name;
 			this.description = value.description;
+			this.background = value.background;
 
 			this.scenario_definitions.delete();
 			foreach (value.scenario_definitions[i]) begin
@@ -877,6 +898,7 @@ package gherkin_pkg;
 			get_as_value.keyword = this.keyword;
 			get_as_value.rule_name = this.rule_name;
 			get_as_value.description = this.description;
+			get_as_value.background = this.background;
 			
 			get_as_value.scenario_definitions.delete();
 			foreach (this.scenario_definitions[i]) begin

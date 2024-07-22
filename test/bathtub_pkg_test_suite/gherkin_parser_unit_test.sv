@@ -780,6 +780,7 @@ module gherkin_parser_unit_test;
     parser.parse_feature_lines(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.feature;
     `FAIL_UNLESS(actual_feature)
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
   `SVTEST_END
 
   `SVUNIT_TESTS_END
