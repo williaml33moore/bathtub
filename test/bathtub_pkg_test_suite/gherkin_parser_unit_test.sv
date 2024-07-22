@@ -764,7 +764,6 @@ module gherkin_parser_unit_test;
     gherkin_pkg::feature actual_feature;
     gherkin_pkg::rule actual_rule;
     gherkin_pkg::scenario actual_scenario;
-    string comment;
 
     feature = '{
       "Feature: This is a feature",
@@ -884,6 +883,39 @@ module gherkin_parser_unit_test;
     
     `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.scenario_definitions[2]))
     `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.scenario_definition_name, "This is a scenario outline")
+
+  `SVTEST_END
+
+  `SVTEST(Test_that_parser_parses_rule_with_description)
+    // =======================================
+    string feature[];
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+    string actual_description;
+
+    feature = '{
+      "Feature: This is a feature",
+      "",
+      "  Rule: This is a rule",
+      "",
+      "    This is a description",
+      "    This is more description",
+      "",
+      "    Scenario: This is a scenario",
+      "      Given some initial state",
+      "      When somebody does something",
+      "      Then the system should be in this final state",
+      ""
+    };
+
+    parser.parse_feature_lines(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS(actual_feature)
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.description, "This is a description\nThis is more description\n")
 
   `SVTEST_END
 
