@@ -508,6 +508,30 @@ module bathtub_utils_unit_test;
 	`SVTEST_END
 
 
+	`SVTEST(String_in_queue_returns_whether_a_string_is_in_a_queue)
+	// ============================================================
+	struct {
+		string s;
+		string q[$];
+		bit expected_s_in_q;
+	} examples[$];
+
+	(* Examples *)
+	examples = '{
+		'{s : "a", q : '{"a", "b", "c"}, expected_s_in_q : 1'b1},
+		'{s : "b", q : '{"b"}, expected_s_in_q : 1'b1},
+		'{s : "c", q : '{"a", "b", "c"}, expected_s_in_q : 1'b1},
+		'{s : "d", q : '{"a", "b", "c"}, expected_s_in_q : 1'b0},
+		'{s : "a", q : '{}, expected_s_in_q : 1'b0}
+	};
+
+	foreach (examples[i]) begin
+		bit actual_s_in_q = bathtub_utils::string_in_queue(examples[i].s, examples[i].q);
+		`FAIL_UNLESS_EQUAL(actual_s_in_q, examples[i].expected_s_in_q)
+	end
+	`SVTEST_END
+
+
 	// ---
 	`SVUNIT_TESTS_END
 

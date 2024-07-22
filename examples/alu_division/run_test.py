@@ -36,7 +36,7 @@ def test_xrun_with_dash_F_option(tmp_path):
     -uvm \
     -uvmhome $UVM_HOME \
     -uvmnocdnsextra \
-    -F $BATHTUB_VIP_DIR/src/bathtub_vip.F \
+    -F $BATHTUB_VIP_DIR/src/bathtub_vip_rel.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
     $BATHTUB_VIP_DIR/examples/alu_division/result/testbench.sv \
@@ -103,7 +103,7 @@ def test_qrun_with_dash_F_option(tmp_path):
     qrun \
     -uvm \
     -uvmhome $UVM_HOME \
-    -F $BATHTUB_VIP_DIR/src/bathtub_vip.F \
+    -F $BATHTUB_VIP_DIR/src/bathtub_vip_rel.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
     $BATHTUB_VIP_DIR/examples/alu_division/result/testbench.sv \
