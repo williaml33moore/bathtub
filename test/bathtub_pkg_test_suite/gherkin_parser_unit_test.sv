@@ -757,6 +757,30 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_step.text, "Parse this step")
   `SVTEST_END
 
+  `SVTEST(Test_that_parser_parses_simple_rule)
+    // =======================================
+    string feature[];
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    string comment;
+
+    feature = '{
+      "Feature: This is a feature",
+      "",
+      "  Rule: This is a rule",
+      "",
+      "    Scenario: This is a scenario",
+      "      Given some initial state",
+      "      When somebody does something",
+      "      Then the system should be in this final state",
+      ""
+    };
+
+    parser.parse_feature_lines(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS(actual_feature)
+  `SVTEST_END
+
   `SVUNIT_TESTS_END
 
 endmodule
