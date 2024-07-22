@@ -32,6 +32,7 @@ class gherkin_parser_rules_test extends uvm_test;
     `uvm_component_utils(gherkin_parser_rules_test)
     gherkin_parser_env env; // uvm_env containing the virtual sequencer
     bathtub_pkg::bathtub bathtub;
+    string step_sb[$]; // Simple scoreboard for steps
 
     function new(string name = "gherkin_parser_rules_test", uvm_component parent = null);
         super.new(name, parent);
@@ -71,11 +72,38 @@ class gherkin_parser_rules_test extends uvm_test;
                     assert ($cast(actual_step_def, obj_item.get_payload()));
                     step_text = actual_step_def.get_step_attributes().get_text();
                     `uvm_info(get_name(), step_text, UVM_MEDIUM)
+                    step_sb.push_back(step_text);
                     phase.drop_objection(this);
                 end
             end
         join
     endtask : run_phase
+
+    virtual function void check_phase(uvm_phase phase);
+        string exp_steps[$];
+        int indexes[$];
+
+        exp_steps = '{
+            "Step 0", "Step 1", "Step 2",
+            "Step 0", "Step 3",
+            "Step 0", "Step 4"
+            };
+
+        `uvm_info(get_name(), $sformatf("Exp step strings '%p'", exp_steps), UVM_MEDIUM)
+        `uvm_info(get_name(), $sformatf("Act step strings '%p'", step_sb), UVM_MEDIUM)
+        
+        foreach (exp_steps[i]) begin
+            // Find and remove expected steps from scoreboard
+            indexes = step_sb.find_first_index() with (item == exp_steps[i]);
+            if (indexes.size() >= 1)
+                step_sb.delete(indexes[0]);
+            else
+                `uvm_error(get_name(), $sformatf("Scoreboard does not contain expected step string '%s'", exp_steps[i]))
+        end
+        check_sb_empty : assert (step_sb.size() == 0) else
+            `uvm_error(get_name(), $sformatf("Scoreboard contains unexpected step strings '%p'", step_sb))
+        
+    endfunction : check_phase
 
 endclass : gherkin_parser_rules_test
 
