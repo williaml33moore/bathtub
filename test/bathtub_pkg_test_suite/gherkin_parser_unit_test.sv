@@ -781,6 +781,9 @@ module gherkin_parser_unit_test;
     actual_feature = actual_doc_bundle.document.feature;
     `FAIL_UNLESS(actual_feature)
     `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.rule_name, "This is a rule")
   `SVTEST_END
 
   `SVUNIT_TESTS_END
