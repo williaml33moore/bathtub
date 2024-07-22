@@ -44,6 +44,7 @@ package gherkin_pkg;
 	typedef class examples;
 	typedef class feature;
 	typedef class gherkin_document;
+	typedef class rule;
 	typedef class scenario;
 	typedef class scenario_definition;
 	typedef class scenario_outline;
@@ -143,6 +144,14 @@ package gherkin_pkg;
 		comment comments[$];
 	} gherkin_document_value;
 
+	(* value_object *)
+	typedef struct {
+		string keyword="";
+		string rule_name="";
+		string description="";
+		scenario_definition scenario_definitions[$];
+	} rule_value;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -153,6 +162,7 @@ package gherkin_pkg;
 		pure virtual task visit_examples(gherkin_pkg::examples examples);
 		pure virtual task visit_feature(gherkin_pkg::feature feature);
 		pure virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
+		pure virtual task visit_rule(gherkin_pkg::rule rule);
 		pure virtual task visit_scenario(gherkin_pkg::scenario scenario);
 		pure virtual task visit_scenario_definition(gherkin_pkg::scenario_definition scenario_definition);
 		pure virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
@@ -830,6 +840,55 @@ package gherkin_pkg;
 		endtask : accept
 
 	endclass : gherkin_document
+
+
+	class rule extends uvm_object implements element;
+		string keyword;
+		string rule_name;
+		string description;
+		scenario_definition scenario_definitions[$];
+
+		`uvm_field_utils_begin(rule)
+		`uvm_field_string(keyword, UVM_ALL_ON)
+		`uvm_field_string(rule_name, UVM_ALL_ON)
+		`uvm_field_string(description, UVM_ALL_ON)
+		`uvm_field_queue_object(scenario_definitions, UVM_ALL_ON)
+		`uvm_field_utils_end
+
+		function new(string name = "rule", rule_value value='{
+				"", // keyword
+				"", // rule_name
+				"", // description
+				'{} // scenario_definitions
+		});
+			super.new(name);
+
+			this.keyword = value.keyword;
+			this.rule_name = value.rule_name;
+			this.description = value.description;
+
+			this.scenario_definitions.delete();
+			foreach (value.scenario_definitions[i]) begin
+				this.scenario_definitions.push_back(value.scenario_definitions[i]);
+			end
+		endfunction : new
+
+		function rule_value get_as_value();
+			get_as_value.keyword = this.keyword;
+			get_as_value.rule_name = this.rule_name;
+			get_as_value.description = this.description;
+			
+			get_as_value.scenario_definitions.delete();
+			foreach (this.scenario_definitions[i]) begin
+				get_as_value.scenario_definitions.push_back(this.scenario_definitions[i]);
+			end
+		endfunction : get_as_value
+
+		virtual task accept(gherkin_pkg::visitor visitor);
+			visitor.visit_rule(this);
+		endtask : accept
+
+	endclass : rule
 
 
 endpackage : gherkin_pkg

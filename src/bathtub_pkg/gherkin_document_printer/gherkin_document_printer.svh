@@ -258,6 +258,10 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 
 	endtask : visit_tag
 
+	virtual task visit_rule(gherkin_pkg::rule rule);
+		$error("Placeholder");
+	endtask : visit_rule
+
 endclass : gherkin_document_printer
 
 `endif // __GHERKIN_DOCUMENT_PRINTER_SVH

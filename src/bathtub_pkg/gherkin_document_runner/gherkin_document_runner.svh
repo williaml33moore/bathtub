@@ -538,6 +538,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	endtask : visit_tag
 
+	virtual task visit_rule(gherkin_pkg::rule rule);
+		$error("Placeholder");
+	endtask : visit_rule
 
 	virtual function bit tag_check(string tags[$]);
 
