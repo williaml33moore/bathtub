@@ -762,6 +762,7 @@ module gherkin_parser_unit_test;
     string feature[];
     gherkin_doc_bundle actual_doc_bundle;
     gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
     string comment;
 
     feature = '{
