@@ -49,3 +49,15 @@ def test_gherkin_printer_e2e(tmp_path, simulator, testname, feature, verbosity):
         '+bathtub_verbosity=' + verbosity,
         ])
     assert simulator.run(tmp_path).passed()
+
+@pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
+def test_uvm_versions_e2e(tmp_path, simulator, testname, feature):
+    """Test that Gherkin compiles and runs with different UVM versions"""
+
+    simulator.extend_args([
+        '-f ' + str(test_path / 'gherkin_parser.f'),
+        '+UVM_TESTNAME=' + testname,
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '-uvm', # Native UVM library
+        ])
+    assert simulator.run(tmp_path).passed()
