@@ -25,6 +25,8 @@ SOFTWARE.
 `ifndef __BATHTUB_MACROS_SV
 `define __BATHTUB_MACROS_SV
 
+`include "uvm_macros.svh"
+
 // Step Definition Macros
 // ======================
 `define Given `BATHTUB__GIVEN
