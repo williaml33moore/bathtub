@@ -129,7 +129,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		this.include_tags = include_tags;
 		this.exclude_tags = exclude_tags;
 		this.report_object = report_object;
-		if (report_object == null) report_object = uvm_get_report_object();
+		if (report_object == null) report_object = `BATHTUB__get_report_object;
 	endfunction : configure
 
 
@@ -178,7 +178,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		step_resource = uvm_resource_db#(uvm_object_wrapper)::get_by_name(step.text, STEP_DEF_RESOURCE_NAME, 1);
 
 		assert_step_resource_is_not_null : assert (step_resource) else begin
-			if (uvm_get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
+			if (report_object.get_report_verbosity_level() >= UVM_HIGH) begin
 				uvm_resource_db#(uvm_object_wrapper)::dump();
 			end
 			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text), report_object)
@@ -212,7 +212,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		seq.print_sequence_info = 1;
 		if (!dry_run) begin
+`ifndef UVM_VERSION_1_1
 			seq.set_starting_phase(starting_phase);
+`endif // UVM_VERSION_1_1
 			seq.start(this.sequencer, this.parent_sequence, this.sequence_priority, this.sequence_call_pre_post);
 		end
 
@@ -304,7 +306,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		current_feature_seq = feature_sequence::type_id::create("current_feature_seq");
 		current_feature_seq.set_parent_sequence(parent_sequence);
 		current_feature_seq.set_sequencer(sequencer);
+`ifndef UVM_VERSION_1_1
 		current_feature_seq.set_starting_phase(starting_phase);
+`endif // UVM_VERSION_1_1
 		current_feature_seq.set_priority(sequence_priority);
 
 		current_feature_seq.configure(gherkin_document.feature, this);
@@ -335,7 +339,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
 			current_scenario_seq.set_parent_sequence(current_feature_seq);
 			current_scenario_seq.set_sequencer(sequencer);
+`ifndef UVM_VERSION_1_1
 			current_scenario_seq.set_starting_phase(starting_phase);
+`endif // UVM_VERSION_1_1
 			current_scenario_seq.set_priority(sequence_priority);
 
 			current_scenario_seq.configure(scenario, this, current_feature_seq);

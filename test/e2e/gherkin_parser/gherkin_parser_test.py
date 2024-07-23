@@ -59,5 +59,6 @@ def test_uvm_versions_e2e(tmp_path, simulator, testname, feature):
         '+UVM_TESTNAME=' + testname,
         '+bathtub_features=' + str(test_path / 'features' /  feature),
         '-uvm', # Native UVM library
+        '+bathtub_verbosity=' + 'UVM_HIGH',
         ])
     assert simulator.run(tmp_path).passed()
