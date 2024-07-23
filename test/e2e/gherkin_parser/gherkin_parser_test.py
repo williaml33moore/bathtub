@@ -40,7 +40,7 @@ def test_gherkin_parser_e2e(tmp_path, simulator, testname, feature):
 @pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
 @pytest.mark.parametrize("verbosity", ['UVM_HIGH'])
 def test_gherkin_printer_e2e(tmp_path, simulator, testname, feature, verbosity):
-    """Test that feature files with rules run successfully"""
+    """Test that feature files with rules print successfully"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'gherkin_parser.f'),
