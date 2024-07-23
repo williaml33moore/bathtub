@@ -601,7 +601,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 			while (status == OK) begin
 				if (line_obj.eof) break;
 				analyze_line(line_obj.text, line_analysis_result);
-				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+				if (line_analysis_result.token_before_colon inside {"Rule", "Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
 					break;
 				end
 				else begin
@@ -617,6 +617,45 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 		`uvm_message_add_int(line_obj.eof, UVM_BIN)
 		`uvm_info_context_end
 	endtask : parse_feature_description
+
+
+	virtual task parse_rule_description(ref string description, ref line_value line_obj);
+		line_analysis_result_t line_analysis_result;
+
+		line_mbox.peek(line_obj);
+
+		`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_rule_description enter", UVM_HIGH, report_object)
+		`uvm_message_add_string(line_obj.file_name)
+		`uvm_message_add_int(line_obj.line_number, UVM_DEC)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		if (!line_obj.eof) begin
+			`uvm_message_add_string(line_obj.text)
+		end
+		`uvm_info_context_end
+
+		if (!line_obj.eof) begin
+
+			description = "";
+
+			while (status == OK) begin
+				if (line_obj.eof) break;
+				analyze_line(line_obj.text, line_analysis_result);
+				if (line_analysis_result.token_before_colon inside {"Background", "Scenario", "Example", "Scenario Outline", "Scenario Template"}) begin
+					break;
+				end
+				else begin
+					description = {description, bathtub_utils::trim_white_space(line_obj.text), "\n"};
+					get_next_line(line_obj);
+				end
+			end
+
+		end
+
+		`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_rule_description exit", UVM_HIGH, report_object)
+		`uvm_message_add_string(description)
+		`uvm_message_add_int(line_obj.eof, UVM_BIN)
+		`uvm_info_context_end
+	endtask : parse_rule_description
 
 
 	virtual task parse_examples_description(ref string description, ref line_value line_obj);
@@ -729,6 +768,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 	extern virtual task parse_examples(ref gherkin_pkg::examples examples);
 	extern virtual task parse_feature(ref gherkin_pkg::feature feature);
 	extern virtual task parse_gherkin_document(ref gherkin_pkg::gherkin_document gherkin_document);
+	extern virtual task parse_rule(ref gherkin_pkg::rule rule);
 	extern virtual task parse_scenario(ref gherkin_pkg::scenario scenario);
 	extern virtual task parse_scenario_definition(ref gherkin_pkg::scenario_definition scenario_definition);
 	extern virtual task parse_scenario_outline(ref gherkin_pkg::scenario_outline scenario_outline);
@@ -747,6 +787,7 @@ endclass : gherkin_parser
 `include "bathtub_pkg/gherkin_parser/parse_examples.svh"
 `include "bathtub_pkg/gherkin_parser/parse_feature.svh"
 `include "bathtub_pkg/gherkin_parser/parse_gherkin_document.svh"
+`include "bathtub_pkg/gherkin_parser/parse_rule.svh"
 `include "bathtub_pkg/gherkin_parser/parse_scenario.svh"
 `include "bathtub_pkg/gherkin_parser/parse_scenario_definition.svh"
 `include "bathtub_pkg/gherkin_parser/parse_scenario_outline.svh"

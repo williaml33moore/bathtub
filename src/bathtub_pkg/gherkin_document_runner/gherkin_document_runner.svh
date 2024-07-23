@@ -56,6 +56,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	gherkin_pkg::gherkin_document document;
 	gherkin_pkg::background feature_background;
+	gherkin_pkg::background rule_background;
 
 	uvm_sequencer_base sequencer;
 	uvm_sequence_base parent_sequence;
@@ -276,18 +277,27 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			end
 		end
 
-		start = this.starting_scenario_number;
-		stop = this.stopping_scenario_number;
-		while (start < 0) start += only_scenarios.size();
-		if (start > only_scenarios.size()) start = only_scenarios.size();
-		while (stop <= 0) stop += only_scenarios.size();
-		if (stop > only_scenarios.size()) stop = only_scenarios.size();
-			
-		for(int i = start; i < stop; i++) begin
-			only_scenarios[i].accept(this);
+		if (only_scenarios.size() > 0) begin
+
+			start = this.starting_scenario_number;
+			stop = this.stopping_scenario_number;
+			while (start < 0) start += only_scenarios.size();
+			if (start > only_scenarios.size()) start = only_scenarios.size();
+			while (stop <= 0) stop += only_scenarios.size();
+			if (stop > only_scenarios.size()) stop = only_scenarios.size();
+
+			for(int i = start; i < stop; i++) begin
+				only_scenarios[i].accept(this);
+			end
+		end
+
+		// Run rules after loose scenarios
+		foreach (feature.rules[i]) begin
+			feature.rules[i].accept(this);
 		end
 
 		feature_tags.delete();
+		this.feature_background = null;
 	endtask : visit_feature
 
 	virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
@@ -538,6 +548,42 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	endtask : visit_tag
 
+	virtual task visit_rule(gherkin_pkg::rule rule);
+		gherkin_pkg::background rule_background;
+		int start;
+		int stop;
+		gherkin_pkg::scenario_definition only_scenarios[$];
+
+		`uvm_info_context(get_name(), $sformatf("%s: %s", rule.keyword, rule.rule_name), UVM_MEDIUM, report_object)
+
+		// rule_tags.delete();
+		// foreach (rule.tags[i]) begin
+		// 	rule_tags.push_back(rule.tags[i].tag_name);
+		// end
+		
+		// Separate background from scenario definitions
+		only_scenarios.delete();
+		foreach (rule.scenario_definitions[i]) begin
+			if ($cast(rule_background, rule.scenario_definitions[i])) begin
+				assert_only_one_background : assert (this.rule_background == null) else
+					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", report_object)
+					`uvm_message_add_string(this.rule_background.scenario_definition_name, "Existing background")
+					`uvm_message_add_string(rule_background.scenario_definition_name, "Conflicting background")
+					`uvm_fatal_context_end
+				this.rule_background = rule_background;
+			end
+			else begin
+				only_scenarios.push_back(rule.scenario_definitions[i]);
+			end
+		end
+			
+		foreach(only_scenarios[i]) begin
+			only_scenarios[i].accept(this);
+		end
+
+		// rule_tags.delete();
+		this.rule_background = null;
+	endtask : visit_rule
 
 	virtual function bit tag_check(string tags[$]);
 
