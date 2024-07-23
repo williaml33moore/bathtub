@@ -26,14 +26,26 @@ from pathlib import Path
 
 test_path = Path(os.path.dirname(__file__))
 
-@pytest.mark.parametrize("feature", ['rules.feature'])
-@pytest.mark.parametrize("testname", ['gherkin_parser_rules_test'])
-def test_plusarg_bathtub_start_stop(tmp_path, simulator, feature, testname):
+@pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
+def test_gherkin_parser_e2e(tmp_path, simulator, testname, feature):
     """Test that feature files with rules run successfully"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'gherkin_parser.f'),
-        '+bathtub_features=' + str(test_path / 'features' /  feature),
         '+UVM_TESTNAME=' + testname,
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        ])
+    assert simulator.run(tmp_path).passed()
+
+@pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
+@pytest.mark.parametrize("verbosity", ['UVM_HIGH'])
+def test_gherkin_printer_e2e(tmp_path, simulator, testname, feature, verbosity):
+    """Test that feature files with rules run successfully"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'gherkin_parser.f'),
+        '+UVM_TESTNAME=' + testname,
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '+bathtub_verbosity=' + verbosity,
         ])
     assert simulator.run(tmp_path).passed()

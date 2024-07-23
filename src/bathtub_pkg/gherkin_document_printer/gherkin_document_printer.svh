@@ -159,6 +159,10 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		foreach(feature.scenario_definitions[i]) begin
 			feature.scenario_definitions[i].accept(this);
 		end
+
+		foreach(feature.rules[i]) begin
+			feature.rules[i].accept(this);
+		end
 	endtask : visit_feature
 
 	virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
