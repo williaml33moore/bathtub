@@ -105,23 +105,6 @@ class gherkin_parser_rules_test extends uvm_test;
         
     endfunction : check_phase
 
-    
-    virtual function void report_phase(uvm_phase phase);
-        $info("UVM_MAJOR_REV=%0d\nUVM_MINOR_REV=%0d", `UVM_MAJOR_REV, `UVM_MINOR_REV);
-`ifdef UVM_MAJOR_REV_1
-        $info("UVM_MAJOR_REV_1");
-`endif
-`ifdef UVM_MINOR_REV_2
-        $info("UVM_MINOR_REV_2");
-`endif
-`ifdef UVM_POST_VERSION_1_1
-        $info("UVM_POST_VERSION_1_1");
-`endif
-`ifdef UVM_POST_VERSION_1_2
-        $info("UVM_POST_VERSION_1_2");
-`endif
-    endfunction : report_phase
-
 endclass : gherkin_parser_rules_test
 
 `endif // __GHERKIN_PARSER_RULES_TEST_SVH
