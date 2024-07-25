@@ -22,6 +22,8 @@
 
 import subprocess
 import pytest
+import yaml
+import os
 
 class Simulator:
     """Abtraction of SystemVerilog Simulators"""
@@ -177,3 +179,23 @@ def simulator(request):
 def svunit():
     """Return an SVUnit instance."""
     return SVUnit()
+
+def simulator_from_name(name):
+    if name in ['Xcelium', 'Questa']:
+        return eval(name + '()')
+
+def uvm_versions_from_config():
+    config_file_name = os.getenv('BATHTUB_TEST_CFG', 'bathtub_test_cfg.yaml')
+    config_file = open(config_file_name, 'r')
+    test_config = yaml.safe_load(config_file)
+    for simulator in test_config['simulators']:
+        for uvm_version in simulator['uvm_versions']:
+            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': True}
+            
+    for uvm_version in test_config['uvm_versions']:
+        for simulator in test_config['simulators']:
+            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': False}
+
+@pytest.fixture(params=uvm_versions_from_config())
+def uvm_version(request):
+    return request.param

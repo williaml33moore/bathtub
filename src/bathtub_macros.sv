@@ -240,9 +240,11 @@ else \
     `uvm_info_context(__id, $sformatf("%s:%p", LABEL, VAR), __verbosity, __ro)
 `endif // uvm_message_add_object
 
-`ifdef UVM_VERSION_1_1
+`ifdef UVM_VERSION_1_0
 `define BATHTUB__get_report_object uvm_root::get()
-`else // UVM_VERSION_1_1
+`elsif UVM_VERSION_1_1
+`define BATHTUB__get_report_object uvm_root::get()
+`else
 `define BATHTUB__get_report_object uvm_get_report_object()
 `endif // UVM_VERSION_1_1
 

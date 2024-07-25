@@ -73,7 +73,11 @@ class bathtub extends uvm_report_object;
 		feature_files.delete();
 		sequencer = null;
 		parent_sequence = null;
+`ifdef UVM_VERSION_1_0
+		sequence_priority = 100;
+`else
 		sequence_priority = -1;
+`endif
 		sequence_call_pre_post = 1;
 		dry_run = 0;
 		starting_scenario_number = 0;
@@ -88,7 +92,11 @@ class bathtub extends uvm_report_object;
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
+`ifdef UVM_VERSION_1_0
+			int sequence_priority = 100,
+`else
 			int sequence_priority = -1,
+`endif
 			bit sequence_call_pre_post = 1,
 			uvm_report_object report_object = null
 		);

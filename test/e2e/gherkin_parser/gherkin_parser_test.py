@@ -51,14 +51,27 @@ def test_gherkin_printer_e2e(tmp_path, simulator, testname, feature, verbosity):
     assert simulator.run(tmp_path).passed()
 
 @pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
-def test_uvm_versions_e2e(tmp_path, simulator, testname, feature):
+def test_uvm_versions_e2e(tmp_path, testname, feature, uvm_version):
     """Test that Gherkin compiles and runs with different UVM versions"""
+    simulator = uvm_version['simulator']
+    uvm_home = uvm_version['uvm_home']
+    is_builtin = uvm_version['is_builtin']
+    extra_opt = '-uvmnocdnsextra' if simulator.name() == 'Xcelium' and not is_builtin else ''
+
+    # Workaround a macro bug in UVM 1800.2-2020-1.0
+    if simulator.name() == 'Xcelium' and '1800.2-2020-1.0' in uvm_home:
+        macro_fix_opt = '+define+UVM_USE_PROCESS_CONTAINER'
+    else:
+        macro_fix_opt = ''
 
     simulator.extend_args([
         '-f ' + str(test_path / 'gherkin_parser.f'),
         '+UVM_TESTNAME=' + testname,
         '+bathtub_features=' + str(test_path / 'features' /  feature),
-        '-uvm', # Native UVM library
+        '-uvm',
+        '-uvmhome ' + uvm_home,
+        extra_opt,
+        macro_fix_opt,
         '+bathtub_verbosity=' + 'UVM_HIGH',
         ])
     assert simulator.run(tmp_path).passed()

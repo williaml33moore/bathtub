@@ -108,7 +108,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
+`ifdef UVM_VERSION_1_0
+			int sequence_priority = 100,
+`else
 			int sequence_priority = -1,
+`endif
 			bit sequence_call_pre_post = 1,
 			uvm_phase starting_phase,
 			bit dry_run = 0,
@@ -212,9 +216,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		seq.print_sequence_info = 1;
 		if (!dry_run) begin
-`ifndef UVM_VERSION_1_1
+`ifdef UVM_VERSION_1_0
+`elsif UVM_VERSION_1_1
+`else
 			seq.set_starting_phase(starting_phase);
-`endif // UVM_VERSION_1_1
+`endif
 			seq.start(this.sequencer, this.parent_sequence, this.sequence_priority, this.sequence_call_pre_post);
 		end
 
@@ -306,9 +312,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		current_feature_seq = feature_sequence::type_id::create("current_feature_seq");
 		current_feature_seq.set_parent_sequence(parent_sequence);
 		current_feature_seq.set_sequencer(sequencer);
-`ifndef UVM_VERSION_1_1
+`ifdef UVM_VERSION_1_0
+`elsif UVM_VERSION_1_1
+`else
 		current_feature_seq.set_starting_phase(starting_phase);
-`endif // UVM_VERSION_1_1
+`endif
 		current_feature_seq.set_priority(sequence_priority);
 
 		current_feature_seq.configure(gherkin_document.feature, this);
@@ -339,9 +347,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
 			current_scenario_seq.set_parent_sequence(current_feature_seq);
 			current_scenario_seq.set_sequencer(sequencer);
-`ifndef UVM_VERSION_1_1
+`ifdef UVM_VERSION_1_0
+`elsif UVM_VERSION_1_1
+`else
 			current_scenario_seq.set_starting_phase(starting_phase);
-`endif // UVM_VERSION_1_1
+`endif
 			current_scenario_seq.set_priority(sequence_priority);
 
 			current_scenario_seq.configure(scenario, this, current_feature_seq);
