@@ -28,6 +28,7 @@ SOFTWARE.
 import gherkin_pkg::gherkin_pkg_metadata;
 
 `include "uvm_macros.svh"
+`include "bathtub_macros.sv"
 `include "bathtub_pkg/step_attributes_interface.svh"
 `include "bathtub_pkg/step_definition_interface.svh"
 `include "bathtub_pkg/feature_sequence_interface.svh"

@@ -58,7 +58,7 @@ def test_uvm_versions_e2e(tmp_path, testname, feature, uvm_version):
     is_builtin = uvm_version['is_builtin']
     extra_opt = '-uvmnocdnsextra' if simulator.name() == 'Xcelium' and not is_builtin else ''
 
-    # Workaround a macro bug in UVM 1800.2-2020-1.0
+    # Workaround for a macro bug in UVM 1800.2-2020-1.0
     if simulator.name() == 'Xcelium' and '1800.2-2020-1.0' in uvm_home:
         macro_fix_opt = '+define+UVM_USE_PROCESS_CONTAINER'
     else:
@@ -73,5 +73,17 @@ def test_uvm_versions_e2e(tmp_path, testname, feature, uvm_version):
         extra_opt,
         macro_fix_opt,
         '+bathtub_verbosity=' + 'UVM_HIGH',
+        ])
+    assert simulator.run(tmp_path).passed()
+
+@pytest.mark.parametrize("testname, feature", [('gherkin_parser_rules_test', 'rules.feature')])
+def test_uvm_defaults_e2e(tmp_path, simulator, testname, feature):
+    """Test that Gherkin compiles and runs with default UVM versions"""
+
+    simulator.extend_args([
+        '-f ' + str(test_path / 'gherkin_parser.f'),
+        '+UVM_TESTNAME=' + testname,
+        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '-uvm',
         ])
     assert simulator.run(tmp_path).passed()

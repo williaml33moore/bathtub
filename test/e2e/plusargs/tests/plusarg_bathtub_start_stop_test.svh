@@ -25,6 +25,8 @@ SOFTWARE.
 `ifndef __PLUSARG_BATHTUB_START_STOP_TEST_SVH
 `define __PLUSARG_BATHTUB_START_STOP_TEST_SVH
 
+`include "bathtub_macros.sv"
+
 typedef class plusargs_env;
 `include "plusargs_env.svh"
 

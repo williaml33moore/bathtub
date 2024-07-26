@@ -59,9 +59,6 @@ class plusarg_bathtub_include_exclude_test extends uvm_test;
                 string step_text;
                 int unsigned exp_step_index;
 
-                `uvm_info_begin(get_name(), "", UVM_MEDIUM)
-                `uvm_info_end
-
                 step_text_sb.delete();
 
                 forever begin

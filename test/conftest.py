@@ -31,7 +31,7 @@ class Simulator:
         self.args = []
         self.returncode = -1
         self.uvm_flag = False
-        self.uvm_home = '$UVM_HOME'
+        self.uvm_home = None
     
     def append_arg(self, arg):
         """Append a single argument to simulator command-line arguments."""
@@ -43,11 +43,12 @@ class Simulator:
         self.args.extend(args)
         return self
     
-    def uvm(self, uvm_home='$UVM_HOME'):
+    def uvm(self, uvm_home=None, is_builtin=True):
         """Enable UVM with the given UVM installation."""
         self.uvm_flag = True
         self.append_arg('-uvm')
-        self.append_arg('-uvmhome ' + uvm_home)
+        if uvm_home is not None:
+            self.append_arg('-uvmhome ' + uvm_home)
         return self
 
     def run(self, cwd='.'):
@@ -72,10 +73,11 @@ class Xcelium(Simulator):
         self.binary = 'xrun'
         self.log = 'xrun.log'
     
-    def uvm(self, uvm_home='$UVM_HOME'):
+    def uvm(self, uvm_home=None, is_builtin=True):
         super().uvm(uvm_home)
         # Xcelium requires additional arg when not using built-in UVM installation.
-        self.append_arg('-uvmnocdnsextra')
+        if not is_builtin:
+            self.append_arg('-uvmnocdnsextra')
         return self
 
 class Questa(Simulator):
@@ -134,12 +136,14 @@ class SVUnit:
         self.args.append('--c_arg ' + self.compile_arg)
         return self
     
-    def uvm(self, uvm_flag=True):
+    def uvm(self, uvm_flag=True, uvm_home=None, is_builtin=True):
         """Set the script's --uvm option"""
         self.uvm_flag = uvm_flag
         if self.uvm_flag:
             self.args.append('--uvm')
-        if self.simulator.name() == 'Xcelium':
+        if uvm_home is not None:
+            self.args.append("--c_arg '-uvmhome " + uvm_home + "'")
+        if self.simulator.name() == 'Xcelium' and not is_builtin:
             # Xcelium requires additional compile arg when not using built-in UVM installation.
             self.args.append("--c_arg '-uvmnocdnsextra'")
         return self

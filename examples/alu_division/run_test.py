@@ -17,8 +17,7 @@ def test_xrun_with_dash_f_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     xrun \
     -uvm \
-    -uvmhome $UVM_HOME \
-    -uvmnocdnsextra \
+    -uvmhome $XCELIUM_HOME/tools.lnx86/methodology/UVM/CDNS-1.2 \
     -f $BATHTUB_VIP_DIR/src/bathtub_vip.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -34,8 +33,7 @@ def test_xrun_with_dash_F_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     xrun \
     -uvm \
-    -uvmhome $UVM_HOME \
-    -uvmnocdnsextra \
+    -uvmhome $XCELIUM_HOME/tools.lnx86/methodology/UVM/CDNS-1.2 \
     -F $BATHTUB_VIP_DIR/src/bathtub_vip_rel.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -51,8 +49,7 @@ def test_xrun_with_wrong_dash_f_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     xrun \
     -uvm \
-    -uvmhome $UVM_HOME \
-    -uvmnocdnsextra \
+    -uvmhome $XCELIUM_HOME/tools.lnx86/methodology/UVM/CDNS-1.2 \
     -f $BATHTUB_VIP_DIR/src/bathtub_vip.F \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -69,8 +66,7 @@ def test_xrun_with_wrong_dash_F_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     xrun \
     -uvm \
-    -uvmhome $UVM_HOME \
-    -uvmnocdnsextra \
+    -uvmhome $XCELIUM_HOME/tools.lnx86/methodology/UVM/CDNS-1.2 \
     -F $BATHTUB_VIP_DIR/src/bathtub_vip.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -86,7 +82,7 @@ def test_qrun_with_dash_f_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     qrun \
     -uvm \
-    -uvmhome $UVM_HOME \
+    -uvmhome $MTI_HOME/verilog_src/uvm-1.2 \
     -f $BATHTUB_VIP_DIR/src/bathtub_vip.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -102,7 +98,7 @@ def test_qrun_with_dash_F_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     qrun \
     -uvm \
-    -uvmhome $UVM_HOME \
+    -uvmhome $MTI_HOME/verilog_src/uvm-1.2 \
     -F $BATHTUB_VIP_DIR/src/bathtub_vip_rel.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -118,7 +114,7 @@ def test_qrun_with_wrong_dash_f_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     qrun \
     -uvm \
-    -uvmhome $UVM_HOME \
+    -uvmhome $MTI_HOME/verilog_src/uvm-1.2 \
     -f $BATHTUB_VIP_DIR/src/bathtub_vip.F \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
@@ -135,7 +131,7 @@ def test_qrun_with_wrong_dash_F_option(tmp_path):
     cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
     qrun \
     -uvm \
-    -uvmhome $UVM_HOME \
+    -uvmhome $MTI_HOME/verilog_src/uvm-1.2 \
     -F $BATHTUB_VIP_DIR/src/bathtub_vip.f \
     -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
     $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \
