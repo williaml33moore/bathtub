@@ -100,7 +100,7 @@ class gherkin_parser extends uvm_object implements gherkin_parser_interface;
 	(* fluent *)
 	function gherkin_parser configure(uvm_report_object report_object=null);
 		this.report_object = report_object;
-		if (report_object == null) this.report_object = uvm_get_report_object();
+		if (report_object == null) this.report_object = `BATHTUB__get_report_object;
 		return this;
 	endfunction : configure
 

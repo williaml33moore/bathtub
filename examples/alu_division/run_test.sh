@@ -5,8 +5,7 @@ xrun $BATHTUB_VIP_DIR/vip-spec.sv $BATHTUB_VIP_DIR/vip_setup.sv &&
 cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
 xrun \
 -uvm \
--uvmhome $UVM_HOME \
--uvmnocdnsextra \
+-uvmhome $XCELIUM_HOME/tools.lnx86/methodology/UVM/CDNS-1.2 \
 -f bathtub_vip.f \
 -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
 $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \

@@ -22,6 +22,8 @@
 
 import subprocess
 import pytest
+import yaml
+import os
 
 class Simulator:
     """Abtraction of SystemVerilog Simulators"""
@@ -29,7 +31,7 @@ class Simulator:
         self.args = []
         self.returncode = -1
         self.uvm_flag = False
-        self.uvm_home = '$UVM_HOME'
+        self.uvm_home = None
     
     def append_arg(self, arg):
         """Append a single argument to simulator command-line arguments."""
@@ -41,11 +43,12 @@ class Simulator:
         self.args.extend(args)
         return self
     
-    def uvm(self, uvm_home='$UVM_HOME'):
+    def uvm(self, uvm_home=None, is_builtin=True):
         """Enable UVM with the given UVM installation."""
         self.uvm_flag = True
         self.append_arg('-uvm')
-        self.append_arg('-uvmhome ' + uvm_home)
+        if uvm_home is not None:
+            self.append_arg('-uvmhome ' + uvm_home)
         return self
 
     def run(self, cwd='.'):
@@ -70,10 +73,11 @@ class Xcelium(Simulator):
         self.binary = 'xrun'
         self.log = 'xrun.log'
     
-    def uvm(self, uvm_home='$UVM_HOME'):
+    def uvm(self, uvm_home=None, is_builtin=True):
         super().uvm(uvm_home)
         # Xcelium requires additional arg when not using built-in UVM installation.
-        self.append_arg('-uvmnocdnsextra')
+        if not is_builtin:
+            self.append_arg('-uvmnocdnsextra')
         return self
 
 class Questa(Simulator):
@@ -132,12 +136,14 @@ class SVUnit:
         self.args.append('--c_arg ' + self.compile_arg)
         return self
     
-    def uvm(self, uvm_flag=True):
+    def uvm(self, uvm_flag=True, uvm_home=None, is_builtin=True):
         """Set the script's --uvm option"""
         self.uvm_flag = uvm_flag
         if self.uvm_flag:
             self.args.append('--uvm')
-        if self.simulator.name() == 'Xcelium':
+        if uvm_home is not None:
+            self.args.append("--c_arg '-uvmhome " + uvm_home + "'")
+        if self.simulator.name() == 'Xcelium' and not is_builtin:
             # Xcelium requires additional compile arg when not using built-in UVM installation.
             self.args.append("--c_arg '-uvmnocdnsextra'")
         return self
@@ -177,3 +183,23 @@ def simulator(request):
 def svunit():
     """Return an SVUnit instance."""
     return SVUnit()
+
+def simulator_from_name(name):
+    if name in ['Xcelium', 'Questa']:
+        return eval(name + '()')
+
+def uvm_versions_from_config():
+    config_file_name = os.getenv('BATHTUB_TEST_CFG', 'bathtub_test_cfg.yaml')
+    config_file = open(config_file_name, 'r')
+    test_config = yaml.safe_load(config_file)
+    for simulator in test_config['simulators']:
+        for uvm_version in simulator['uvm_versions']:
+            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': True}
+            
+    for uvm_version in test_config['uvm_versions']:
+        for simulator in test_config['simulators']:
+            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': False}
+
+@pytest.fixture(params=uvm_versions_from_config())
+def uvm_version(request):
+    return request.param
