@@ -33,8 +33,8 @@ This table summarizes different ways simulations can exit, and their exit status
 
 | Event             | Xcelium Exit Status | Questa Exit Status | Desired Status |
 | :---------------- | ------------------: | -----------------: | -------------: |
-| Compile error     | nonzero             | nonzero            | nonzero        |
-| `` `uvm_fatal()`` | 0                   | 0                  | nonzero        |
+| Compile error     | nonzero             | nonzero            | nonzero ✅      |
+| `` `uvm_fatal()`` | 0                   | 0                  | nonzero ❌      |
 | `` `uvm_error()`` | 0                   | 0                  | nonzero        |
 | `$fatal()`        | nonzero             | 0                  | nonzero        |
 | `$error()`        | nonzero             | 0                  | nonzero        |
