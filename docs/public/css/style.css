@@ -321,7 +321,7 @@ input.button {
 	.sidebar {
 		font-size: 0.8em;
 		flex: 0 0 auto;
-		flex-flow: row nowrap;
+		flex-flow: row wrap;
 		height: auto;
 	}
 
@@ -341,5 +341,9 @@ input.button {
 		flex: 0 0 0px;
 		visibility: hidden;
 		display: none;
+	}
+
+	.sidebar-brand {
+		width: 100%;
 	}
 }

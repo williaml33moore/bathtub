@@ -31,15 +31,15 @@ That's not good.
 I run Xcelium as `xrun` and Questa as `qrun`.
 This table summarizes different ways simulations can exit, and their exit status with the two tools.
 
-| Event | Xcelium Exit Status | Questa Exit Status | Desired Status |
-| :---- | ------------------: | -----------------: | -------------: |
-| Compile error | nonzero | nonzero | nonzero |
-| `` `uvm_fatal()`` | 0 | 0 | nonzero |
-| `` `uvm_error()`` | 0 | 0 | nonzero |
-| `$fatal()` | nonzero | 0 | nonzero |
-| `$error()` | nonzero | 0 | nonzero |
-| Assertion failure | nonzero | 0 | nonzero |
-| Simulation passes | 0 | 0 | 0 |
+| Event             | Xcelium Exit Status | Questa Exit Status | Desired Status |
+| :---------------- | ------------------: | -----------------: | -------------: |
+| Compile error     | nonzero             | nonzero            | nonzero ✅      |
+| `` `uvm_fatal()`` | 0                   | 0                  | nonzero ❌      |
+| `` `uvm_error()`` | 0                   | 0                  | nonzero ❌      |
+| `$fatal()`        | nonzero             | 0                  | nonzero ❌      |
+| `$error()`        | nonzero             | 0                  | nonzero ❌      |
+| Assertion failure | nonzero             | 0                  | nonzero ❌      |
+| Simulation passes | 0                   | 0                  | 0 ✅            |
 
 There are a lot of mismatches between what I desired to happen and my actual results, and that's a problem.
 
