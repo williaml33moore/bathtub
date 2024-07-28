@@ -1,5 +1,4 @@
 -timescale 1ns/1ns
--uvmhome $UVM_HOME
 -f bathtub_vip.f
 -incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item
 -incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item/sequencers

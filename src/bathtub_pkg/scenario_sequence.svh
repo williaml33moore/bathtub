@@ -73,6 +73,10 @@ class scenario_sequence extends uvm_sequence implements scenario_sequence_interf
 				runner.feature_background.accept(runner); // runner.visit_feature_background(runner.feature_background)
 			end
 
+			if (runner.rule_background != null) begin
+				runner.rule_background.accept(runner); // runner.visit_feature_background(runner.rule_background)
+			end
+
 			foreach (scenario.steps[i]) begin
 				scenario.steps[i].accept(runner); // runner.visit_step(scenario.steps[i])
 			end

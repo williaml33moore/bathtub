@@ -148,7 +148,11 @@ class plusarg_options;
 
 		num_bathtub_include = clp.get_arg_values("+bathtub_include=", plusarg_values);
         foreach (plusarg_values[i]) begin
+`ifdef UVM_VERSION_POST_2017
+            uvm_string_split(plusarg_values[i], ",", split_values);
+`else
             uvm_split_string(plusarg_values[i], ",", split_values);
+`endif
             foreach (split_values[j]) begin
                 bathtub_include.push_back(split_values[j]);
             end
@@ -156,7 +160,11 @@ class plusarg_options;
 
 		num_bathtub_exclude = clp.get_arg_values("+bathtub_exclude=", plusarg_values);
         foreach (plusarg_values[i]) begin
+`ifdef UVM_VERSION_POST_2017
+            uvm_string_split(plusarg_values[i], ",", split_values);
+`else
             uvm_split_string(plusarg_values[i], ",", split_values);
+`endif
             foreach (split_values[j]) begin
                 bathtub_exclude.push_back(split_values[j]);
             end

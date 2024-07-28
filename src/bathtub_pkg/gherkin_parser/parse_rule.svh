@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __PARSE_FEATURE_SVH
-`define __PARSE_FEATURE_SVH
+`ifndef __PARSE_RULE_SVH
+`define __PARSE_RULE_SVH
 
-task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
+task gherkin_parser::parse_rule(ref gherkin_pkg::rule rule);
 	line_value line_obj;
 	line_analysis_result_t line_analysis_result;
-	gherkin_pkg::feature_value feature_value;
+	gherkin_pkg::rule_value rule_value;
 
 	line_mbox.peek(line_obj);
 
-	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature enter", UVM_HIGH, report_object)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_rule enter", UVM_HIGH, report_object)
 	`uvm_message_add_string(line_obj.file_name)
 	`uvm_message_add_int(line_obj.line_number, UVM_DEC)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
@@ -48,19 +48,19 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 
 		case (line_analysis_result.token_before_colon)
 
-			"Feature" : begin : configure_feature
+			"Rule" : begin : configure_rule
 				int description_count = 0;
 				int background_count = 0;
 				bit can_receive_description = 1;
 
-				feature_value.keyword = line_analysis_result.token_before_colon;
-				feature_value.feature_name = line_analysis_result.remainder_after_colon;
-				while (floating_tags.size() > 0) begin
-					feature_value.tags.push_back(floating_tags.pop_front());
-				end
+				rule_value.keyword = line_analysis_result.token_before_colon;
+				rule_value.rule_name = line_analysis_result.remainder_after_colon;
+				// while (floating_tags.size() > 0) begin
+				// 	rule_value.tags.push_back(floating_tags.pop_front());
+				// end
 				get_next_line(line_obj);
 
-				while (status == OK) begin : feature_elements
+				while (status == OK) begin : rule_elements
 					line_mbox.peek(line_obj);
 
 					if (line_obj.eof) break;
@@ -76,12 +76,12 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 							`pop_from_parser_stack(background)
 							if (status == OK) begin
 								if (background_count == 0) begin
-									feature_value.scenario_definitions.push_back(background);
+									rule_value.scenario_definitions.push_back(background);
 									background_count++;
 								end
 								else begin
 									status = ERROR;
-									`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), "A feature can have only one background", report_object)
+									`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), "A rule can have only one background", report_object)
 								end
 							end
 						end
@@ -92,7 +92,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 							parse_scenario(scenario);
 							`pop_from_parser_stack(scenario)
 							if (status == OK) begin
-								feature_value.scenario_definitions.push_back(scenario);
+								rule_value.scenario_definitions.push_back(scenario);
 							end
 						end
 
@@ -102,17 +102,7 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 							parse_scenario_outline(scenario_outline);
 							`pop_from_parser_stack(scenario_outline)
 							if (status == OK) begin
-								feature_value.scenario_definitions.push_back(scenario_outline);
-							end
-						end
-
-						"Rule" : begin : construct_rule
-							gherkin_pkg::rule rule;
-
-							parse_rule(rule);
-							`pop_from_parser_stack(rule)
-							if (status == OK) begin
-								feature_value.rules.push_back(rule);
+								rule_value.scenario_definitions.push_back(scenario_outline);
 							end
 						end
 
@@ -145,8 +135,8 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 								default : begin
 									if (can_receive_description) begin
 										string description;
-										parse_feature_description(description, line_obj);
-										feature_value.description = description;
+										parse_rule_description(description, line_obj);
+										rule_value.description = description;
 										can_receive_description = 0;
 									end
 									else begin
@@ -162,20 +152,20 @@ task gherkin_parser::parse_feature(ref gherkin_pkg::feature feature);
 			default : begin
 				status = ERROR;
 				`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon,
-					". Expecting \"Feature:\"."}, report_object)
+					". Expecting \"Rule:\"."}, report_object)
 			end
 		endcase
 	end
 
-	feature = new("feature", feature_value);
-	`push_onto_parser_stack(feature)
+	rule = new("rule", rule_value);
+	`push_onto_parser_stack(rule)
 
-	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_feature exit", UVM_HIGH, report_object)
+	`uvm_info_context_begin(`BATHTUB__GET_SCOPE_NAME(), "gherkin_parser::parse_rule exit", UVM_HIGH, report_object)
 	`uvm_message_add_tag("status", status.name())
-	`uvm_message_add_object(feature)
+	`uvm_message_add_object(rule)
 	`uvm_message_add_int(line_obj.eof, UVM_BIN)
 	`uvm_info_context_end
 	`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("parser_stack: %p", parser_stack), UVM_HIGH, report_object)
-endtask : parse_feature
+endtask : parse_rule
 
-`endif // __PARSE_FEATURE_SVH
+`endif // __PARSE_RULE_SVH
