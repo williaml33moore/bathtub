@@ -74,6 +74,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	string exclude_tags[$];
 	uvm_report_object report_object;
 	string feature_tags[$];
+	string rule_tags[$];
 	string scenario_outline_tags[$];
 
 	`uvm_object_utils_begin(gherkin_document_runner)
@@ -334,6 +335,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		foreach (feature_tags[i]) begin
 			tags.push_back(feature_tags[i]);
 		end
+		foreach (rule_tags[i]) begin
+			tags.push_back(rule_tags[i]);
+		end
 		foreach (scenario.tags[i]) begin
 			tags.push_back(scenario.tags[i].tag_name); // All accumulated tags
 		end
@@ -380,6 +384,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		tags.delete();
 		foreach (feature_tags[i]) begin
 			tags.push_back(feature_tags[i]);
+		end
+		foreach (rule_tags[i]) begin
+			tags.push_back(rule_tags[i]);
 		end
 		foreach (scenario_outline.tags[i]) begin
 			scenario_outline_tags.push_back(scenario_outline.tags[i].tag_name);
@@ -572,10 +579,10 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		`uvm_info_context(get_name(), $sformatf("%s: %s", rule.keyword, rule.rule_name), UVM_MEDIUM, report_object)
 
-		// rule_tags.delete();
-		// foreach (rule.tags[i]) begin
-		// 	rule_tags.push_back(rule.tags[i].tag_name);
-		// end
+		rule_tags.delete();
+		foreach (rule.tags[i]) begin
+			rule_tags.push_back(rule.tags[i].tag_name);
+		end
 		
 		// Separate background from scenario definitions
 		only_scenarios.delete();
@@ -597,7 +604,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			only_scenarios[i].accept(this);
 		end
 
-		// rule_tags.delete();
+		rule_tags.delete();
 		this.rule_background = null;
 	endtask : visit_rule
 
