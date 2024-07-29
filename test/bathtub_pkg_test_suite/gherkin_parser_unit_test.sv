@@ -311,6 +311,58 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[2].tag_name, "@charlie")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[3].tag_name, "@delta")
   `SVTEST_END
+  
+  `SVTEST(Parse_a_tag_on_a_rule)
+    // ========================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+    gherkin_pkg::tag actual_tag;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "@alpha\n",
+      "Rule: This is a rule\n",
+      "Scenario: This is a scenario\n",
+      "* This is a step\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 1)
+    actual_tag = actual_rule.tags[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_tag.tag_name, "@alpha")
+  `SVTEST_END
+
+  `SVTEST(Parse_multiple_tags_on_a_rule)
+    // ================================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "@alpha @bravo   @charlie\n",
+      "   @delta\n",
+      "Rule: This is a rule\n",
+      "Scenario: This is a scenario\n",
+      "* This is a step\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[0].tag_name, "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[1].tag_name, "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[2].tag_name, "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[3].tag_name, "@delta")
+  `SVTEST_END
 
   `SVTEST(Parse_a_tag_on_a_scenario)
     // =============================
