@@ -147,6 +147,7 @@ package gherkin_pkg;
 
 	(* value_object *)
 	typedef struct {
+		tag tags[$];
 		string keyword="";
 		string rule_name="";
 		string description="";
@@ -863,10 +864,12 @@ package gherkin_pkg;
 		string keyword;
 		string rule_name;
 		string description;
+		tag tags[$];
 		gherkin_pkg::background background;
 		scenario_definition scenario_definitions[$];
 
 		`uvm_field_utils_begin(rule)
+		`uvm_field_queue_object(tags, UVM_ALL_ON)
 		`uvm_field_string(keyword, UVM_ALL_ON)
 		`uvm_field_string(rule_name, UVM_ALL_ON)
 		`uvm_field_string(description, UVM_ALL_ON)
@@ -875,13 +878,20 @@ package gherkin_pkg;
 		`uvm_field_utils_end
 
 		function new(string name = "rule", rule_value value='{
-				"", // keyword
-				"", // rule_name
-				"", // description
-				null, // background
-				'{} // scenario_definitions
+			'{}, // tags
+			"", // keyword
+			"", // rule_name
+			"", // description
+			null, // background
+			'{} // scenario_definitions
 		});
 			super.new(name);
+			
+			this.tags.delete();
+			foreach (value.tags[i]) begin
+				tag new_obj = new value.tags[i]; // TODO - deep copy
+				this.tags.push_back(new_obj);
+			end
 
 			this.keyword = value.keyword;
 			this.rule_name = value.rule_name;
@@ -895,6 +905,12 @@ package gherkin_pkg;
 		endfunction : new
 
 		function rule_value get_as_value();
+			get_as_value.tags.delete();
+			foreach (this.tags[i]) begin
+				tag new_obj = new this.tags[i]; // TODO - deep copy
+				get_as_value.tags.push_back(new_obj);
+			end
+
 			get_as_value.keyword = this.keyword;
 			get_as_value.rule_name = this.rule_name;
 			get_as_value.description = this.description;
