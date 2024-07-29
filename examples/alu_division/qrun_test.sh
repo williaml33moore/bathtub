@@ -5,7 +5,7 @@ qrun $BATHTUB_VIP_DIR/vip-spec.sv $BATHTUB_VIP_DIR/vip_setup.sv &&
 cp $BATHTUB_VIP_DIR/examples/alu_division/result/alu_division.feature . &&
 qrun \
 -uvm \
--uvmhome $UVM_HOME \
+-uvmhome $MTI_HOME/verilog_src/uvm-1.2 \
 -f bathtub_vip.f \
 -incdir $BATHTUB_VIP_DIR/examples/alu_division/result/ \
 $BATHTUB_VIP_DIR/examples/alu_division/result/design.sv \

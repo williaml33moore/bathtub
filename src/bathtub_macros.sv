@@ -25,6 +25,8 @@ SOFTWARE.
 `ifndef __BATHTUB_MACROS_SV
 `define __BATHTUB_MACROS_SV
 
+`include "uvm_macros.svh"
+
 // Step Definition Macros
 // ======================
 `define Given `BATHTUB__GIVEN
@@ -152,5 +154,98 @@ begin\
         verbosity = verbosity.next();\
     end\
 end
+
+
+// UVM message macro replacements
+// Back ports UVM 1.2 macros if user is running with UVM 1.1.
+
+`ifndef uvm_info_begin
+`define uvm_info_begin(ID, MSG, VERBOSITY, RM=null) \
+begin\
+    string __id;\
+    uvm_verbosity __verbosity;\
+    uvm_report_object __ro;\
+    __id = ID;\
+    __verbosity = VERBOSITY;\
+    __ro = `BATHTUB__get_report_object;\
+    `uvm_info_context(__id, MSG, __verbosity, __ro)
+`endif // uvm_info_begin
+
+`ifndef uvm_info_end
+`define uvm_info_end \
+end
+`endif // uvm_info_end
+
+`ifndef uvm_info_context_begin
+`define uvm_info_context_begin(ID, MSG, VERBOSITY, RO, RM=null) \
+begin\
+    string __id;\
+    uvm_verbosity __verbosity;\
+    uvm_report_object __ro;\
+    __id = ID;\
+    __verbosity = VERBOSITY;\
+    __ro = RO;\
+    `uvm_info_context(__id, MSG, __verbosity, __ro)
+`endif // uvm_info_context_begin
+
+`ifndef uvm_info_context_end
+`define uvm_info_context_end \
+end
+`endif // uvm_info_context_end
+
+`ifndef uvm_fatal_context_begin
+`define uvm_fatal_context_begin(ID, MSG, RO, RM=null) \
+begin\
+    string __id;\
+    uvm_verbosity __verbosity;\
+    uvm_report_object __ro;\
+    __id = ID;\
+    __verbosity = UVM_NONE;\
+    __ro = RO;\
+    `uvm_info_context(__id, MSG, __verbosity, __ro)
+`endif // uvm_fatal_context_begin
+
+`ifndef uvm_fatal_context_end
+`define uvm_fatal_context_end \
+    `uvm_fatal_context(__id, "", __ro)\
+end
+`endif // uvm_fatal_context_end
+
+`ifndef uvm_message_add_int
+`define uvm_message_add_int(VAR, RADIX, LABEL="", ACTION=(UVM_LOG|UVM_RM_RECORD)) \
+if (LABEL == "") \
+    `uvm_info_context(__id, $sformatf("%s:%0d", `"VAR`", VAR), __verbosity, __ro) \
+else \
+    `uvm_info_context(__id, $sformatf("%s:%0d", LABEL, VAR), __verbosity, __ro)
+`endif // uvm_message_add_int
+
+`ifndef uvm_message_add_string
+`define uvm_message_add_string(VAR, LABEL="", ACTION=(UVM_LOG|UVM_RM_RECORD)) \
+if (LABEL == "") \
+    `uvm_info_context(__id, $sformatf("%s:%s", `"VAR`", VAR), __verbosity, __ro) \
+else \
+    `uvm_info_context(__id, $sformatf("%s:%s", LABEL, VAR), __verbosity, __ro)
+`endif // uvm_message_add_string
+
+`ifndef uvm_message_add_tag
+`define uvm_message_add_tag(NAME, VALUE, ACTION=(UVM_LOG|UVM_RM_RECORD)) \
+    `uvm_info_context(__id, $sformatf("%s:%s", NAME, VALUE), __verbosity, __ro)
+`endif // uvm_message_add_tag
+
+`ifndef uvm_message_add_object
+`define uvm_message_add_object(VAR, LABEL="", ACTION=(UVM_LOG|UVM_RM_RECORD)) \
+    if (LABEL == "") \
+    `uvm_info_context(__id, $sformatf("%s:%p", `"VAR`", VAR), __verbosity, __ro) \
+    else \
+    `uvm_info_context(__id, $sformatf("%s:%p", LABEL, VAR), __verbosity, __ro)
+`endif // uvm_message_add_object
+
+`ifdef UVM_VERSION_1_0
+`define BATHTUB__get_report_object uvm_root::get()
+`elsif UVM_VERSION_1_1
+`define BATHTUB__get_report_object uvm_root::get()
+`else
+`define BATHTUB__get_report_object uvm_get_report_object()
+`endif // UVM_VERSION_1_1
 
 `endif // __BATHTUB_MACROS_SV
