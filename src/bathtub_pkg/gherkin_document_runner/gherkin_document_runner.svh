@@ -31,6 +31,9 @@ SOFTWARE.
 import gherkin_pkg::gherkin_pkg_metadata;
 import uvm_pkg::*;
 
+typedef class test_sequence;
+`include "bathtub_pkg/test_sequence.svh"
+
 typedef class feature_sequence;
 `ifndef __FEATURE_SEQUENCE_SVH
 // Prevent `include recursion
@@ -60,6 +63,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	uvm_sequencer_base sequencer;
 	uvm_sequence_base parent_sequence;
+	test_sequence current_test_seq;
 	feature_sequence current_feature_seq;
 	scenario_sequence current_scenario_seq;
 	int sequence_priority;
@@ -123,8 +127,13 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			string exclude_tags[$] = '{},
 			uvm_report_object report_object = null
 		);
+		int success;
+
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
+		success = $cast(current_test_seq, parent_sequence);
+		check_test_sequence : assert (success) else
+			`uvm_fatal_context(get_name(), "parent_sequence is not a test_sequence", report_object)
 		this.sequence_priority = sequence_priority;
 		this.sequence_call_pre_post = sequence_call_pre_post;
 		this.starting_phase = starting_phase;
@@ -205,7 +214,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		if ($cast(step_seq, obj)) begin
 			step_nurture step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.configure(step, step_seq, current_scenario_seq, current_feature_seq);
+			step_attributes.configure(step, step_seq, current_scenario_seq, current_feature_seq, current_test_seq);
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin

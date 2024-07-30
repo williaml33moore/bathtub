@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __BATHTUB_SVH
+`define __BATHTUB_SVH
+
 import uvm_pkg::*;
 
 typedef class gherkin_parser;
@@ -38,6 +41,9 @@ typedef class gherkin_doc_bundle;
 
 typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
+
+typedef class test_sequence;
+`include "bathtub_pkg/test_sequence.svh"
 
 `include "bathtub_macros.sv"
 
@@ -57,6 +63,7 @@ class bathtub extends uvm_report_object;
 	uvm_report_object report_object;
 	string include_tags[$];
 	string exclude_tags[$];
+	test_sequence current_test_seq;
 	
 	static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -86,6 +93,7 @@ class bathtub extends uvm_report_object;
 		include_tags.delete();
 		exclude_tags.delete();
 		report_object = null;
+		current_test_seq = null;
 	endfunction : new
 
 
@@ -109,10 +117,6 @@ class bathtub extends uvm_report_object;
 
 
 	virtual task run_test(uvm_phase phase);
-		gherkin_doc_bundle gherkin_doc_bundle;
-		gherkin_parser parser;
-		gherkin_document_printer printer;
-		gherkin_document_runner runner;
 
 		// Process plusarg overrides
 		if (plusarg_opts.num_bathtub_features) feature_files = {feature_files, plusarg_opts.bathtub_features}; // Append
@@ -126,30 +130,18 @@ class bathtub extends uvm_report_object;
 		if (report_object == null) report_object = this;
 		set_report_verbosity_level(bathtub_verbosity);
 
-		foreach (feature_files[i]) begin : iterate_over_feature_files
-			
-			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files[i]}, UVM_HIGH, report_object)
+		current_test_seq = test_sequence::type_id::create("current_test_seq");
+		current_test_seq.set_parent_sequence(parent_sequence);
+		current_test_seq.set_sequencer(sequencer);
+`ifdef UVM_VERSION_1_0
+`elsif UVM_VERSION_1_1
+`else
+		current_test_seq.set_starting_phase(phase);
+`endif
+		current_test_seq.set_priority(sequence_priority);
 
-			parser = gherkin_parser::type_id::create("parser").configure(report_object);
-
-			parser.parse_feature_file(feature_files[i], gherkin_doc_bundle);
-
-			assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
-
-			if (report_object.get_report_verbosity_level() >= UVM_HIGH) begin
-				printer = gherkin_document_printer::create_new("printer", gherkin_doc_bundle.document);
-				printer.print();
-			end
-
-			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
-			runner.configure(sequencer, parent_sequence, sequence_priority, sequence_call_pre_post, phase, dry_run, starting_scenario_number, stopping_scenario_number, include_tags, exclude_tags, report_object);
-			runner.run();
-			
-`ifdef BATHTUB_VERBOSITY_TEST
-			parser.test_verbosity();
-			runner.test_verbosity();
-`endif // BATHTUB_VERBOSITY_TEST
-		end
+		current_test_seq.configure(this, phase);
+		current_test_seq.start(current_test_seq.get_sequencer());
 			
 `ifdef BATHTUB_VERBOSITY_TEST
 		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
@@ -163,3 +155,5 @@ class bathtub extends uvm_report_object;
 	endfunction : get_plusarg_opts
 
 endclass : bathtub
+
+`endif // __BATHTUB_SVH
