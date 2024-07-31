@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`include "bathtub_macros.sv"
+`ifndef __STEP_DEFINITION_INTERFACE_ENV_SVH
+`define __STEP_DEFINITION_INTERFACE_ENV_SVH
 
-// ===================================================================
-package bathtub_pkg;
-// ===================================================================
+class step_definition_interface_env extends uvm_env;
+    `uvm_component_utils(step_definition_interface_env)
 
-	// Classes
-	typedef class bathtub;
-	typedef class bathtub_utils;
-	typedef class feature_sequence;
-	typedef class gherkin_doc_bundle;
-	typedef class gherkin_document_printer;
-	typedef class gherkin_document_runner;
-	typedef class gherkin_parser;
-	typedef class gherkin_step_bundle;
-	typedef class line_value;
-	typedef class pool_provider;
-	typedef class scenario_sequence;
-	typedef class step_definition_seq;
-	typedef class step_nature;
-	typedef class step_nurture;
-	typedef class step_parameter_arg;
-	typedef class step_parameters;
-	typedef class test_sequence;
+    uvm_sequencer#() seqr;
 
-	// Main entry points
-	`include "bathtub_pkg/bathtub.svh"
-	`include "bathtub_pkg/step_definition_seq.svh"
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
 
-endpackage : bathtub_pkg
+    virtual function void build_phase(uvm_phase phase);
+        seqr = uvm_sequencer#()::type_id::create("seqr", this);
+    endfunction : build_phase
+
+    virtual function void connect_phase(uvm_phase phase);
+        ; // Placeholder
+    endfunction : connect_phase
+
+endclass : step_definition_interface_env
+
+`endif // __STEP_DEFINITION_INTERFACE_ENV_SVH

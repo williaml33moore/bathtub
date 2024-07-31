@@ -45,6 +45,8 @@ classes_under_test = [
     "bathtub_pkg/step_parameters_interface.svh",
     "bathtub_pkg/step_parameters.svh",
     "bathtub_pkg/step_static_attributes_interface.svh",
+    "bathtub_pkg/test_sequence_interface.svh",
+    "bathtub_pkg/test_sequence.svh",
     "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh",
     "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh",
     "bathtub_pkg/gherkin_parser/gherkin_parser.svh",

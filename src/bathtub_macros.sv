@@ -68,6 +68,12 @@ endfunction : get_step_attributes\
 virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
 this.__step_attributes = step_attributes;\
 endfunction : set_step_attributes\
+virtual function bathtub_pkg::test_sequence_interface get_current_test_sequence();\
+return this.__step_attributes.get_current_test_sequence();\
+endfunction : get_current_test_sequence\
+virtual function void set_current_test_sequence(bathtub_pkg::test_sequence_interface seq);\
+this.__step_attributes.set_current_test_sequence(seq);\
+endfunction : set_current_test_sequence\
 virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
 return this.__step_attributes.get_current_feature_sequence();\
 endfunction : get_current_feature_sequence\
@@ -97,6 +103,11 @@ return null;\
 endfunction : get_step_attributes\
 virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes);\
 endfunction : set_step_attributes\
+virtual function bathtub_pkg::test_sequence_interface get_current_test_sequence();\
+return null;\
+endfunction : get_current_test_sequence\
+virtual function void set_current_test_sequence(bathtub_pkg::test_sequence_interface seq);\
+endfunction : set_current_test_sequence\
 virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
 return null;\
 endfunction : get_current_feature_sequence\
