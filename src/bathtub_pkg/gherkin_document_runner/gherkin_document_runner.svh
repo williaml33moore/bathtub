@@ -32,7 +32,10 @@ import gherkin_pkg::gherkin_pkg_metadata;
 import uvm_pkg::*;
 
 typedef class test_sequence;
+`ifndef __TEST_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/test_sequence.svh"
+`endif // __TEST_SEQUENCE_SVH
 
 typedef class feature_sequence;
 `ifndef __FEATURE_SEQUENCE_SVH
@@ -113,11 +116,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
-`ifdef UVM_VERSION_1_0
 			int sequence_priority = 100,
-`else
-			int sequence_priority = -1,
-`endif
 			bit sequence_call_pre_post = 1,
 			uvm_phase starting_phase,
 			bit dry_run = 0,

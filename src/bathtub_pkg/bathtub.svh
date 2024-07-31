@@ -34,7 +34,10 @@ typedef class gherkin_document_printer;
 `include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
 
 typedef class gherkin_document_runner;
+`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
+`endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
 typedef class gherkin_doc_bundle;
 `include "bathtub_pkg/gherkin_doc_bundle.svh"
@@ -43,7 +46,10 @@ typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
 
 typedef class test_sequence;
+`ifndef __TEST_SEQUENCE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/test_sequence.svh"
+`endif // __TEST_SEQUENCE_SVH
 
 `include "bathtub_macros.sv"
 

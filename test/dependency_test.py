@@ -26,6 +26,7 @@ classes_under_test = [
     "bathtub_pkg/bathtub_pkg.svh",
     "bathtub_pkg/bathtub.svh",
     "bathtub_pkg/bathtub_utils.svh",
+    "bathtub_pkg/context_sequence.svh",
     "bathtub_pkg/feature_sequence_interface.svh",
     "bathtub_pkg/feature_sequence.svh",
     "bathtub_pkg/gherkin_doc_bundle.svh",

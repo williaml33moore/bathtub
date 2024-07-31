@@ -31,6 +31,7 @@ package bathtub_pkg;
 	// Classes
 	typedef class bathtub;
 	typedef class bathtub_utils;
+	typedef class context_sequence;
 	typedef class feature_sequence;
 	typedef class gherkin_doc_bundle;
 	typedef class gherkin_document_printer;
