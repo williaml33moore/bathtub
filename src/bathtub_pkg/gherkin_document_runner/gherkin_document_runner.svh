@@ -207,8 +207,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		obj = factory.create_object_by_type(step_seq_object_wrapper, get_full_name(), step_seq_object_wrapper.get_type_name());
 
-		success = $cast(seq, obj);
-		assert_step_object_is_sequence : assert (success) else begin
+		if ($cast(seq, obj)) begin
+			seq.set_parent_sequence(current_scenario_seq);
+			seq.set_priority(sequence_priority);
+		end
+		else begin
 			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
 		end
 
@@ -231,7 +234,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 `else
 			seq.set_starting_phase(starting_phase);
 `endif
-			seq.start(this.sequencer, this.parent_sequence, this.sequence_priority, this.sequence_call_pre_post);
+			seq.start(this.sequencer, seq.get_parent_sequence(), seq.get_priority(), this.sequence_call_pre_post);
 		end
 
 	endtask : start_step

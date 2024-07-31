@@ -181,7 +181,9 @@ class check_return_value_seq extends virtual_step_def_seq;
 
                 act_value = get_current_scenario_sequence().get_int_pool().get(return_value_$var_name);
                 exp_value = expected_value.atoi();
-                check_return_value : assert (act_value == exp_value) else
+                check_return_value : assert (act_value == exp_value)
+                    `uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: %0d, exp_value: %0d", act_value, exp_value), UVM_HIGH)
+                else
                     `uvm_error(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: %0d, exp_value: %0d", act_value, exp_value))
             end
             default : `uvm_error("Unknown var_type", var_type)
