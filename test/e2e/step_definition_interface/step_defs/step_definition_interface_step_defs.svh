@@ -89,12 +89,14 @@ class store_value_in_pool_seq extends virtual_step_def_seq;
             "scenario" : begin
                 case (var_type)
                     "integer" : get_current_scenario_sequence().get_int_pool().add(var_name, value.atoi());
+                    "string" : get_current_scenario_sequence().get_string_pool().add(var_name, value);
                     default : `uvm_error("Unknown var_type", var_type)
                 endcase
             end
             "test" : begin
                 case (var_type)
                     "integer" : get_current_test_sequence().get_int_pool().add(var_name, value.atoi());
+                    "string" : get_current_test_sequence().get_string_pool().add(var_name, value);
                     default : `uvm_error("Unknown var_type", var_type)
                 endcase
             end
@@ -130,7 +132,9 @@ class read_value_from_pool_seq extends virtual_step_def_seq;
                     "integer" : begin
                         int return_value;
 
-                        check_item_exists : assert(get_current_scenario_sequence().get_int_pool().exists(var_name));
+                        if (!get_current_scenario_sequence().get_int_pool().exists(var_name)) begin
+                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
+                        end
                         return_value = get_current_scenario_sequence().get_int_pool().get(var_name);
                         get_current_scenario_sequence().get_int_pool().add(return_value_$var_name, return_value);
                     end
@@ -142,10 +146,22 @@ class read_value_from_pool_seq extends virtual_step_def_seq;
                     "integer" : begin
                         int return_value;
 
-                        check_item_exists : assert(get_current_test_sequence().get_int_pool().exists(var_name));
+                        if (!get_current_test_sequence().get_int_pool().exists(var_name)) begin
+                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
+                        end
                         return_value = get_current_test_sequence().get_int_pool().get(var_name);
                         // Return_value is always stored in the scenario pool.
                         get_current_scenario_sequence().get_int_pool().add(return_value_$var_name, return_value);
+                    end
+                    "string" : begin
+                        string return_value;
+
+                        if (!get_current_test_sequence().get_string_pool().exists(var_name)) begin
+                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
+                        end
+                        return_value = get_current_test_sequence().get_string_pool().get(var_name);
+                        // Return_value is always stored in the scenario pool.
+                        get_current_scenario_sequence().get_string_pool().add(return_value_$var_name, return_value);
                     end
                     default : `uvm_error("Unknown var_type", var_type)
                 endcase
@@ -185,6 +201,17 @@ class check_return_value_seq extends virtual_step_def_seq;
                     `uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: %0d, exp_value: %0d", act_value, exp_value), UVM_HIGH)
                 else
                     `uvm_error(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: %0d, exp_value: %0d", act_value, exp_value))
+            end
+            "string" : begin
+                string act_value;
+                string exp_value;
+
+                act_value = get_current_scenario_sequence().get_string_pool().get(return_value_$var_name);
+                exp_value = expected_value;
+                check_return_value : assert (act_value == exp_value)
+                    `uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: '%s', exp_value: '%s'", act_value, exp_value), UVM_HIGH)
+                else
+                    `uvm_error(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_value: '%s', exp_value: '%s'", act_value, exp_value))
             end
             default : `uvm_error("Unknown var_type", var_type)
         endcase

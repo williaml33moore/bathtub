@@ -26,14 +26,14 @@ from pathlib import Path
 
 test_path = Path(os.path.dirname(__file__))
 
-@pytest.mark.parametrize("testname, feature", [('simple_test', 'step_definition_interface_0.feature')])
-def test_step_definition_interface_e2e(tmp_path, simulator, testname, feature):
+@pytest.mark.parametrize("testname, features", [('simple_test', ['step_definition_interface_0.feature', 'step_definition_interface_1.feature'])])
+def test_step_definition_interface_e2e(tmp_path, simulator, testname, features):
     """Test that step definition interface methods function correctly"""
 
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'step_definition_interface.f'),
         '+UVM_TESTNAME=' + testname,
-        '+bathtub_features=' + str(test_path / 'features' /  feature),
+        '+bathtub_features=' + '"' + " ".join([str(test_path / 'features' /  feature) for feature in features]) + '"',
         '+UVM_VERBOSITY=UVM_HIGH',
         '+bathtub_verbosity=UVM_HIGH',
         ])
