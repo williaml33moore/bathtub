@@ -977,6 +977,7 @@ module gherkin_parser_unit_test;
     gherkin_doc_bundle actual_doc_bundle;
     gherkin_pkg::feature actual_feature;
     gherkin_pkg::scenario_outline actual_scenario_outline;
+    gherkin_pkg::examples actual_examples;
   
     feature = {
       "Feature: This is a feature\n",
@@ -996,6 +997,20 @@ module gherkin_parser_unit_test;
     actual_feature = actual_doc_bundle.document.feature;
     void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
     `FAIL_UNLESS_EQUAL(actual_scenario_outline.examples.size(), 2)
+
+    actual_examples = actual_scenario_outline.examples[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.examples_name, "Fruit")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.header.cells[0].value, "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].value, "apple")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].value, "berry")
+
+    actual_examples = actual_scenario_outline.examples[1];
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.examples_name, "Animals")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.header.cells[0].value, "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].value, "moose")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].value, "hound")
   `SVTEST_END
 
 
