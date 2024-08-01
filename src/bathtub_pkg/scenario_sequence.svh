@@ -33,21 +33,19 @@ typedef class gherkin_document_runner;
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 `endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
-typedef class pool_provider;
-`include "bathtub_pkg/pool_provider.svh"
+typedef class context_sequence;
+`include "bathtub_pkg/context_sequence.svh"
 
-class scenario_sequence extends uvm_sequence implements scenario_sequence_interface;
+class scenario_sequence extends context_sequence implements scenario_sequence_interface;
 	gherkin_pkg::scenario scenario;
 	gherkin_document_runner runner;
 	feature_sequence_interface current_feature_seq;
-	pool_provider pool_prvdr;
 
 	function new(string name="scenario_sequence");
 		super.new(name);
 		scenario = null;
 		runner = null;
 		current_feature_seq = null;
-		pool_prvdr = new();
 	endfunction : new
 
 	`uvm_object_utils(scenario_sequence)
@@ -83,50 +81,6 @@ class scenario_sequence extends uvm_sequence implements scenario_sequence_interf
 
 		end
 	endtask : body
-
-	virtual function uvm_pool#(string, shortint) get_shortint_pool();
-		return pool_prvdr.get_shortint_pool();
-	endfunction : get_shortint_pool
-
-	virtual function uvm_pool#(string, int) get_int_pool();
-		return pool_prvdr.get_int_pool();
-	endfunction : get_int_pool
-	
-	virtual function uvm_pool#(string, longint) get_longint_pool();
-		return pool_prvdr.get_longint_pool();
-	endfunction : get_longint_pool
-	
-	virtual function uvm_pool#(string, byte) get_byte_pool();
-		return pool_prvdr.get_byte_pool();
-	endfunction : get_byte_pool
-	
-	virtual function uvm_pool#(string, integer) get_integer_pool();
-		return pool_prvdr.get_integer_pool();
-	endfunction : get_integer_pool
-	
-	virtual function uvm_pool#(string, time) get_time_pool();
-		return pool_prvdr.get_time_pool();
-	endfunction : get_time_pool
-	
-	virtual function uvm_pool#(string, real) get_real_pool();
-		return pool_prvdr.get_real_pool();
-	endfunction : get_real_pool
-	
-	virtual function uvm_pool#(string, shortreal) get_shortreal_pool();
-		return pool_prvdr.get_shortreal_pool();
-	endfunction : get_shortreal_pool
-	
-	virtual function uvm_pool#(string, realtime) get_realtime_pool();
-		return pool_prvdr.get_realtime_pool();
-	endfunction : get_realtime_pool
-	
-	virtual function uvm_pool#(string, string) get_string_pool();
-		return pool_prvdr.get_string_pool();
-	endfunction : get_string_pool
-	
-	virtual function uvm_pool#(string, uvm_object) get_uvm_object_pool();
-		return pool_prvdr.get_uvm_object_pool();
-	endfunction : get_uvm_object_pool
 
 endclass : scenario_sequence
 
