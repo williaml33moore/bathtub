@@ -20,3 +20,22 @@ Feature: This is a feature
             Given I store the value "step_definition_interface_0.feature" in an item called "feature" in the "test" "string" pool
             When I read item "feature" from the "test" "string" pool
             Then the returned "string" value should be "step_definition_interface_0.feature"
+
+        Scenario Outline: Store values in every pool
+            Given I store the value "<value>" in an item called "<name>" in the "<context>" "<type>" pool
+            When I read item "<name>" from the "<context>" "<type>" pool
+            Then the returned "<type>" value should be "<value>"
+
+            Examples: Integers
+                | context  | type    | name | value |
+                | scenario | integer | ii   | 123   |
+                | rule     | integer | ii   | 234   |
+                | feature  | integer | ii   | 345   |
+                | test     | integer | ii   | 456   |
+
+            Examples: Strings
+                | context  | type   | name | value |
+                | scenario | string | ss   | ABC   |
+                | rule     | string | ss   | BCD   |
+                | feature  | string | ss   | CDE   |
+                | test     | string | ss   | DEF   |

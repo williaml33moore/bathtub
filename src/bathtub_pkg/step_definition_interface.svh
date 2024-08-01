@@ -34,6 +34,9 @@ typedef interface class test_sequence_interface;
 typedef interface class feature_sequence_interface;
 `include "bathtub_pkg/feature_sequence_interface.svh"
 
+typedef interface class rule_sequence_interface;
+`include "bathtub_pkg/rule_sequence_interface.svh"
+
 typedef interface class scenario_sequence_interface;
 `include "bathtub_pkg/scenario_sequence_interface.svh"
 
@@ -45,6 +48,8 @@ interface class step_definition_interface;
 	pure virtual function void set_current_test_sequence(test_sequence_interface seq);
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
 	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+	pure virtual function rule_sequence_interface get_current_rule_sequence();
+	pure virtual function void set_current_rule_sequence(rule_sequence_interface seq);
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
 	pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
 endclass : step_definition_interface

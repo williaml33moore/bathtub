@@ -60,6 +60,27 @@ virtual class virtual_step_def_seq extends base_seq implements bathtub_pkg::step
     static function string trim(string s);
         return s.substr(0, s.len() - 2);
     endfunction : trim
+
+    function bathtub_pkg::pool_provider_interface get_context_by_name(string name);
+        case (name)
+            "scenario" : begin
+                get_context_by_name = get_current_scenario_sequence();
+            end
+            "rule" : begin
+                get_context_by_name = get_current_rule_sequence();
+            end
+            "feature" : begin
+                get_context_by_name = get_current_feature_sequence();
+            end
+            "test" : begin
+                get_context_by_name = get_current_test_sequence();
+            end
+            default : begin
+                `uvm_error(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Unknown context: %s", name))
+                get_context_by_name = null;
+            end
+        endcase
+    endfunction : get_context_by_name
 endclass : virtual_step_def_seq
 
 
@@ -69,7 +90,7 @@ class store_value_in_pool_seq extends virtual_step_def_seq;
 
     string value;
     string var_name;
-    string pool;
+    string contxt;
     string var_type;
 
     `uvm_object_utils(store_value_in_pool_seq)
@@ -78,29 +99,22 @@ class store_value_in_pool_seq extends virtual_step_def_seq;
     endfunction : new
 
     virtual task body();
+        bathtub_pkg::pool_provider_interface context_seq;
+
         `step_parameter_get_args_begin()
         value = trim(`step_parameter_get_next_arg_as(string));
         var_name = trim(`step_parameter_get_next_arg_as(string));
-        pool = trim(`step_parameter_get_next_arg_as(string));
+        contxt = trim(`step_parameter_get_next_arg_as(string));
         var_type = trim(`step_parameter_get_next_arg_as(string));
         `step_parameter_get_args_end
 
-        case (pool)
-            "scenario" : begin
-                case (var_type)
-                    "integer" : get_current_scenario_sequence().get_int_pool().add(var_name, value.atoi());
-                    "string" : get_current_scenario_sequence().get_string_pool().add(var_name, value);
-                    default : `uvm_error("Unknown var_type", var_type)
-                endcase
-            end
-            "test" : begin
-                case (var_type)
-                    "integer" : get_current_test_sequence().get_int_pool().add(var_name, value.atoi());
-                    "string" : get_current_test_sequence().get_string_pool().add(var_name, value);
-                    default : `uvm_error("Unknown var_type", var_type)
-                endcase
-            end
-            default :`uvm_error("Unknown pool", pool)
+        context_seq = get_context_by_name(contxt);
+        check_valid_context : assert (context_seq != null) else return;
+
+        case (var_type)
+            "integer" : context_seq.get_int_pool().add(var_name, value.atoi());
+            "string" : context_seq.get_string_pool().add(var_name, value);
+            default : `uvm_error("Unknown var_type", var_type)
         endcase
     endtask : body
 endclass : store_value_in_pool_seq
@@ -111,7 +125,7 @@ class read_value_from_pool_seq extends virtual_step_def_seq;
     `When("I read item \"%s from the \"%s \"%s pool")
 
     string var_name;
-    string pool;
+    string contxt;
     string var_type;
 
     `uvm_object_utils(read_value_from_pool_seq)
@@ -120,53 +134,39 @@ class read_value_from_pool_seq extends virtual_step_def_seq;
     endfunction : new
 
     virtual task body();
+        bathtub_pkg::pool_provider_interface context_seq;
+
         `step_parameter_get_args_begin()
         var_name = trim(`step_parameter_get_next_arg_as(string));
-        pool = trim(`step_parameter_get_next_arg_as(string));
+        contxt = trim(`step_parameter_get_next_arg_as(string));
         var_type = trim(`step_parameter_get_next_arg_as(string));
         `step_parameter_get_args_end
 
-        case (pool)
-            "scenario" : begin
-                case (var_type)
-                    "integer" : begin
-                        int return_value;
+        context_seq = get_context_by_name(contxt);
+        check_valid_context : assert (context_seq != null) else return;
 
-                        if (!get_current_scenario_sequence().get_int_pool().exists(var_name)) begin
-                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
-                        end
-                        return_value = get_current_scenario_sequence().get_int_pool().get(var_name);
-                        get_current_scenario_sequence().get_int_pool().add(return_value_$var_name, return_value);
-                    end
-                    default : `uvm_error("Unknown var_type", var_type)
-                endcase
+        case (var_type)
+            "integer" : begin
+                int return_value;
+
+                if (!context_seq.get_int_pool().exists(var_name)) begin
+                    `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", contxt, var_type, var_name))
+                end
+                return_value = context_seq.get_int_pool().get(var_name);
+                // Return_value is always stored in the scenario pool.
+                get_current_scenario_sequence().get_int_pool().add(return_value_$var_name, return_value);
             end
-            "test" : begin
-                case (var_type)
-                    "integer" : begin
-                        int return_value;
+            "string" : begin
+                string return_value;
 
-                        if (!get_current_test_sequence().get_int_pool().exists(var_name)) begin
-                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
-                        end
-                        return_value = get_current_test_sequence().get_int_pool().get(var_name);
-                        // Return_value is always stored in the scenario pool.
-                        get_current_scenario_sequence().get_int_pool().add(return_value_$var_name, return_value);
-                    end
-                    "string" : begin
-                        string return_value;
-
-                        if (!get_current_test_sequence().get_string_pool().exists(var_name)) begin
-                            `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", pool, var_type, var_name))
-                        end
-                        return_value = get_current_test_sequence().get_string_pool().get(var_name);
-                        // Return_value is always stored in the scenario pool.
-                        get_current_scenario_sequence().get_string_pool().add(return_value_$var_name, return_value);
-                    end
-                    default : `uvm_error("Unknown var_type", var_type)
-                endcase
+                if (!context_seq.get_string_pool().exists(var_name)) begin
+                    `uvm_warning(`BATHTUB__GET_SCOPE_NAME(), $sformatf("%s %s pool item %s does not exist", contxt, var_type, var_name))
+                end
+                return_value = context_seq.get_string_pool().get(var_name);
+                // Return_value is always stored in the scenario pool.
+                get_current_scenario_sequence().get_string_pool().add(return_value_$var_name, return_value);
             end
-            default :`uvm_error("Unknown pool", pool)
+            default : `uvm_error("Unknown var_type", var_type)
         endcase
     endtask : body
 endclass : read_value_from_pool_seq

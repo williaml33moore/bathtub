@@ -35,6 +35,8 @@ classes_under_test = [
     "bathtub_pkg/plusarg_options.svh",
     "bathtub_pkg/pool_provider_interface.svh",
     "bathtub_pkg/pool_provider.svh",
+    "bathtub_pkg/rule_sequence_interface.svh",
+    "bathtub_pkg/rule_sequence.svh",
     "bathtub_pkg/scenario_sequence_interface.svh",
     "bathtub_pkg/scenario_sequence.svh",
     "bathtub_pkg/step_attributes_interface.svh",
