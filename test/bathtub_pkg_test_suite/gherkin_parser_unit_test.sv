@@ -971,6 +971,34 @@ module gherkin_parser_unit_test;
 
   `SVTEST_END
 
+  `SVTEST(Parse_a_scenario_outline_with_multiple_examples)
+    // ==================================================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::scenario_outline actual_scenario_outline;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "Scenario Outline: This is a scenario outline\n",
+      "* This is a <thing>\n",
+      "Examples: Fruit\n",
+      "| thing |\n",
+      "| apple |\n",
+      "| berry |\n",
+      "Examples: Animals\n",
+      "| thing |\n",
+      "| moose |\n",
+      "| hound |\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.examples.size(), 2)
+  `SVTEST_END
+
+
   `SVUNIT_TESTS_END
 
 endmodule
