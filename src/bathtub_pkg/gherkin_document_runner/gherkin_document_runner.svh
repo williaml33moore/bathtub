@@ -341,6 +341,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		current_feature_seq.configure(gherkin_document.feature, this);
 		current_feature_seq.start(current_feature_seq.get_sequencer());
+		current_feature_seq = null;
 	endtask : visit_gherkin_document
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
@@ -368,7 +369,10 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario", tags), UVM_MEDIUM, report_object)
 
 			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
-			current_scenario_seq.set_parent_sequence(current_feature_seq);
+			if (current_rule_seq != null)
+				current_scenario_seq.set_parent_sequence(current_rule_seq);
+			else
+				current_scenario_seq.set_parent_sequence(current_feature_seq);
 			current_scenario_seq.set_sequencer(sequencer);
 `ifdef UVM_VERSION_1_0
 `elsif UVM_VERSION_1_1
@@ -379,6 +383,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 			current_scenario_seq.configure(scenario, this, current_feature_seq);
 			current_scenario_seq.start(current_scenario_seq.get_sequencer());
+			current_scenario_seq = null;
 		end
 		else begin
 			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario", tags), UVM_MEDIUM, report_object)
@@ -611,6 +616,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		current_rule_seq.configure(rule, this);
 		current_rule_seq.start(current_rule_seq.get_sequencer());
+		current_rule_seq = null;
 
 		rule_tags.delete();
 		this.rule_background = null;

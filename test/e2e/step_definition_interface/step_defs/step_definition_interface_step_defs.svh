@@ -218,4 +218,48 @@ class check_return_value_seq extends virtual_step_def_seq;
     endtask : body
 endclass : check_return_value_seq
 
+
+// Then The sequence path to this step sequence should contain the correct hierarchy without a rule sequence
+class check_sequence_path_seq extends virtual_step_def_seq;
+    `Then("The sequence path to this step sequence should contain the correct hierarchy %s a rule sequence")
+
+    parameter string path_excerpt_with_rule = "current_feature_seq.current_rule_seq.current_scenario_seq.check_sequence_path_seq";
+    parameter string path_excerpt_without_rule = "current_feature_seq.current_scenario_seq.check_sequence_path_seq";
+
+    string with_or_without;
+
+    `uvm_object_utils(check_sequence_path_seq)
+    function new (string name="check_sequence_path_seq");
+        super.new(name);
+    endfunction : new
+
+    virtual task body();
+        string act_path;
+        string exp_path_excerpt;
+        bit match;
+
+        `step_parameter_get_args_begin()
+        with_or_without = `step_parameter_get_next_arg_as(string);
+        `step_parameter_get_args_end
+        
+        act_path = get_sequence_path();
+
+        case (with_or_without)
+            "with" : exp_path_excerpt = path_excerpt_with_rule;
+            "without" : exp_path_excerpt = path_excerpt_without_rule;
+
+            default : `uvm_error("Unknown with_or_without", with_or_without)
+        endcase
+
+        match = bathtub_pkg::bathtub_utils::re_match(exp_path_excerpt, act_path) == 0; // 0 means match
+
+        check_sequence_path : assert (match)
+            `uvm_info(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_path: %s, exp_path_excerpt: %s", act_path, exp_path_excerpt), UVM_HIGH)
+        else
+            `uvm_error(`BATHTUB__GET_SCOPE_NAME(), $sformatf("act_path: %s, exp_path_excerpt: %s", act_path, exp_path_excerpt))
+
+    endtask : body
+endclass : check_sequence_path_seq
+
+
 `endif // __STEP_DEFINITION_INTERFACE_STEP_DEFS_SVH

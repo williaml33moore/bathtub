@@ -1,6 +1,9 @@
 Feature: This is a feature
 
-    Rule: This is a rule
+    Scenario: A loose scenario outside any rule should not include a rule sequence
+        * The sequence path to this step sequence should contain the correct hierarchy without a rule sequence
+
+    Rule: This rule should result in a rule sequence
 
         Scenario: Store an integer in the scenario integer pool
             Given I store the value "42" in an item called "i" in the "scenario" "integer" pool
@@ -39,3 +42,49 @@ Feature: This is a feature
                 | rule     | string | ss   | BCD   |
                 | feature  | string | ss   | CDE   |
                 | test     | string | ss   | DEF   |
+
+    Rule: This other rule should result in a different rule sequence
+
+        Scenario: A scenario inside a rule should include a rule sequence
+            * The sequence path to this step sequence should contain the correct hierarchy with a rule sequence
+
+        Scenario Outline: Rule values should be uninitialized, not carried over
+            Given I store the value "<value>" in an item called "<name>" in the "<context>" "<type>" pool
+            When I read item "<name>" from the "<context>" "<type>" pool
+            Then the returned "<type>" value should be "<value>"
+
+            Examples: Integers
+                | context  | type    | name | value |
+                | rule     | integer | ii   | 0   |
+
+            Examples: Strings
+                # Values are empty strings
+                | context  | type   | name | value |
+                | rule     | string | ss   |    |
+
+        Scenario Outline: Values stored in this scenario should not carry over to the next
+            Given I store the value "<value>" in an item called "<name>" in the "<context>" "<type>" pool
+            When I read item "<name>" from the "<context>" "<type>" pool
+            Then the returned "<type>" value should be "<value>"
+
+            Examples: Integers
+                | context  | type    | name | value |
+                | scenario | integer | ii   | 99999 |
+
+            Examples: Strings
+                # Values are empty strings
+                | context  | type   | name | value |
+                | scenario | string | ss   | ALPHA |
+
+        Scenario Outline: Scenario values should be uninitialized, not carried over
+            When I read item "<name>" from the "<context>" "<type>" pool
+            Then the returned "<type>" value should be "<value>"
+
+            Examples: Integers
+                | context  | type    | name | value |
+                | scenario | integer | ii   | 0   |
+
+            Examples: Strings
+                # Values are empty strings
+                | context  | type   | name | value |
+                | scenario | string | ss   |    |
