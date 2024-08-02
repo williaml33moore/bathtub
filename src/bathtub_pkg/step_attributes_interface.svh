@@ -25,8 +25,14 @@ SOFTWARE.
 `ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_ATTRIBUTES_INTERFACE_SVH
 
+typedef interface class test_sequence_interface;
+`include "bathtub_pkg/test_sequence_interface.svh"
+
 typedef interface class feature_sequence_interface;
 `include "bathtub_pkg/feature_sequence_interface.svh"
+
+typedef interface class rule_sequence_interface;
+`include "bathtub_pkg/rule_sequence_interface.svh"
 
 typedef interface class scenario_sequence_interface;
 `include "bathtub_pkg/scenario_sequence_interface.svh"
@@ -51,8 +57,12 @@ interface class step_attributes_interface;
 	pure virtual function uvm_object_wrapper get_step_obj();
 	pure virtual function string get_step_obj_name();
 	
+	pure virtual function test_sequence_interface get_current_test_sequence();
+	pure virtual function void set_current_test_sequence(test_sequence_interface seq);
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
 	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+	pure virtual function rule_sequence_interface get_current_rule_sequence();
+	pure virtual function void set_current_rule_sequence(rule_sequence_interface seq);
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
 	pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
 

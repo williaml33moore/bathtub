@@ -55,9 +55,9 @@ task gherkin_parser::parse_rule(ref gherkin_pkg::rule rule);
 
 				rule_value.keyword = line_analysis_result.token_before_colon;
 				rule_value.rule_name = line_analysis_result.remainder_after_colon;
-				// while (floating_tags.size() > 0) begin
-				// 	rule_value.tags.push_back(floating_tags.pop_front());
-				// end
+				while (floating_tags.size() > 0) begin
+					rule_value.tags.push_back(floating_tags.pop_front());
+				end
 				get_next_line(line_obj);
 
 				while (status == OK) begin : rule_elements
