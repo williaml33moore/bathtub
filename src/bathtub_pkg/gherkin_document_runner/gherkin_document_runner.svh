@@ -31,11 +31,23 @@ SOFTWARE.
 import gherkin_pkg::gherkin_pkg_metadata;
 import uvm_pkg::*;
 
+typedef class test_sequence;
+`ifndef __TEST_SEQUENCE_SVH
+// Prevent `include recursion
+`include "bathtub_pkg/test_sequence.svh"
+`endif // __TEST_SEQUENCE_SVH
+
 typedef class feature_sequence;
 `ifndef __FEATURE_SEQUENCE_SVH
 // Prevent `include recursion
 `include "bathtub_pkg/feature_sequence.svh"
 `endif // __FEATURE_SEQUENCE_SVH
+
+typedef class rule_sequence;
+`ifndef __RULE_SEQUENCE_SVH
+// Prevent `include recursion
+`include "bathtub_pkg/rule_sequence.svh"
+`endif // __RULE_SEQUENCE_SVH
 
 typedef class scenario_sequence;
 `ifndef __SCENARIO_SEQUENCE_SVH
@@ -60,7 +72,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 	uvm_sequencer_base sequencer;
 	uvm_sequence_base parent_sequence;
+	test_sequence current_test_seq;
 	feature_sequence current_feature_seq;
+	rule_sequence current_rule_seq;
 	scenario_sequence current_scenario_seq;
 	int sequence_priority;
 	bit sequence_call_pre_post;
@@ -74,6 +88,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	string exclude_tags[$];
 	uvm_report_object report_object;
 	string feature_tags[$];
+	string rule_tags[$];
 	string scenario_outline_tags[$];
 
 	`uvm_object_utils_begin(gherkin_document_runner)
@@ -87,6 +102,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		super.new(name);
 
 		current_feature_seq = null;
+		current_rule_seq = null;
 		current_scenario_seq = null;
 		current_step_keyword = "Given";
 		feature_background = null;
@@ -108,11 +124,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
-`ifdef UVM_VERSION_1_0
 			int sequence_priority = 100,
-`else
-			int sequence_priority = -1,
-`endif
 			bit sequence_call_pre_post = 1,
 			uvm_phase starting_phase,
 			bit dry_run = 0,
@@ -122,8 +134,13 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			string exclude_tags[$] = '{},
 			uvm_report_object report_object = null
 		);
+		int success;
+
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
+		success = $cast(current_test_seq, parent_sequence);
+		check_test_sequence : assert (success) else
+			`uvm_fatal_context(get_name(), "parent_sequence is not a test_sequence", report_object)
 		this.sequence_priority = sequence_priority;
 		this.sequence_call_pre_post = sequence_call_pre_post;
 		this.starting_phase = starting_phase;
@@ -197,14 +214,17 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		obj = factory.create_object_by_type(step_seq_object_wrapper, get_full_name(), step_seq_object_wrapper.get_type_name());
 
-		success = $cast(seq, obj);
-		assert_step_object_is_sequence : assert (success) else begin
+		if ($cast(seq, obj)) begin
+			seq.set_parent_sequence(current_scenario_seq);
+			seq.set_priority(sequence_priority);
+		end
+		else begin
 			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
 		end
 
 		if ($cast(step_seq, obj)) begin
 			step_nurture step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.configure(step, step_seq, current_scenario_seq, current_feature_seq);
+			step_attributes.configure(step, step_seq, current_scenario_seq, current_rule_seq, current_feature_seq, current_test_seq);
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin
@@ -221,7 +241,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 `else
 			seq.set_starting_phase(starting_phase);
 `endif
-			seq.start(this.sequencer, this.parent_sequence, this.sequence_priority, this.sequence_call_pre_post);
+			seq.start(this.sequencer, seq.get_parent_sequence(), seq.get_priority(), this.sequence_call_pre_post);
 		end
 
 	endtask : start_step
@@ -321,6 +341,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		current_feature_seq.configure(gherkin_document.feature, this);
 		current_feature_seq.start(current_feature_seq.get_sequencer());
+		current_feature_seq = null;
 	endtask : visit_gherkin_document
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
@@ -334,6 +355,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		foreach (feature_tags[i]) begin
 			tags.push_back(feature_tags[i]);
 		end
+		foreach (rule_tags[i]) begin
+			tags.push_back(rule_tags[i]);
+		end
 		foreach (scenario.tags[i]) begin
 			tags.push_back(scenario.tags[i].tag_name); // All accumulated tags
 		end
@@ -345,7 +369,10 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				`uvm_info_context(get_name(), $sformatf("tags %p included; run scenario", tags), UVM_MEDIUM, report_object)
 
 			current_scenario_seq = scenario_sequence::type_id::create("current_scenario_seq");
-			current_scenario_seq.set_parent_sequence(current_feature_seq);
+			if (current_rule_seq != null)
+				current_scenario_seq.set_parent_sequence(current_rule_seq);
+			else
+				current_scenario_seq.set_parent_sequence(current_feature_seq);
 			current_scenario_seq.set_sequencer(sequencer);
 `ifdef UVM_VERSION_1_0
 `elsif UVM_VERSION_1_1
@@ -356,6 +383,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 			current_scenario_seq.configure(scenario, this, current_feature_seq);
 			current_scenario_seq.start(current_scenario_seq.get_sequencer());
+			current_scenario_seq = null;
 		end
 		else begin
 			`uvm_info_context(get_name(), $sformatf("tags %p excluded; skip scenario", tags), UVM_MEDIUM, report_object)
@@ -380,6 +408,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		tags.delete();
 		foreach (feature_tags[i]) begin
 			tags.push_back(feature_tags[i]);
+		end
+		foreach (rule_tags[i]) begin
+			tags.push_back(rule_tags[i]);
 		end
 		foreach (scenario_outline.tags[i]) begin
 			scenario_outline_tags.push_back(scenario_outline.tags[i].tag_name);
@@ -565,39 +596,29 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	endtask : visit_tag
 
 	virtual task visit_rule(gherkin_pkg::rule rule);
-		gherkin_pkg::background rule_background;
-		int start;
-		int stop;
-		gherkin_pkg::scenario_definition only_scenarios[$];
 
 		`uvm_info_context(get_name(), $sformatf("%s: %s", rule.keyword, rule.rule_name), UVM_MEDIUM, report_object)
 
-		// rule_tags.delete();
-		// foreach (rule.tags[i]) begin
-		// 	rule_tags.push_back(rule.tags[i].tag_name);
-		// end
+		rule_tags.delete();
+		foreach (rule.tags[i]) begin
+			rule_tags.push_back(rule.tags[i].tag_name);
+		end
 		
-		// Separate background from scenario definitions
-		only_scenarios.delete();
-		foreach (rule.scenario_definitions[i]) begin
-			if ($cast(rule_background, rule.scenario_definitions[i])) begin
-				assert_only_one_background : assert (this.rule_background == null) else
-					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", report_object)
-					`uvm_message_add_string(this.rule_background.scenario_definition_name, "Existing background")
-					`uvm_message_add_string(rule_background.scenario_definition_name, "Conflicting background")
-					`uvm_fatal_context_end
-				this.rule_background = rule_background;
-			end
-			else begin
-				only_scenarios.push_back(rule.scenario_definitions[i]);
-			end
-		end
-			
-		foreach(only_scenarios[i]) begin
-			only_scenarios[i].accept(this);
-		end
+		current_rule_seq = rule_sequence::type_id::create("current_rule_seq");
+		current_rule_seq.set_parent_sequence(current_feature_seq);
+		current_rule_seq.set_sequencer(sequencer);
+`ifdef UVM_VERSION_1_0
+`elsif UVM_VERSION_1_1
+`else
+		current_rule_seq.set_starting_phase(starting_phase);
+`endif
+		current_rule_seq.set_priority(sequence_priority);
 
-		// rule_tags.delete();
+		current_rule_seq.configure(rule, this);
+		current_rule_seq.start(current_rule_seq.get_sequencer());
+		current_rule_seq = null;
+
+		rule_tags.delete();
 		this.rule_background = null;
 	endtask : visit_rule
 

@@ -70,45 +70,70 @@ task gherkin_parser::parse_examples(ref gherkin_pkg::examples examples);
 
 					analyze_line(line_obj.text, line_analysis_result);
 
-					case (line_analysis_result.secondary_keyword)
+					case (line_analysis_result.token_before_colon)
 
-						"#" : begin : construct_comment
-							gherkin_pkg::comment comment;
-
-							parse_comment(comment);
-							`pop_from_parser_stack(comment)
-							if (status == OK) begin
-								; // Discard comment
-							end
+						"Rule",
+						"Example",
+						"Scenario",
+						"Background",
+						"Scenario Outline",
+						"Scenario Template",
+						"Examples",
+						"Scenarios" : begin : terminate_examples
+							// These primary keywords terminate the examples.
+							break;
 						end
 
-						"|" : begin : construct_examples_row
-							gherkin_pkg::table_row row;
+						"Feature": begin
+							status = ERROR;
+							`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), {"Unexpected keyword: ", line_analysis_result.token_before_colon}, report_object)
+							break;
+						end
 
-							parse_table_row(row);
-							`pop_from_parser_stack(row)
-							if (status == OK) begin
-								if (num_headers == 0) begin
-									examples_value.header = row;
-									num_headers++;
+						default : begin
+
+							case (line_analysis_result.secondary_keyword)
+
+								"#" : begin : construct_comment
+									gherkin_pkg::comment comment;
+
+									parse_comment(comment);
+									`pop_from_parser_stack(comment)
+									if (status == OK) begin
+										; // Discard comment
+									end
 								end
-								else begin
-									examples_value.rows.push_back(row);
+
+								"|" : begin : construct_examples_row
+									gherkin_pkg::table_row row;
+
+									parse_table_row(row);
+									`pop_from_parser_stack(row)
+									if (status == OK) begin
+										if (num_headers == 0) begin
+											examples_value.header = row;
+											num_headers++;
+										end
+										else begin
+											examples_value.rows.push_back(row);
+										end
+									end
 								end
-							end
+
+								default: begin
+									if (can_receive_description) begin
+										string description;
+										parse_examples_description(description, line_obj);
+										examples_value.description = description;
+										can_receive_description = 0;
+									end
+									else begin
+										break;
+									end
+								end
+							endcase
 						end
 
-						default: begin
-							if (can_receive_description) begin
-								string description;
-								parse_examples_description(description, line_obj);
-								examples_value.description = description;
-								can_receive_description = 0;
-							end
-							else begin
-								break;
-							end
-						end
 					endcase
 
 				end

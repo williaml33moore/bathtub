@@ -311,6 +311,58 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[2].tag_name, "@charlie")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[3].tag_name, "@delta")
   `SVTEST_END
+  
+  `SVTEST(Parse_a_tag_on_a_rule)
+    // ========================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+    gherkin_pkg::tag actual_tag;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "@alpha\n",
+      "Rule: This is a rule\n",
+      "Scenario: This is a scenario\n",
+      "* This is a step\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 1)
+    actual_tag = actual_rule.tags[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_tag.tag_name, "@alpha")
+  `SVTEST_END
+
+  `SVTEST(Parse_multiple_tags_on_a_rule)
+    // ================================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::rule actual_rule;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "@alpha @bravo   @charlie\n",
+      "   @delta\n",
+      "Rule: This is a rule\n",
+      "Scenario: This is a scenario\n",
+      "* This is a step\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
+    actual_rule = actual_feature.rules[0];
+    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[0].tag_name, "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[1].tag_name, "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[2].tag_name, "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[3].tag_name, "@delta")
+  `SVTEST_END
 
   `SVTEST(Parse_a_tag_on_a_scenario)
     // =============================
@@ -918,6 +970,49 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_rule.description, "This is a description\nThis is more description\n")
 
   `SVTEST_END
+
+  `SVTEST(Parse_a_scenario_outline_with_multiple_examples)
+    // ==================================================
+    string feature;
+    gherkin_doc_bundle actual_doc_bundle;
+    gherkin_pkg::feature actual_feature;
+    gherkin_pkg::scenario_outline actual_scenario_outline;
+    gherkin_pkg::examples actual_examples;
+  
+    feature = {
+      "Feature: This is a feature\n",
+      "Scenario Outline: This is a scenario outline\n",
+      "* This is a <thing>\n",
+      "Examples: Fruit\n",
+      "| thing |\n",
+      "| apple |\n",
+      "| berry |\n",
+      "Examples: Animals\n",
+      "| thing |\n",
+      "| moose |\n",
+      "| hound |\n"
+    };
+
+    parser.parse_feature_string(feature, actual_doc_bundle);
+    actual_feature = actual_doc_bundle.document.feature;
+    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.examples.size(), 2)
+
+    actual_examples = actual_scenario_outline.examples[0];
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.examples_name, "Fruit")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.header.cells[0].value, "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].value, "apple")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].value, "berry")
+
+    actual_examples = actual_scenario_outline.examples[1];
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.examples_name, "Animals")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.header.cells[0].value, "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].value, "moose")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].value, "hound")
+  `SVTEST_END
+
 
   `SVUNIT_TESTS_END
 

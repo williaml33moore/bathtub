@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __FEATURE_SEQUENCE_SVH
-`define __FEATURE_SEQUENCE_SVH
+`ifndef __RULE_SEQUENCE_SVH
+`define __RULE_SEQUENCE_SVH
 
-`include "bathtub_pkg/feature_sequence_interface.svh"
+`include "bathtub_pkg/rule_sequence_interface.svh"
 
 typedef class context_sequence;
 `include "bathtub_pkg/context_sequence.svh"
@@ -36,29 +36,48 @@ typedef class gherkin_document_runner;
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 `endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
-class feature_sequence extends context_sequence implements feature_sequence_interface;
-	gherkin_pkg::feature feature;
+class rule_sequence extends context_sequence implements rule_sequence_interface;
+	gherkin_pkg::rule rule;
 	gherkin_document_runner runner;
 
-	function new(string name="feature_sequence");
+	function new(string name="rule_sequence");
 		super.new(name);
-		feature = null;
+		rule = null;
 		runner = null;
 	endfunction : new
 
-	`uvm_object_utils(feature_sequence)
+	`uvm_object_utils(rule_sequence)
 
-	virtual function void configure(gherkin_pkg::feature feature, gherkin_document_runner runner);
-		this.feature = feature;
+	virtual function void configure(gherkin_pkg::rule rule, gherkin_document_runner runner);
+		this.rule = rule;
 		this.runner = runner;
 	endfunction : configure
 
 	virtual task body();
-		if (feature != null) begin
-			feature.accept(runner); // runner.visit_feature(feature)
+		gherkin_pkg::background rule_background;
+		gherkin_pkg::scenario_definition only_scenarios[$];
+		
+		// Separate background from scenario definitions
+		only_scenarios.delete();
+		foreach (rule.scenario_definitions[i]) begin
+			if ($cast(rule_background, rule.scenario_definitions[i])) begin
+				assert_only_one_background : assert (runner.rule_background == null) else
+					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", runner.report_object)
+					`uvm_message_add_string(runner.rule_background.scenario_definition_name, "Existing background")
+					`uvm_message_add_string(rule_background.scenario_definition_name, "Conflicting background")
+					`uvm_fatal_context_end
+				runner.rule_background = rule_background;
+			end
+			else begin
+				only_scenarios.push_back(rule.scenario_definitions[i]);
+			end
+		end
+			
+		foreach(only_scenarios[i]) begin
+			only_scenarios[i].accept(runner);
 		end
 	endtask : body
 	
-endclass : feature_sequence
+endclass : rule_sequence
 
-`endif // __FEATURE_SEQUENCE_SVH
+`endif // __RULE_SEQUENCE_SVH
