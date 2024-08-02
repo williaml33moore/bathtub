@@ -99,4 +99,18 @@ These easy-to-remember bookmarkable URLs all redirect you to the home page:
 **U**nderstand \
 **B**ehavior
 
-
+## Directory Contents
+| Name | Description |
+| --- | --- |
+| README.md | This file. |
+| LICENSE |  |
+| README.md |  |
+| bathtub_vip.csh |  |
+| bathtub_vip.sh |  |
+| docs/ |  |
+| examples/ |  |
+| pytest.ini |  |
+| src/ |  |
+| test/ |  |
+| vip-spec.sv |  |
+| vip_setup.sv |  |
