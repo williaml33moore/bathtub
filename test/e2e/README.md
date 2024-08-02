@@ -3,6 +3,6 @@
 | Name | Description |
 | --- | --- |
 | README.md | This file. |
-| gherkin_parser |  |
-| plusargs |  |
-| step_definition_interface |  |
+| gherkin_parser/ |  |
+| plusargs/ |  |
+| step_definition_interface/ |  |
