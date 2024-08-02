@@ -1,5 +1,7 @@
 # src
 Contains the source code for Bathtub.
+Bathtub is delivered as source code.
+This is the code the user must compile and include in their UVM testbench to use Bathtub.
 
 ## Contents
 | Name | Description |
