@@ -41,3 +41,19 @@ def test_basic_e2e(tmp_path, simulator, testname, features):
         '+bathtub_features=' + '"' + " ".join([str(test_path / 'features' /  feature) for feature in features]) + '"',
         ])
     assert simulator.run(tmp_path).passed()
+
+@pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature'])])
+def test_basic_snippet_e2e(tmp_path, simulator, testname, features):
+    """Basic end-to-end test"""
+
+    simulator.uvm().extend_args([
+        '-f ' + str(test_path / 'basic.f'),
+        '-incdir $BATHTUB_VIP_DIR/test/e2e/basic',
+        '-incdir $BATHTUB_VIP_DIR/test/e2e/basic/tests',
+        '-incdir $BATHTUB_VIP_DIR/test/e2e/basic/step_defs',
+        '-incdir $BATHTUB_VIP_DIR/test/resources/environments',
+        '$BATHTUB_VIP_DIR/test/resources/testbenches/basic_tb_top.sv',
+        '+UVM_TESTNAME=' + testname,
+        '+bathtub_features=' + '"' + " ".join([str(test_path / 'features' /  feature) for feature in features]) + '"',
+        ])
+    assert simulator.run(tmp_path).passed()
