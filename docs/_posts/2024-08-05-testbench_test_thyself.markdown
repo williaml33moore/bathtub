@@ -93,3 +93,4 @@ Perhaps the "I" in the scenario is Bathtub itself, exploring its emerging self-a
 I behave, therefore I am.
 
 Strange loop, indeed.
+ 
