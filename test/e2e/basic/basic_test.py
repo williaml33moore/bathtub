@@ -30,8 +30,6 @@ test_path = Path(os.path.dirname(__file__))
 def test_basic_e2e(tmp_path, simulator, testname, features):
     """Basic end-to-end test"""
 
-    
-
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'basic.f'),
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic',
