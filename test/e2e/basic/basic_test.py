@@ -44,7 +44,8 @@ def test_basic_e2e(tmp_path, simulator, testname, features):
         ])
     assert simulator.run(tmp_path).passed()
 
-@pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature'])])
+@pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature']),
+                                                ('basic_test', ['undefined_steps.feature'])])
 def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
     """Test undefined steps produce a working snippet"""
     simulator = create_simulator()

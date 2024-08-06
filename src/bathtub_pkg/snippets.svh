@@ -28,6 +28,11 @@ SOFTWARE.
 import uvm_pkg::*;
 
 virtual class snippets extends uvm_object;
+    static local int unsigned snippet_counter = 1;
+
+    static function int unsigned get_next_snippet_number();
+        return snippet_counter++;
+    endfunction : get_next_snippet_number
 
     static function string create_snippet(gherkin_pkg::step step);
         string class_name;
@@ -38,7 +43,8 @@ virtual class snippets extends uvm_object;
             default : keyword_macro = "`Given";
         endcase
 
-        class_name = "step_definition_seq";
+        class_name = $sformatf("step_definition_%0d_seq", get_next_snippet_number());
+        
         create_snippet = "";
         create_snippet = {create_snippet, "class ", class_name, " extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;", "\n"};
         create_snippet = {create_snippet, "    ", keyword_macro, "(\"", step.text, "\")", "\n"};
