@@ -32,7 +32,7 @@ import uvm_pkg::*;
 import bathtub_pkg::bathtub_pkg_metadata;
 
 /*
- * Virttual sequence base class sets the sequence item type.
+ * Virtual sequence base class sets the sequence item type.
  */
 class base_vseq extends uvm_sequence#();
 

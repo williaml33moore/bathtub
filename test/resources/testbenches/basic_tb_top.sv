@@ -44,7 +44,8 @@ module basic_tb_top();
   // Bathtub Step Definition UVM Sequences
 
 `ifdef BASIC_STEP_DEF_SEQS
-`include `BASIC_STEP_DEF_SEQS
+`define qq(f) `"f`"
+`include `qq(`BASIC_STEP_DEF_SEQS)
 `else
 `include "basic_step_def_seqs.svh"
 `endif // BASIC_STEP_DEF_SEQS

@@ -39,6 +39,7 @@ classes_under_test = [
     "bathtub_pkg/rule_sequence.svh",
     "bathtub_pkg/scenario_sequence_interface.svh",
     "bathtub_pkg/scenario_sequence.svh",
+    "bathtub_pkg/snippets.svh",
     "bathtub_pkg/step_attributes_interface.svh",
     "bathtub_pkg/step_definition_interface.svh",
     "bathtub_pkg/step_definition_seq.svh",

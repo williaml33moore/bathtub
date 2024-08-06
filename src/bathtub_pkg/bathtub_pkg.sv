@@ -41,6 +41,7 @@ package bathtub_pkg;
 	typedef class line_value;
 	typedef class pool_provider;
 	typedef class scenario_sequence;
+	typedef class snippets;
 	typedef class step_definition_seq;
 	typedef class step_nature;
 	typedef class step_nurture;

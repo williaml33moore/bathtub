@@ -28,10 +28,14 @@ import os
 class Simulator:
     """Abtraction of SystemVerilog Simulators"""
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.args = []
         self.returncode = -1
         self.uvm_flag = False
         self.uvm_home = None
+        return self
     
     def append_arg(self, arg):
         """Append a single argument to simulator command-line arguments."""

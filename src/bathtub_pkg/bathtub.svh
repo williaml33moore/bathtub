@@ -51,6 +51,9 @@ typedef class test_sequence;
 `include "bathtub_pkg/test_sequence.svh"
 `endif // __TEST_SEQUENCE_SVH
 
+typedef class snippets;
+`include "bathtub_pkg/snippets.svh"
+
 `include "bathtub_macros.sv"
 
 class bathtub extends uvm_report_object;
@@ -70,6 +73,7 @@ class bathtub extends uvm_report_object;
 	string include_tags[$];
 	string exclude_tags[$];
 	test_sequence current_test_seq;
+	gherkin_pkg::step undefined_steps[$];
 	
 	static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -96,6 +100,7 @@ class bathtub extends uvm_report_object;
 		exclude_tags.delete();
 		report_object = null;
 		current_test_seq = null;
+		undefined_steps.delete();
 	endfunction : new
 
 
@@ -140,12 +145,45 @@ class bathtub extends uvm_report_object;
 
 		current_test_seq.configure(this, phase);
 		current_test_seq.start(current_test_seq.get_sequencer());
-			
+
+		if (undefined_steps.size() > 0) write_snippets();
+
 `ifdef BATHTUB_VERBOSITY_TEST
 		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
 `endif // BATHTUB_VERBOSITY_TEST
 
 	endtask : run_test
+
+
+	virtual function void write_snippets();
+        string file_name;
+        bit[31:0] fd;
+
+        file_name = "bathtub_snippets.svh";
+        
+        fd = $fopen(file_name, "w");
+        if (fd == 0)
+            $fatal(0, "Could not open file '%s' for writing.", file_name);
+
+		`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), "", UVM_NONE, this)
+		$display("You can use the following snippets to create step definitions for undefined steps.");
+		$display("They have been saved in file `%s`.", file_name);
+		$display("```");
+		$display("`include \"uvm_macros.svh\"");
+		$display("`include \"bathtub_macros.sv\"");
+		$fdisplay(fd, "`include \"uvm_macros.svh\"\n");
+		$fdisplay(fd, "`include \"bathtub_macros.sv\"\n");
+		foreach (undefined_steps[i]) begin
+			string snippet;
+
+			snippet = snippets::create_snippet(undefined_steps[i]);
+            $display(snippet);
+            $fdisplay(fd, snippet);
+		end
+		$display("```");
+
+        $fclose(fd);
+	endfunction : write_snippets
 
 
 	function plusarg_options get_plusarg_opts();
