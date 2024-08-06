@@ -24,6 +24,7 @@ import pytest
 import os.path
 from pathlib import Path
 import subprocess
+import shutil
 
 test_path = Path(os.path.dirname(__file__))
 
@@ -60,17 +61,24 @@ def test_basic_snippet_e2e(tmp_path, simulator, testname, features):
     assert not simulator.run(tmp_path).passed() # Expect failure
 
     # Check log file for expected error message
-    error_string = '\\[assert_step_resource_is_not_null\\]'
+    error_string = '\\UVM_ERROR.*[assert_step_resource_is_not_null\\]'
     run_cmd = "grep {} {}".format(error_string, simulator.log)
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Expected error string '{}' not found in log file".format(error_string)
 
+    # Save off log file and snippets file
+    shutil.copyfile(tmp_path / simulator.log, tmp_path / 'first_run.log')
+    new_snippets_filename = 'new_snippets.svh'
+    shutil.copyfile(tmp_path / 'bathtub_snippets.svh', tmp_path / new_snippets_filename)
+
     # Append new snippets file to step def file
-    new_step_defs_filename = 'new_step_defs.svh'
+    new_step_defs_filename = 'new_step_def_seqs.svh'
     new_step_defs_path = Path(tmp_path / new_step_defs_filename)
     if new_step_defs_path.exists():
         new_step_defs_path.unlink()
-    run_cmd = "cat " + str(test_path / 'basic_step_def_seqs.svh') + ' ' + str(tmp_path / 'bathtub_snippets.svh') + ' > ' + str(new_step_defs_path)
+    append_str = '`include "' + new_snippets_filename + '"'
+    sed_cmd = "$a" + append_str
+    run_cmd = "sed -e '" + sed_cmd + "' " + str(test_path / 'basic_step_def_seqs.svh') + " > " + str(new_step_defs_path)
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
     
@@ -86,6 +94,13 @@ def test_basic_snippet_e2e(tmp_path, simulator, testname, features):
         '+UVM_TESTNAME=' + testname,
         '+bathtub_features=' + '"' + " ".join([str(test_path / 'features' /  feature) for feature in features]) + '"',
         '+define+BASIC_STEP_DEF_SEQS=' + str(new_step_defs_path) + '', # New step defs
+        '+uvm_set_severity="uvm_test_top.env.seqr,PENDING,UVM_ERROR,UVM_WARNING"', # Demote PENDING error to warning
         ])
     assert simulator.run(tmp_path).passed() # Expect passing
+
+    # Check log file for expected warning message
+    warning_string = '\\UVM_WARNING.*[PENDING\\]'
+    run_cmd = "grep {} {}".format(warning_string, simulator.log)
+    cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+    assert cp.returncode==0, "Expected warning string '{}' not found in log file".format(warning_string)
 

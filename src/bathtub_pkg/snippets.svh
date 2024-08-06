@@ -40,23 +40,18 @@ virtual class snippets extends uvm_object;
 
         class_name = "step_definition_seq";
         create_snippet = "";
-        create_snippet = {create_snippet, "// ", step.keyword, " ", step.text, "\n"};
         create_snippet = {create_snippet, "class ", class_name, " extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;", "\n"};
         create_snippet = {create_snippet, "    ", keyword_macro, "(\"", step.text, "\")", "\n"};
-        create_snippet = {create_snippet, "\n"};
         create_snippet = {create_snippet, "    `uvm_object_utils(", class_name, ")", "\n"};
         create_snippet = {create_snippet, "    function new (string name=\"", class_name, "\");", "\n"};
         create_snippet = {create_snippet, "        super.new(name);", "\n"};
         create_snippet = {create_snippet, "    endfunction : new", "\n"};
-        create_snippet = {create_snippet, "\n"};
         create_snippet = {create_snippet, "    virtual task body();", "\n"};
-        create_snippet = {create_snippet, "\n"};
         create_snippet = {create_snippet, "        `step_parameter_get_args_begin()", "\n"};
-        create_snippet = {create_snippet, "        // Extract parameters from step string", "\n"};
-        create_snippet = {create_snippet, "        // e.g., my_arg = `step_parameter_get_next_arg_as(int);", "\n"};
+        create_snippet = {create_snippet, "        // Extract parameters from the step string, e.g.:", "\n"};
+        create_snippet = {create_snippet, "        // my_arg = `step_parameter_get_next_arg_as(int);", "\n"};
         create_snippet = {create_snippet, "        `step_parameter_get_args_end", "\n"};
-        create_snippet = {create_snippet, "\n"};
-        create_snippet = {create_snippet, "        // Write code that performs this step's actions", "\n"};
+        create_snippet = {create_snippet, "        `uvm_error(\"PENDING\", \"** Write code that performs this step's actions here **\")", "\n"};
         create_snippet = {create_snippet, "    endtask : body", "\n"};
         create_snippet = {create_snippet, "endclass : ", class_name, "\n"};
     endfunction : create_snippet

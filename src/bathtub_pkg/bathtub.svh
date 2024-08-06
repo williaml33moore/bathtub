@@ -146,7 +146,7 @@ class bathtub extends uvm_report_object;
 		current_test_seq.configure(this, phase);
 		current_test_seq.start(current_test_seq.get_sequencer());
 
-		if (undefined_steps.size() > 0) write_snippets();
+		write_snippets();
 
 `ifdef BATHTUB_VERBOSITY_TEST
 		`BATHTUB___TEST_VERBOSITY("bathtub_verbosity_test")
@@ -165,13 +165,19 @@ class bathtub extends uvm_report_object;
         if (fd == 0)
             $fatal(0, "Could not open file '%s' for writing.", file_name);
 
+		if (undefined_steps.size() == 0) begin
+			$fclose(fd);
+			return;
+		end
+
 		`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(), "", UVM_NONE, this)
 		$display("You can use the following snippets to create step definitions for undefined steps.");
 		$display("They have been saved in file `%s`.", file_name);
 		$display("```");
+		$fdisplay(fd, "// You can use the following snippets to create step definitions for undefined steps.\n");
 		$display("`include \"uvm_macros.svh\"");
+		$fdisplay(fd, "`include \"uvm_macros.svh\"");
 		$display("`include \"bathtub_macros.sv\"");
-		$fdisplay(fd, "`include \"uvm_macros.svh\"\n");
 		$fdisplay(fd, "`include \"bathtub_macros.sv\"\n");
 		foreach (undefined_steps[i]) begin
 			string snippet;
