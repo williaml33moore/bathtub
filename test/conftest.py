@@ -183,6 +183,15 @@ def simulator(request):
     """Return an instance of the classes specified by params."""
     return request.param()
 
+@pytest.fixture(params=[Xcelium, Questa])
+def create_simulator(request):
+    """Return a factory that instantiates the classes specified by params."""
+    # Pytest "factory as fixture" pattern.
+    # Closure.
+    def _create_simulator():
+        return request.param()
+    return _create_simulator
+
 @pytest.fixture
 def svunit():
     """Return an SVUnit instance."""

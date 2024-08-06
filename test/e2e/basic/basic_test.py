@@ -45,9 +45,9 @@ def test_basic_e2e(tmp_path, simulator, testname, features):
     assert simulator.run(tmp_path).passed()
 
 @pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature'])])
-def test_basic_snippet_e2e(tmp_path, simulator, testname, features):
+def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
     """Test undefined steps produce a working snippet"""
-
+    simulator = create_simulator()
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'basic.f'),
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic',
@@ -84,7 +84,8 @@ def test_basic_snippet_e2e(tmp_path, simulator, testname, features):
     
     # Run test again with new snippet
 
-    simulator.reset().uvm().extend_args([
+    simulator = create_simulator()
+    simulator.uvm().extend_args([
         '-f ' + str(test_path / 'basic.f'),
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic',
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic/tests',
