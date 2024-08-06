@@ -28,10 +28,14 @@ import os
 class Simulator:
     """Abtraction of SystemVerilog Simulators"""
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.args = []
         self.returncode = -1
         self.uvm_flag = False
         self.uvm_home = None
+        return self
     
     def append_arg(self, arg):
         """Append a single argument to simulator command-line arguments."""
@@ -178,6 +182,15 @@ class SVUnit:
 def simulator(request):
     """Return an instance of the classes specified by params."""
     return request.param()
+
+@pytest.fixture(params=[Xcelium, Questa])
+def create_simulator(request):
+    """Return a factory that instantiates the classes specified by params."""
+    # Pytest "factory as fixture" pattern.
+    # Closure.
+    def _create_simulator():
+        return request.param()
+    return _create_simulator
 
 @pytest.fixture
 def svunit():

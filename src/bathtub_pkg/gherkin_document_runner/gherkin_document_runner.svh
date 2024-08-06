@@ -90,6 +90,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	string feature_tags[$];
 	string rule_tags[$];
 	string scenario_outline_tags[$];
+	gherkin_pkg::step undefined_steps[$];
 
 	`uvm_object_utils_begin(gherkin_document_runner)
 		`uvm_field_object(document, UVM_ALL_ON)
@@ -188,7 +189,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			search_keyword = current_step_keyword;
 		end
 		else begin
-			`uvm_fatal_context(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword), report_object)
+			`uvm_error_context(get_name(), $sformatf("Illegal step keyword: '%s'", step.keyword), report_object)
+			return;
 		end
 
 		`uvm_info_context_begin(get_name(), "uvm_resource_db search parameters", UVM_HIGH, report_object)
@@ -202,7 +204,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			if (report_object.get_report_verbosity_level() >= UVM_HIGH) begin
 				uvm_resource_db#(uvm_object_wrapper)::dump();
 			end
-			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text), report_object)
+			`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("No match for this step found in `uvm_resource_db`:\n> %s %s", search_keyword, step.text), report_object)
+			undefined_steps.push_back(step);
+			return;
 		end
 
 		// Success. Update current keyword.
@@ -219,7 +223,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			seq.set_priority(sequence_priority);
 		end
 		else begin
-			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
+			`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a sequence."), report_object)
+			undefined_steps.push_back(step);
+			return;
 		end
 
 		if ($cast(step_seq, obj)) begin
@@ -228,7 +234,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin
-			`uvm_fatal_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
+			`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
+			undefined_steps.push_back(step);
+			return;
 		end
 
 		`uvm_info_context(get_name(), {"Executing sequence ", seq.get_name(),
@@ -245,6 +253,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		end
 
 	endtask : start_step
+
+	virtual function void get_undefined_steps(ref gherkin_pkg::step steps[$]);
+		steps.delete();
+		foreach (undefined_steps[i]) steps.push_back(undefined_steps[i]);
+	endfunction : get_undefined_steps
 
 	virtual task visit_background(gherkin_pkg::background background);
 
