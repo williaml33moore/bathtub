@@ -66,7 +66,3 @@ class Simulator:
     def name(self):
         """Return the simulator class' name."""
         return self.__class__.__name__
-
-def simulator_from_name(name):
-    if name in ['Xcelium', 'Questa']:
-        return eval(name + '()')

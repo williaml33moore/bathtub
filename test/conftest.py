@@ -37,12 +37,22 @@ def init():
 
 init()
 
-@pytest.fixture(params=[Xcelium, Questa])
+def legal_simulators():
+    """List legal simulators."""
+    return [Xcelium, Questa]
+
+def list_of_simulators():
+    """List legal simulators listed in the config file."""
+    available_simulator_names = [s['name'] for s in test_config['simulators']]
+    result = [s for s in legal_simulators() if s.__name__ in available_simulator_names]
+    return result
+
+@pytest.fixture(params=list_of_simulators())
 def simulator(request):
     """Return an instance of the classes specified by params."""
     return request.param()
 
-@pytest.fixture(params=[Xcelium, Questa])
+@pytest.fixture(params=list_of_simulators())
 def create_simulator(request):
     """Return a factory that instantiates the classes specified by params."""
     # Pytest "factory as fixture" pattern.
@@ -57,7 +67,7 @@ def svunit():
     return SVUnit()
 
 def simulator_from_name(name):
-    if name in ['Xcelium', 'Questa']:
+    if name in [s.__name__ for s in list_of_simulators()]:
         return eval(name + '()')
 
 def uvm_versions_from_config():

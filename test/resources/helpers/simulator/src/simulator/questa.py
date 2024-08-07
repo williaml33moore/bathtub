@@ -41,7 +41,3 @@ class Questa(Simulator):
         run_cmd = "perl $BATHTUB_VIP_DIR/test/scripts/qrun_result.pl"
         self.returncode = subprocess.run(run_cmd, shell=True, cwd=cwd).returncode
         return self
-
-def simulator_from_name(name):
-    if name in ['Xcelium', 'Questa']:
-        return eval(name + '()')
