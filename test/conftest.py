@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
 import pytest
 import yaml
 import os
@@ -28,6 +27,15 @@ from simulator.xcelium import Xcelium
 from simulator.questa import Questa
 from svunit.svunit import SVUnit
 
+test_config = None # Global config object
+
+def init():
+    global test_config
+    config_file_name = os.getenv('BATHTUB_TEST_CFG', 'bathtub_test_cfg.yaml')
+    config_file = open(config_file_name, 'r')
+    test_config = yaml.safe_load(config_file)
+
+init()
 
 @pytest.fixture(params=[Xcelium, Questa])
 def simulator(request):
@@ -53,9 +61,6 @@ def simulator_from_name(name):
         return eval(name + '()')
 
 def uvm_versions_from_config():
-    config_file_name = os.getenv('BATHTUB_TEST_CFG', 'bathtub_test_cfg.yaml')
-    config_file = open(config_file_name, 'r')
-    test_config = yaml.safe_load(config_file)
     for simulator in test_config['simulators']:
         for uvm_version in simulator['uvm_versions']:
             yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': True}
