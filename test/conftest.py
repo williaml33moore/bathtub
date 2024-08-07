@@ -24,84 +24,8 @@ import subprocess
 import pytest
 import yaml
 import os
-
-class Simulator:
-    """Abtraction of SystemVerilog Simulators"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.args = []
-        self.returncode = -1
-        self.uvm_flag = False
-        self.uvm_home = None
-        return self
-    
-    def append_arg(self, arg):
-        """Append a single argument to simulator command-line arguments."""
-        self.args.append(arg)
-        return self
-    
-    def extend_args(self, args):
-        """Extend simulator command-line arguments with a list of new arguments."""
-        self.args.extend(args)
-        return self
-    
-    def uvm(self, uvm_home=None, is_builtin=True):
-        """Enable UVM with the given UVM installation."""
-        self.uvm_flag = True
-        self.append_arg('-uvm')
-        if uvm_home is not None:
-            self.append_arg('-uvmhome ' + uvm_home)
-        return self
-
-    def run(self, cwd='.'):
-        """Run the simulator and store the process' return code (0=success)."""
-        assert 'binary' in dir(self), "Simulator '" + self.name() + "' has no attribute 'binary'; use a concrete Simulator instead."
-        run_cmd = " ".join([self.binary] + self.args)
-        self.returncode = subprocess.run(run_cmd, shell=True, cwd=cwd).returncode
-        return self
-    
-    def passed(self):
-        """Return True if the simulator's return code is 0 (success), False otherwise."""
-        return self.returncode == 0
-    
-    def name(self):
-        """Return the simulator class' name."""
-        return self.__class__.__name__
-
-class Xcelium(Simulator):
-    """Abstraction of Xcelium simulator"""
-    def __init__(self):
-        super().__init__()
-        self.binary = 'xrun'
-        self.log = 'xrun.log'
-    
-    def uvm(self, uvm_home=None, is_builtin=True):
-        super().uvm(uvm_home)
-        # Xcelium requires additional arg when not using built-in UVM installation.
-        if not is_builtin:
-            self.append_arg('-uvmnocdnsextra')
-        return self
-
-class Questa(Simulator):
-    """Abstraction of Questa simulator"""
-    def __init__(self):
-        super().__init__()
-        self.binary = 'qrun'
-        self.log = 'qrun.log'
-
-    def run(self, cwd='.'):
-        """Run the simulator then do additional result checks."""
-        super().run(cwd)
-        if self.returncode != 0:
-            # Simulator returned nonzero, indicating a problem
-            return self
-        
-        # Simulator returned, so do additional log checks
-        run_cmd = "perl $BATHTUB_VIP_DIR/test/scripts/qrun_result.pl"
-        self.returncode = subprocess.run(run_cmd, shell=True, cwd=cwd).returncode
-        return self
+from simulator.xcelium import Xcelium
+from simulator.questa import Questa
 
 class SVUnit:
     """Abstraction of runSVUnit script"""
