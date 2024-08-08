@@ -458,6 +458,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 					foreach (scenario_outline.examples[k].rows[j]) begin
 						gherkin_pkg::scenario scenario;
 						gherkin_pkg::scenario scenario_definition;
+						gherkin_pkg::table_cells cells;
 					
 						`uvm_info_context(get_name(), $sformatf("Example #%0d:", j + 1), UVM_MEDIUM, report_object)
 
@@ -465,8 +466,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 						// Store the example values in a hash.
 						// Put the "<" ears ">" on the key.
-						foreach (scenario_outline.examples[k].rows[j].cells[i]) begin
-							example_values[{"<", scenario_outline.examples[k].header.cells[i].get_value(), ">"}] = scenario_outline.examples[k].rows[j].cells[i].get_value();
+						cells = scenario_outline.examples[k].rows[j].get_cells();
+						for (int i = 0; i < cells.size(); i++) begin
+							example_values[{"<", cells.get(i).get_value(), ">"}] = cells.get(i).get_value();
 						end
 
 						// Create a new scenario out of this unrolled scenario outline
@@ -548,16 +550,22 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 				foreach (data_table.rows[row]) begin
 					gherkin_pkg::table_row replaced_table_row;
+					gherkin_pkg::table_row_value replaced_table_row_value;
+					gherkin_pkg::table_cells cells;
 
-					replaced_table_row =new("replaced_table_row");
-					foreach (data_table.rows[row].cells[col]) begin
-						string replaced_cell_value = data_table.rows[row].cells[col].get_value();
+					replaced_table_row = new("replaced_table_row");
+					replaced_table_row_value = data_table.rows[row].get_as_value();
+					cells = data_table.rows[row].get_cells();
+					for (int col = 0; col < cells.size(); col++) begin
+						string replaced_cell_value = cells.get(col).get_value();
+						gherkin_pkg::table_cell replaced_cell;
 
 						if (example_values.first(example_parameter)) do
 								replaced_cell_value = replace_string(replaced_cell_value, example_parameter, example_values[example_parameter]);
 							while (example_values.next(example_parameter));
 
-						replaced_table_row.cells.push_back(gherkin_pkg::table_cell::create_new("anonymous", replaced_cell_value));
+						replaced_cell = gherkin_pkg::table_cell::create_new("replaced_cell", replaced_cell_value);
+						replaced_table_row_value.cells.push_back(replaced_cell);
 
 					end
 

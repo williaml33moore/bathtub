@@ -178,17 +178,17 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_text(), "This is a step")
 
     `FAIL_UNLESS($cast(actual_data_table, actual_step.get_argument()))
-    `FAIL_UNLESS_EQUAL(actual_data_table.rows.size(), 2)
-    for (int i = 0; i < actual_data_table.rows.size(); i++) begin
-      `FAIL_UNLESS_EQUAL(actual_data_table.rows[i].cells.size(), 3)
+    `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().size(), 2)
+    for (int i = 0; i < actual_data_table.get_rows().size(); i++) begin
+      `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().get(i).get_cells().size(), 3)
     end
 
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[0].cells[0].get_value(), "Alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[0].cells[1].get_value(), "Bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[0].cells[2].get_value(), "Charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[1].cells[0].get_value(), "100")
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[1].cells[1].get_value(), "200")
-    `FAIL_UNLESS_STR_EQUAL(actual_data_table.rows[1].cells[2].get_value(), "300")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(0).get_cells().get(0).get_value(), "Alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(0).get_cells().get(1).get_value(), "Bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(0).get_cells().get(2).get_value(), "Charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(1).get_cells().get(0).get_value(), "100")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(1).get_cells().get(1).get_value(), "200")
+    `FAIL_UNLESS_STR_EQUAL(actual_data_table.get_rows().get(1).get_cells().get(2).get_value(), "300")
 	
   `SVTEST_END
 
@@ -667,10 +667,10 @@ module gherkin_parser_unit_test;
     
     actual_step = actual_step_bndl.step;
     `FAIL_UNLESS($cast(actual_data_table, actual_step.get_argument()))
-    `FAIL_UNLESS_EQUAL(actual_data_table.rows.size(), 2)
-    `FAIL_UNLESS_EQUAL(actual_data_table.rows[1].cells.size(), 3)
+    `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().size(), 2)
+    `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().get(1).get_cells().size(), 3)
     
-    actual_cell = actual_data_table.rows[1].cells[2];
+    actual_cell = actual_data_table.get_rows().get(1).get_cells().get(2);
     `FAIL_UNLESS_STR_EQUAL(actual_cell.get_value(), "C2")
   `SVTEST_END
 
@@ -759,10 +759,10 @@ module gherkin_parser_unit_test;
     
     actual_step = actual_step_bndl.step;
     `FAIL_UNLESS($cast(actual_data_table, actual_step.get_argument()))
-    `FAIL_UNLESS_EQUAL(actual_data_table.rows.size(), 2)
-    `FAIL_UNLESS_EQUAL(actual_data_table.rows[1].cells.size(), 3)
+    `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().size(), 2)
+    `FAIL_UNLESS_EQUAL(actual_data_table.get_rows().get(1).get_cells().size(), 3)
     
-    actual_cell = actual_data_table.rows[1].cells[2];
+    actual_cell = actual_data_table.get_rows().get(1).get_cells().get(2);
     `FAIL_UNLESS_STR_EQUAL(actual_cell.get_value(), "C2")
   `SVTEST_END
 
@@ -1000,17 +1000,17 @@ module gherkin_parser_unit_test;
 
     actual_examples = actual_scenario_outline.examples[0];
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_examples_name(), "Fruit")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().cells[0].get_value(), "thing")
-    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].get_value(), "apple")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].get_value(), "berry")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().get_cells().get(0).get_value(), "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.get_rows().size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(0).get_cells().get(0).get_value(), "apple")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(1).get_cells().get(0).get_value(), "berry")
 
     actual_examples = actual_scenario_outline.examples[1];
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_examples_name(), "Animals")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().cells[0].get_value(), "thing")
-    `FAIL_UNLESS_EQUAL(actual_examples.rows.size(), 2) // Don't count header row
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[0].cells[0].get_value(), "moose")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.rows[1].cells[0].get_value(), "hound")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().get_cells().get(0).get_value(), "thing")
+    `FAIL_UNLESS_EQUAL(actual_examples.get_rows().size(), 2) // Don't count header row
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(0).get_cells().get(0).get_value(), "moose")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(1).get_cells().get(0).get_value(), "hound")
   `SVTEST_END
 
 

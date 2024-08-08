@@ -259,9 +259,12 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_table_cell
 
 	virtual task visit_table_row(gherkin_pkg::table_row table_row);
+		gherkin_pkg::table_cells cells;
+
 		$write(string'({indent(2), "|"}));
-		foreach (table_row.cells[i]) begin
-			table_row.cells[i].accept(this); // visit_table_cell(table_row.cells[i])
+		cells = table_row.get_cells();
+		for (int i = 0; i < cells.size(); i++) begin
+			cells.get(i).accept(this); // visit_table_cell(cells.get(i))
 		end
 		$display();
 	endtask : visit_table_row

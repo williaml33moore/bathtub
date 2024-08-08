@@ -155,6 +155,17 @@ package gherkin_pkg;
 		scenario_definition scenario_definitions[$];
 	} rule_value;
 
+	// Collections
+
+	typedef uvm_queue#(table_cell) table_cells;
+	typedef uvm_queue#(table_row) table_rows;
+	typedef uvm_queue#(step) steps;
+	typedef uvm_queue#(tag) tags;
+	typedef uvm_queue#(examples) examples_tables;
+	typedef uvm_queue#(scenario_definition) scenario_definitions;
+	typedef uvm_queue#(rule) rules;
+	typedef uvm_queue#(comment) comments;
+
 
 	(* visitor_pattern *)
 	interface class visitor;
@@ -266,7 +277,7 @@ package gherkin_pkg;
 
 
 	class table_row extends uvm_object implements element;
-		table_cell cells[$];
+		protected table_cell cells[$];
 
 		`uvm_object_utils_begin(table_row)
 		`uvm_field_queue_object(cells, UVM_ALL_ON)
@@ -293,6 +304,11 @@ package gherkin_pkg;
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_table_row(this);
 		endtask : accept
+
+		function table_cells get_cells();
+			get_cells = new("cells");
+			foreach (cells[i]) get_cells.push_back(cells[i]);
+		endfunction : get_cells
 
 	endclass : table_row
 
@@ -326,6 +342,11 @@ package gherkin_pkg;
 			super.accept(visitor);
 			visitor.visit_data_table(this);
 		endtask : accept
+
+		function gherkin_pkg::table_rows get_rows();
+			get_rows = new("rows");
+			foreach (rows[i]) get_rows.push_back(rows[i]);
+		endfunction : get_rows
 
 	endclass : data_table
 
@@ -488,6 +509,11 @@ package gherkin_pkg;
 		function string get_description();
 			return description;
 		endfunction : get_description
+
+		function gherkin_pkg::steps get_steps();
+			get_steps = new("steps");
+			foreach (steps[i]) get_steps.push_back(steps[i]);
+		endfunction : get_steps
 
 	endclass : scenario_definition
 
@@ -658,6 +684,16 @@ package gherkin_pkg;
 			return header;
 		endfunction : get_header
 
+		function table_rows get_rows();
+			get_rows = new("rows");
+			foreach (rows[i]) get_rows.push_back(rows[i]);
+		endfunction : get_rows
+
+		function gherkin_pkg::tags get_tags();
+			get_tags = new("tags");
+			foreach (tags[i]) get_tags.push_back(tags[i]);
+		endfunction : get_tags
+
 	endclass : examples
 
 
@@ -726,6 +762,16 @@ package gherkin_pkg;
 			visitor.visit_scenario_outline(this);
 		endtask : accept
 
+		function gherkin_pkg::tags get_tags();
+			get_tags = new("tags");
+			foreach (tags[i]) get_tags.push_back(tags[i]);
+		endfunction : get_tags
+
+		function gherkin_pkg::examples_tables get_examples();
+			get_examples = new("examples");
+			foreach (examples[i]) get_examples.push_back(examples[i]);
+		endfunction : get_examples
+
 	endclass : scenario_outline
 
 
@@ -778,6 +824,11 @@ package gherkin_pkg;
 			super.accept(visitor);
 			visitor.visit_scenario(this);
 		endtask : accept
+
+		function gherkin_pkg::tags get_tags();
+			get_tags = new("tags");
+			foreach (tags[i]) get_tags.push_back(tags[i]);
+		endfunction : get_tags
 
 	endclass : scenario
 
@@ -895,6 +946,21 @@ package gherkin_pkg;
 			return description;
 		endfunction : get_description
 
+		function gherkin_pkg::tags get_tags();
+			get_tags = new("tags");
+			foreach (tags[i]) get_tags.push_back(tags[i]);
+		endfunction : get_tags
+
+		function gherkin_pkg::scenario_definitions get_scenario_definitions();
+			get_scenario_definitions = new("scenario_definitions");
+			foreach (scenario_definitions[i]) get_scenario_definitions.push_back(scenario_definitions[i]);
+		endfunction : get_scenario_definitions
+
+		function gherkin_pkg::rules get_rules();
+			get_rules = new("rules");
+			foreach (rules[i]) get_rules.push_back(rules[i]);
+		endfunction : get_rules
+
 	endclass : feature
 
 
@@ -940,6 +1006,11 @@ package gherkin_pkg;
 		function gherkin_pkg::feature get_feature();
 			return this.feature;
 		endfunction : get_feature
+
+		function gherkin_pkg::comments get_comments();
+			get_comments = new("comments");
+			foreach (comments[i]) get_comments.push_back(comments[i]);
+		endfunction : get_comments
 
 	endclass : gherkin_document
 
@@ -1026,6 +1097,16 @@ package gherkin_pkg;
 		function gherkin_pkg::background get_background();
 			return background;
 		endfunction : get_background
+
+		function gherkin_pkg::tags get_tags();
+			get_tags = new("tags");
+			foreach (tags[i]) get_tags.push_back(tags[i]);
+		endfunction : get_tags
+
+		function gherkin_pkg::scenario_definitions get_scenario_definitions();
+			get_scenario_definitions = new("scenario_definitions");
+			foreach (scenario_definitions[i]) get_scenario_definitions.push_back(scenario_definitions[i]);
+		endfunction : get_scenario_definitions
 
 	endclass : rule
 
