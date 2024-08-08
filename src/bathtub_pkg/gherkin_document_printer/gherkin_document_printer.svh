@@ -64,12 +64,14 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		* @param background -
 		*/
 	virtual task visit_background(gherkin_pkg::background background);
-		$display(indent(1), background.keyword, ": ", background.scenario_definition_name);
+		$display(indent(1), background.get_keyword(), ": ", background.get_scenario_definition_name());
 
-		if (background.description.len() > 0) begin
+		if (background.get_description().len() > 0) begin
+			string description;
 			$write(string'(indent(2)));
-			foreach (background.description[i]) begin
-				byte c = background.description[i];
+			description = background.get_description();
+			foreach (description[i]) begin
+				byte c = description[i];
 
 				$write(string'(c));
 				if (c inside {"\n", CR}) begin
@@ -109,12 +111,14 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_doc_string
 
 	virtual task visit_examples(gherkin_pkg::examples examples);
-		$display({indent(2), examples.keyword, ": ", examples.examples_name});
+		$display({indent(2), examples.get_keyword(), ": ", examples.get_examples_name()});
 
-		if (examples.description != "") begin
+		if (examples.get_description() != "") begin
+			string description;
 			$write(indent(2));
-			foreach (examples.description[i]) begin
-				byte c = examples.description[i];
+			description = examples.get_description();
+			foreach (description[i]) begin
+				byte c = description[i];
 
 				$write(string'(c));
 				if (c inside {"\n", CR}) begin
@@ -124,7 +128,7 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 			$display();
 		end
 
-		examples.header.accept(this); // visit_table_row(examples.header)
+		examples.get_header().accept(this); // visit_table_row(examples.get_header())
 
 		foreach (examples.rows[i]) begin
 			examples.rows[i].accept(this); // visit_table_row(examples.rows[i])
@@ -137,17 +141,19 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		* @param feature -
 		*/
 	virtual task visit_feature(gherkin_pkg::feature feature);
-		$display({"# language: ", feature.language});
+		string description;
+		$display({"# language: ", feature.get_language()});
 
 		foreach (feature.tags[i]) begin
 			feature.tags[i].accept(this); // visit_tag(feature.tags[i])
 		end
 
-		$display(feature.keyword, ": ", feature.feature_name);
+		$display(feature.get_keyword(), ": ", feature.get_feature_name());
 
 		$write(indent(1));
-		foreach (feature.description[i]) begin
-			byte c = feature.description[i];
+		description = feature.get_description();
+		foreach (description[i]) begin
+			byte c = description[i];
 
 			$write(string'(c));
 			if (c == "\n") begin
@@ -170,20 +176,23 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 			gherkin_document.comments[i].accept(this); // visit_comment(gherkin_document.comments[i])
 		end
 
-		gherkin_document.feature.accept(this); // visit_feature(gherkin_document.feature)
+		gherkin_document.get_feature().accept(this); // visit_feature(gherkin_document.get_feature())
 
 	endtask : visit_gherkin_document
 
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
+		string description;
+
 		foreach (scenario.tags[i]) begin
 			scenario.tags[i].accept(this); // visit_tag(scenario.tags[i])
 		end
 
-		$display(indent(1), scenario.keyword, ": ", scenario.scenario_definition_name);
+		$display(indent(1), scenario.get_keyword(), ": ", scenario.get_scenario_definition_name());
 
 		$write(indent(2));
-		foreach (scenario.description[i]) begin
-			byte c = scenario.description[i];
+		description = scenario.get_description();
+		foreach (description[i]) begin
+			byte c = description[i];
 
 			$write(string'(c));
 			if (c == "\n") begin
@@ -203,15 +212,18 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_scenario_definition
 
 	virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
+		string description;
+
 		foreach (scenario_outline.tags[i]) begin
 			scenario_outline.tags[i].accept(this); // visit_tag(scenario_outline.tags[i])
 		end
 
-		$display(indent(1), scenario_outline.keyword, ": ", scenario_outline.scenario_definition_name);
+		$display(indent(1), scenario_outline.get_keyword(), ": ", scenario_outline.get_scenario_definition_name());
 
 		$write(indent(2));
-		foreach (scenario_outline.description[i]) begin
-			byte c = scenario_outline.description[i];
+		description = scenario_outline.get_description();
+		foreach (description[i]) begin
+			byte c = description[i];
 
 			$write(string'(c));
 			if (c == "\n") begin
@@ -232,9 +244,9 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_scenario_outline
 
 	virtual task visit_step(gherkin_pkg::step step);
-		$display(indent(2), step.keyword, " ", step.text);
-		if (step.argument != null) begin
-			step.argument.accept(this);
+		$display(indent(2), step.get_keyword(), " ", step.get_text());
+		if (step.get_argument() != null) begin
+			step.get_argument().accept(this);
 		end
 	endtask : visit_step
 
@@ -243,7 +255,7 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_step_argument
 
 	virtual task visit_table_cell(gherkin_pkg::table_cell table_cell);
-		$write(string'({" ", table_cell.value, " |"}));
+		$write(string'({" ", table_cell.get_value(), " |"}));
 	endtask : visit_table_cell
 
 	virtual task visit_table_row(gherkin_pkg::table_row table_row);
@@ -263,16 +275,18 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_tag
 
 	virtual task visit_rule(gherkin_pkg::rule rule);
+		string description;
 
 		// foreach (rule.tags[i]) begin
 		// 	rule.tags[i].accept(this); // visit_tag(rule.tags[i])
 		// end
 
-		$display(rule.keyword, ": ", rule.rule_name);
+		$display(rule.get_keyword(), ": ", rule.get_rule_name());
 
 		$write(indent(1));
-		foreach (rule.description[i]) begin
-			byte c = rule.description[i];
+		description = rule.get_description();
+		foreach (description[i]) begin
+			byte c = description[i];
 
 			$write(string'(c));
 			if (c == "\n") begin

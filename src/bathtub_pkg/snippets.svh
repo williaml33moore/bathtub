@@ -38,8 +38,8 @@ virtual class snippets extends uvm_object;
         string class_name;
         string keyword_macro;
 
-        case (step.keyword)
-            "Given", "When", "Then": keyword_macro = {"`", step.keyword};
+        case (step.get_keyword())
+            "Given", "When", "Then": keyword_macro = {"`", step.get_keyword()};
             default : keyword_macro = "`Given";
         endcase
 
@@ -47,7 +47,7 @@ virtual class snippets extends uvm_object;
         
         create_snippet = "";
         create_snippet = {create_snippet, "class ", class_name, " extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;", "\n"};
-        create_snippet = {create_snippet, "    ", keyword_macro, "(\"", step.text, "\")", "\n"};
+        create_snippet = {create_snippet, "    ", keyword_macro, "(\"", step.get_text(), "\")", "\n"};
         create_snippet = {create_snippet, "    `uvm_object_utils(", class_name, ")", "\n"};
         create_snippet = {create_snippet, "    function new (string name=\"", class_name, "\");", "\n"};
         create_snippet = {create_snippet, "        super.new(name);", "\n"};

@@ -63,8 +63,8 @@ class rule_sequence extends context_sequence implements rule_sequence_interface;
 			if ($cast(rule_background, rule.scenario_definitions[i])) begin
 				assert_only_one_background : assert (runner.rule_background == null) else
 					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", runner.report_object)
-					`uvm_message_add_string(runner.rule_background.scenario_definition_name, "Existing background")
-					`uvm_message_add_string(rule_background.scenario_definition_name, "Conflicting background")
+					`uvm_message_add_string(runner.rule_background.get_scenario_definition_name(), "Existing background")
+					`uvm_message_add_string(rule_background.get_scenario_definition_name(), "Conflicting background")
 					`uvm_fatal_context_end
 				runner.rule_background = rule_background;
 			end

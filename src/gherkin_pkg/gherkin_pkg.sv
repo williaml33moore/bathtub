@@ -184,7 +184,7 @@ package gherkin_pkg;
 
 
 	class comment extends uvm_object implements element;
-		string text;
+		protected string text;
 
 		`uvm_object_utils_begin(comment)
 		`uvm_field_string(text, UVM_ALL_ON)
@@ -209,6 +209,10 @@ package gherkin_pkg;
 			visitor.visit_comment(this);
 		endtask : accept
 
+		function string get_text();
+			return text;
+		endfunction : get_text
+
 	endclass : comment
 
 
@@ -226,7 +230,7 @@ package gherkin_pkg;
 
 
 	class table_cell extends uvm_object implements element;
-		string value;
+		protected string value;
 
 		`uvm_object_utils_begin(table_cell)
 		`uvm_field_string(value, UVM_ALL_ON)
@@ -253,6 +257,10 @@ package gherkin_pkg;
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_table_cell(this);
 		endtask : accept
+
+		function string get_value();
+			return value;
+		endfunction : get_value
 
 	endclass : table_cell
 
@@ -323,8 +331,8 @@ package gherkin_pkg;
 
 
 	class doc_string extends step_argument implements element;
-		string content;
-		string content_type;
+		protected string content;
+		protected string content_type;
 
 		`uvm_object_utils_begin(doc_string)
 		`uvm_field_string(content, UVM_ALL_ON)
@@ -354,13 +362,21 @@ package gherkin_pkg;
 			visitor.visit_doc_string(this);
 		endtask : accept
 
+		function string get_content();
+			return content;
+		endfunction : get_content
+
+		function string get_content_type();
+			return content_type;
+		endfunction : get_content_type
+
 	endclass : doc_string
 
 
 	class step extends uvm_object implements element;
-		string keyword;
-		string text;
-		step_argument argument;
+		protected string keyword;
+		protected string text;
+		protected step_argument argument;
 
 		`uvm_object_utils_begin(step)
 		`uvm_field_string(keyword, UVM_ALL_ON)
@@ -399,13 +415,25 @@ package gherkin_pkg;
 			visitor.visit_step(this);
 		endtask : accept
 
+		function string get_keyword();
+			return keyword;
+		endfunction : get_keyword
+		
+		function string get_text();
+			return text;
+		endfunction : get_text
+
+		function step_argument get_argument();
+			return argument;
+		endfunction : get_argument
+
 	endclass : step
 
 
 	virtual class scenario_definition extends uvm_object implements element;
-		string keyword;
-		string scenario_definition_name;
-		string description;
+		protected string keyword;
+		protected string scenario_definition_name;
+		protected string description;
 		step steps[$];
 
 		`uvm_field_utils_begin(scenario_definition)
@@ -447,6 +475,19 @@ package gherkin_pkg;
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_scenario_definition(this);
 		endtask : accept
+
+		
+		function string get_keyword();
+			return keyword;
+		endfunction : get_keyword
+
+		function string get_scenario_definition_name();
+			return scenario_definition_name;
+		endfunction : get_scenario_definition_name
+
+		function string get_description();
+			return description;
+		endfunction : get_description
 
 	endclass : scenario_definition
 
@@ -490,7 +531,7 @@ package gherkin_pkg;
 
 
 	class tag extends uvm_object implements element;
-		string tag_name;
+		protected string tag_name;
 
 		`uvm_object_utils_begin(tag)
 		`uvm_field_string(tag_name, UVM_ALL_ON)
@@ -515,14 +556,18 @@ package gherkin_pkg;
 			visitor.visit_tag(this);
 		endtask : accept
 
+		function string get_tag_name();
+			return tag_name;
+		endfunction : get_tag_name
+
 	endclass : tag
 
 
 	class examples extends uvm_object implements element;
-		string keyword;
-		string examples_name;
-		string description;
-		table_row header;
+		protected string keyword;
+		protected string examples_name;
+		protected string description;
+		protected table_row header;
 		table_row rows[$];
 		tag tags[$];
 
@@ -595,6 +640,23 @@ package gherkin_pkg;
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_examples(this);
 		endtask : accept
+
+		
+		function string get_keyword();
+			return keyword;
+		endfunction : get_keyword
+
+		function string get_examples_name();
+			return examples_name;
+		endfunction : get_examples_name
+
+		function string get_description();
+			return description;
+		endfunction : get_description
+
+		function table_row get_header();
+			return header;
+		endfunction : get_header
 
 	endclass : examples
 
@@ -721,10 +783,10 @@ package gherkin_pkg;
 
 
 	class feature extends uvm_object implements element;
-		string language;
-		string keyword;
-		string feature_name;
-		string description;
+		protected string language;
+		protected string keyword;
+		protected string feature_name;
+		protected string description;
 		tag tags[$];
 		scenario_definition scenario_definitions[$];
 		rule rules[$];
@@ -816,11 +878,28 @@ package gherkin_pkg;
 			visitor.visit_feature(this);
 		endtask : accept
 
+		
+		function string get_language();
+			return language;
+		endfunction : get_language
+
+		function string get_keyword();
+			return keyword;
+		endfunction : get_keyword
+
+		function string get_feature_name();
+			return feature_name;
+		endfunction : get_feature_name
+
+		function string get_description();
+			return description;
+		endfunction : get_description
+
 	endclass : feature
 
 
 	class gherkin_document extends uvm_object implements element;
-		gherkin_pkg::feature feature;
+		protected gherkin_pkg::feature feature;
 		comment comments[$];
 
 		`uvm_object_utils_begin(gherkin_document)
@@ -857,15 +936,20 @@ package gherkin_pkg;
 			visitor.visit_gherkin_document(this);
 		endtask : accept
 
+		
+		function gherkin_pkg::feature get_feature();
+			return this.feature;
+		endfunction : get_feature
+
 	endclass : gherkin_document
 
 
 	class rule extends uvm_object implements element;
-		string keyword;
-		string rule_name;
-		string description;
+		protected string keyword;
+		protected string rule_name;
+		protected string description;
 		tag tags[$];
-		gherkin_pkg::background background;
+		protected gherkin_pkg::background background;
 		scenario_definition scenario_definitions[$];
 
 		`uvm_field_utils_begin(rule)
@@ -925,6 +1009,23 @@ package gherkin_pkg;
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_rule(this);
 		endtask : accept
+
+		
+		function string get_keyword();
+			return keyword;
+		endfunction : get_keyword
+
+		function string get_rule_name();
+			return rule_name;
+		endfunction : get_rule_name
+
+		function string get_description();
+			return description;
+		endfunction : get_description
+
+		function gherkin_pkg::background get_background();
+			return background;
+		endfunction : get_background
 
 	endclass : rule
 
