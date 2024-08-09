@@ -80,7 +80,7 @@ vsim: Errors: 0, Warnings: 0
 If there are errors, they are counted in the log as "Errors."
 So for Questa, I wrote a simple Perl script called [qrun_result.pl](https://github.com/williaml33moore/bathtub/blob/main/test/scripts/qrun_result.pl) that post-processes `stats_log` and indicates success (exit status 0!) if and only if the file exists and positively records zero errors in each step.
 Otherwise, the Perl script dies with a nonzero exit code.
-My `pytest` Python configuration [helper module](https://github.com/williaml33moore/bathtub/blob/main/test/conftest.py) runs the Perl script after every Questa simulation, and catches all my errors and fatalities.
+My `pytest` Python configuration [helper module](https://github.com/williaml33moore/bathtub/blob/main/test/resources/helpers/simulator/src/simulator/questa.py) runs the Perl script after every Questa simulation, and catches all my errors and fatalities.
 
 Yes, this is pretty complex.
 If I call `` `uvm_error()`` in a `qrun` job, it gets caught by a UVM report catcher which calls `$error()` which gets logged in `stats_log` which gets post-processed by `qrun_result.pl` which returns a nonzero exit status to my Python subprocess which triggers an assertion in my test subroutine which causes the `pytest` regression to fail.
