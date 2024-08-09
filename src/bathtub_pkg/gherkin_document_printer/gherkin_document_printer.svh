@@ -130,8 +130,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 
 		examples.get_header().accept(this); // visit_table_row(examples.get_header())
 
-		foreach (examples.rows[i]) begin
-			examples.rows[i].accept(this); // visit_table_row(examples.rows[i])
+		for (int i = 0; i < examples.get_rows().size(); i++) begin
+			examples.get_rows().get(i).accept(this); // visit_table_row(examples.get_rows().get(i))
 		end
 		$display();
 		
@@ -144,8 +144,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		string description;
 		$display({"# language: ", feature.get_language()});
 
-		foreach (feature.tags[i]) begin
-			feature.tags[i].accept(this); // visit_tag(feature.tags[i])
+		for (int i = 0; i < feature.get_tags().size(); i++) begin
+			feature.get_tags().get(i).accept(this); // visit_tag(feature.get_tags().get(i))
 		end
 
 		$display(feature.get_keyword(), ": ", feature.get_feature_name());
@@ -162,8 +162,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		end
 		$display();
 
-		foreach(feature.scenario_definitions[i]) begin
-			feature.scenario_definitions[i].accept(this);
+		for (int i = 0; i < feature.get_scenario_definitions().size(); i++) begin
+			feature.get_scenario_definitions().get(i).accept(this);
 		end
 
 		for (int i = 0; i < feature.get_rules().size(); i++) begin
@@ -183,8 +183,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	virtual task visit_scenario(gherkin_pkg::scenario scenario);
 		string description;
 
-		foreach (scenario.tags[i]) begin
-			scenario.tags[i].accept(this); // visit_tag(scenario.tags[i])
+		for (int i = 0; i < scenario.get_tags().size(); i++) begin
+			scenario.get_tags().get(i).accept(this); // visit_tag(scenario.get_tags().get(i))
 		end
 
 		$display(indent(1), scenario.get_keyword(), ": ", scenario.get_scenario_definition_name());
@@ -214,8 +214,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	virtual task visit_scenario_outline(gherkin_pkg::scenario_outline scenario_outline);
 		string description;
 
-		foreach (scenario_outline.tags[i]) begin
-			scenario_outline.tags[i].accept(this); // visit_tag(scenario_outline.tags[i])
+		for (int i = 0; i < scenario_outline.get_tags().size(); i++) begin
+			scenario_outline.get_tags().get(i).accept(this); // visit_tag(scenario_outline.get_tags().get(i))
 		end
 
 		$display(indent(1), scenario_outline.get_keyword(), ": ", scenario_outline.get_scenario_definition_name());
@@ -237,8 +237,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		end
 		$display();
 
-		foreach (scenario_outline.examples[i]) begin
-			scenario_outline.examples[i].accept(this); // visit_examples(scenario_outline.examples[i])
+		for (int i = 0; i < scenario_outline.get_examples().size(); i++) begin
+			scenario_outline.get_examples().get(i).accept(this); // visit_examples(scenario_outline.get_examples().get(i))
 		end
 
 	endtask : visit_scenario_outline

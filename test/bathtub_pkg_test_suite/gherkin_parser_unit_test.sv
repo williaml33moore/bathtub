@@ -90,8 +90,8 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_keyword(), "Feature")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_feature_name(), "This is a feature")
     
-    `FAIL_UNLESS_EQUAL(actual_feature.scenario_definitions.size(), 1)
-    `FAIL_UNLESS($cast(actual_scenario, actual_feature.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_feature.get_scenario_definitions().size(), 1)
+    `FAIL_UNLESS($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)))
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
@@ -129,8 +129,8 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_keyword(), "Feature")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_feature_name(), "This is a feature")
     
-    `FAIL_UNLESS_EQUAL(actual_feature.scenario_definitions.size(), 1)
-    `FAIL_UNLESS($cast(actual_scenario, actual_feature.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_feature.get_scenario_definitions().size(), 1)
+    `FAIL_UNLESS($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)))
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
@@ -166,8 +166,8 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_keyword(), "Feature")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_feature_name(), "This is a feature")
     
-    `FAIL_UNLESS_EQUAL(actual_feature.scenario_definitions.size(), 1)
-    `FAIL_UNLESS($cast(actual_scenario, actual_feature.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_feature.get_scenario_definitions().size(), 1)
+    `FAIL_UNLESS($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)))
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
@@ -218,8 +218,8 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_keyword(), "Feature")
     `FAIL_UNLESS_STR_EQUAL(actual_feature.get_feature_name(), "This is a feature")
     
-    `FAIL_UNLESS_EQUAL(actual_feature.scenario_definitions.size(), 1)
-    `FAIL_UNLESS($cast(actual_scenario, actual_feature.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_feature.get_scenario_definitions().size(), 1)
+    `FAIL_UNLESS($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)))
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
@@ -260,7 +260,7 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario, actual_feature.scenario_definitions[0]));
+    void'($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)));
     actual_step = actual_scenario.get_steps().get(0);
     void'($cast(actual_doc_string, actual_step.get_argument()));
     `FAIL_UNLESS(actual_doc_string.get_content().len() > 0)
@@ -284,8 +284,8 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    `FAIL_UNLESS_EQUAL(actual_feature.tags.size(), 1)
-    actual_tag = actual_feature.tags[0];
+    `FAIL_UNLESS_EQUAL(actual_feature.get_tags().size(), 1)
+    actual_tag = actual_feature.get_tags().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_tag_name(), "@alpha")
   `SVTEST_END
 
@@ -305,11 +305,11 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    `FAIL_UNLESS_EQUAL(actual_feature.tags.size(), 4)
-    `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[0].get_tag_name(), "@alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[1].get_tag_name(), "@bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[2].get_tag_name(), "@charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_feature.tags[3].get_tag_name(), "@delta")
+    `FAIL_UNLESS_EQUAL(actual_feature.get_tags().size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_feature.get_tags().get(0).get_tag_name(), "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_feature.get_tags().get(1).get_tag_name(), "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_feature.get_tags().get(2).get_tag_name(), "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_feature.get_tags().get(3).get_tag_name(), "@delta")
   `SVTEST_END
   
   `SVTEST(Parse_a_tag_on_a_rule)
@@ -381,10 +381,10 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario.tags.size(), 1)
+    void'($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_tags().size(), 1)
     
-    actual_tag = actual_scenario.tags[0];
+    actual_tag = actual_scenario.get_tags().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_tag_name(), "@alpha")
   `SVTEST_END
 
@@ -405,12 +405,12 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario.tags.size(), 4)
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario.tags[0].get_tag_name(), "@alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario.tags[1].get_tag_name(), "@bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario.tags[2].get_tag_name(), "@charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario.tags[3].get_tag_name(), "@delta")
+    void'($cast(actual_scenario, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_tags().size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_tags().get(0).get_tag_name(), "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_tags().get(1).get_tag_name(), "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_tags().get(2).get_tag_name(), "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_tags().get(3).get_tag_name(), "@delta")
   `SVTEST_END
 
   `SVTEST(Parse_a_tag_on_a_scenario_outline)
@@ -430,10 +430,10 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario_outline.tags.size(), 1)
+    void'($cast(actual_scenario_outline, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.get_tags().size(), 1)
     
-    actual_tag = actual_scenario_outline.tags[0];
+    actual_tag = actual_scenario_outline.get_tags().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_tag_name(), "@alpha")
   `SVTEST_END
 
@@ -454,12 +454,12 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario_outline.tags.size(), 4)
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.tags[0].get_tag_name(), "@alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.tags[1].get_tag_name(), "@bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.tags[2].get_tag_name(), "@charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.tags[3].get_tag_name(), "@delta")
+    void'($cast(actual_scenario_outline, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.get_tags().size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_tags().get(0).get_tag_name(), "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_tags().get(1).get_tag_name(), "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_tags().get(2).get_tag_name(), "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_tags().get(3).get_tag_name(), "@delta")
   `SVTEST_END
 
   `SVTEST(Parse_a_tag_on_a_scenario_outline_examples_block)
@@ -484,13 +484,13 @@ module gherkin_parser_unit_test;
     `FAIL_UNLESS(actual_doc_bundle)
     
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario_outline.examples.size(), 1)
+    void'($cast(actual_scenario_outline, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.get_examples().size(), 1)
 
-    actual_examples = actual_scenario_outline.examples[0];
-    `FAIL_UNLESS_EQUAL(actual_examples.tags.size(), 1)
+    actual_examples = actual_scenario_outline.get_examples().get(0);
+    `FAIL_UNLESS_EQUAL(actual_examples.get_tags().size(), 1)
     
-    actual_tag = actual_examples.tags[0];
+    actual_tag = actual_examples.get_tags().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_tag_name(), "@alpha")
   `SVTEST_END
 
@@ -514,13 +514,13 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
-    actual_examples = actual_scenario_outline.examples[0];    
-    `FAIL_UNLESS_EQUAL(actual_examples.tags.size(), 4)
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.tags[0].get_tag_name(), "@alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.tags[1].get_tag_name(), "@bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.tags[2].get_tag_name(), "@charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_examples.tags[3].get_tag_name(), "@delta")
+    void'($cast(actual_scenario_outline, actual_feature.get_scenario_definitions().get(0)));
+    actual_examples = actual_scenario_outline.get_examples().get(0);    
+    `FAIL_UNLESS_EQUAL(actual_examples.get_tags().size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_tags().get(0).get_tag_name(), "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_tags().get(1).get_tag_name(), "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_tags().get(2).get_tag_name(), "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_examples.get_tags().get(3).get_tag_name(), "@delta")
   `SVTEST_END
 
   `SVTEST(Test_that_parser_can_handle_comments_anywhere_in_the_document)
@@ -995,17 +995,17 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    void'($cast(actual_scenario_outline, actual_feature.scenario_definitions[0]));
-    `FAIL_UNLESS_EQUAL(actual_scenario_outline.examples.size(), 2)
+    void'($cast(actual_scenario_outline, actual_feature.get_scenario_definitions().get(0)));
+    `FAIL_UNLESS_EQUAL(actual_scenario_outline.get_examples().size(), 2)
 
-    actual_examples = actual_scenario_outline.examples[0];
+    actual_examples = actual_scenario_outline.get_examples().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_examples_name(), "Fruit")
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().get_cells().get(0).get_value(), "thing")
     `FAIL_UNLESS_EQUAL(actual_examples.get_rows().size(), 2) // Don't count header row
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(0).get_cells().get(0).get_value(), "apple")
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_rows().get(1).get_cells().get(0).get_value(), "berry")
 
-    actual_examples = actual_scenario_outline.examples[1];
+    actual_examples = actual_scenario_outline.get_examples().get(1);
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_examples_name(), "Animals")
     `FAIL_UNLESS_STR_EQUAL(actual_examples.get_header().get_cells().get(0).get_value(), "thing")
     `FAIL_UNLESS_EQUAL(actual_examples.get_rows().size(), 2) // Don't count header row

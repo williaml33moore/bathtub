@@ -594,8 +594,8 @@ package gherkin_pkg;
 		protected string examples_name;
 		protected string description;
 		protected table_row header;
-		table_row rows[$];
-		tag tags[$];
+		protected table_row rows[$];
+		protected tag tags[$];
 
 		`uvm_object_utils_begin(examples)
 		`uvm_field_string(keyword, UVM_ALL_ON)
@@ -698,8 +698,8 @@ package gherkin_pkg;
 
 
 	class scenario_outline extends scenario_definition implements element;
-		tag tags[$];
-		gherkin_pkg::examples examples[$];
+		protected tag tags[$];
+		protected gherkin_pkg::examples examples[$];
 
 		`uvm_object_utils_begin(scenario_outline)
 		`uvm_field_queue_object(tags, UVM_ALL_ON)
@@ -776,7 +776,7 @@ package gherkin_pkg;
 
 
 	class scenario extends scenario_definition implements element;
-		tag tags[$];
+		protected tag tags[$];
 
 		`uvm_object_utils_begin(scenario)
 		`uvm_field_queue_object(tags, UVM_ALL_ON)
@@ -838,8 +838,8 @@ package gherkin_pkg;
 		protected string keyword;
 		protected string feature_name;
 		protected string description;
-		tag tags[$];
-		scenario_definition scenario_definitions[$];
+		protected tag tags[$];
+		protected scenario_definition scenario_definitions[$];
 		protected rule rules[$];
 
 		`uvm_object_utils_begin(feature)
