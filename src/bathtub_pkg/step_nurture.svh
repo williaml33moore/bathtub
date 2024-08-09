@@ -166,9 +166,9 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 		feature_sequence_interface current_feature_seq = null,
 		test_sequence_interface current_test_seq = null
 		);
-		set_runtime_keyword(step.keyword);
-		set_text(step.text);
-		set_argument(step.argument);
+		set_runtime_keyword(step.get_keyword());
+		set_text(step.get_text());
+		set_argument(step.get_argument());
 		set_static_attributes(step_seq.get_step_static_attributes());
 		set_current_scenario_sequence(current_scenario_seq);
 		set_current_rule_sequence(current_rule_seq);

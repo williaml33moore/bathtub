@@ -1,0 +1,2 @@
+-f $BATHTUB_VIP_DIR/src/bathtub_vip.f
+-incdir $BATHTUB_VIP_DIR/test/resources/callbacks
