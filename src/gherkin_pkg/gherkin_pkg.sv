@@ -257,14 +257,6 @@ package gherkin_pkg;
 			get_as_value.value = this.value;
 		endfunction : get_as_value
 
-		static function table_cell create_new(string name="table_cell", string value="");
-			table_cell new_obj;
-
-			new_obj = new(name);
-			new_obj.value = value;
-			return new_obj;
-		endfunction : create_new
-
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_table_cell(this);
 		endtask : accept
@@ -423,15 +415,6 @@ package gherkin_pkg;
 			get_as_value.argument = new this.argument; // TODO - deep copy
 		endfunction : get_as_value
 
-		static function step create_new(string name = "step", string keyword, string text);
-			step new_obj;
-
-			new_obj = new(name);
-			new_obj.keyword = keyword;
-			new_obj.text = text;
-			return new_obj;
-		endfunction : create_new
-
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_step(this);
 		endtask : accept
@@ -538,16 +521,6 @@ package gherkin_pkg;
 			get_as_value.base = super.get_as_value();
 		endfunction : get_as_value
 
-		static function background create_new(string name = "background", string scenario_definition_name="", string description="", string keyword="Background");
-			background new_obj;
-
-			new_obj = new(name);
-			new_obj.scenario_definition_name = scenario_definition_name;
-			new_obj.description = description;
-			new_obj.keyword = keyword;
-			return new_obj;
-		endfunction : create_new
-
 		virtual task accept(gherkin_pkg::visitor visitor);
 			super.accept(visitor);
 			visitor.visit_background(this);
@@ -653,16 +626,6 @@ package gherkin_pkg;
 			end
 		endfunction : get_as_value
 
-		static function examples create_new(string name="examples", string examples_name="", string description="", string keyword="Examples");
-			examples new_obj;
-
-			new_obj = new(name);
-			new_obj.examples_name = examples_name;
-			new_obj.description = description;
-			new_obj.keyword = keyword;
-			return new_obj;
-		endfunction : create_new
-
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_examples(this);
 		endtask : accept
@@ -747,16 +710,6 @@ package gherkin_pkg;
 			end
 		endfunction : get_as_value
 
-		static function scenario_outline create_new(string name = "scenario_outline", string scenario_definition_name="", string description="", string keyword="Scenario Outline");
-			scenario_outline new_obj;
-
-			new_obj = new(name);
-			new_obj.scenario_definition_name = scenario_definition_name;
-			new_obj.description = description;
-			new_obj.keyword = keyword;
-			return new_obj;
-		endfunction : create_new
-
 		virtual task accept(gherkin_pkg::visitor visitor);
 			super.accept(visitor);
 			visitor.visit_scenario_outline(this);
@@ -809,16 +762,6 @@ package gherkin_pkg;
 
 			get_as_value.base = super.get_as_value();
 		endfunction : get_as_value
-
-		static function scenario create_new(string name = "scenario", string scenario_definition_name="", string description="", string keyword="Scenario");
-			scenario new_obj;
-
-			new_obj = new(name);
-			new_obj.scenario_definition_name = scenario_definition_name;
-			new_obj.description = description;
-			new_obj.keyword = keyword;
-			return new_obj;
-		endfunction : create_new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			super.accept(visitor);
@@ -913,17 +856,6 @@ package gherkin_pkg;
 				get_as_value.rules.push_back(new_obj);
 			end
 		endfunction : get_as_value
-
-		static function feature create_new(string name = "feature", string feature_name="", string description="", string keyword="Feature", string language="en");
-			feature new_obj;
-
-			new_obj = new(name);
-			new_obj.keyword = keyword;
-			new_obj.feature_name = feature_name;
-			new_obj.description = description;
-			new_obj.language = language;
-			return new_obj;
-		endfunction : create_new
 
 		virtual task accept(gherkin_pkg::visitor visitor);
 			visitor.visit_feature(this);
