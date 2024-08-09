@@ -538,7 +538,6 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		while (example_values.next(example_parameter));
 
 		step_value = step.get_as_value();
-		step_value.keyword = step.get_keyword();
 		step_value.text = replaced_text;
 
 		if (step.get_argument()) begin
@@ -559,28 +558,24 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 					replaced_table_row_value.cells.delete();
 					cells = data_table.rows[row].get_cells();
 					for (int col = 0; col < cells.size(); col++) begin
-						string replaced_cell_value;
 						gherkin_pkg::table_cell replaced_cell;
+						gherkin_pkg::table_cell_value replaced_cell_value;
 
-						replaced_cell_value = cells.get(col).get_value();
+						replaced_cell_value = cells.get(col).get_as_value();
 						if (example_values.first(example_parameter)) do
-								replaced_cell_value = replace_string(replaced_cell_value, example_parameter, example_values[example_parameter]);
+								replaced_cell_value.value = replace_string(replaced_cell_value.value, example_parameter, example_values[example_parameter]);
 							while (example_values.next(example_parameter));
 
-						replaced_cell = gherkin_pkg::table_cell::create_new("replaced_cell", replaced_cell_value);
+						replaced_cell = new("replaced_cell", replaced_cell_value);
 						replaced_table_row_value.cells.push_back(replaced_cell);
-
 					end
-					$info($sformatf("%p", replaced_table_row_value));
 
 					replaced_table_row = new("replaced_table_row", replaced_table_row_value);
 					replaced_data_table_value.rows.push_back(replaced_table_row);
-
 				end
 
-				replaced_data_table = new("replaced_data_table");
+				replaced_data_table = new("replaced_data_table", replaced_data_table_value);
 				step_value.argument = replaced_data_table;
-
 			end
 			else if ($cast(doc_string, step.get_argument())) begin
 			end
