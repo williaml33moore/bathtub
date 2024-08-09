@@ -68,6 +68,7 @@ class test_sequence extends context_sequence implements test_sequence_interface;
 		gherkin_document_runner runner;
 
 		foreach (bt.feature_files[i]) begin : iterate_over_feature_files
+			gherkin_pkg::step undefined_steps[$];
 			
 			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", bt.feature_files[i]}, UVM_HIGH, bt.report_object)
 
@@ -85,6 +86,9 @@ class test_sequence extends context_sequence implements test_sequence_interface;
 			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
 			runner.configure(bt.sequencer, this, bt.sequence_priority, bt.sequence_call_pre_post, phase, bt.dry_run, bt.starting_scenario_number, bt.stopping_scenario_number, bt.include_tags, bt.exclude_tags, bt.report_object);
 			runner.run();
+
+			runner.get_undefined_steps(undefined_steps);
+			bt.undefined_steps = {bt.undefined_steps, undefined_steps};
 			
 `ifdef BATHTUB_VERBOSITY_TEST
 			parser.test_verbosity();

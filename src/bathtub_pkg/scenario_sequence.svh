@@ -75,8 +75,8 @@ class scenario_sequence extends context_sequence implements scenario_sequence_in
 				runner.rule_background.accept(runner); // runner.visit_feature_background(runner.rule_background)
 			end
 
-			foreach (scenario.steps[i]) begin
-				scenario.steps[i].accept(runner); // runner.visit_step(scenario.steps[i])
+			for (int i = 0; i < scenario.get_steps().size(); i++) begin
+				scenario.get_steps().get(i).accept(runner); // runner.visit_step(scenario.get_steps().get(i))
 			end
 
 		end
