@@ -314,7 +314,7 @@ package gherkin_pkg;
 
 
 	class data_table extends step_argument implements element;
-		table_row rows[$];
+		protected table_row rows[$];
 
 		`uvm_object_utils_begin(data_table)
 		`uvm_field_queue_object(rows, UVM_ALL_ON)
@@ -455,7 +455,7 @@ package gherkin_pkg;
 		protected string keyword;
 		protected string scenario_definition_name;
 		protected string description;
-		step steps[$];
+		protected step steps[$];
 
 		`uvm_field_utils_begin(scenario_definition)
 		`uvm_field_string(keyword, UVM_ALL_ON)
@@ -840,7 +840,7 @@ package gherkin_pkg;
 		protected string description;
 		tag tags[$];
 		scenario_definition scenario_definitions[$];
-		rule rules[$];
+		protected rule rules[$];
 
 		`uvm_object_utils_begin(feature)
 		`uvm_field_string(language, UVM_ALL_ON)
@@ -966,7 +966,7 @@ package gherkin_pkg;
 
 	class gherkin_document extends uvm_object implements element;
 		protected gherkin_pkg::feature feature;
-		comment comments[$];
+		protected comment comments[$];
 
 		`uvm_object_utils_begin(gherkin_document)
 		`uvm_field_object(feature, UVM_ALL_ON)
@@ -1019,9 +1019,9 @@ package gherkin_pkg;
 		protected string keyword;
 		protected string rule_name;
 		protected string description;
-		tag tags[$];
+		protected tag tags[$];
 		protected gherkin_pkg::background background;
-		scenario_definition scenario_definitions[$];
+		protected scenario_definition scenario_definitions[$];
 
 		`uvm_field_utils_begin(rule)
 		`uvm_field_queue_object(tags, UVM_ALL_ON)

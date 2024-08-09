@@ -95,9 +95,9 @@ module gherkin_parser_unit_test;
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
-    `FAIL_UNLESS_EQUAL(actual_scenario.steps.size(), 1)
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_steps().size(), 1)
     
-    actual_step = actual_scenario.steps[0];
+    actual_step = actual_scenario.get_steps().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_keyword(), "*")
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_text(), "This is a step")
 	
@@ -134,9 +134,9 @@ module gherkin_parser_unit_test;
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
-    `FAIL_UNLESS_EQUAL(actual_scenario.steps.size(), 1)
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_steps().size(), 1)
     
-    actual_step = actual_scenario.steps[0];
+    actual_step = actual_scenario.get_steps().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_keyword(), "*")
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_text(), "This is a step")
 	
@@ -171,9 +171,9 @@ module gherkin_parser_unit_test;
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
-    `FAIL_UNLESS_EQUAL(actual_scenario.steps.size(), 1)
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_steps().size(), 1)
     
-    actual_step = actual_scenario.steps[0];
+    actual_step = actual_scenario.get_steps().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_keyword(), "*")
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_text(), "This is a step")
 
@@ -223,9 +223,9 @@ module gherkin_parser_unit_test;
 
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_keyword(), "Scenario")
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
-    `FAIL_UNLESS_EQUAL(actual_scenario.steps.size(), 1)
+    `FAIL_UNLESS_EQUAL(actual_scenario.get_steps().size(), 1)
     
-    actual_step = actual_scenario.steps[0];
+    actual_step = actual_scenario.get_steps().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_keyword(), "*")
     `FAIL_UNLESS_STR_EQUAL(actual_step.get_text(), "This is a step")
 
@@ -261,7 +261,7 @@ module gherkin_parser_unit_test;
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
     void'($cast(actual_scenario, actual_feature.scenario_definitions[0]));
-    actual_step = actual_scenario.steps[0];
+    actual_step = actual_scenario.get_steps().get(0);
     void'($cast(actual_doc_string, actual_step.get_argument()));
     `FAIL_UNLESS(actual_doc_string.get_content().len() > 0)
     `FAIL_UNLESS_STR_EQUAL(actual_doc_string.get_content_type(), "")
@@ -330,10 +330,10 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
-    actual_rule = actual_feature.rules[0];
-    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 1)
-    actual_tag = actual_rule.tags[0];
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size(), 1);
+    actual_rule = actual_feature.get_rules().get(0);
+    `FAIL_UNLESS_EQUAL(actual_rule.get_tags().size(), 1)
+    actual_tag = actual_rule.get_tags().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_tag.get_tag_name(), "@alpha")
   `SVTEST_END
 
@@ -355,13 +355,13 @@ module gherkin_parser_unit_test;
 
     parser.parse_feature_string(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size(), 1);
-    actual_rule = actual_feature.rules[0];
-    `FAIL_UNLESS_EQUAL(actual_rule.tags.size(), 4)
-    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[0].get_tag_name(), "@alpha")
-    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[1].get_tag_name(), "@bravo")
-    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[2].get_tag_name(), "@charlie")
-    `FAIL_UNLESS_STR_EQUAL(actual_rule.tags[3].get_tag_name(), "@delta")
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size(), 1);
+    actual_rule = actual_feature.get_rules().get(0);
+    `FAIL_UNLESS_EQUAL(actual_rule.get_tags().size(), 4)
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.get_tags().get(0).get_tag_name(), "@alpha")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.get_tags().get(1).get_tag_name(), "@bravo")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.get_tags().get(2).get_tag_name(), "@charlie")
+    `FAIL_UNLESS_STR_EQUAL(actual_rule.get_tags().get(3).get_tag_name(), "@delta")
   `SVTEST_END
 
   `SVTEST(Parse_a_tag_on_a_scenario)
@@ -832,13 +832,13 @@ module gherkin_parser_unit_test;
     parser.parse_feature_lines(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
     `FAIL_UNLESS(actual_feature)
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size, 1)
 
-    actual_rule = actual_feature.rules[0];
+    actual_rule = actual_feature.get_rules().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_rule.get_rule_name(), "This is a rule")
 
-    `FAIL_UNLESS_EQUAL(actual_rule.scenario_definitions.size, 1)
-    `FAIL_UNLESS($cast(actual_scenario, actual_rule.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_rule.get_scenario_definitions().size, 1)
+    `FAIL_UNLESS($cast(actual_scenario, actual_rule.get_scenario_definitions().get(0)))
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
 
   `SVTEST_END
@@ -872,13 +872,13 @@ module gherkin_parser_unit_test;
     parser.parse_feature_lines(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
     `FAIL_UNLESS(actual_feature)
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size, 1)
 
-    actual_rule = actual_feature.rules[0];
+    actual_rule = actual_feature.get_rules().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_rule.get_rule_name(), "This is a rule")
 
-    `FAIL_UNLESS_EQUAL(actual_rule.scenario_definitions.size, 1)
-    `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.scenario_definitions[0]))
+    `FAIL_UNLESS_EQUAL(actual_rule.get_scenario_definitions().size, 1)
+    `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.get_scenario_definitions().get(0)))
     `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_scenario_definition_name(), "This is a scenario outline")
 
   `SVTEST_END
@@ -920,20 +920,20 @@ module gherkin_parser_unit_test;
     parser.parse_feature_lines(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
     `FAIL_UNLESS(actual_feature)
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size, 1)
 
-    actual_rule = actual_feature.rules[0];
+    actual_rule = actual_feature.get_rules().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_rule.get_rule_name(), "This is a rule")
 
-    `FAIL_UNLESS_EQUAL(actual_rule.scenario_definitions.size, 3)
+    `FAIL_UNLESS_EQUAL(actual_rule.get_scenario_definitions().size(), 3)
 
-    `FAIL_UNLESS($cast(actual_background, actual_rule.scenario_definitions[0]))
+    `FAIL_UNLESS($cast(actual_background, actual_rule.get_scenario_definitions().get(0)))
     `FAIL_UNLESS_STR_EQUAL(actual_background.get_scenario_definition_name(), "This is a background")
     
-    `FAIL_UNLESS($cast(actual_scenario, actual_rule.scenario_definitions[1]))
+    `FAIL_UNLESS($cast(actual_scenario, actual_rule.get_scenario_definitions().get(1)))
     `FAIL_UNLESS_STR_EQUAL(actual_scenario.get_scenario_definition_name(), "This is a scenario")
     
-    `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.scenario_definitions[2]))
+    `FAIL_UNLESS($cast(actual_scenario_outline, actual_rule.get_scenario_definitions().get(2)))
     `FAIL_UNLESS_STR_EQUAL(actual_scenario_outline.get_scenario_definition_name(), "This is a scenario outline")
 
   `SVTEST_END
@@ -964,9 +964,9 @@ module gherkin_parser_unit_test;
     parser.parse_feature_lines(feature, actual_doc_bundle);
     actual_feature = actual_doc_bundle.document.get_feature();
     `FAIL_UNLESS(actual_feature)
-    `FAIL_UNLESS_EQUAL(actual_feature.rules.size, 1)
+    `FAIL_UNLESS_EQUAL(actual_feature.get_rules().size, 1)
 
-    actual_rule = actual_feature.rules[0];
+    actual_rule = actual_feature.get_rules().get(0);
     `FAIL_UNLESS_STR_EQUAL(actual_rule.get_description(), "This is a description\nThis is more description\n")
 
   `SVTEST_END

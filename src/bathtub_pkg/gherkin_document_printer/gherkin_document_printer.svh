@@ -81,8 +81,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 			$display();
 		end
 
-		foreach (background.steps[i]) begin
-			background.steps[i].accept(this); // visit_step(background.steps[i])
+		for (int i = 0; i < background.get_steps().size(); i++) begin
+			background.get_steps().get(i).accept(this); // visit_step(background.get_steps().get(i))
 		end
 		$display();
 
@@ -97,8 +97,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 	endtask : visit_comment
 
 	virtual task visit_data_table(gherkin_pkg::data_table data_table);
-		foreach (data_table.rows[i]) begin
-			data_table.rows[i].accept(this); // visit_table_row(data_table.rows[i])
+		for (int i = 0; i < data_table.get_rows().size(); i++) begin
+			data_table.get_rows().get(i).accept(this); // visit_table_row(data_table.get_rows().get(i))
 		end
 	endtask : visit_data_table
 
@@ -166,14 +166,14 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 			feature.scenario_definitions[i].accept(this);
 		end
 
-		foreach(feature.rules[i]) begin
-			feature.rules[i].accept(this);
+		for (int i = 0; i < feature.get_rules().size(); i++) begin
+			feature.get_rules().get(i).accept(this);
 		end
 	endtask : visit_feature
 
 	virtual task visit_gherkin_document(gherkin_pkg::gherkin_document gherkin_document);
-		foreach (gherkin_document.comments[i]) begin
-			gherkin_document.comments[i].accept(this); // visit_comment(gherkin_document.comments[i])
+		for (int i = 0; i < gherkin_document.get_comments().size(); i++) begin
+			gherkin_document.get_comments().get(i).accept(this); // visit_comment(gherkin_document.get_comments().get(i))
 		end
 
 		gherkin_document.get_feature().accept(this); // visit_feature(gherkin_document.get_feature())
@@ -201,8 +201,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		end
 		$display();
 
-		foreach (scenario.steps[i]) begin
-			scenario.steps[i].accept(this); // visit_step(scenario.steps[i])
+		for (int i = 0; i < scenario.get_steps().size(); i++) begin
+			scenario.get_steps().get(i).accept(this); // visit_step(scenario.get_steps().get(i))
 		end
 		$display();
 		
@@ -232,8 +232,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		end
 		$display();
 
-		foreach (scenario_outline.steps[i]) begin
-			scenario_outline.steps[i].accept(this); // visit_step(scenario_outline.steps[i])
+		for (int i = 0; i < scenario_outline.get_steps().size(); i++) begin
+			scenario_outline.get_steps().get(i).accept(this); // visit_step(scenario_outline.get_steps().get(i))
 		end
 		$display();
 
@@ -298,8 +298,8 @@ class gherkin_document_printer extends uvm_object implements gherkin_pkg::visito
 		end
 		$display();
 
-		foreach(rule.scenario_definitions[i]) begin
-			rule.scenario_definitions[i].accept(this);
+		for (int i = 0; i < rule.get_scenario_definitions().size(); i++) begin
+			rule.get_scenario_definitions().get(i).accept(this);
 		end
 	endtask : visit_rule
 

@@ -263,8 +263,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 		`uvm_info_context(get_name(), $sformatf("%s: %s", background.get_keyword(), background.get_scenario_definition_name()), UVM_MEDIUM, report_object)
 
-		foreach (background.steps[i]) begin
-			background.steps[i].accept(this); // visit_step(background.steps[i])
+		for (int i = 0; i < background.get_steps().size(); i++) begin
+			background.get_steps().get(i).accept(this); // visit_step(background.get_steps().get(i))
 		end
 
 	endtask : visit_background
@@ -333,8 +333,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		end
 
 		// Run rules after loose scenarios
-		foreach (feature.rules[i]) begin
-			feature.rules[i].accept(this);
+		for (int i = 0; i < feature.get_rules().size(); i++) begin
+			feature.get_rules().get(i).accept(this);
 		end
 
 		feature_tags.delete();
@@ -457,6 +457,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 					foreach (scenario_outline.examples[k].rows[j]) begin
 						gherkin_pkg::scenario scenario;
+						gherkin_pkg::scenario_value scenario_value;
 						gherkin_pkg::scenario scenario_definition;
 						gherkin_pkg::table_cells cells;
 					
@@ -472,11 +473,15 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 						end
 
 						// Create a new scenario out of this unrolled scenario outline
-						scenario = gherkin_pkg::scenario::create_new(scenario_outline.get_name(), scenario_outline.get_scenario_definition_name(), scenario_outline.get_description());
-						foreach (scenario_outline.steps[l])
-							scenario.steps.push_back(scenario_outline.steps[l]);
+						scenario_value.base.keyword = scenario_outline.get_keyword();
+						scenario_value.base.scenario_definition_name = scenario_outline.get_scenario_definition_name();
+						scenario_value.base.description = scenario_outline.get_description();
+
+						for (int l = 0; l < scenario_outline.get_steps().size(); l++)
+							scenario_value.base.steps.push_back(scenario_outline.get_steps().get(l));
 						foreach (scenario_outline.tags[l])
-							scenario.tags.push_back(scenario_outline.tags[l]);
+							scenario_value.tags.push_back(scenario_outline.tags[l]);
+						scenario = new("scenario", scenario_value);
 						scenario_definition = scenario;
 						// Give our new scenario the full scenario treatment
 						scenario_definition.accept(this);
@@ -549,14 +554,14 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 				replaced_data_table_value = data_table.get_as_value();
 				replaced_data_table_value.rows.delete();
 
-				foreach (data_table.rows[row]) begin
+				for (int row = 0; row < data_table.get_rows().size(); row++) begin
 					gherkin_pkg::table_row replaced_table_row;
 					gherkin_pkg::table_row_value replaced_table_row_value;
 					gherkin_pkg::table_cells cells;
 
-					replaced_table_row_value = data_table.rows[row].get_as_value();
+					replaced_table_row_value = data_table.get_rows().get(row).get_as_value();
 					replaced_table_row_value.cells.delete();
-					cells = data_table.rows[row].get_cells();
+					cells = data_table.get_rows().get(row).get_cells();
 					for (int col = 0; col < cells.size(); col++) begin
 						gherkin_pkg::table_cell replaced_cell;
 						gherkin_pkg::table_cell_value replaced_cell_value;
@@ -625,8 +630,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		`uvm_info_context(get_name(), $sformatf("%s: %s", rule.get_keyword(), rule.get_rule_name()), UVM_MEDIUM, report_object)
 
 		rule_tags.delete();
-		foreach (rule.tags[i]) begin
-			rule_tags.push_back(rule.tags[i].get_tag_name());
+		for (int i = 0; i < rule.get_tags().size(); i++) begin
+			rule_tags.push_back(rule.get_tags().get(i).get_tag_name());
 		end
 		
 		current_rule_seq = rule_sequence::type_id::create("current_rule_seq");
