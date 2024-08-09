@@ -59,17 +59,17 @@ class rule_sequence extends context_sequence implements rule_sequence_interface;
 		
 		// Separate background from scenario definitions
 		only_scenarios.delete();
-		foreach (rule.scenario_definitions[i]) begin
-			if ($cast(rule_background, rule.scenario_definitions[i])) begin
+		for (int i = 0; i < rule.get_scenario_definitions().size; i++) begin
+			if ($cast(rule_background, rule.get_scenario_definitions().get(i))) begin
 				assert_only_one_background : assert (runner.rule_background == null) else
 					`uvm_fatal_context_begin(get_name(), "Found more than one background definition", runner.report_object)
-					`uvm_message_add_string(runner.rule_background.scenario_definition_name, "Existing background")
-					`uvm_message_add_string(rule_background.scenario_definition_name, "Conflicting background")
+					`uvm_message_add_string(runner.rule_background.get_scenario_definition_name(), "Existing background")
+					`uvm_message_add_string(rule_background.get_scenario_definition_name(), "Conflicting background")
 					`uvm_fatal_context_end
 				runner.rule_background = rule_background;
 			end
 			else begin
-				only_scenarios.push_back(rule.scenario_definitions[i]);
+				only_scenarios.push_back(rule.get_scenario_definitions().get(i));
 			end
 		end
 			
