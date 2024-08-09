@@ -468,7 +468,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 						// Put the "<" ears ">" on the key.
 						cells = scenario_outline.examples[k].rows[j].get_cells();
 						for (int i = 0; i < cells.size(); i++) begin
-							example_values[{"<", cells.get(i).get_value(), ">"}] = cells.get(i).get_value();
+							example_values[{"<", scenario_outline.get_examples().get(k).get_header().get_cells().get(i).get_value(), ">"}] = cells.get(i).get_value();
 						end
 
 						// Create a new scenario out of this unrolled scenario outline
@@ -534,8 +534,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		`uvm_info_context(get_name(), $sformatf("Before replacement: %s %s", step.get_keyword(), step.get_text()), UVM_HIGH, report_object)
 
 		if (example_values.first(example_parameter)) do
-				replaced_text = replace_string(replaced_text, example_parameter, example_values[example_parameter]);
-			while (example_values.next(example_parameter));
+			replaced_text = replace_string(replaced_text, example_parameter, example_values[example_parameter]);
+		while (example_values.next(example_parameter));
 
 		step_value = step.get_as_value();
 		step_value.keyword = step.get_keyword();
@@ -545,21 +545,24 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 
 			if ($cast(data_table, step.get_argument())) begin
 				gherkin_pkg::data_table replaced_data_table;
+				gherkin_pkg::data_table_value replaced_data_table_value;
 
-				replaced_data_table = new("replaced_data_table");
+				replaced_data_table_value = data_table.get_as_value();
+				replaced_data_table_value.rows.delete();
 
 				foreach (data_table.rows[row]) begin
 					gherkin_pkg::table_row replaced_table_row;
 					gherkin_pkg::table_row_value replaced_table_row_value;
 					gherkin_pkg::table_cells cells;
 
-					replaced_table_row = new("replaced_table_row");
 					replaced_table_row_value = data_table.rows[row].get_as_value();
+					replaced_table_row_value.cells.delete();
 					cells = data_table.rows[row].get_cells();
 					for (int col = 0; col < cells.size(); col++) begin
-						string replaced_cell_value = cells.get(col).get_value();
+						string replaced_cell_value;
 						gherkin_pkg::table_cell replaced_cell;
 
+						replaced_cell_value = cells.get(col).get_value();
 						if (example_values.first(example_parameter)) do
 								replaced_cell_value = replace_string(replaced_cell_value, example_parameter, example_values[example_parameter]);
 							while (example_values.next(example_parameter));
@@ -568,11 +571,14 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 						replaced_table_row_value.cells.push_back(replaced_cell);
 
 					end
+					$info($sformatf("%p", replaced_table_row_value));
 
-					replaced_data_table.rows.push_back(replaced_table_row);
+					replaced_table_row = new("replaced_table_row", replaced_table_row_value);
+					replaced_data_table_value.rows.push_back(replaced_table_row);
 
 				end
 
+				replaced_data_table = new("replaced_data_table");
 				step_value.argument = replaced_data_table;
 
 			end
