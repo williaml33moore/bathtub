@@ -89,6 +89,19 @@ class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_defin
     endfunction : new
 
     virtual task body();
+`ifdef UVM_VERSION_1_0
+        check_starting_phase : assert (starting_phase != null) else
+            `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+`elsif UVM_VERSION_1_1
+        check_starting_phase : assert (starting_phase != null) else
+            `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+`elsif UVM_POST_VERSION_1_1
+        check_starting_phase : assert (get_starting_phase() != null) else
+            `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+`else
+        check_starting_phase : assert (get_starting_phase() != null) else
+            `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+`endif
         req = mock_object_sequence_item::type_id::create("req");
         start_item(req);
         // Sends itself as payload to the sequencer
