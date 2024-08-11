@@ -92,9 +92,11 @@ class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_defin
 `ifdef UVM_VERSION_1_0
         check_starting_phase : assert (starting_phase != null) else
             `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+        starting_phase.raise_objection(this);
 `elsif UVM_VERSION_1_1
         check_starting_phase : assert (starting_phase != null) else
             `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
+        starting_phase.raise_objection(this);
 `elsif UVM_POST_VERSION_1_1
         check_starting_phase : assert (get_starting_phase() != null) else
             `uvm_error(`BATHTUB__GET_SCOPE_NAME(), "starting_phase is null")
@@ -107,6 +109,11 @@ class mock_step_def_seq extends mock_base_seq implements bathtub_pkg::step_defin
         // Sends itself as payload to the sequencer
         req.set_payload(this);
         finish_item(req);
+`ifdef UVM_VERSION_1_0
+        starting_phase.drop_objection(this);
+`elsif UVM_VERSION_1_1
+        starting_phase.drop_objection(this);
+`endif
     endtask : body
 endclass : mock_step_def_seq
 
