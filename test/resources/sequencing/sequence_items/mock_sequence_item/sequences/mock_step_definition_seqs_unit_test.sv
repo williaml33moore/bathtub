@@ -21,6 +21,7 @@ module mock_sequences_unit_test;
 
 
   mock_object_sequencer object_sqr;
+  uvm_phase phase;
 
   //===================================
   // This is the UUT that we're 
@@ -36,6 +37,7 @@ module mock_sequences_unit_test;
     svunit_ut = new(name);
 
     object_sqr = mock_object_sequencer::type_id::create("object_sqr", null);
+    phase = new();
   endfunction
 
 
@@ -89,6 +91,16 @@ module mock_sequences_unit_test;
 			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");
       step_attributes.configure(step_bundle.step, my_step_def_seq);
 			my_step_def_seq.set_step_attributes(step_attributes);
+`ifdef UVM_VERSION_1_0
+      my_step_def_seq.starting_phase = phase;
+`elsif UVM_VERSION_1_1
+      my_step_def_seq.starting_phase = phase;
+`elsif UVM_POST_VERSION_1_1
+			my_step_def_seq.set_starting_phase(phase);
+`else
+			my_step_def_seq.set_starting_phase(phase);
+`endif
+
 
       fork
         begin
