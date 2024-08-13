@@ -25,7 +25,7 @@ UVM_HOME	= ../../..
 include ../../Makefile.xcelium
 
 
-all run: test hw_reset
+all run: test hw_reset bathtub
 
 test:
 	$(XCELIUM) -incdir ../apb -incdir vip tb_top.sv test.sv
@@ -36,8 +36,8 @@ hw_reset:
 		+UVM_TESTNAME=hw_reset_test
 	$(CHECK)
 
-test_bathtub:
+bathtub:
 	$(XCELIUM) $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
 	$(XCELIUM) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
-		+UVM_TESTNAME=test_bathtub +bathtub_features=codec.feature +bathtub_verbosity=UVM_MEDIUM +UVM_OBJECTION_TRACE
+		+UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
 	$(CHECK)
