@@ -55,8 +55,8 @@ def test_codec_as_is(tmp_path, get_test_config):
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
 
-
-def test_codec_with_bathtub(tmp_path, get_test_config):
+@pytest.mark.parametrize("test_target", ["bathtub", "test_with_bathtub"])
+def test_codec_with_bathtub(tmp_path, get_test_config, test_target):
     """Test UVM 1.2 codec example with Bathtub."""
     
     # Get the path to the correct UVM version download from our pytest test config.
@@ -78,12 +78,13 @@ def test_codec_with_bathtub(tmp_path, get_test_config):
     shutil.copy(examples_src_path / 'Makefile_run.xcelium', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.xcelium')
     shutil.copy(examples_src_path / 'tb_virtual_sequencer.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'tb_env.svh', sim_cwd_path)
+    shutil.copy(examples_src_path / 'test.sv', sim_cwd_path)
     shutil.copy(examples_src_path / 'bathtub_test.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'codec_step_definitions.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'testlib.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'codec.feature', sim_cwd_path)
     
     # Run the codec simulation with Bathtub.
-    run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS=-uvmnocdnsextra UVM_VERBOSITY=UVM_MEDIUM clean bathtub'
+    run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS=-uvmnocdnsextra UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(test_target)
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)

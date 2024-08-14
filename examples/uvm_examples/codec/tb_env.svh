@@ -101,13 +101,6 @@ class tb_env extends uvm_env;
       egress = sym_sb::type_id::create("egress", this);
       adapt = apb2txrx::type_id::create("adapt", this);
 
-    //   uvm_config_db #(uvm_object_wrapper)::set(this, "vip.sqr.main_phase",
-    //                                            "default_sequence",
-    //                                            vip_sentence_seq::type_id::get());
-    //   uvm_config_db #(uvm_object_wrapper)::set(this, "tx_src.main_phase",
-    //                                            "default_sequence",
-    //                                            vip_sentence_seq::type_id::get());
-
       virtual_sequencer = tb_virtual_sequencer::type_id::create("virtual_sequencer", this);
 
       m_isr = 0;

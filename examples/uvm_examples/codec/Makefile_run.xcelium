@@ -41,3 +41,11 @@ bathtub:
 	$(XCELIUM) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
 		+UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
 	$(CHECK)
+
+# Run the original test on the new testbench with Bathtub, without using Bathtub.
+# Check that we didn't break the original test.
+test_with_bathtub:
+	$(XCELIUM) $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
+	$(XCELIUM) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
+		+UVM_TESTNAME=test
+	$(CHECK)
