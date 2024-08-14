@@ -29,19 +29,23 @@ import shutil
 
 test_path = Path(os.path.dirname(__file__))
 
-def test_codec_as_is(tmp_path, get_test_config):
-    """Test UVM 1.2 codec example as-is."""
+def test_codec_as_is(tmp_path, uvm_version):
+    """Test UVM codec example as-is."""
     
-    # Get the path to the correct UVM version download from our pytest test config.
-    uvm_version_name = 'uvm-1.2'
-    uvm_versions = get_test_config['uvm_versions']
-    uvm_version_full_name = [v for v in uvm_versions if v.endswith(uvm_version_name)][0]
-    uvm_version_path = Path(uvm_version_full_name)
-    working_uvm_home = tmp_path / uvm_version_name
+    simulator = uvm_version['simulator']
+    uvm_home = Path(uvm_version['uvm_home'])
+    is_builtin = uvm_version['is_builtin']
+    extra_opt = '-uvmnocdnsextra' if simulator.name() == 'Xcelium' and not is_builtin else ''
+
+    if not (uvm_home / 'examples' / 'integrated' / 'codec').exists():
+        # This version doesn't include the codec example.
+        return
+
+    working_uvm_home = tmp_path / 'uvm'
 
     # Copy the entire UVM library locally and `chdir` there.
     # This is our working sim dir.
-    shutil.copytree(uvm_version_path, working_uvm_home)
+    shutil.copytree(uvm_home, working_uvm_home)
     os.chdir(working_uvm_home / 'examples' / 'integrated' / 'codec')
     sim_cwd_path = Path(os.getcwd())
 
@@ -49,26 +53,37 @@ def test_codec_as_is(tmp_path, get_test_config):
     examples_src_path = Path(os.environ['BATHTUB_VIP_DIR']) / 'examples' / 'uvm_examples' / 'codec'
     shutil.copy(examples_src_path / 'Makefile_inc.xcelium', working_uvm_home / 'examples' / 'Makefile.xcelium')
     shutil.copy(examples_src_path / 'Makefile_run.xcelium', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.xcelium')
+    shutil.copy(examples_src_path / 'Makefile_inc.questa', working_uvm_home / 'examples' / 'Makefile.questa')
     
     # Run the codec simulation as-is.
-    run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS=-uvmnocdnsextra clean test'
+    if simulator.name() == 'Xcelium':
+        is_uvm_1p0 = 'uvm-1.0' in uvm_version['uvm_home']
+        run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS={} {} UVM_VERBOSITY=UVM_MEDIUM clean test'.format(extra_opt, 'UVM_VERSION_1_0=defined' if is_uvm_1p0 else '')
+    elif simulator.name() == 'Questa':
+        run_cmd = 'make -f Makefile.questa UVM_VERBOSITY=UVM_MEDIUM clean run'
+    else:
+        assert False, "Unknown simulator: {}".format(simulator.name())
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
 
 @pytest.mark.parametrize("test_target", ["bathtub", "test_with_bathtub"])
-def test_codec_with_bathtub(tmp_path, get_test_config, test_target):
-    """Test UVM 1.2 codec example with Bathtub."""
+def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target):
+    """Test UVM codec example with Bathtub."""
     
-    # Get the path to the correct UVM version download from our pytest test config.
-    uvm_version_name = 'uvm-1.2'
-    uvm_versions = get_test_config['uvm_versions']
-    uvm_version_full_name = [v for v in uvm_versions if v.endswith(uvm_version_name)][0]
-    uvm_version_path = Path(uvm_version_full_name)
-    working_uvm_home = tmp_path / uvm_version_name
+    simulator = uvm_version['simulator']
+    uvm_home = Path(uvm_version['uvm_home'])
+    is_builtin = uvm_version['is_builtin']
+    extra_opt = '-uvmnocdnsextra' if simulator.name() == 'Xcelium' and not is_builtin else ''
+
+    if not (uvm_home / 'examples' / 'integrated' / 'codec').exists():
+        # This version doesn't include the codec example.
+        return
+    
+    working_uvm_home = tmp_path / 'uvm'
 
     # Copy the entire UVM library locally and `chdir` there.
     # This is our working sim dir.
-    shutil.copytree(uvm_version_path, working_uvm_home)
+    shutil.copytree(uvm_home, working_uvm_home)
     os.chdir(working_uvm_home / 'examples' / 'integrated' / 'codec')
     sim_cwd_path = Path(os.getcwd())
 
@@ -85,6 +100,13 @@ def test_codec_with_bathtub(tmp_path, get_test_config, test_target):
     shutil.copy(examples_src_path / 'codec.feature', sim_cwd_path)
     
     # Run the codec simulation with Bathtub.
-    run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS=-uvmnocdnsextra UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(test_target)
+    if simulator.name() == 'Xcelium':
+        is_uvm_1p0 = 'uvm-1.0' in uvm_version['uvm_home']
+        run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS={} {} UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(
+            extra_opt, 'UVM_VERSION_1_0=defined' if is_uvm_1p0 else '', test_target)
+    elif simulator.name() == 'Questa':
+        run_cmd = 'make -f Makefile.questa UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(test_target)
+    else:
+        assert False, "Unknown simulator: {}".format(simulator.name())
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
