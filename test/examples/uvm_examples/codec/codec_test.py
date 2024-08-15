@@ -54,6 +54,8 @@ def test_codec_as_is(tmp_path, uvm_version):
     shutil.copy(examples_src_path / 'Makefile_inc.xcelium', working_uvm_home / 'examples' / 'Makefile.xcelium')
     shutil.copy(examples_src_path / 'Makefile_run.xcelium', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.xcelium')
     shutil.copy(examples_src_path / 'Makefile_inc.questa', working_uvm_home / 'examples' / 'Makefile.questa')
+
+    subprocess.run('echo "{}" > uvm_version.txt'.format(uvm_version), shell=True)
     
     # Run the codec simulation as-is.
     if simulator.name() == 'Xcelium':
@@ -63,6 +65,7 @@ def test_codec_as_is(tmp_path, uvm_version):
         run_cmd = 'make -f Makefile.questa UVM_VERBOSITY=UVM_MEDIUM clean run'
     else:
         assert False, "Unknown simulator: {}".format(simulator.name())
+    subprocess.run('echo "{}" > run_cmd.sh'.format(run_cmd), shell=True)
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
 
@@ -80,6 +83,7 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
         return
     
     working_uvm_home = tmp_path / 'uvm'
+    is_uvm_1p0 = 'uvm-1.0' in uvm_version['uvm_home']
 
     # Copy the entire UVM library locally and `chdir` there.
     # This is our working sim dir.
@@ -91,13 +95,21 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
     examples_src_path = Path(os.environ['BATHTUB_VIP_DIR']) / 'examples' / 'uvm_examples' / 'codec'
     shutil.copy(examples_src_path / 'Makefile_inc.xcelium', working_uvm_home / 'examples' / 'Makefile.xcelium')
     shutil.copy(examples_src_path / 'Makefile_run.xcelium', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.xcelium')
+    shutil.copy(examples_src_path / 'Makefile_inc.questa', working_uvm_home / 'examples' / 'Makefile.questa')
+    shutil.copy(examples_src_path / 'Makefile_run.questa', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.questa')
     shutil.copy(examples_src_path / 'tb_virtual_sequencer.svh', sim_cwd_path)
-    shutil.copy(examples_src_path / 'tb_env.svh', sim_cwd_path)
-    shutil.copy(examples_src_path / 'test.sv', sim_cwd_path)
+    if is_uvm_1p0:
+        shutil.copy(examples_src_path / 'uvm-1.0p1' / 'tb_env.svh', sim_cwd_path)
+        shutil.copy(examples_src_path / 'uvm-1.0p1' / 'test.sv', sim_cwd_path)
+    else:
+        shutil.copy(examples_src_path / 'tb_env.svh', sim_cwd_path)
+        shutil.copy(examples_src_path / 'test.sv', sim_cwd_path)
     shutil.copy(examples_src_path / 'bathtub_test.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'codec_step_definitions.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'testlib.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'codec.feature', sim_cwd_path)
+
+    subprocess.run('echo "{}" > uvm_version.txt'.format(uvm_version), shell=True)
     
     # Run the codec simulation with Bathtub.
     if simulator.name() == 'Xcelium':
@@ -105,8 +117,13 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
         run_cmd = 'make -f Makefile.xcelium XCELIUMFLAGS={} {} UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(
             extra_opt, 'UVM_VERSION_1_0=defined' if is_uvm_1p0 else '', test_target)
     elif simulator.name() == 'Questa':
+        # Questa and Xcelium Makefiles use different target names.
+        questa_test_target = test_target
+        if questa_test_target == 'test':
+            questa_test_target = 'run'
         run_cmd = 'make -f Makefile.questa UVM_VERBOSITY=UVM_MEDIUM clean {}'.format(test_target)
     else:
         assert False, "Unknown simulator: {}".format(simulator.name())
+    subprocess.run('echo "{}" > run_cmd.sh'.format(run_cmd), shell=True)
     cp = subprocess.run(run_cmd, shell=True)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)

@@ -20,8 +20,6 @@
 //
 
 
-`include "uvm_macros.svh"
-
 `include "apb.sv"
 `include "vip.sv"
 
@@ -56,9 +54,8 @@ class test extends uvm_test;
                                               vip_sentence_seq::type_id::get());
    endfunction
 
-   function void start_of_simulation_phase(uvm_phase phase); uvm_coreservice_t cs_ = uvm_coreservice_t::get();
-
-      uvm_root top = cs_.get_root();
+   function void start_of_simulation_phase(uvm_phase phase);
+      uvm_root top = uvm_root::get();
       $cast(env, top.find("env"));
    endfunction
 

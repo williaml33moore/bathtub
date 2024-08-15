@@ -12,8 +12,23 @@ virtual class codec_step_definition extends uvm_sequence implements bathtub_pkg:
     `uvm_declare_p_sequencer(tb_virtual_sequencer)
     function new (string name="codec_step_definition");
         super.new(name);
+`ifdef UVM_POST_VERSION_1_1
         set_automatic_phase_objection(1);
+`endif
     endfunction : new
+
+`ifndef UVM_POST_VERSION_1_1
+    virtual task pre_body();
+        super.pre_body();
+        starting_phase.raise_objection(this);
+    endtask : pre_body
+
+    virtual task post_body();
+        super.post_body();
+        starting_phase.drop_objection(this);
+    endtask : post_body
+`endif // UVM_POST_VERSION_1_1
+
 endclass : codec_step_definition
 
 
@@ -35,7 +50,16 @@ class transmit_chr_seq extends codec_step_definition;
         chr_str = `step_parameter_get_next_arg_as(string);
         `step_parameter_get_args_end
         chr = chr_str.atohex();
+`ifdef UVM_VERSION_1_0
+        `uvm_create_on(tr, p_sequencer.tx_src)
+        start_item(tr, -1, tr.get_sequencer());
+        if (!tr.randomize() with {chr == local::chr;} ) begin 
+            `uvm_warning("RNDFLD", "Randomization failed") 
+        end
+        finish_item(tr, -1);
+`else
         `uvm_do_on_with(tr, p_sequencer.tx_src, {chr == local::chr;})
+`endif
     endtask : body
 endclass : transmit_chr_seq
 
@@ -58,7 +82,16 @@ class vip_transmit_chr_seq extends codec_step_definition;
         chr_str = `step_parameter_get_next_arg_as(string);
         `step_parameter_get_args_end
         chr = chr_str.atohex();
+`ifdef UVM_VERSION_1_0
+        `uvm_create_on(tr, p_sequencer.vip_sqr)
+        start_item(tr, -1, tr.get_sequencer());
+        if (!tr.randomize() with {chr == local::chr;} ) begin 
+            `uvm_warning("RNDFLD", "Randomization failed") 
+        end
+        finish_item(tr, -1);
+`else
         `uvm_do_on_with(tr, p_sequencer.vip_sqr, {chr == local::chr;})
+`endif
     endtask : body
 endclass : vip_transmit_chr_seq
 
