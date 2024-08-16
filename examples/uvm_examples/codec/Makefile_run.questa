@@ -24,7 +24,7 @@ UVM_HOME	= ../../..
 include ../../Makefile.questa
 
 
-all: run hw_reset
+all: run hw_reset bathtub
 
 comp: vlib
 	$(VLOG) +incdir+../apb+vip \
@@ -41,9 +41,13 @@ hw_reset hw_reset_test: comp
 bathtub_comp: vlib
 	qrun $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
 	$(VLOG) -f bathtub_vip.f \
-        +incdir+../apb+vip \
+        +incdir+../apb+vip+. \
 		tb_top.sv test.sv
 
 test_with_bathtub: bathtub_comp
-	$(VSIM) 
+	$(VSIM) +UVM_TESTNAME=test
+	$(CHECK)
+
+bathtub: bathtub_comp
+	$(VSIM) +UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
 	$(CHECK)

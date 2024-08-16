@@ -1,5 +1,5 @@
-`ifndef \codec_step_definitions.svh 
-`define \codec_step_definitions.svh 
+`ifndef __CODEC_STEP_DEFINITIONS_SVH 
+`define __CODEC_STEP_DEFINITIONS_SVH 
 
 `include "uvm_macros.svh"
 `include "bathtub_macros.sv"
@@ -96,4 +96,4 @@ class vip_transmit_chr_seq extends codec_step_definition;
 endclass : vip_transmit_chr_seq
 
 
-`endif // \codec_step_definitions.svh 
+`endif // __CODEC_STEP_DEFINITIONS_SVH

@@ -1,5 +1,5 @@
-`ifndef \bathtub_test.svh
-`define \bathtub_test.svh
+`ifndef __BATHTUB_TEST_SVH
+`define __BATHTUB_TEST_SVH
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
@@ -56,4 +56,4 @@ endtask : main_phase
 
 endclass : bathtub_test
 
-`endif // \bathtub_test.svh
+`endif // __BATHTUB_TEST_SVH

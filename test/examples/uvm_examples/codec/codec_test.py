@@ -84,6 +84,7 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
     
     working_uvm_home = tmp_path / 'uvm'
     is_uvm_1p0 = 'uvm-1.0' in uvm_version['uvm_home']
+    is_uvm_1p1 = 'uvm-1.1' in uvm_version['uvm_home']
 
     # Copy the entire UVM library locally and `chdir` there.
     # This is our working sim dir.
@@ -98,7 +99,8 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
     shutil.copy(examples_src_path / 'Makefile_inc.questa', working_uvm_home / 'examples' / 'Makefile.questa')
     shutil.copy(examples_src_path / 'Makefile_run.questa', working_uvm_home / 'examples' / 'integrated' / 'codec' / 'Makefile.questa')
     shutil.copy(examples_src_path / 'tb_virtual_sequencer.svh', sim_cwd_path)
-    if is_uvm_1p0:
+    if is_uvm_1p0 or is_uvm_1p1:
+        # UVM 1.0 and 1.1a do not contain uvm_coreservice_t so we need to use versions of these components that don't depend on it.
         shutil.copy(examples_src_path / 'uvm-1.0p1' / 'tb_env.svh', sim_cwd_path)
         shutil.copy(examples_src_path / 'uvm-1.0p1' / 'test.sv', sim_cwd_path)
     else:

@@ -1,5 +1,5 @@
-`ifndef \tb_virtual_sequencer.svh
-`define \tb_virtual_sequencer.svh
+`ifndef __TB_VIRTUAL_SEQUENCER_SVH
+`define __TB_VIRTUAL_SEQUENCER_SVH
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
@@ -16,4 +16,4 @@ class tb_virtual_sequencer extends uvm_sequencer;
     `uvm_component_utils(tb_virtual_sequencer)
 endclass: tb_virtual_sequencer
 
-`endif // \tb_virtual_sequencer.svh
+`endif // __TB_VIRTUAL_SEQUENCER_SVH
