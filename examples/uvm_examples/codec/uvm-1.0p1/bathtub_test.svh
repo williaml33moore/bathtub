@@ -16,9 +16,11 @@ $error({"\n",
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
+`include "tb_virtual_sequencer.svh"
 `include "codec_step_definitions.svh"
 
 class bathtub_test extends test;
+    tb_virtual_sequencer virtual_sequencer;
 
 `uvm_component_utils(bathtub_test)
 
@@ -37,6 +39,8 @@ function void build_phase(uvm_phase phase);
 
     super.build_phase(phase);
 
+    virtual_sequencer = tb_virtual_sequencer::type_id::create("virtual_sequencer", this);
+
     // Override default sequences set in the base class.
     uvm_config_db#(uvm_object_wrapper)::set(null, "env.vip.sqr.main_phase",
                                             "default_sequence",
@@ -52,13 +56,21 @@ function void build_phase(uvm_phase phase);
                                             default_sequence_2);
 endfunction : build_phase
 
+function void start_of_simulation_phase(uvm_phase phase);
+    super.start_of_simulation_phase(phase);
+    
+    virtual_sequencer.regmodel = env.regmodel;
+    virtual_sequencer.tx_src = env.tx_src;
+    virtual_sequencer.vip_sqr = env.vip.sqr;
+endfunction
+
 task main_phase(uvm_phase phase);
     bathtub_pkg::bathtub bathtub;
 
     phase.raise_objection(this);
 
     bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
-    bathtub.configure(env.virtual_sequencer);
+    bathtub.configure(virtual_sequencer);
     bathtub.run_test(phase); // Run Bathtub!
     phase.drop_objection(this);
 endtask : main_phase

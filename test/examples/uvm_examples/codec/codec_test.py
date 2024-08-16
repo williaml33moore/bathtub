@@ -101,14 +101,10 @@ def test_codec_with_bathtub(tmp_path, get_test_config, uvm_version, test_target)
     shutil.copy(examples_src_path / 'tb_virtual_sequencer.svh', sim_cwd_path)
     if is_uvm_1p0 or is_uvm_1p1:
         # Use these files for UVM 1.0 and 1.1.
-        shutil.copy(examples_src_path / 'uvm-1.0p1' / 'tb_env.svh', sim_cwd_path)
-        shutil.copy(examples_src_path / 'uvm-1.0p1' / 'test.sv', sim_cwd_path)
         shutil.copy(examples_src_path / 'uvm-1.0p1' / 'codec_step_definitions.svh', sim_cwd_path)
         shutil.copy(examples_src_path / 'uvm-1.0p1' / 'bathtub_test.svh', sim_cwd_path)
     else:
         # Use these files for UVM 1.2, UVM 2017, and newer.
-        shutil.copy(examples_src_path / 'tb_env.svh', sim_cwd_path)
-        shutil.copy(examples_src_path / 'test.sv', sim_cwd_path)
         shutil.copy(examples_src_path / 'codec_step_definitions.svh', sim_cwd_path)
         shutil.copy(examples_src_path / 'bathtub_test.svh', sim_cwd_path)
     shutil.copy(examples_src_path / 'testlib.svh', sim_cwd_path)
