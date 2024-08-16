@@ -1,17 +1,16 @@
 `ifndef __BATHTUB_TEST_SVH
 `define __BATHTUB_TEST_SVH
 
-`ifdef UVM_VERSION_1_0
+`ifndef UVM_VERSION_1_0
+`ifndef UVM_VERSION_1_1
 `define VERSION_ERROR
-`endif 
-`ifdef UVM_VERSION_1_1
-`define VERSION_ERROR
-`endif
+`endif // UVM_VERSION_1_1
+`endif // UVM_VERSION_1_0
 `ifdef VERSION_ERROR
 $error({"\n",
 "Detected UVM version ", `UVM_VERSION_STRING, ".", "\n",
-"This file requires UVM 1.2 or UVM 2017 (IEEE 1800.2) or later.", "\n",
-"For UVM 1.0 or 1.1, use `examples/uvm_examples/codec/uvm-1.0p1/bathtub_test.svh` instead.", "\n",
+"This file is intended For UVM 1.0 or 1.1.", "\n",
+"For UVM 1.2 or UVM 2017 (IEEE 1800.2) or later, use `examples/uvm_examples/codec/bathtub_test.svh` instead.", "\n",
 ""});
 `endif // VERSION_ERROR
 
@@ -29,11 +28,12 @@ endfunction
       
 
 function void build_phase(uvm_phase phase);
-    uvm_sequence_base default_sequence;
+    uvm_sequence_base default_sequence_1, default_sequence_2;
     uvm_object_wrapper default_sequence_type;
 
-    default_sequence = null;
-    default_sequence_type = null;
+    default_sequence_1 = new("default_sequence_1");
+    default_sequence_2 = new("default_sequence_2");
+    default_sequence_type = uvm_sequence_base::type_id::get();
 
     super.build_phase(phase);
 
@@ -46,10 +46,10 @@ function void build_phase(uvm_phase phase);
                                             default_sequence_type);
     uvm_config_db#(uvm_sequence_base)::set(null, "env.vip.sqr.main_phase",
                                             "default_sequence",
-                                            default_sequence);
+                                            default_sequence_1);
     uvm_config_db#(uvm_sequence_base)::set(null, "env.tx_src.main_phase",
                                             "default_sequence",
-                                            default_sequence);
+                                            default_sequence_2);
 endfunction : build_phase
 
 task main_phase(uvm_phase phase);
