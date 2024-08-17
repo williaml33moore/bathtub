@@ -84,44 +84,8 @@ You got the codec testbench running as-is.
 Now we're going to modify it.
 
 `$CODEC_WORKING_DIR/README.txt` briefly describes the DUT, and `$CODEC_WORKING_DIR/block_diagram.pdf` gives an overview of the testbench.
-Here's a class diagram of the testbench that focuses on the parts relevant to this Bathtub exercise.
-```mermaid
----
-title: Codec
----
-classDiagram
-    test --|> uvm_test
-    tb_env --|> uvm_env
-    class test
+Here's a UML class diagram of the testbench that focuses on the parts relevant to this Bathtub exercise.
 
-    class tb_env {
-        +vif : tb_ctl_vif
-        +build_phase(phase : uvm_phase)
-        +connect_phase(phase : uvm_phase)
-        +reset_phase(phase : uvm_phase)
-        +main_phase(phase : uvm_phase)
-        +pull_from_RxFIFO(phase : uvm_phase)
-    }
-    tb_env *-- reg_dut : regmodel
-    tb_env *-- apb_agent : apb
-    tb_env *-- vip_sequencer : tx_src
-    tb_env *-- vip_agent : vip
-    test o-- tb_env : env
-    vip_agent *-- vip_sequencer : vip_sequencer
-    class vip_agent {
-        +drv : vip_driver
-        +tx_mon : vip_monitor
-        +rx_mon : vip_monitor
-    }
-    class apb_agent {
-        +drv : apb_master
-        +mon : apb_monitor
-    }
-    apb_agent *-- apb_sequencer : sqr
-    reg_dut -- apb_sequencer : adapter
-```
-`[![](https://mermaid.ink/img/pako:eNqNk81uwyAMx18FcdpXXiCHXTZV2mnSdkVCFJwUCUjKR9Spy7vPIcmSqK1UDsj2_2eb4HCmslFAS1oUBXNRRwMlecOQZC6HpBEhvGtRe2GZI7gihEiK4veVpM7ywZview6uWxR0RiGXICO4iYwJ5zE2rOdOV6QcBBkNR2cl7ZM2ircHEeAh7wgObbL9uAJl4xzIeA_qIcBdoBXa3cO1yRhe-cbyr9PuY_d5k-43d_ZUFMRDzVWKyKJlcQLmAhHtnosa3AChfaF3uuUBjgmcBD_c44kHL69icxm0V1NtUJ3AkvzPb-GvNdn46_EuaesJK99NScrrbs7IEh7XNm5S0dKxWcv-ptyv2y6XdNl20KwIcdN2LJqlK0WXcvME1h8fjhM9T-8KI5Roc0fm6Au14PFnUvji8vEYjQewwGiJpoJKJBMZZa5HVKTYfP84ScvoE7xQ36T6QMtKmIBeapWIML3MEen_AOUQOk8?type=png)](https://mermaid.live/edit#pako:eNqNk81uwyAMx18FcdpXXiCHXTZV2mnSdkVCFJwUCUjKR9Spy7vPIcmSqK1UDsj2_2eb4HCmslFAS1oUBXNRRwMlecOQZC6HpBEhvGtRe2GZI7gihEiK4veVpM7ywZview6uWxR0RiGXICO4iYwJ5zE2rOdOV6QcBBkNR2cl7ZM2ircHEeAh7wgObbL9uAJl4xzIeA_qIcBdoBXa3cO1yRhe-cbyr9PuY_d5k-43d_ZUFMRDzVWKyKJlcQLmAhHtnosa3AChfaF3uuUBjgmcBD_c44kHL69icxm0V1NtUJ3AkvzPb-GvNdn46_EuaesJK99NScrrbs7IEh7XNm5S0dKxWcv-ptyv2y6XdNl20KwIcdN2LJqlK0WXcvME1h8fjhM9T-8KI5Roc0fm6Au14PFnUvji8vEYjQewwGiJpoJKJBMZZa5HVKTYfP84ScvoE7xQ36T6QMtKmIBeapWIML3MEen_AOUQOk8)`
-
-
+[![](https://mermaid.ink/img/pako:eNqVVU2PmzAQ_SuWe9ntLlXPKOLSdqWeVrs9lgoZM0nQGpv1B91qm__esYEYEkdKOSTDe29mHh5j3ilXDdCcZllWSttaATn5ghAvZYC4YMZ8bdlOs66UBK-AEFtXVvXkfcT8tdl0qnECiiJi3AqSey0G1dBuI9M4-xkp_Buxw_gnWQemZxwI6-uqf9ktO4ydPcF2IG2KMPDqQHLQF6r2WvknqSwYe17ao2dYXYEcTlENu-qy96Ht0949kfTuibT34DTL_hbEDaPvCQ--InM0uXyUk4n5hIWnO5zIhfHc1a4VTdXvmYGb8ItC3ybEtwshV1ICt9dINRi4StixVl6j650Q1Varrnp-e_j-8HhRfVit2ccsi7sI1Rif8dOAkcUINzaIM8lqZn4d3yqjeVI2d8J4MVWF7CTMyXF-UZ9qktgoJ1trNeFGD1NSo9thzggU2u2UnFiMWquWtL5IH5Zt4zqet_Vcx4xdtR2LBipRNJabh7R8ePM6qefpqISogS1zwmLn_lNypebkleGYNG0fr8K7lbs58_jSeaAWir9E99HKUbV0t9mQupUNKYoNef72RLIiZOnfpIjj__8aPsvquUY8icKLkDqJ1ofJGk-cdysLP0u6uv9wgy5uS_orlXWyRAd6TzvQ-IY3-NUJtkpq99BBSXMMp0GUtJReypxVP_5ITnOrHdxTrdxuT_MtEwbvXN8wC9PXaUIP_wAQUS8G?type=png)](https://mermaid.live/edit#pako:eNqVVU2PmzAQ_SuWe9ntLlXPKOLSdqWeVrs9lgoZM0nQGpv1B91qm__esYEYEkdKOSTDe29mHh5j3ilXDdCcZllWSttaATn5ghAvZYC4YMZ8bdlOs66UBK-AEFtXVvXkfcT8tdl0qnECiiJi3AqSey0G1dBuI9M4-xkp_Buxw_gnWQemZxwI6-uqf9ktO4ydPcF2IG2KMPDqQHLQF6r2WvknqSwYe17ao2dYXYEcTlENu-qy96Ht0949kfTuibT34DTL_hbEDaPvCQ--InM0uXyUk4n5hIWnO5zIhfHc1a4VTdXvmYGb8ItC3ybEtwshV1ICt9dINRi4StixVl6j650Q1Varrnp-e_j-8HhRfVit2ccsi7sI1Rif8dOAkcUINzaIM8lqZn4d3yqjeVI2d8J4MVWF7CTMyXF-UZ9qktgoJ1trNeFGD1NSo9thzggU2u2UnFiMWquWtL5IH5Zt4zqet_Vcx4xdtR2LBipRNJabh7R8ePM6qefpqISogS1zwmLn_lNypebkleGYNG0fr8K7lbs58_jSeaAWir9E99HKUbV0t9mQupUNKYoNef72RLIiZOnfpIjj__8aPsvquUY8icKLkDqJ1ofJGk-cdysLP0u6uv9wgy5uS_orlXWyRAd6TzvQ-IY3-NUJtkpq99BBSXMMp0GUtJReypxVP_5ITnOrHdxTrdxuT_MtEwbvXN8wC9PXaUIP_wAQUS8G)
 
 
