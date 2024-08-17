@@ -1,7 +1,7 @@
 # codec
-The reference implementation libraries for UVM 1.0, 1.1, and 1.2 include a working sample verification environment for a simple parallel-to-serial codec.
-This example applies Bathtub to that codec environment.
-The goal is to illustrate how you can apply Bathtub to any UVM testbench.
+The reference implementation libraries for UVM 1.0, 1.1, and 1.2 include complete source code for a working verification environment for a simple parallel-to-serial codec.
+We are going to apply Bathtub to that codec environment.
+The purpose is to illustrate how you can apply Bathtub to any UVM testbench.
 ## Overview
 In general, these are the steps for applying Bathtub to a UVM testbench.
 1. Build a working UVM environment.
@@ -78,6 +78,49 @@ The included makefiles all have `clean` targets you can use to remove those file
 | VCS | `make -f Makefile.vcs clean` |
 
 Once your simulation is running and passing, you're ready to move on.
+
+## Create a New Bathtub Test
+You got the codec testbench running as-is.
+Now we're going to modify it.
+
+`$CODEC_WORKING_DIR/README.txt` briefly describes the DUT, and `$CODEC_WORKING_DIR/block_diagram.pdf` gives an overview of the testbench.
+Here's a class diagram of the testbench that focuses on the parts relevant to this Bathtub exercise.
+```mermaid
+---
+title: Codec
+---
+classDiagram
+    test --|> uvm_test
+    tb_env --|> uvm_env
+    class test
+
+    class tb_env {
+        +vif : tb_ctl_vif
+        +build_phase(phase : uvm_phase)
+        +connect_phase(phase : uvm_phase)
+        +reset_phase(phase : uvm_phase)
+        +main_phase(phase : uvm_phase)
+        +pull_from_RxFIFO(phase : uvm_phase)
+    }
+    tb_env *-- reg_dut : regmodel
+    tb_env *-- apb_agent : apb
+    tb_env *-- vip_sequencer : tx_src
+    tb_env *-- vip_agent : vip
+    test o-- tb_env : env
+    vip_agent *-- vip_sequencer : vip_sequencer
+    class vip_agent {
+        +drv : vip_driver
+        +tx_mon : vip_monitor
+        +rx_mon : vip_monitor
+    }
+    class apb_agent {
+        +drv : apb_master
+        +mon : apb_monitor
+    }
+    apb_agent *-- apb_sequencer : sqr
+    reg_dut -- apb_sequencer : adapter
+```
+`[![](https://mermaid.ink/img/pako:eNqNk81uwyAMx18FcdpXXiCHXTZV2mnSdkVCFJwUCUjKR9Spy7vPIcmSqK1UDsj2_2eb4HCmslFAS1oUBXNRRwMlecOQZC6HpBEhvGtRe2GZI7gihEiK4veVpM7ywZview6uWxR0RiGXICO4iYwJ5zE2rOdOV6QcBBkNR2cl7ZM2ircHEeAh7wgObbL9uAJl4xzIeA_qIcBdoBXa3cO1yRhe-cbyr9PuY_d5k-43d_ZUFMRDzVWKyKJlcQLmAhHtnosa3AChfaF3uuUBjgmcBD_c44kHL69icxm0V1NtUJ3AkvzPb-GvNdn46_EuaesJK99NScrrbs7IEh7XNm5S0dKxWcv-ptyv2y6XdNl20KwIcdN2LJqlK0WXcvME1h8fjhM9T-8KI5Roc0fm6Au14PFnUvji8vEYjQewwGiJpoJKJBMZZa5HVKTYfP84ScvoE7xQ36T6QMtKmIBeapWIML3MEen_AOUQOk8?type=png)](https://mermaid.live/edit#pako:eNqNk81uwyAMx18FcdpXXiCHXTZV2mnSdkVCFJwUCUjKR9Spy7vPIcmSqK1UDsj2_2eb4HCmslFAS1oUBXNRRwMlecOQZC6HpBEhvGtRe2GZI7gihEiK4veVpM7ywZview6uWxR0RiGXICO4iYwJ5zE2rOdOV6QcBBkNR2cl7ZM2ircHEeAh7wgObbL9uAJl4xzIeA_qIcBdoBXa3cO1yRhe-cbyr9PuY_d5k-43d_ZUFMRDzVWKyKJlcQLmAhHtnosa3AChfaF3uuUBjgmcBD_c44kHL69icxm0V1NtUJ3AkvzPb-GvNdn46_EuaesJK99NScrrbs7IEh7XNm5S0dKxWcv-ptyv2y6XdNl20KwIcdN2LJqlK0WXcvME1h8fjhM9T-8KI5Roc0fm6Au14PFnUvji8vEYjQewwGiJpoJKJBMZZa5HVKTYfP84ScvoE7xQ36T6QMtKmIBeapWIML3MEen_AOUQOk8)`
 
 
 
