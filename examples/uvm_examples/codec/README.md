@@ -116,6 +116,7 @@ Copy the virtual sequencer file from the Bathtub examples source directory to yo
 cp $BATHTUB_CODEC_SRC/tb_virtual_sequencer.svh $CODEC_WORKING_DIR
 ```
 The Bathtub test already instantiates the virtual sequencer and connects it to the concrete sequencers.
+Note that it is normally best practice to instantiate the virtual sequencer inside the environment class, not the test class, but for the sake of this exercise it is simpler to put it in the test class so we don't have to modify `tb_env.svh`.
 
 This updated UVM diagram shows the testbench with the Bathtub test and virtual sequencer added.
 
@@ -125,3 +126,12 @@ This object diagram shows how the `tb_env` component instantiates all the concre
 The register model has a reference to the APB sequencer and provides a useful register-based interface to it, so the virtual sequencer contains a reference to the register model instead of the APB sequencer directly.
 
 [![](https://mermaid.ink/img/pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw?type=png)](https://mermaid.live/edit#pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw)
+
+## Write a Gherkin Feature File
+We have done this for you.
+Copy the feature file from the Bathtub examples source directory to your working directory.
+```
+cp $BATHTUB_CODEC_SRC/codec.feature $CODEC_WORKING_DIR
+```
+It's a very small, simple feature file, just enough to demonstrate that Bathtub is working.
+
