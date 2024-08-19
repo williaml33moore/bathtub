@@ -12,7 +12,7 @@ In general, these are the steps for applying Bathtub to a UVM testbench.
    * Since Bathtub will provide sequences for some of your sequencers, the test should disable any default sequences for run-time phases that might conflict.
 3. Write a Gherkin feature file that describes and exercises the behavior of the DUT.
 4. Write step definitions (`uvm_sequence`) for every step in the feature file.
-5. Run!
+5. Run Bathtub!
 
 This README walks through the above steps for the codec example.
 ## Build a UVM Environment
@@ -67,6 +67,23 @@ Cadence replaced Incisive with Xcelium, so feel free to make a pair of `Makefile
 That's what we've done.
 We run Xcelium like so:
 `make -f Makefile.xcelium test`
+
+⚠️ **Note:** Cadence simulators (`irun` and `xrun`) generally require the `-uvmnocdnsextra` command line option since we are not using Cadence's built-in UVM library.
+You can make that change in `$CODEC_WORKING_DIR/../../Makefile.ius` or `$CODEC_WORKING_DIR/../../Makefile.xcelium`, e.g.:
+```
+# Change
+IUS =   irun -access rw -uvmhome $(UVM_HOME) +UVM_VERBOSITY=$(UVM_VERBOSITY) -quiet
+# to
+IUS =   irun -access rw -uvmhome $(UVM_HOME) +UVM_VERBOSITY=$(UVM_VERBOSITY) -quiet -uvmnocdnsextra
+```
+⚠️ **Note:** Newer versions of Questa have deprecated `+acc` option `m`.
+Edit `$CODEC_WORKING_DIR/../../Makefile.questa`:
+```
+# Change
+        +acc=rmb \
+# to
+        +acc=rb \
+```
 
 The simulators produce various log files and other artifacts in your working directory.
 The included makefiles all have `clean` targets you can use to remove those files.
@@ -127,11 +144,27 @@ The register model has a reference to the APB sequencer and provides a useful re
 
 [![](https://mermaid.ink/img/pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw?type=png)](https://mermaid.live/edit#pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw)
 
-You can confirm that your Bathtub-updated testbench works by running the original unchanged `test` on it.
-There is a target in the makefiles for that.
+You can confirm that your Bathtub-updated testbench still works by running the original unchanged `test` on it.
+First we must update the makefile since we have added some new files to the working directory.
+Recall that each simulator requires two makefiles, which we call the "run" makefile (`Makefile_run.xxx`) and the "include" makefile (`Makefile_inc.xxx`).
+You will copy the makefiles from the Bathtub examples source directory to the appropriate working directories.
+
+⚠️ **Caution:** If you had to modify the makefiles to get the original codec testbench to run, you will need to merge those same modifications into the makefiles we provide.
+Make backup copies of your modified makefiles before you copy over them.
+```
+# Back up any changes you made to the makefiles!
+# Copy the pairs of makefiles into your working directory locations.
+# Note that the source and destination filenames are different.
+# Reapply your modifications to these new makefiles.
+cp $BATHTUB_CODEC_SRC/Makefile_inc.xcelium $CODEC_WORKING_DIR/../../Makefile.xcelium
+cp $BATHTUB_CODEC_SRC/Makefile_run.xcelium $CODEC_WORKING_DIR/Makefile.xcelium
+cp $BATHTUB_CODEC_SRC/Makefile_inc.questa $CODEC_WORKING_DIR/../../Makefile.questa
+cp $BATHTUB_CODEC_SRC/Makefile_run.questa $CODEC_WORKING_DIR/Makefile.questa
+```
+The new makefiles have a new target for running the original `test` on your updated testbench:
 | Simulator | Command |
 | --- | --- |
-| Incisive | `make -f Makefile.ius test_with_bathtub` |
+| Incisive | `make -f Makefile.xcelium test_with_bathtub` |
 | Questa | `make -f Makefile.questa test_with_bathtub` |
 | VCS | `make -f Makefile.vcs test_with_bathtub` # Not implemented yet|
 ## Write a Gherkin Feature File
@@ -148,10 +181,24 @@ Copy the step definition file from the Bathtub examples source directory to your
 cp $BATHTUB_CODEC_SRC/codec_step_definitions.svh $CODEC_WORKING_DIR
 ```
 There is an abstract base class for the step definitions and two child classes: one to transmit a single byte from parallel (APB) to serial, and one to transmit a single byte from the serial VIP agent to the DUT's `rx` pin.
+These step definitions are sufficient to cover our simple feature file.
+A more thorough feature file would require many more step definition classes.
 This class diagram depicts the step definition sequences.
 [![](https://mermaid.ink/img/pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg?type=png)](https://mermaid.live/edit#pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg)
 
 The base class declares a `p_sequencer` that references the virtual sequencer through which the child step definitions can access the concrete sequencers.
 Each sequencer has an integer `chr` member which holds the data byte parameters in the feature file.
-
+## Run Bathtub
+The  makefiles have a `bathtub` target for running Bathtub.
+The simulator command line includes options `+UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature`, which specify the test and feature file.
+| Simulator | Command |
+| --- | --- |
+| Incisive | `make -f Makefile.xcelium bathtub` |
+| Questa | `make -f Makefile.questa bathtub` |
+| VCS | `make -f Makefile.vcs bathtub` # Not implemented yet|
+Congratulations, you have run the codec example with Bathtub!
+## Summary
+Here's a pseudo shell script that summarizes the preceding instructions.
+```
+```
 
