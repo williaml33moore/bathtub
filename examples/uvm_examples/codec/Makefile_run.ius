@@ -22,30 +22,31 @@
 
 UVM_HOME	= ../../..
 
-include ../../Makefile.xcelium
+include ../../Makefile.ius
 
 
-all run: test hw_reset bathtub
+all run: test hw_reset bathtub_test
 
 test:
-	$(XCELIUM) -incdir ../apb -incdir vip tb_top.sv test.sv
+	$(IUS) -incdir ../apb -incdir vip tb_top.sv test.sv
 	$(CHECK)
 
 hw_reset:
-	$(XCELIUM) -incdir ../apb -incdir vip tb_top.sv test.sv \
+	$(IUS) -incdir ../apb -incdir vip tb_top.sv test.sv \
 		+UVM_TESTNAME=hw_reset_test
 	$(CHECK)
 
-bathtub:
-	$(XCELIUM) $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
-	$(XCELIUM) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
+bathtub_vip.f:
+	$(IUS) $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
+
+bathtub_test: bathtub_vip.f
+	$(IUS) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
 		+UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
 	$(CHECK)
 
 # Run the original test on the new testbench with Bathtub, without using Bathtub.
 # Check that we didn't break the original test.
-test_with_bathtub:
-	$(XCELIUM) $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
-	$(XCELIUM) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
+test_with_bathtub: bathtub_vip.f
+	$(IUS) -f bathtub_vip.f -incdir ../apb -incdir vip tb_top.sv test.sv \
 		+UVM_TESTNAME=test
 	$(CHECK)

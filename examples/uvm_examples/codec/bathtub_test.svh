@@ -21,6 +21,7 @@ import uvm_pkg::*;
 `include "codec_step_definitions.svh"
 
 class bathtub_test extends test;
+    bathtub_pkg::bathtub bathtub;
     tb_virtual_sequencer virtual_sequencer;
 
     `uvm_component_utils(bathtub_test)
@@ -38,6 +39,8 @@ class bathtub_test extends test;
         default_sequence_type = null;
 
         super.build_phase(phase);
+
+        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
 
         virtual_sequencer = tb_virtual_sequencer::type_id::create("virtual_sequencer", this);
 
@@ -62,15 +65,12 @@ class bathtub_test extends test;
         virtual_sequencer.regmodel = env.regmodel;
         virtual_sequencer.tx_src = env.tx_src;
         virtual_sequencer.vip_sqr = env.vip.sqr;
+
+        bathtub.configure(virtual_sequencer);
     endfunction
 
     task main_phase(uvm_phase phase);
-        bathtub_pkg::bathtub bathtub;
-
         phase.raise_objection(this);
-
-        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
-        bathtub.configure(virtual_sequencer);
         bathtub.run_test(phase); // Run Bathtub!
         phase.drop_objection(this);
     endtask : main_phase

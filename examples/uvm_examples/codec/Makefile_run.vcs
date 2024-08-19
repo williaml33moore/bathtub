@@ -1,6 +1,6 @@
 ## 
 ## -------------------------------------------------------------
-##    Copyright 2010 Mentor Graphics Corporation
+##    Copyright 2010-2011 Synopsys, Inc.
 ##    All Rights Reserved Worldwide
 ## 
 ##    Licensed under the Apache License, Version 2.0 (the
@@ -21,35 +21,36 @@
 
 UVM_HOME	= ../../..
 
-include ../../Makefile.questa
+include ../../Makefile.vcs
 
 
-all: run hw_reset bathtub_test
+all: comp run
 
-comp: vlib
-	$(VLOG) +incdir+../apb+vip \
+comp:
+	$(VCS) $(COPTS) +incdir+../apb+vip \
 		tb_top.sv test.sv
 
-run: comp
-	$(VSIM)
+run: test hw_reset_test
+
+test:
+	$(SIMV) $(ROPTS)
 	$(CHECK)
 
-hw_reset hw_reset_test: comp
-	$(VSIM) +UVM_TESTNAME=hw_reset_test
+hw_reset hw_reset_test:
+	$(SIMV) $(ROPTS) +UVM_TESTNAME=hw_reset_test
 	$(CHECK)
 
 bathtub_vip.f:
-	qrun $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
+	$(VCS) -r $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
 
-bathtub_comp: bathtub_vip.f vlib
-	$(VLOG) -f bathtub_vip.f \
-        +incdir+../apb+vip+. \
+bathtub_comp: bathtub_vip.f
+	$(VCS) $(COPTS) -f bathtub_vip.f +incdir+../apb+vip+. \
 		tb_top.sv test.sv
 
 test_with_bathtub: bathtub_comp
-	$(VSIM) +UVM_TESTNAME=test
+	$(SIMV) $(ROPTS) +UVM_TESTNAME=test
 	$(CHECK)
 
 bathtub_test: bathtub_comp
-	$(VSIM) +UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
+	$(SIMV) $(ROPTS) +UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
 	$(CHECK)

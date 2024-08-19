@@ -29,13 +29,14 @@ endif
 #---------------------------------------------------------------
 
 UVM_HOME ?= ..
+UVM_VERBOSITY =	UVM_MEDIUM
 
 
 LIBDIR  = $(UVM_HOME)/lib
 #GCC     = $(MTI_HOME)/gcc-4.1.2-linux/bin/g++
-GCC     = gcc
+GCC     = g++
 TEST    = /usr/bin/test
-BITS    ?= 32
+BITS    = 32
 LIBNAME = uvm_dpi
 DPI_SRC = $(UVM_HOME)/src/dpi/uvm_dpi.cc
 
@@ -47,7 +48,6 @@ GCCCMD =  $(GCC) \
         -g \
         -W \
         -shared \
-        -x c \
         -I$(MTI_HOME)/include \
         $(DPI_SRC) \
         -o $(LIBDIR)/$(LIBNAME).so
@@ -59,7 +59,6 @@ GCC_WINCMD = \
         -W \
         -shared \
         -Bsymbolic \
-        -x c \
         -I$(MTI_HOME)/include \
         $(DPI_SRC) \
         -o $(LIBDIR)/$(LIBNAME).dll \
@@ -83,6 +82,7 @@ VLOG =  vlog \
 
 
 VSIM =  vsim \
+        +UVM_VERBOSITY=$(UVM_VERBOSITY) \
         $(DPILIB_VSIM_OPT) \
         $(VSIM_OPT) \
         $(OPT_R) \

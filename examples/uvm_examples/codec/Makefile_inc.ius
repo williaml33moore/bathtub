@@ -1,6 +1,6 @@
 ## 
 ## -------------------------------------------------------------
-##    Copyright 2010 Mentor Graphics Corporation
+##    Copyright 2010 Cadence.
 ##    All Rights Reserved Worldwide
 ## 
 ##    Licensed under the Apache License, Version 2.0 (the
@@ -19,37 +19,33 @@
 ## -------------------------------------------------------------
 ## 
 
-UVM_HOME	= ../../..
+x: all
 
-include ../../Makefile.questa
+#
+# Include file for IUS Makefiles
+#
+
+UVM_VERBOSITY =	UVM_LOW
+
+#
+# Note that "-access rw" have an adverse impact on performance
+# and should not be used unless necessary.
+#
+# They are used here because they are required by some examples
+# (backdoor register accesses).
+#
 
 
-all: run hw_reset bathtub_test
+TEST = /usr/bin/test
+N_ERRS = 0
+N_FATALS = 0
 
-comp: vlib
-	$(VLOG) +incdir+../apb+vip \
-		tb_top.sv test.sv
+IUS =	irun -access rw -uvmhome $(UVM_HOME) +UVM_VERBOSITY=$(UVM_VERBOSITY) -quiet -uvmnocdnsextra
 
-run: comp
-	$(VSIM)
-	$(CHECK)
 
-hw_reset hw_reset_test: comp
-	$(VSIM) +UVM_TESTNAME=hw_reset_test
-	$(CHECK)
+CHECK = \
+	@$(TEST) \( `grep -c 'UVM_ERROR :    $(N_ERRS)' xrun.log` -eq 1 \) -a \
+		 \( `grep -c 'UVM_FATAL :    $(N_FATALS)' xrun.log` -eq 1 \)
 
-bathtub_vip.f:
-	qrun $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
-
-bathtub_comp: bathtub_vip.f vlib
-	$(VLOG) -f bathtub_vip.f \
-        +incdir+../apb+vip+. \
-		tb_top.sv test.sv
-
-test_with_bathtub: bathtub_comp
-	$(VSIM) +UVM_TESTNAME=test
-	$(CHECK)
-
-bathtub_test: bathtub_comp
-	$(VSIM) +UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature
-	$(CHECK)
+clean:
+	rm -rf *~ core csrc simv* vc_hdrs.h ucli.key *.log
