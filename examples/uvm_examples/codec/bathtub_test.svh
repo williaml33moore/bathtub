@@ -44,7 +44,7 @@ class bathtub_test extends test;
 
         virtual_sequencer = tb_virtual_sequencer::type_id::create("virtual_sequencer", this);
 
-        // Override default sequences set in the base class.
+        // Override default sequences set in the tb environment class.
         uvm_config_db#(uvm_object_wrapper)::set(null, "env.vip.sqr.main_phase",
                                                 "default_sequence",
                                                 default_sequence_type);
