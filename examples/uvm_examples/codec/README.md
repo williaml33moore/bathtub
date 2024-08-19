@@ -99,8 +99,71 @@ Now we're going to modify it.
 
 `$CODEC_WORKING_DIR/README.txt` briefly describes the DUT, and `$CODEC_WORKING_DIR/block_diagram.pdf` gives an overview of the testbench.
 Here's a UML class diagram of the testbench that focuses on the parts relevant to this Bathtub exercise.
+```mermaid
+---
+title: Original Codec before Bathtub
+---
+classDiagram
+    class tb_top {
+        <<module>>
+        ctl : tb_ctl_vif
+        dut0 : dut
+    }
+    namespace apb_pkg {
+        class apb_agent
+        class apb_sequencer
+    }
+    namespace program {
+        class test
+        class tb_env
+        class reg_dut
+    }
+    namespace vip_pkg {
+        class vip_agent
+        class vip_sequencer
+    }
+    test --|> uvm_test
+    tb_env --|> uvm_env
+    class test
 
-[![](https://mermaid.ink/img/pako:eNqVVU1v3CAQ_SuIXpImrnq2Vj70I1JPUdNjXVkYj70oGBwMbqp0_3sHfyz2LittfbCHeW9mHgzgN8p1BTSlSZLkygorISWPRjRCMUk-I8ZJCbU2QD4xu7euzNVI5ZL1_RfBGsPaXBF8Rg-xZWF1R94mn392u1ZXTkKWBR-3kqSei0YxiDoglbMfEcLP5DtMH8Va6DvGgbCuLLrnZl1hquwB1oCyMaCHFweKg7mQtTPaz-Q8q4X-LCHqBjWceg00xWXZg-jisj0Qle2BuGyviSTJ34y4oS2CwklXQI4i11M5aZYPWGm6w2Zc6Mxd6YSsim7PergZ30j0ZUb7dkXkWing9hqqgR6uIrZMqGt4nZOyqI1ui6fXh28PjxfZh82avU-SsIGQjfYZPjcYUbRwT4M8o2x65tfxtegNj9KWSmivuqoRnYkpOfYv8GNFIhvlZGttOlyZYQ6qjBiWiBFCua1WM4qWsHoNm4vwYV02rON5WY-1rLebslPSEYokDemWJq0n37_M7KU7OkKqoGZOWqzcfYiu1BK8ERyC5u3jWTjaqFsij4fOO0qp-XNQH6QcWWt1ux0phapIlu3I09fvJMnGKPObZKH9_5_DR1mz5Ag30XgQYjfR9jLZ-iP33UbCz5xuxu9uUMVtTn_Fok6W6EDvaQsGT3iFP6JRVk7tHlrIaYrm3Iic5spTmbP6xx_FaWqNg3tqtGv2NK2Z7HHkuopZmH9Ms_fwD356Nbk?type=png)](https://mermaid.live/edit#pako:eNqVVU1v3CAQ_SuIXpImrnq2Vj70I1JPUdNjXVkYj70oGBwMbqp0_3sHfyz2LittfbCHeW9mHgzgN8p1BTSlSZLkygorISWPRjRCMUk-I8ZJCbU2QD4xu7euzNVI5ZL1_RfBGsPaXBF8Rg-xZWF1R94mn392u1ZXTkKWBR-3kqSei0YxiDoglbMfEcLP5DtMH8Va6DvGgbCuLLrnZl1hquwB1oCyMaCHFweKg7mQtTPaz-Q8q4X-LCHqBjWceg00xWXZg-jisj0Qle2BuGyviSTJ34y4oS2CwklXQI4i11M5aZYPWGm6w2Zc6Mxd6YSsim7PergZ30j0ZUb7dkXkWing9hqqgR6uIrZMqGt4nZOyqI1ui6fXh28PjxfZh82avU-SsIGQjfYZPjcYUbRwT4M8o2x65tfxtegNj9KWSmivuqoRnYkpOfYv8GNFIhvlZGttOlyZYQ6qjBiWiBFCua1WM4qWsHoNm4vwYV02rON5WY-1rLebslPSEYokDemWJq0n37_M7KU7OkKqoGZOWqzcfYiu1BK8ERyC5u3jWTjaqFsij4fOO0qp-XNQH6QcWWt1ux0phapIlu3I09fvJMnGKPObZKH9_5_DR1mz5Ag30XgQYjfR9jLZ-iP33UbCz5xuxu9uUMVtTn_Fok6W6EDvaQsGT3iFP6JRVk7tHlrIaYrm3Iic5spTmbP6xx_FaWqNg3tqtGv2NK2Z7HHkuopZmH9Ms_fwD356Nbk)
+    class tb_env {
+        +vif : tb_ctl_vif
+        +build_phase(phase : uvm_phase)
+        +connect_phase(phase : uvm_phase)
+        +reset_phase(phase : uvm_phase)
+        +main_phase(phase : uvm_phase)
+        +pull_from_RxFIFO(phase : uvm_phase)
+    }
+    tb_env *-- apb_agent : apb
+    tb_env *-- reg_dut : regmodel
+    tb_env *-- vip_sequencer : tx_src
+    tb_env *-- vip_agent : vip
+    test o-- tb_env : env
+    vip_agent *-- vip_sequencer : vip_sequencer
+    class vip_agent {
+        +drv : vip_driver
+        +tx_mon : vip_monitor
+        +rx_mon : vip_monitor
+    }
+    class apb_agent {
+        +drv : apb_master
+        +mon : apb_monitor
+    }
+    apb_agent *-- apb_sequencer : sqr
+    reg_dut o-- apb_sequencer : default_map.sequencer
+    class reg_dut {
+        +default_map : uvm_reg_map
+    }
+    reg_dut --|> uvm_reg_block
+    apb_sequencer --|> uvm_sequencer : << bind >>< REQ -> apb_rw >
+    vip_sequencer --|> uvm_sequencer : << bind >>< REQ -> vip_tr >
+    namespace uvm_pkg {
+        class uvm_test
+        class uvm_env
+        class uvm_sequencer["uvm_sequencer#(REQ)"]
+        class uvm_reg_block
+    }
+```
 
 The testbench has a `uvm_test` class called `test` which is our top component.
 We're going to extend it into a new class called `bathtub_test`.
@@ -133,14 +196,125 @@ The Bathtub test already instantiates the virtual sequencer and connects it to t
 Note that it is normally best practice to instantiate the virtual sequencer inside the environment class, not the test class, but for the sake of this exercise it is simpler to put it in the test class so we don't have to touch `tb_env.svh`.
 
 This updated UVM diagram shows the testbench with the Bathtub test and virtual sequencer added.
+```mermaid
+---
+title: Codec Enhanced with Bathtub
+---
+classDiagram
+    class tb_top {
+        <<module>>
+        ctl : tb_ctl_vif
+        dut0 : dut
+    }
+    namespace apb_pkg {
+        class apb_agent
+        class apb_sequencer
+    }
+    namespace program {
+        class test
+        class bathtub_test
+        class tb_virtual_sequencer
+        class tb_env
+        class reg_dut
+    }
+    namespace bathtub_pkg {
+        class bathtub
+    }
+    class bathtub {
+        +configure(sequencer : uvm_sequencer_base)
+        +run_test(phase : uvm_phase)
+    }
+    namespace vip_pkg {
+        class vip_agent
+        class vip_sequencer
+    }
+    test --|> uvm_test
+    tb_env --|> uvm_env
+    class test
+    bathtub_test --|> test
+    note for bathtub_test "New bathtub test"
+    bathtub_test *-- tb_virtual_sequencer : virtual_sequencer
+    style bathtub_test fill:#0ff
+    tb_virtual_sequencer --|> uvm_sequencer
+    style tb_virtual_sequencer fill:#0ff
+    note for tb_virtual_sequencer "New virtual sequencer"
+    bathtub_test *-- bathtub : bathtub
+    tb_virtual_sequencer o-- reg_dut : regmodel
+    tb_virtual_sequencer o-- vip_sequencer : tx_src
+    tb_virtual_sequencer o-- vip_sequencer : vip_sqr
 
-[![](https://mermaid.ink/img/pako:eNqVVktvnDAQ_iuWc9k0ocoZrTi0TaReWjU9lgoZMLtWjE2MTRKl-e8d8zJmTR57WTPfN-_xwDMuZElxjKMoSoVmmtMYfQVRga7FkYiCluiB6SP6QvRRmzwVPbHgpG2_MXJQpE4Fgl8vQTrPtGzQ8yCzv_2-lqXhNEmcrNAcxZYLh6xjlUNKo68Agr9B9jL8CVLTtiEFRaTJs-busPQweLYAOVChQ0BL7w2FXNSG1UZJm8mpVU3bE4P5UIkshEFOHVPaEL726XGo6NZSRQ_ZdtqTz2Dq-dSahaqHLFUuCikqdjCK7uYIoeKmq13EWU5aer7QUUb06e6aIyAjvT-fbwTcsSYcrAWCfbJAuE_WM4qif0nv1pV9KKRD5qque7fs2EB3mJCaokoqn5TiH_RhLl_PxgFbn6Io2HKo0MYYtPqJU99IxTiPz66qas7q1N6cY9BcUGVlds4zSB7yHeXIOdlKeqpM7A9f0LYE_jjdwIcTLATK31DwpsEui8esVcUHlfrneyjVakXZqVleCVhBG_voIjeMl8Oobw7_dK0ELfR7qIq29F3EmjDxHl5jOM8qJevs9vHm-83Pt67pWALbyHltAhvOJ_grjZsob7RqSZs8wXlxteVwiywxRvMldvyQk76tga3i9bVU3TgFpWLdchNfQJC1FCMKJ6blElabsLdfXfVO3VqsJq323A5Geyhg1JmbWhNMeeqJDJBKWhHDNXhuPq92hfee8QN2SuPQWBY8edFNmvMusoKcy-LORf_axgLT-z3KmShRkuzR7fUvFCW9lnpAiWv6x21YLa0mG-4l1I9_6CXkv0d8eeDd7IXwJ8Xe89kOojhP8d-Q1qpEL_gS11TBvS7hk6sPK8X6SGua4hiOYyPs2rVUYrT8_SQKHGtl6CVW0hyOOK4Ib-HJNCXRdPwIG6Uv_wH0hTiN?type=png)](https://mermaid.live/edit#pako:eNqVVktvnDAQ_iuWc9k0ocoZrTi0TaReWjU9lgoZMLtWjE2MTRKl-e8d8zJmTR57WTPfN-_xwDMuZElxjKMoSoVmmtMYfQVRga7FkYiCluiB6SP6QvRRmzwVPbHgpG2_MXJQpE4Fgl8vQTrPtGzQ8yCzv_2-lqXhNEmcrNAcxZYLh6xjlUNKo68Agr9B9jL8CVLTtiEFRaTJs-busPQweLYAOVChQ0BL7w2FXNSG1UZJm8mpVU3bE4P5UIkshEFOHVPaEL726XGo6NZSRQ_ZdtqTz2Dq-dSahaqHLFUuCikqdjCK7uYIoeKmq13EWU5aer7QUUb06e6aIyAjvT-fbwTcsSYcrAWCfbJAuE_WM4qif0nv1pV9KKRD5qque7fs2EB3mJCaokoqn5TiH_RhLl_PxgFbn6Io2HKo0MYYtPqJU99IxTiPz66qas7q1N6cY9BcUGVlds4zSB7yHeXIOdlKeqpM7A9f0LYE_jjdwIcTLATK31DwpsEui8esVcUHlfrneyjVakXZqVleCVhBG_voIjeMl8Oobw7_dK0ELfR7qIq29F3EmjDxHl5jOM8qJevs9vHm-83Pt67pWALbyHltAhvOJ_grjZsob7RqSZs8wXlxteVwiywxRvMldvyQk76tga3i9bVU3TgFpWLdchNfQJC1FCMKJ6blElabsLdfXfVO3VqsJq323A5Geyhg1JmbWhNMeeqJDJBKWhHDNXhuPq92hfee8QN2SuPQWBY8edFNmvMusoKcy-LORf_axgLT-z3KmShRkuzR7fUvFCW9lnpAiWv6x21YLa0mG-4l1I9_6CXkv0d8eeDd7IXwJ8Xe89kOojhP8d-Q1qpEL_gS11TBvS7hk6sPK8X6SGua4hiOYyPs2rVUYrT8_SQKHGtl6CVW0hyOOK4Ib-HJNCXRdPwIG6Uv_wH0hTiN)
+    class tb_env {
+        +vif : tb_ctl_vif
+        +build_phase(phase : uvm_phase)
+        +connect_phase(phase : uvm_phase)
+        +reset_phase(phase : uvm_phase)
+        +main_phase(phase : uvm_phase)
+        +pull_from_RxFIFO(phase : uvm_phase)
+    }
+    tb_env *-- apb_agent : apb
+    tb_env *-- reg_dut : regmodel
+    tb_env *-- vip_sequencer : tx_src
+    tb_env *-- vip_agent : vip
+    test o-- tb_env : env
+    vip_agent *-- vip_sequencer : sqr
+    class vip_agent {
+        +drv : vip_driver
+        +tx_mon : vip_monitor
+        +rx_mon : vip_monitor
+    }
+    class apb_agent {
+        +drv : apb_master
+        +mon : apb_monitor
+    }
+    apb_agent *-- apb_sequencer : sqr
+    reg_dut o-- apb_sequencer : default_map.sequencer
+    class reg_dut {
+        +default_map : uvm_reg_map
+    }
+    reg_dut --|> uvm_reg_block
+    apb_sequencer --|> uvm_sequencer : << bind >>< REQ -> apb_rw >
+    vip_sequencer --|> uvm_sequencer : << bind >>< REQ -> vip_tr >
+    namespace uvm_pkg {
+        class uvm_test
+        class uvm_env
+        class uvm_sequencer["uvm_sequencer#(REQ)"]
+        class uvm_reg_block
+    }
+```
 
 This UML object diagram shows how the `tb_env` component instantiates all the concrete sequencers as children or grandchildren, and the virtual sequencer simply references them all.
 The register model has a reference to the APB sequencer and provides a useful UVM register-based interface to it, so the virtual sequencer contains a reference to the register model instead of the APB sequencer directly.
+```mermaid
+---
+title: Object Diagram of the Virtual Sequencer Connections
+---
+classDiagram
+    class bathtub_test["bathtub_test : bathtub_test"]
+    class tb_env["env : tb_env"]
+    class vip_sequencer_sqr["sqr : vip_sequencer"]
+    class reg_dut["regmodel : reg_dut"]
+    class apb_agent["apb : apb_agent"]
+    class apb_sequencer["sqr : apb_sequencer"]
+    class vip_sequencer_tx_src["tx_src : vip_sequencer"]
+    class vip_agent["vip : vip_agent"]
+    class tb_virtual_sequencer["virtual_sequencer : tb_virtual_sequencer"]
 
-[![](https://mermaid.ink/img/pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw?type=png)](https://mermaid.live/edit#pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw)
+    bathtub_test -- tb_env : contains
+    bathtub_test -- tb_virtual_sequencer : contains
 
+    tb_env -- apb_agent : contains
+    tb_env -- reg_dut : contains
+    tb_env -- vip_agent : contains
+    tb_env -- vip_sequencer_tx_src : contains
+
+    tb_virtual_sequencer -- reg_dut : references
+    tb_virtual_sequencer -- vip_sequencer_tx_src : references 
+    tb_virtual_sequencer -- vip_sequencer_sqr : references as "vip_sqr"
+
+    vip_agent -- vip_sequencer_sqr : contains
+    apb_agent -- apb_sequencer : contains
+    reg_dut -- apb_sequencer : references
+```
 You can confirm that your Bathtub-updated testbench still works by running the original unchanged `test` on it.
 First we must update the makefile since we have added some new files to the working directory.
 Recall that each simulator requires two makefiles, which we call the "run" makefile (`Makefile_run.xxx`) and the "include" makefile (`Makefile_inc.xxx`).
@@ -181,7 +355,35 @@ There is an abstract base class for the step definitions and two child classes: 
 These step definitions are sufficient to cover our simple feature file.
 A more thorough feature file would require many more step definition classes.
 This class diagram depicts the step definition sequences.
-[![](https://mermaid.ink/img/pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg?type=png)](https://mermaid.live/edit#pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg)
+```mermaid
+---
+title: Codec Step Definitions
+---
+classDiagram
+    namespace uvm_pkg {
+        class uvm_sequence
+    }
+    namespace bathtub_pkg {
+        class step_definition_interface
+    }
+    class step_definition_interface {
+        <<interface>>
+    }
+    class codec_step_definition {
+        <<abstract>>
+        +p_sequencer : tb_virtual_sequencer
+    }
+    class transmit_chr_seq {
+        +chr : int
+    }
+    class vip_transmit_chr_seq {
+        +chr : int
+    }
+    codec_step_definition --|> uvm_sequence : extends
+    codec_step_definition --|> step_definition_interface : implements
+    transmit_chr_seq --|> codec_step_definition
+    vip_transmit_chr_seq --|> codec_step_definition
+```
 
 The base class declares a `p_sequencer` that references the virtual sequencer through which the child step definitions can access the concrete sequencers.
 Each sequencer has an integer `chr` member which holds the data byte parameters in the feature file.
