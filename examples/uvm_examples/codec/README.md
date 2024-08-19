@@ -402,11 +402,28 @@ The simulator command line includes options `+UVM_TESTNAME=bathtub_test +bathtub
 | --- | --- |
 | Incisive | `make -f Makefile.xcelium bathtub_test` |
 | Questa | `make -f Makefile.questa bathtub_test` |
-| VCS | `make -f Makefile.vcs bathtub_test` # Not implemented yet|
+| VCS | `make -f Makefile.vcs bathtub_test` |
 
+Try running it.
+Hopefully it passes.
 Congratulations, you have run the codec example with Bathtub!
-## Summary
-Here's a pseudo shell script that summarizes the preceding instructions.
+## Automated Version
+The script `run_me.sh` in this directory performs the steps in this `README`.
+From the script's Usage section:
+> This script automatically runs through the process of applying Bathtub to the UVM 1.2 codec example.
+It downloads your own personal UVM 1.2 installation, gets it running as-is, adds Bathtub by copying files from this directory, then runs everything all together.
+You may need to customize this script for your environment.
+See `README.md` for details.
+This script is intended to be living documentation that is operational but also human-readable, so you can understand the steps involved.
+> 
+> The script requires you have environment variable $BATHTUB_VIP_DIR which contains the path to your Bathtub installation.
+Run this script from a suitable directory that you have read and write privileges for, e.g., your home directory:
 ```
+sh -f $BATHTUB_VIP_DIR/examples/uvm_examples/codec/run_me.sh
 ```
-
+## Congratulations
+You have a working UVM codec example testbench with Bathtub!
+Feel free to examine the files to see how the Bathtub pieces fit together.
+Then you can experiment with modifying the feature file and adding more step definitions.
+Finally, apply Bathtub to your own project and testbench.
+Good luck!
