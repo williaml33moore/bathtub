@@ -127,6 +127,13 @@ The register model has a reference to the APB sequencer and provides a useful re
 
 [![](https://mermaid.ink/img/pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw?type=png)](https://mermaid.live/edit#pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw)
 
+You can confirm that your Bathtub-updated testbench works by running the original unchanged `test` on it.
+There is a target in the makefiles for that.
+| Simulator | Command |
+| --- | --- |
+| Incisive | `make -f Makefile.ius test_with_bathtub` |
+| Questa | `make -f Makefile.questa test_with_bathtub` |
+| VCS | `make -f Makefile.vcs test_with_bathtub` # Not implemented yet|
 ## Write a Gherkin Feature File
 We have done this for you.
 Copy the feature file from the Bathtub examples source directory to your working directory.
@@ -134,4 +141,17 @@ Copy the feature file from the Bathtub examples source directory to your working
 cp $BATHTUB_CODEC_SRC/codec.feature $CODEC_WORKING_DIR
 ```
 It's a very small, simple feature file, just enough to demonstrate that Bathtub is working.
+## Write Step Definitions
+Again, we have provided these.
+Copy the step definition file from the Bathtub examples source directory to your working directory.
+```
+cp $BATHTUB_CODEC_SRC/codec_step_definitions.svh $CODEC_WORKING_DIR
+```
+There is an abstract base class for the step definitions and two child classes: one to transmit a single byte from parallel (APB) to serial, and one to transmit a single byte from the serial VIP agent to the DUT's `rx` pin.
+This class diagram depicts the step definition sequences.
+[![](https://mermaid.ink/img/pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg?type=png)](https://mermaid.live/edit#pako:eNqdUstuwjAQ_BXLV8gPRIhL-QOulqyNsxCrsePa64iK8u_dBEqBGiF1T_bszOzDPkoztChrWVWV8mSpx1q8MWTEljCIDe6st2QHn5SfOaaHlDYW9hGc8oLDg8MUwKDIo9PhfS-O58QUM31OJPzI6A2ec6dHbQPUUW7K-sS96Pbai7aeMO7gwewF99Z2tbrC63XBZNqK0Q9W9wbQJIpg6Ec_xSJcx4yiFtTo0UbK0P_ChWJs45OzpE0XJ-JtnQVj7MTdFoSjDfo_4uJwVfW1vnsoVuKB0Lfppez5zrm6Cz069HSx-dPw7FA0PwuKUz4XyaV0GB3Ylr_1vAwlqeMOlKz5yETIPSmp_ImpkGnYfnoja4oZlzIOed_Jegd94lsOLRBefvsFPX0DI6AXrg)
+
+The base class declares a `p_sequencer` that references the virtual sequencer through which the child step definitions can access the concrete sequencers.
+Each sequencer has an integer `chr` member which holds the data byte parameters in the feature file.
+
 
