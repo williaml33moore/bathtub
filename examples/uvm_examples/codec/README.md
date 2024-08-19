@@ -60,23 +60,20 @@ Choose your preferred simulator and try running with the corresponding makefile.
 
 Do whatever you need to do to get your simulation to run and pass on your system.
 If you look inside the makefiles, you'll see that they each include a corresponding makefile two directories higher (`include ../../Makefile.xxx`), in `$USER_UVM_HOME/examples`.
-You may need to set up your environment, or edit the local makefiles in this directory or the included makefiles two directories up.
+You may need to set up your environment, or edit included makefiles two directories up.
 (They're your personal makefiles, so edit them as much as you like. You might want to make backup copies first.)
 
-Cadence replaced Incisive with Xcelium, so feel free to make a pair of `Makefile.xcelium` files appropriate for the newer simulator, changing "irun" to "xrun," and use those instead.
-That's what we've done.
-We run Xcelium like so:
-`make -f Makefile.xcelium test`
+Cadence replaced Incisive with Xcelium, but it seems that the Incisive `irun` commands still work. 
 
 ⚠️ **Note:** Cadence simulators (`irun` and `xrun`) generally require the `-uvmnocdnsextra` command line option since we are not using Cadence's built-in UVM library.
-You can make that change in `$CODEC_WORKING_DIR/../../Makefile.ius` or `$CODEC_WORKING_DIR/../../Makefile.xcelium`, e.g.:
+You can make that change in `$CODEC_WORKING_DIR/../../Makefile.ius`, e.g.:
 ```
 # Change
 IUS =   irun -access rw -uvmhome $(UVM_HOME) +UVM_VERBOSITY=$(UVM_VERBOSITY) -quiet
 # to
 IUS =   irun -access rw -uvmhome $(UVM_HOME) +UVM_VERBOSITY=$(UVM_VERBOSITY) -quiet -uvmnocdnsextra
 ```
-⚠️ **Note:** Newer versions of Questa have deprecated `+acc` option `m`.
+⚠️ **Note:** Newer versions of Questa have deprecated `+acc` option `m`, so you should remove it from the makefile.
 Edit `$CODEC_WORKING_DIR/../../Makefile.questa`:
 ```
 # Change
@@ -105,7 +102,7 @@ Here's a UML class diagram of the testbench that focuses on the parts relevant t
 
 [![](https://mermaid.ink/img/pako:eNqVVU1v3CAQ_SuIXpImrnq2Vj70I1JPUdNjXVkYj70oGBwMbqp0_3sHfyz2LittfbCHeW9mHgzgN8p1BTSlSZLkygorISWPRjRCMUk-I8ZJCbU2QD4xu7euzNVI5ZL1_RfBGsPaXBF8Rg-xZWF1R94mn392u1ZXTkKWBR-3kqSei0YxiDoglbMfEcLP5DtMH8Va6DvGgbCuLLrnZl1hquwB1oCyMaCHFweKg7mQtTPaz-Q8q4X-LCHqBjWceg00xWXZg-jisj0Qle2BuGyviSTJ34y4oS2CwklXQI4i11M5aZYPWGm6w2Zc6Mxd6YSsim7PergZ30j0ZUb7dkXkWing9hqqgR6uIrZMqGt4nZOyqI1ui6fXh28PjxfZh82avU-SsIGQjfYZPjcYUbRwT4M8o2x65tfxtegNj9KWSmivuqoRnYkpOfYv8GNFIhvlZGttOlyZYQ6qjBiWiBFCua1WM4qWsHoNm4vwYV02rON5WY-1rLebslPSEYokDemWJq0n37_M7KU7OkKqoGZOWqzcfYiu1BK8ERyC5u3jWTjaqFsij4fOO0qp-XNQH6QcWWt1ux0phapIlu3I09fvJMnGKPObZKH9_5_DR1mz5Ag30XgQYjfR9jLZ-iP33UbCz5xuxu9uUMVtTn_Fok6W6EDvaQsGT3iFP6JRVk7tHlrIaYrm3Iic5spTmbP6xx_FaWqNg3tqtGv2NK2Z7HHkuopZmH9Ms_fwD356Nbk?type=png)](https://mermaid.live/edit#pako:eNqVVU1v3CAQ_SuIXpImrnq2Vj70I1JPUdNjXVkYj70oGBwMbqp0_3sHfyz2LittfbCHeW9mHgzgN8p1BTSlSZLkygorISWPRjRCMUk-I8ZJCbU2QD4xu7euzNVI5ZL1_RfBGsPaXBF8Rg-xZWF1R94mn392u1ZXTkKWBR-3kqSei0YxiDoglbMfEcLP5DtMH8Va6DvGgbCuLLrnZl1hquwB1oCyMaCHFweKg7mQtTPaz-Q8q4X-LCHqBjWceg00xWXZg-jisj0Qle2BuGyviSTJ34y4oS2CwklXQI4i11M5aZYPWGm6w2Zc6Mxd6YSsim7PergZ30j0ZUb7dkXkWing9hqqgR6uIrZMqGt4nZOyqI1ui6fXh28PjxfZh82avU-SsIGQjfYZPjcYUbRwT4M8o2x65tfxtegNj9KWSmivuqoRnYkpOfYv8GNFIhvlZGttOlyZYQ6qjBiWiBFCua1WM4qWsHoNm4vwYV02rON5WY-1rLebslPSEYokDemWJq0n37_M7KU7OkKqoGZOWqzcfYiu1BK8ERyC5u3jWTjaqFsij4fOO0qp-XNQH6QcWWt1ux0phapIlu3I09fvJMnGKPObZKH9_5_DR1mz5Ag30XgQYjfR9jLZ-iP33UbCz5xuxu9uUMVtTn_Fok6W6EDvaQsGT3iFP6JRVk7tHlrIaYrm3Iic5spTmbP6xx_FaWqNg3tqtGv2NK2Z7HHkuopZmH9Ms_fwD356Nbk)
 
-The testbench has a `uvm_test` class called `test` that really doesn't do anything.
+The testbench has a `uvm_test` class called `test` which is our top component.
 We're going to extend it into a new class called `bathtub_test`.
 The existing `test` class is defined in file `$CODEC_WORKING_DIR/test.sv`.
 That file `` `include``s a file called `$CODEC_WORKING_DIR/testlib.svh`, which is a library of additional tests.
@@ -133,14 +130,14 @@ Copy the virtual sequencer file from the Bathtub examples source directory to yo
 cp $BATHTUB_CODEC_SRC/tb_virtual_sequencer.svh $CODEC_WORKING_DIR
 ```
 The Bathtub test already instantiates the virtual sequencer and connects it to the concrete sequencers.
-Note that it is normally best practice to instantiate the virtual sequencer inside the environment class, not the test class, but for the sake of this exercise it is simpler to put it in the test class so we don't have to modify `tb_env.svh`.
+Note that it is normally best practice to instantiate the virtual sequencer inside the environment class, not the test class, but for the sake of this exercise it is simpler to put it in the test class so we don't have to touch `tb_env.svh`.
 
 This updated UVM diagram shows the testbench with the Bathtub test and virtual sequencer added.
 
 [![](https://mermaid.ink/img/pako:eNqVVktvnDAQ_iuWc9k0ocoZrTi0TaReWjU9lgoZMLtWjE2MTRKl-e8d8zJmTR57WTPfN-_xwDMuZElxjKMoSoVmmtMYfQVRga7FkYiCluiB6SP6QvRRmzwVPbHgpG2_MXJQpE4Fgl8vQTrPtGzQ8yCzv_2-lqXhNEmcrNAcxZYLh6xjlUNKo68Agr9B9jL8CVLTtiEFRaTJs-busPQweLYAOVChQ0BL7w2FXNSG1UZJm8mpVU3bE4P5UIkshEFOHVPaEL726XGo6NZSRQ_ZdtqTz2Dq-dSahaqHLFUuCikqdjCK7uYIoeKmq13EWU5aer7QUUb06e6aIyAjvT-fbwTcsSYcrAWCfbJAuE_WM4qif0nv1pV9KKRD5qque7fs2EB3mJCaokoqn5TiH_RhLl_PxgFbn6Io2HKo0MYYtPqJU99IxTiPz66qas7q1N6cY9BcUGVlds4zSB7yHeXIOdlKeqpM7A9f0LYE_jjdwIcTLATK31DwpsEui8esVcUHlfrneyjVakXZqVleCVhBG_voIjeMl8Oobw7_dK0ELfR7qIq29F3EmjDxHl5jOM8qJevs9vHm-83Pt67pWALbyHltAhvOJ_grjZsob7RqSZs8wXlxteVwiywxRvMldvyQk76tga3i9bVU3TgFpWLdchNfQJC1FCMKJ6blElabsLdfXfVO3VqsJq323A5Geyhg1JmbWhNMeeqJDJBKWhHDNXhuPq92hfee8QN2SuPQWBY8edFNmvMusoKcy-LORf_axgLT-z3KmShRkuzR7fUvFCW9lnpAiWv6x21YLa0mG-4l1I9_6CXkv0d8eeDd7IXwJ8Xe89kOojhP8d-Q1qpEL_gS11TBvS7hk6sPK8X6SGua4hiOYyPs2rVUYrT8_SQKHGtl6CVW0hyOOK4Ib-HJNCXRdPwIG6Uv_wH0hTiN?type=png)](https://mermaid.live/edit#pako:eNqVVktvnDAQ_iuWc9k0ocoZrTi0TaReWjU9lgoZMLtWjE2MTRKl-e8d8zJmTR57WTPfN-_xwDMuZElxjKMoSoVmmtMYfQVRga7FkYiCluiB6SP6QvRRmzwVPbHgpG2_MXJQpE4Fgl8vQTrPtGzQ8yCzv_2-lqXhNEmcrNAcxZYLh6xjlUNKo68Agr9B9jL8CVLTtiEFRaTJs-busPQweLYAOVChQ0BL7w2FXNSG1UZJm8mpVU3bE4P5UIkshEFOHVPaEL726XGo6NZSRQ_ZdtqTz2Dq-dSahaqHLFUuCikqdjCK7uYIoeKmq13EWU5aer7QUUb06e6aIyAjvT-fbwTcsSYcrAWCfbJAuE_WM4qif0nv1pV9KKRD5qque7fs2EB3mJCaokoqn5TiH_RhLl_PxgFbn6Io2HKo0MYYtPqJU99IxTiPz66qas7q1N6cY9BcUGVlds4zSB7yHeXIOdlKeqpM7A9f0LYE_jjdwIcTLATK31DwpsEui8esVcUHlfrneyjVakXZqVleCVhBG_voIjeMl8Oobw7_dK0ELfR7qIq29F3EmjDxHl5jOM8qJevs9vHm-83Pt67pWALbyHltAhvOJ_grjZsob7RqSZs8wXlxteVwiywxRvMldvyQk76tga3i9bVU3TgFpWLdchNfQJC1FCMKJ6blElabsLdfXfVO3VqsJq323A5Geyhg1JmbWhNMeeqJDJBKWhHDNXhuPq92hfee8QN2SuPQWBY8edFNmvMusoKcy-LORf_axgLT-z3KmShRkuzR7fUvFCW9lnpAiWv6x21YLa0mG-4l1I9_6CXkv0d8eeDd7IXwJ8Xe89kOojhP8d-Q1qpEL_gS11TBvS7hk6sPK8X6SGua4hiOYyPs2rVUYrT8_SQKHGtl6CVW0hyOOK4Ib-HJNCXRdPwIG6Uv_wH0hTiN)
 
-This object diagram shows how the `tb_env` component instantiates all the concrete sequencers as children or grandchildren, and the virtual sequencer simply references them all.
-The register model has a reference to the APB sequencer and provides a useful register-based interface to it, so the virtual sequencer contains a reference to the register model instead of the APB sequencer directly.
+This UML object diagram shows how the `tb_env` component instantiates all the concrete sequencers as children or grandchildren, and the virtual sequencer simply references them all.
+The register model has a reference to the APB sequencer and provides a useful UVM register-based interface to it, so the virtual sequencer contains a reference to the register model instead of the APB sequencer directly.
 
 [![](https://mermaid.ink/img/pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw?type=png)](https://mermaid.live/edit#pako:eNqdlM1ugzAMx18lyrm8ANftvkOlXcaEQjCQCZIucapNVd99pgmUUNpK44Ac5_c3_hInLk0NPOdZlhUaFfaQs7fqCySyVyVaKwZmGoYdsHdl0Yue7eHbg5Zg2YvRmkBltCv0JYDshXNRV2hGz8XDKoEd-qpEcPhR8OWR5cltwT-XQqxK0EeS0JvIcFwxR3Uo3ZRU6b4t4fQmPLlZqSy0Ze3HbMgaqAk9CaJzhYpDVYoW9AiTTdzs2SDnD85pJN6HyeNP6awkYTCelDDeTXmRHemtvKhvxzC-JL0bX2jxjfsSLcRLRpdlcSKkk0ajUOMmBDBeEDI3K6FSJjb-ATGX9oRZN3M7tdvKkyQsNGBHv3usuPPB_8nDsiy1QX2t_I4kbce13bH3y-mm6FTwBrguYWPuW9szxec7PoAdhKrp33IaQ9BOdzBAwXMya2iE72lLC30mVHg0-18teY7Ww45b49uO543oHZ38oRYI8a8Svec_Gzqrbw)
 
@@ -189,13 +186,14 @@ This class diagram depicts the step definition sequences.
 The base class declares a `p_sequencer` that references the virtual sequencer through which the child step definitions can access the concrete sequencers.
 Each sequencer has an integer `chr` member which holds the data byte parameters in the feature file.
 ## Run Bathtub
-The  makefiles have a `bathtub` target for running Bathtub.
+The  makefiles have a `bathtub_test` target for running the Bathtub test.
 The simulator command line includes options `+UVM_TESTNAME=bathtub_test +bathtub_features=codec.feature`, which specify the test and feature file.
 | Simulator | Command |
 | --- | --- |
-| Incisive | `make -f Makefile.xcelium bathtub` |
-| Questa | `make -f Makefile.questa bathtub` |
-| VCS | `make -f Makefile.vcs bathtub` # Not implemented yet|
+| Incisive | `make -f Makefile.xcelium bathtub_test` |
+| Questa | `make -f Makefile.questa bathtub_test` |
+| VCS | `make -f Makefile.vcs bathtub_test` # Not implemented yet|
+
 Congratulations, you have run the codec example with Bathtub!
 ## Summary
 Here's a pseudo shell script that summarizes the preceding instructions.
