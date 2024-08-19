@@ -81,6 +81,13 @@ Edit `$CODEC_WORKING_DIR/../../Makefile.questa`:
 # to
         +acc=rb \
 ```
+You can find our modified versions of the makefiles in the Bathtub examples source directory, each with "inc" in the name.
+These files work for us, but you might need to make additional modifications.
+```
+$BATHTUB_CODEC_SRC/Makefile_inc.ius
+$BATHTUB_CODEC_SRC/Makefile_inc.questa
+$BATHTUB_CODEC_SRC/Makefile_inc.vcs
+```
 
 The simulators produce various log files and other artifacts in your working directory.
 The included makefiles all have `clean` targets you can use to remove those files.
@@ -173,9 +180,10 @@ We'll add our new test to `testlib.svh`.
 You can find our new Bathtub test in `$BATHTUB_CODEC_SRC/bathtub_test.svh`.
 You can also find in `$BATHTUB_CODEC_SRC` a modified version of `testlib.svh` which`` `include``s our Bathtub test.
 All you need to do is copy `bathtub_test.svh` and a `testlib.svh` from `$BATHTUB_CODEC_SRC` into `$CODEC_WORKING_DIR`.
-`bathtub_test.svh` is new to `$CODEC_WORKING_DIR`, but `testlib.svh` will overwrite the existing version.
+`bathtub_test.svh` is new to `$CODEC_WORKING_DIR`, but `testlib.svh` will overwrite the existing version so you should make a backup first.
 ```
 # Copy two files from the Bathtub examples directory into your working directory
+cp $CODEC_WORKING_DIR/testlib.svh $CODEC_WORKING_DIR/testlib.svh-BACKUP # Make a backup first
 cp $BATHTUB_CODEC_SRC/bathtub_test.svh $BATHTUB_CODEC_SRC/testlib.svh $CODEC_WORKING_DIR
 ```
 ### Add a Virtual Sequencer
@@ -316,28 +324,28 @@ classDiagram
     reg_dut -- apb_sequencer : references
 ```
 You can confirm that your Bathtub-updated testbench still works by running the original unchanged `test` on it.
-First we must update the makefile since we have added some new files to the working directory.
+First we must update the makefiles since we have added some new files to the working directory.
 Recall that each simulator requires two makefiles, which we call the "run" makefile (`Makefile_run.xxx`) and the "include" makefile (`Makefile_inc.xxx`).
-You will copy the makefiles from the Bathtub examples source directory to the appropriate working directories.
-
-⚠️ **Caution:** If you had to modify the makefiles to get the original codec testbench to run, you will need to merge those same modifications into the makefiles we provide.
-Make backup copies of your modified makefiles before you copy over them.
+You will now copy the "run" makefiles from the Bathtub examples source directory to the your directory.
+Make backup copies of your original makefiles before you copy over them.
 ```
-# Back up any changes you made to the makefiles!
-# Copy the pairs of makefiles into your working directory locations.
+# Back up your makefiles.
+cp $CODEC_WORKING_DIR/Makefile.ius $CODEC_WORKING_DIR/Makefile.ius-BACKUP
+cp $CODEC_WORKING_DIR/Makefile.questa $CODEC_WORKING_DIR/Makefile.questa-BACKUP
+cp $CODEC_WORKING_DIR/Makefile.vcs $CODEC_WORKING_DIR/Makefile.vcs-BACKUP
+
+# Copy our makefiles from the Bathtub examples source directory to your working directory.
 # Note that the source and destination filenames are different.
-# Reapply your modifications to these new makefiles.
-cp $BATHTUB_CODEC_SRC/Makefile_inc.xcelium $CODEC_WORKING_DIR/../../Makefile.xcelium
-cp $BATHTUB_CODEC_SRC/Makefile_run.xcelium $CODEC_WORKING_DIR/Makefile.xcelium
-cp $BATHTUB_CODEC_SRC/Makefile_inc.questa $CODEC_WORKING_DIR/../../Makefile.questa
+cp $BATHTUB_CODEC_SRC/Makefile_run.ius $CODEC_WORKING_DIR/Makefile.ius
 cp $BATHTUB_CODEC_SRC/Makefile_run.questa $CODEC_WORKING_DIR/Makefile.questa
+cp $BATHTUB_CODEC_SRC/Makefile_run.vcs $CODEC_WORKING_DIR/Makefile.vcs
 ```
 The new makefiles have a new target for running the original `test` on your updated testbench:
 | Simulator | Command |
 | --- | --- |
 | Incisive | `make -f Makefile.xcelium test_with_bathtub` |
 | Questa | `make -f Makefile.questa test_with_bathtub` |
-| VCS | `make -f Makefile.vcs test_with_bathtub` # Not implemented yet|
+| VCS | `make -f Makefile.vcs test_with_bathtub` |
 ## Write a Gherkin Feature File
 We have done this for you.
 Copy the feature file from the Bathtub examples source directory to your working directory.
