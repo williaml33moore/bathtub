@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# bathtub_vip.csh
+# bathtub_vip.sh
 # Set up Bathtub environment variable.
 #
 # Usage:
