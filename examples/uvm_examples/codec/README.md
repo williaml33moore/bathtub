@@ -186,6 +186,49 @@ All you need to do is copy `bathtub_test.svh` and a `testlib.svh` from `$BATHTUB
 cp $CODEC_WORKING_DIR/testlib.svh $CODEC_WORKING_DIR/testlib.svh-BACKUP # Make a backup first
 cp $BATHTUB_CODEC_SRC/bathtub_test.svh $BATHTUB_CODEC_SRC/testlib.svh $CODEC_WORKING_DIR
 ```
+### Remove Default Sequences
+The codec example `tb_env` class has main phase default sequences hard-coded for two of its sequencers.
+```sv
+      uvm_config_db #(uvm_object_wrapper)::set(this, "vip.sqr.main_phase",
+                                               "default_sequence",
+                                               vip_sentence_seq::type_id::get());
+      uvm_config_db #(uvm_object_wrapper)::set(this, "tx_src.main_phase",
+                                               "default_sequence",
+                                               vip_sentence_seq::type_id::get());
+```
+Our Bathtub test needs to override those default sequence selections because Bathtub will be supplying sequences to those sequencers itself.
+The _UVM 1.2 Class Reference_ warns in the "`uvm_sequencer_base::start_phase_sequence`" section that we must override default sequences in the resource database two ways:
+> When attempting to override a
+previous default sequence setting, you must override both the instance and type
+(wrapper) resources, else your override may not take effect.
+
+The Bathtub test does exactly that, for both sequencers, setting the default sequence resources to null:
+```sv
+    function void build_phase(uvm_phase phase);
+        uvm_sequence_base default_sequence;
+        uvm_object_wrapper default_sequence_type;
+
+        // Empty sequences
+        default_sequence = null;
+        default_sequence_type = null;
+
+        ...
+
+        // Override default sequences set in the tb environment class.
+        uvm_config_db#(uvm_object_wrapper)::set(null, "env.vip.sqr.main_phase",
+                                                "default_sequence",
+                                                default_sequence_type);
+        uvm_config_db#(uvm_object_wrapper)::set(null, "env.tx_src.main_phase",
+                                                "default_sequence",
+                                                default_sequence_type);
+        uvm_config_db#(uvm_sequence_base)::set(null, "env.vip.sqr.main_phase",
+                                                "default_sequence",
+                                                default_sequence);
+        uvm_config_db#(uvm_sequence_base)::set(null, "env.tx_src.main_phase",
+                                                "default_sequence",
+                                                default_sequence);
+    endfunction : build_phase
+```
 ### Add a Virtual Sequencer
 The original codec testbench instantiates three "concrete" sequencers:
 1. `test.env.tx_src : vip_sequencer` -- Provides `vip_tr` sequence items containing data bytes that the testbench's main routine writes into the DUT's `TxFIFO` to be transmitted.
