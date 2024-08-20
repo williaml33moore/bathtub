@@ -245,7 +245,11 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		seq.print_sequence_info = 1;
 		if (!dry_run) begin
 `ifdef UVM_VERSION_1_0
+			seq.starting_phase = starting_phase;
 `elsif UVM_VERSION_1_1
+			seq.starting_phase = starting_phase;
+`elsif UVM_POST_VERSION_1_1
+			seq.set_starting_phase(starting_phase);
 `else
 			seq.set_starting_phase(starting_phase);
 `endif

@@ -49,6 +49,8 @@ virtual class snippets extends uvm_object;
         create_snippet = {create_snippet, "class ", class_name, " extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;", "\n"};
         create_snippet = {create_snippet, "    ", keyword_macro, "(\"", step.get_text(), "\")", "\n"};
         create_snippet = {create_snippet, "    `uvm_object_utils(", class_name, ")", "\n"};
+        create_snippet = {create_snippet, "    // Declare the correct virtual sequencer type here", "\n"};
+        create_snippet = {create_snippet, "    `uvm_declare_p_sequencer(uvm_sequencer)", "\n"};
         create_snippet = {create_snippet, "    function new (string name=\"", class_name, "\");", "\n"};
         create_snippet = {create_snippet, "        super.new(name);", "\n"};
         create_snippet = {create_snippet, "    endfunction : new", "\n"};

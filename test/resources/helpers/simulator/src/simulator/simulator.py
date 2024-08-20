@@ -66,3 +66,7 @@ class Simulator:
     def name(self):
         """Return the simulator class' name."""
         return self.__class__.__name__
+    
+    def __repr__(self):
+        """Return string representation of simulator"""
+        return self.name()

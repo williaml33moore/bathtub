@@ -45,6 +45,9 @@ class mock_base_seq extends uvm_sequence#(mock_object_sequence_item);
 
     function new (string name="mock_base_seq");
         super.new(name);
+`ifdef UVM_POST_VERSION_1_1
+        set_automatic_phase_objection(1);
+`endif
     endfunction : new
 endclass : mock_base_seq
 

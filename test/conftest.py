@@ -82,3 +82,8 @@ def uvm_versions_from_config():
 @pytest.fixture(params=uvm_versions_from_config())
 def uvm_version(request):
     return request.param
+
+@pytest.fixture
+def get_test_config():
+    """Return the test config object."""
+    return test_config

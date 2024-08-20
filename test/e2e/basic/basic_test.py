@@ -47,7 +47,7 @@ def test_basic_e2e(tmp_path, simulator, testname, features):
 @pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature']),
                                                 ('basic_test', ['undefined_steps.feature'])])
 def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
-    """Test undefined steps produce a working snippet"""
+    """Test undefined steps produce a snippet"""
     simulator = create_simulator()
     simulator.uvm().extend_args([
         '-f ' + str(test_path / 'basic.f'),
@@ -67,6 +67,15 @@ def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Expected error string '{}' not found in log file".format(error_string)
 
+@pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature']),
+                                                ('basic_test', ['undefined_steps.feature'])])
+def test_basic_working_snippet_e2e(tmp_path, create_simulator, testname, features):
+    """Test undefined steps produce a working snippet"""
+    simulator = create_simulator()
+
+    # Run test the first time with undefined steps to produce a snippet
+    test_basic_snippet_e2e(tmp_path, create_simulator, testname, features)
+
     # Save off log file and snippets file
     shutil.copyfile(tmp_path / simulator.log, tmp_path / 'first_run.log')
     new_snippets_filename = 'new_snippets.svh'
@@ -82,7 +91,7 @@ def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
     run_cmd = "sed -e '" + sed_cmd + "' " + str(test_path / 'basic_step_def_seqs.svh') + " > " + str(new_step_defs_path)
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Error with shell command: {}".format(run_cmd)
-    
+
     # Run test again with new snippet
 
     simulator = create_simulator()
@@ -105,4 +114,21 @@ def test_basic_snippet_e2e(tmp_path, create_simulator, testname, features):
     run_cmd = "grep {} {}".format(warning_string, simulator.log)
     cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
     assert cp.returncode==0, "Expected warning string '{}' not found in log file".format(warning_string)
+
+@pytest.mark.parametrize("testname, features", [('basic_test', ['undefined_step.feature']),
+                                                ('basic_test', ['undefined_steps.feature'])])
+def test_snippet_p_sequencer_e2e(tmp_path, create_simulator, testname, features):
+    """Test snippet declares a p_sequencer"""
+    simulator = create_simulator()
+
+    # Run test the first time with undefined steps to produce a snippet
+    test_basic_snippet_e2e(tmp_path, create_simulator, testname, features)
+
+    # Check snippet for p_sequencer declaration
+    snippets_filename = 'bathtub_snippets.svh'
+    snippets_path = Path(tmp_path / snippets_filename)
+    expected_string = "'^ *`uvm_declare_p_sequencer(uvm_sequencer)'"
+    run_cmd = "grep {} {}".format(expected_string, str(snippets_path))
+    cp = subprocess.run(run_cmd, shell=True, cwd=tmp_path)
+    assert cp.returncode==0, "{}\nExpected declaration string '{}' not found in snippets file {}".format(run_cmd, expected_string, snippets_filename)
 
