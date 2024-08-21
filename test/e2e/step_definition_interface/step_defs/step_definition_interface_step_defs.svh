@@ -31,18 +31,8 @@ import uvm_pkg::*;
 `include "bathtub_macros.sv"
 import bathtub_pkg::bathtub_pkg_metadata;
 
-/*
- * Driver sequence base class sets the sequence item type.
- */
-class base_seq extends uvm_sequence#();
-
-    `uvm_object_utils(base_seq)
-    `uvm_declare_p_sequencer(uvm_sequencer)
-
-    function new (string name="base_seq");
-        super.new(name);
-    endfunction : new
-endclass : base_seq
+typedef class base_seq;
+`include "base_seq.svh"
 
 /*
  * Example of a virtual step definition

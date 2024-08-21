@@ -22,6 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+`ifndef __BASE_SEQ_SVH
+`define __BASE_SEQ_SVH
 
-`include "step_definition_interface_step_defs.svh"
-`include "step_parameters_step_defs.svh"
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+`include "bathtub_macros.sv"
+
+/*
+ * Driver sequence base class sets the sequence item type.
+ */
+class base_seq extends uvm_sequence#();
+
+    `uvm_object_utils(base_seq)
+    `uvm_declare_p_sequencer(uvm_sequencer)
+
+    function new (string name="base_seq");
+        super.new(name);
+    endfunction : new
+endclass : base_seq
+
+`endif // __BASE_SEQ_SVH

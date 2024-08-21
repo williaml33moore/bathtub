@@ -26,7 +26,9 @@ from pathlib import Path
 
 test_path = Path(os.path.dirname(__file__))
 
-@pytest.mark.parametrize("testname, features", [('simple_test', ['step_definition_interface_0.feature', 'step_definition_interface_1.feature'])])
+@pytest.mark.parametrize("testname, features", [('simple_test', ['step_definition_interface_0.feature',
+                                                                 'step_definition_interface_1.feature',
+                                                                 'step_parameters.feature'])])
 def test_step_definition_interface_e2e(tmp_path, simulator, testname, features):
     """Test that step definition interface methods function correctly"""
 
