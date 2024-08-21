@@ -78,7 +78,7 @@ endclass : set_operand_A_and_B_vseq
 This repository contains the following:
 
 * [Code](https://github.com/williaml33moore/bathtub): Bathtub source code
-* [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides
+* [Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides including a detailed [Getting Started](https://github.com/williaml33moore/bathtub/wiki/Getting-Started) page
 * [Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation (requires a free [account](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_))
 * [Issues](https://github.com/williaml33moore/bathtub/issues): Task and bug tracking
 
