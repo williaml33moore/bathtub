@@ -61,8 +61,36 @@ Feature: Step parameters
 
             Examples: Octal
                 | type | argument | expected_value |
-                | int  | 04412     | 2314           |
-                | int  | 04472     | 2362           |
-                | int  | 03707     | 1991           |
-                | int  | 05323     | 2771           |
-                | int  | 01317     | 719            |
+                | int  | 04412    | 2314           |
+                | int  | 04472    | 2362           |
+                | int  | 037_07   | 1991           |
+                | int  | 05323    | 2771           |
+                | int  | 01317    | 719            |
+
+        Scenario Outline: Binary integers prefixed by "0b"
+            The "0b" prefix is not part of the argument.
+
+            When a step definition interprets binary integer 0b<argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Octal
+                | type | argument  | expected_value |
+                | int  | 10011000  | 152            |
+                | int  | 01101101  | 109            |
+                | int  | 1110_0101 | 229            |
+                | int  | 00101011  | 43             |
+                | int  | 11011110  | 222            |
+
+        Scenario Outline: Binary integers prefixed by "32'b"
+            The "32'b" prefix is not part of the argument.
+
+            When a step definition interprets binary integer 32'b<argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Octal
+                | type | argument | expected_value |
+                | int  | 10011000 | 152            |
+                | int  | 01101101 | 109            |
+                | int  | 11100101 | 229            |
+                | int  | 00101011 | 43             |
+                | int  | 11011110 | 222            |

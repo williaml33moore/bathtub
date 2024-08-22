@@ -109,6 +109,39 @@ class receive_octal_argument_without_prefix extends receive_integer_argument;
 endclass : receive_octal_argument_without_prefix
 
 
+class receive_binary_argument_without_prefix extends receive_integer_argument;
+    `When("a step definition interprets binary integer %b as a %s")
+
+    `uvm_object_utils(receive_binary_argument_without_prefix)
+    
+    function new (string name="receive_binary_argument_without_prefix");
+        super.new(name);
+    endfunction : new
+endclass : receive_binary_argument_without_prefix
+
+
+class receive_binary_argument_with_verilog_prefix extends receive_integer_argument;
+    `When("a step definition interprets binary integer 32'b%b as a %s")
+
+    `uvm_object_utils(receive_binary_argument_with_verilog_prefix)
+    
+    function new (string name="receive_binary_argument_with_verilog_prefix");
+        super.new(name);
+    endfunction : new
+endclass : receive_binary_argument_with_verilog_prefix
+
+
+class receive_binary_argument_with_python_prefix extends receive_integer_argument;
+    `When("a step definition interprets binary integer 0b%b as a %s")
+
+    `uvm_object_utils(receive_binary_argument_with_python_prefix)
+    
+    function new (string name="receive_binary_argument_with_python_prefix");
+        super.new(name);
+    endfunction : new
+endclass : receive_binary_argument_with_python_prefix
+
+
 class check_decimal_argument extends base_seq implements bathtub_pkg::step_definition_interface;
     `Then("the resulting integer value should be %s")
 
