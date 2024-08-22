@@ -38,3 +38,17 @@ Feature: Step parameters
                 | int  | cba      | 3258           |
                 | int  | 0        | 0              |
                 | int  | _4_3_2_1 | 17185          |
+
+        Scenario Outline: Octal integers prefixed by "32'o"
+            The "32'o" prefix is not part of the argument.
+
+            When a step definition interprets octal integer 32'o<argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Octal
+                | type | argument | expected_value |
+                | int  | 4412     | 2314           |
+                | int  | 4472     | 2362           |
+                | int  | 3707     | 1991           |
+                | int  | 5323     | 2771           |
+                | int  | 1317     | 719            |
