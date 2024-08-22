@@ -97,6 +97,18 @@ class receive_octal_argument extends receive_integer_argument;
 endclass : receive_octal_argument
 
 
+class receive_octal_argument_without_prefix extends receive_integer_argument;
+    `When("a step definition interprets octal integer %o as a %s")
+    // If the octal number has a 0 prefix, SystemVerilog should just ignore it.
+
+    `uvm_object_utils(receive_octal_argument_without_prefix)
+    
+    function new (string name="receive_octal_argument_without_prefix");
+        super.new(name);
+    endfunction : new
+endclass : receive_octal_argument_without_prefix
+
+
 class check_decimal_argument extends base_seq implements bathtub_pkg::step_definition_interface;
     `Then("the resulting integer value should be %s")
 
@@ -124,7 +136,6 @@ class check_decimal_argument extends base_seq implements bathtub_pkg::step_defin
             `uvm_error("CHECK", $sformatf("actual_value %0d != expected_value %0d", actual_value, expected_value))
     endtask : body
 endclass : check_decimal_argument
-
 
 
 `endif // __STEP_PARAMETERS_STEP_DEFS_SVH

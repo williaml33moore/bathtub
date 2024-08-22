@@ -52,3 +52,17 @@ Feature: Step parameters
                 | int  | 3707     | 1991           |
                 | int  | 5323     | 2771           |
                 | int  | 1317     | 719            |
+
+        Scenario Outline: Octal integers prefixed by "0"
+            SystemVerilog should simply ignore the leading 0.
+
+            When a step definition interprets octal integer <argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Octal
+                | type | argument | expected_value |
+                | int  | 04412     | 2314           |
+                | int  | 04472     | 2362           |
+                | int  | 03707     | 1991           |
+                | int  | 05323     | 2771           |
+                | int  | 01317     | 719            |
