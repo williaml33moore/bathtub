@@ -41,8 +41,8 @@ classes_under_test = [
     "bathtub_pkg/scenario_sequence.svh",
     "bathtub_pkg/snippets.svh",
     "bathtub_pkg/step_attributes_interface.svh",
+    "bathtub_pkg/step_definition_seq.svh", 
     "bathtub_pkg/step_definition_interface.svh",
-    "bathtub_pkg/step_definition_seq.svh",
     "bathtub_pkg/step_nature.svh",
     "bathtub_pkg/step_nurture.svh",
     "bathtub_pkg/step_parameter_arg.svh",
@@ -79,6 +79,31 @@ def test_class_dependencies(tmp_path, simulator, class_under_test):
         'testbench.sv',
         ])
     assert simulator.run(tmp_path).passed()
+
+# @pytest.mark.parametrize("class_under_test", [
+#     ])
+# def test_step_definition_dependencies(tmp_path, simulator, class_under_test):
+#     """Test that each step_definition_seq fully specifies all its dependencies"""
+#     # Create a minimal top level that just includes the class file.
+#     # Simulate it with only required packages and include directories.
+#     # Class file should include everything it needs and compile successfully.
+#     # This is a special case.
+#     # A few classe reside in the bathtub_pkg but they are used outside the package.
+#     # These classes depend on other classes in the package, so we must compile the package.
+#     f = tmp_path / 'testbench.sv'
+#     content = "\n".join(['program test();',
+#                          '`include "' + class_under_test + '"',
+#                         'endprogram : test'
+#                         ])
+#     f.write_text(content, encoding="utf-8")
+#     simulator.uvm()
+#     simulator.extend_args([
+#         '$BATHTUB_VIP_DIR/src/gherkin_pkg/gherkin_pkg.sv',
+#         '$BATHTUB_VIP_DIR/src/bathtub_pkg/bathtub_pkg.sv',
+#         '-incdir $BATHTUB_VIP_DIR/src',
+#         'testbench.sv',
+#         ])
+#     assert simulator.run(tmp_path).passed()
 
 def test_macro_dependencies(tmp_path, simulator):
     """Test that bathtub_macros dependencies are satisfied by bathtub_pkg"""

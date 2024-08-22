@@ -120,7 +120,7 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 	// Set obj_name
 	virtual function void set_step_obj(uvm_object_wrapper step_obj);
 		this.step_obj = step_obj;
-		this.step_obj_name = step_obj.get_type_name();
+		this.step_obj_name = step_obj ? step_obj.get_type_name() : "null";
 	endfunction : set_step_obj
 	
 	// Get step_obj_name

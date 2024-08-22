@@ -99,7 +99,7 @@ endfunction : set_current_scenario_sequence
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
-`define BATHTUB__VIRTUAL_STEP_DEFINITION(e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(bathtub_pkg::\* , e, get_type(), 1'b0);\
+`define BATHTUB__VIRTUAL_STEP_DEFINITION(e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(bathtub_pkg::\* , e, null, 1'b0);\
 bathtub_pkg::step_attributes_interface __step_attributes;\
 virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
 return null;\
@@ -138,7 +138,7 @@ endfunction : set_current_scenario_sequence
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
-`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=get_step_attributes().get_expression())\
+`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=(get_step_attributes() ? get_step_attributes().get_expression() : ""))\
 begin : step_parameter_get_args\
     bathtub_pkg::step_parameters_interface __step_params;\
     int __next = 0;\
