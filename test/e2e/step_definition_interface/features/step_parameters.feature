@@ -5,14 +5,36 @@ Feature: Step parameters
     Rule: Integers
 
         Scenario Outline: Decimal integers
-            In this context, format "int" means decimal.
-
-            When a step definition interprets decimal integer <argument> as a <format>
+            When a step definition interprets decimal integer <argument> as a <type>
             Then the resulting integer value should be <expected_value>
 
             Examples: Decimal
-                | format | argument | expected_value |
-                | int    | 123      | 123            |
-                | int    | 0        | 0              |
-                | int    | -42      | -42            |
-                | int    | _4_5_6_  | 456            |
+                | type | argument | expected_value |
+                | int  | 123      | 123            |
+                | int  | 0        | 0              |
+                | int  | -42      | -42            |
+                | int  | _4_5_6_  | 456            |
+
+        Scenario Outline: Hexaecimal integers prefixed by "32'h"
+            The "32'h" prefix is not part of the argument.
+
+            When a step definition interprets hexadecimal integer 32'h<argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Hexadecimal
+                | type | argument | expected_value |
+                | int  | abc      | 2748           |
+                | int  | 0        | 0              |
+                | int  | _1_2_3_4 | 4660           |
+
+        Scenario Outline: Hexadecimal integers prefixed by "0x"
+            The "0x" prefix is not part of the argument.
+
+            When a step definition interprets hexadecimal integer 0x<argument> as a <type>
+            Then the resulting integer value should be <expected_value>
+
+            Examples: Hexadecimal
+                | type | argument | expected_value |
+                | int  | cba      | 3258           |
+                | int  | 0        | 0              |
+                | int  | _4_3_2_1 | 17185          |

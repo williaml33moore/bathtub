@@ -33,7 +33,7 @@ class receive_decimal_argument extends base_seq implements bathtub_pkg::step_def
     `When("a step definition interprets decimal integer %d as a %s")
 
     protected int argument;
-    protected string format;
+    protected string arg_type;
 
     `uvm_object_utils(receive_decimal_argument)
     
@@ -43,15 +43,53 @@ class receive_decimal_argument extends base_seq implements bathtub_pkg::step_def
     
     virtual task body();
         `step_parameter_get_args_begin()
-        format = `step_parameter_get_arg_as(1, string);
-        case (format)
+        arg_type = `step_parameter_get_arg_as(1, string);
+        case (arg_type)
             "int" : argument = `step_parameter_get_arg_as(0, int);
-            default : `uvm_error("UNEXPECTED FORMAT", format)
+            default : `uvm_error("UNEXPECTED TYPE", arg_type)
         endcase
         `step_parameter_get_args_end
         get_current_scenario_sequence().get_int_pool().add("argument", argument);
     endtask : body
 endclass : receive_decimal_argument
+
+
+class receive_hexadecimal_argument extends base_seq implements bathtub_pkg::step_definition_interface;
+    `When("a step definition interprets hexadecimal integer 32'h%h as a %s")
+    // This version uses specifier "%h"
+
+    protected int argument;
+    protected string arg_type;
+
+    `uvm_object_utils(receive_hexadecimal_argument)
+    
+    function new (string name="receive_hexadecimal_argument");
+        super.new(name);
+    endfunction : new
+    
+    virtual task body();
+        `step_parameter_get_args_begin()
+        arg_type = `step_parameter_get_arg_as(1, string);
+        case (arg_type)
+            "int" : argument = `step_parameter_get_arg_as(0, int);
+            default : `uvm_error("UNEXPECTED TYPE", arg_type)
+        endcase
+        `step_parameter_get_args_end
+        get_current_scenario_sequence().get_int_pool().add("argument", argument);
+    endtask : body
+endclass : receive_hexadecimal_argument
+
+
+class receive_c_style_hexadecimal_argument extends receive_hexadecimal_argument;
+    `When("a step definition interprets hexadecimal integer 0x%x as a %s")
+    // This version uses specifier "%x"; it should be equivalent to "%h".
+
+    `uvm_object_utils(receive_c_style_hexadecimal_argument)
+    
+    function new (string name="receive_c_style_hexadecimal_argument");
+        super.new(name);
+    endfunction : new
+endclass : receive_c_style_hexadecimal_argument
 
 
 class check_decimal_argument extends base_seq implements bathtub_pkg::step_definition_interface;
