@@ -58,24 +58,24 @@ typedef class snippets;
 
 class bathtub extends uvm_report_object;
 
-	string feature_files[$];
+	protected string feature_files[$];
 
-	gherkin_doc_bundle gherkin_docs[$];
-	uvm_sequencer_base sequencer;
-	uvm_sequence_base parent_sequence;
-	int sequence_priority;
-	bit sequence_call_pre_post;
-	bit dry_run;
-	int starting_scenario_number;
-	int stopping_scenario_number;
-	uvm_verbosity bathtub_verbosity;
-	uvm_report_object report_object;
-	string include_tags[$];
-	string exclude_tags[$];
-	test_sequence current_test_seq;
-	gherkin_pkg::step undefined_steps[$];
+	protected gherkin_doc_bundle gherkin_docs[$];
+	protected uvm_sequencer_base sequencer;
+	protected uvm_sequence_base parent_sequence;
+	protected int sequence_priority;
+	protected bit sequence_call_pre_post;
+	protected bit dry_run;
+	protected int starting_scenario_number;
+	protected int stopping_scenario_number;
+	protected uvm_verbosity bathtub_verbosity;
+	protected uvm_report_object report_object;
+	protected string include_tags[$];
+	protected string exclude_tags[$];
+	protected test_sequence current_test_seq;
+	protected gherkin_pkg::step undefined_steps[$];
 	
-	static plusarg_options plusarg_opts = plusarg_options::create().populate();
+	protected static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
 	`uvm_object_utils_begin(bathtub)
 		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
@@ -155,7 +155,7 @@ class bathtub extends uvm_report_object;
 	endtask : run_test
 
 
-	virtual function void write_snippets();
+	protected virtual function void write_snippets();
         string file_name;
         bit[31:0] fd;
 
@@ -195,6 +195,57 @@ class bathtub extends uvm_report_object;
 	function plusarg_options get_plusarg_opts();
 		return plusarg_opts;
 	endfunction : get_plusarg_opts
+
+
+	function strings_t get_feature_files();
+		get_feature_files = new("feature_files");
+		foreach (feature_files[i]) get_feature_files.push_back(feature_files[i]);
+	endfunction : get_feature_files
+
+	
+	function uvm_report_object get_report_object();
+		return report_object;
+	endfunction : get_report_object
+
+	function uvm_sequencer_base get_sequencer();
+		return sequencer;
+	endfunction : get_sequencer
+	
+	function int get_sequence_priority();
+		return sequence_priority;
+	endfunction : get_sequence_priority
+	
+	function bit get_sequence_call_pre_post();
+		return sequence_call_pre_post;
+	endfunction : get_sequence_call_pre_post
+
+	function bit get_dry_run();
+		return dry_run;
+	endfunction : get_dry_run
+
+	function int get_starting_scenario_number();
+		return starting_scenario_number;
+	endfunction : get_starting_scenario_number
+
+	function int get_stopping_scenario_number();
+		return stopping_scenario_number;
+	endfunction : get_stopping_scenario_number
+
+	function strings_t get_include_tags();
+		get_include_tags = new("include_tags");
+		foreach (include_tags[i]) get_include_tags.push_back(include_tags[i]);
+	endfunction : get_include_tags
+
+	function strings_t get_exclude_tags();
+		get_exclude_tags = new("exclude_tags");
+		foreach (exclude_tags[i]) get_exclude_tags.push_back(exclude_tags[i]);
+	endfunction : get_exclude_tags
+
+	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
+		undefined_steps = {undefined_steps, steps};
+	endfunction : concat_undefined_steps
+
+
 
 endclass : bathtub
 

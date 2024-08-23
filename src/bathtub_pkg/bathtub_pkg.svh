@@ -25,7 +25,10 @@ SOFTWARE.
 `ifndef __BATHTUB_PKG_SVH
 `define __BATHTUB_PKG_SVH
 
+import uvm_pkg::*;
+
 typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
+typedef uvm_queue#(string) strings_t;
 
 parameter byte CR = 13; // ASCII carriage return
 parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
