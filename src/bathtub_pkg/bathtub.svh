@@ -202,6 +202,13 @@ class bathtub extends uvm_report_object;
 		foreach (feature_files[i]) get_feature_files.push_back(feature_files[i]);
 	endfunction : get_feature_files
 
+	function void concat_feature_files(string files[$]);
+		feature_files = {feature_files, files};
+	endfunction : concat_feature_files
+
+	function void push_back_feature_file(string file);
+		feature_files.push_back(file);
+	endfunction : push_back_feature_file
 	
 	function uvm_report_object get_report_object();
 		return report_object;
