@@ -110,17 +110,19 @@ Initializes the Bathtub object with the given `name`.\
 	endfunction : new
 
 	(* doc$markdown = "\
-Configures the Bathtub object prior to running it.\
+Configures how the Bathtub object runs its sequences.\
 \
 Parameters `sequencer`, `parent_sequence`, `sequence_priority`, and `sequence_call_pre_post` are all related to the respective arguments of `uvm_sequence_base::start()`.\
-These parameters all influence how Bathtub executes its sequences.\
+These parameters all influence how Bathtub executes its context and step definition sequences.\
+Call this function before calling `run_test()`.\
 \
-`sequencer` is the sequencer on which Bathtub will execute all its context and step definition sequences.\
+`sequencer` is the sequencer on which Bathtub will execute all its sequences.\
+This is the only required argument.\
 \
 The Bathtub object creates its own context sequence called `current_test_seq`.\
 If `parent_sequence` is null, then `current_test_seq` is a root parent, otherwise it is a child of `parent_sequence`.\
 \
-Bathtub assigns `sequence_priority` to all its context and step definition sequences.\
+Bathtub assigns `sequence_priority` to all its sequences.\
 \
 `sequence_call_pre_post` determines whether the sequences' `pre_body()` and `post_body()` tasks are called.\
 	"*)
@@ -137,6 +139,31 @@ Bathtub assigns `sequence_priority` to all its context and step definition seque
 	endfunction : configure
 
 
+	(* doc$markdown = "\
+Run the Bathtub test.\
+\
+`run_test()` causes the Bathtub object to read the provided feature files and execute them on the configured sequencer.\
+\
+This task is typically called from a UVM test or component's phase implementation method, such as `run_phase()`.\
+The `phase` argument is passed along from the phase method's parameter.\
+Be sure to call `configure()` prior to calling `run_test()`.\
+\
+Typical usage:\
+```\
+class bathtub_test extends uvm_test;\
+    ...\
+    task run_phase(uvm_phase phase);\
+        phase.raise_objection(this);\
+        bathtub.configure(my_env.my_sequencer);\
+        bathtub.run_test(phase);\
+        phase.drop_objection(this);\
+    endtask\
+endclass\
+```\
+If Bathtub encounters any feature file steps that don't have step definitions registered in the resource database,\
+then before returning, `run_test()` outputs a step definition snippet for each of the steps in the log file and in a separate file called `bathtub_snippets.svh`.\
+The snippets can be used as the basis for actual step definitions.\
+	"*)
 	virtual task run_test(uvm_phase phase);
 
 		// Process plusarg overrides
