@@ -237,71 +237,144 @@ The snippets can be used as the basis for actual step definitions.\
 	endfunction : write_snippets
 
 
+	(* doc$markdown = "\
+Gets the plusarg options object.\
+\
+The plus arg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\
+	"*)
 	function plusarg_options get_plusarg_opts();
 		return plusarg_opts;
 	endfunction : get_plusarg_opts
 
-
+	(* doc$markdown = "\
+Gets the list of feature files.\
+\
+`strings_t` is a typedef for `uvm_queue#(string)`.\
+	"*)
 	function strings_t get_feature_files();
 		get_feature_files = new("feature_files");
 		foreach (feature_files[i]) get_feature_files.push_back(feature_files[i]);
 	endfunction : get_feature_files
 
+	(* doc$markdown = "\
+Concatenates strings to the end of the internal list of feature files to run.\
+\
+`files` is a queue of strings.\
+Each string should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\
+\
+e.g.\
+```\
+bathtub.concat_feature_files('{\"path/to/features/feature_A.feature\"});\
+bathtub.concat_feature_files('{\"path/to/features/feature_B.feature\", \"path/to/features/feature_C.feature\"});\
+bathtub.concat_feature_files('{\"path/to/features/feature_D.feature path/to/features/feature_E.feature\"});\
+bathtub.concat_feature_files(my_queue_of_strings);\
+bathtub.run_test(phase);\
+```\
+	"*)
 	function void concat_feature_files(string files[$]);
 		feature_files = {feature_files, files};
 	endfunction : concat_feature_files
 
+	(* doc$markdown = "\
+Pushes a single string to the end of the internal list of feature files to run.\
+\
+`file` should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\
+e.g.\
+```\
+bathtub.push_back_feature_file(\"path/to/features/feature_A.feature\");\
+bathtub.push_back_feature_file(\"path/to/features/feature_B.feature path/to/features/feature_C.feature\");\
+bathtub.run_test(phase);\
+	"*)
 	function void push_back_feature_file(string file);
 		feature_files.push_back(file);
 	endfunction : push_back_feature_file
 
+	(* doc$markdown = "\
+Sets the Bathtub object's report object.\
+\
+By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()``, `` `uvm_error()``, etc.) it issues.\
+This accessor assigns a different report object.\
+e.g.\
+```\
+bathtub.set_report_object(uvm_root::get()); // Global object\
+bathtub.set_report_object(bathtub); // Back to self\
+```\
+	"*)
 	function void set_report_object(uvm_report_object report_object);
 		this.report_object = report_object;
 	endfunction : set_report_object
 	
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function uvm_report_object get_report_object();
 		return report_object;
 	endfunction : get_report_object
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function uvm_sequencer_base get_sequencer();
 		return sequencer;
 	endfunction : get_sequencer
 	
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function int get_sequence_priority();
 		return sequence_priority;
 	endfunction : get_sequence_priority
 	
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function bit get_sequence_call_pre_post();
 		return sequence_call_pre_post;
 	endfunction : get_sequence_call_pre_post
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function bit get_dry_run();
 		return dry_run;
 	endfunction : get_dry_run
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function int get_starting_scenario_number();
 		return starting_scenario_number;
 	endfunction : get_starting_scenario_number
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function int get_stopping_scenario_number();
 		return stopping_scenario_number;
 	endfunction : get_stopping_scenario_number
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function strings_t get_include_tags();
 		get_include_tags = new("include_tags");
 		foreach (include_tags[i]) get_include_tags.push_back(include_tags[i]);
 	endfunction : get_include_tags
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function strings_t get_exclude_tags();
 		get_exclude_tags = new("exclude_tags");
 		foreach (exclude_tags[i]) get_exclude_tags.push_back(exclude_tags[i]);
 	endfunction : get_exclude_tags
 
+	(* doc$markdown = "\
+docstring\
+	"*)
 	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
 		undefined_steps = {undefined_steps, steps};
 	endfunction : concat_undefined_steps
-
-
 
 endclass : bathtub
 
