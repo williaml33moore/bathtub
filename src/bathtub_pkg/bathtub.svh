@@ -84,6 +84,12 @@ class bathtub extends uvm_report_object;
 		`uvm_field_int(stopping_scenario_number, UVM_ALL_ON)
 	`uvm_object_utils_end
 
+
+	(* doc$markdown = "\
+Constructor.\
+\
+Initializes the Bathtub object with the given `name`.\
+	"*)
 	function new(string name = "bathtub");
 		super.new(name);
 
@@ -103,19 +109,31 @@ class bathtub extends uvm_report_object;
 		undefined_steps.delete();
 	endfunction : new
 
-
+	(* doc$markdown = "\
+Configures the Bathtub object prior to running it.\
+\
+Parameters `sequencer`, `parent_sequence`, `sequence_priority`, and `sequence_call_pre_post` are all related to the respective arguments of `uvm_sequence_base::start()`.\
+These parameters all influence how Bathtub executes its sequences.\
+\
+`sequencer` is the sequencer on which Bathtub will execute all its context and step definition sequences.\
+\
+The Bathtub object creates its own context sequence called `current_test_seq`.\
+If `parent_sequence` is null, then `current_test_seq` is a root parent, otherwise it is a child of `parent_sequence`.\
+\
+Bathtub assigns `sequence_priority` to all its context and step definition sequences.\
+\
+`sequence_call_pre_post` determines whether the sequences' `pre_body()` and `post_body()` tasks are called.\
+	"*)
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
 			uvm_sequence_base parent_sequence = null,
 			int sequence_priority = 100,
-			bit sequence_call_pre_post = 1,
-			uvm_report_object report_object = null
+			bit sequence_call_pre_post = 1
 		);
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
 		this.sequence_priority = sequence_priority;
 		this.sequence_call_pre_post = sequence_call_pre_post;
-		this.report_object = report_object;
 	endfunction : configure
 
 
@@ -209,6 +227,10 @@ class bathtub extends uvm_report_object;
 	function void push_back_feature_file(string file);
 		feature_files.push_back(file);
 	endfunction : push_back_feature_file
+
+	function void set_report_object(uvm_report_object report_object);
+		this.report_object = report_object;
+	endfunction : set_report_object
 	
 	function uvm_report_object get_report_object();
 		return report_object;
