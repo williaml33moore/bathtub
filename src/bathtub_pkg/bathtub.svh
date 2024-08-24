@@ -284,6 +284,7 @@ e.g.\
 bathtub.push_back_feature_file(\"path/to/features/feature_A.feature\");\
 bathtub.push_back_feature_file(\"path/to/features/feature_B.feature path/to/features/feature_C.feature\");\
 bathtub.run_test(phase);\
+```\
 	"*)
 	function void push_back_feature_file(string file);
 		feature_files.push_back(file);
