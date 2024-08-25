@@ -41,7 +41,7 @@ hw_reset hw_reset_test:
 	$(CHECK)
 
 bathtub_vip.f:
-	$(VCS) -r $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
+	$(VCS) -R $(BATHTUB_VIP_DIR)/vip-spec.sv $(BATHTUB_VIP_DIR)/vip_setup.sv
 
 bathtub_comp: bathtub_vip.f
 	$(VCS) $(COPTS) -f bathtub_vip.f +incdir+../apb+vip+. \
