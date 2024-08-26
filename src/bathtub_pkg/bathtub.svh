@@ -426,6 +426,7 @@ The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \
 Gets Bathtub's starting scenario number.\
 \
 The simulator command-line plusarg `+bathtub_start=<number>` sets the zero-based index of the scenario Bathtub will start running with.\
+This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\
 `get_starting_scenario_number()` returns the starting number.\
 	"*)
 	function int get_starting_scenario_number();
@@ -436,6 +437,7 @@ The simulator command-line plusarg `+bathtub_start=<number>` sets the zero-based
 Gets Bathtub's stopping scenario number.\
 \
 The simulator command-line plusarg `+bathtub_stop=<number>` sets the zero-based index of the scenario to stop running with.\
+This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\
 `get_stopping_scenario_number()` returns the stopping number.\
 	"*)
 	function int get_stopping_scenario_number();
@@ -467,10 +469,10 @@ Scenarios that have or inherit these tags will not run.\
 	endfunction : get_exclude_tags
 
 	(* doc$markdown = "\
-Concatenates steps to Bathtub's list of undefined steps.\
+Adds steps to Bathtub's list of undefined steps.\
 \
-Bathtub maintains a list of steps in the feature files which do not have matching step definitions.\
-The Gherkin runner uses `concat_undefined_steps()` to concatenate a queue of `gherkin_pkg::step` objects to the list.\
+As it runs, Bathtub maintains a list of feature file steps which do not have matching step definitions.\
+The Gherkin runner uses `concat_undefined_steps()` to add a queue of `gherkin_pkg::step` objects to the end of the list.\
 Bathtub uses the list to produce snippets at the end of `run_test()`.\
 This is for internal use.\
 	"*)
