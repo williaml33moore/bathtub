@@ -121,7 +121,7 @@ classDiagram\
     }\
     bathtub --|> uvm_report_object\
     bathtub *-- test_sequence : current_test_seq\
-	test_sequence o-- bathtub : bt\
+	test_sequence --> bathtub : bt\
 ```\
 	"*)
 class bathtub extends uvm_report_object;
