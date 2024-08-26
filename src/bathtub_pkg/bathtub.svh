@@ -149,7 +149,7 @@ The `phase` argument is passed along from the phase method's parameter.\
 Be sure to call `configure()` prior to calling `run_test()`.\
 \
 Typical usage:\
-```\
+```sv\
 class bathtub_test extends uvm_test;\
     ...\
     task run_phase(uvm_phase phase);\
@@ -263,7 +263,7 @@ Concatenates strings to the end of the internal list of feature files to run.\
 Each string should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\
 \
 e.g.\
-```\
+```sv\
 bathtub.concat_feature_files('{\"path/to/features/feature_A.feature\"});\
 bathtub.concat_feature_files('{\"path/to/features/feature_B.feature\", \"path/to/features/feature_C.feature\"});\
 bathtub.concat_feature_files('{\"path/to/features/feature_D.feature path/to/features/feature_E.feature\"});\
@@ -280,7 +280,7 @@ Pushes a single string to the end of the internal list of feature files to run.\
 \
 `file` should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\
 e.g.\
-```\
+```sv\
 bathtub.push_back_feature_file(\"path/to/features/feature_A.feature\");\
 bathtub.push_back_feature_file(\"path/to/features/feature_B.feature path/to/features/feature_C.feature\");\
 bathtub.run_test(phase);\
@@ -296,7 +296,7 @@ Sets the Bathtub object's report object.\
 By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()``, `` `uvm_error()``, etc.) it issues.\
 This accessor assigns a different report object.\
 e.g.\
-```\
+```sv\
 bathtub.set_report_object(uvm_root::get()); // Global object\
 bathtub.set_report_object(bathtub); // Back to self\
 ```\
@@ -306,56 +306,78 @@ bathtub.set_report_object(bathtub); // Back to self\
 	endfunction : set_report_object
 	
 	(* doc$markdown = "\
-docstring\
+Gets the Bathtub object's report object.\
+\
+By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()``, `` `uvm_error()``, etc.) it issues, but the report object could be reassigned by `set_report_object()`.\
+Use `get_report_object()` to get the current report object.\
 	"*)
 	function uvm_report_object get_report_object();
 		return report_object;
 	endfunction : get_report_object
 
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's configured sequencer.\
+\
+Returns the sequencer on which Bathtub will execute all its sequences, as set by `configure()`.\
 	"*)
 	function uvm_sequencer_base get_sequencer();
 		return sequencer;
 	endfunction : get_sequencer
 	
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's configured sequence priority.\
+\
+Returns the sequence priority Bathtub starts all its sequences with, as set by `configure()`.\
 	"*)
 	function int get_sequence_priority();
 		return sequence_priority;
 	endfunction : get_sequence_priority
 	
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's configured `call_pre_post` value.\
+\
+Returns the `call_pre_post` value Bathtub starts all its sequences with, as set by `configure()`.\
 	"*)
 	function bit get_sequence_call_pre_post();
 		return sequence_call_pre_post;
 	endfunction : get_sequence_call_pre_post
 
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's dry-run status.\
+\
+If the simulation is run with the `+bathtub_dryrun` command-line plusarg, then Bathtub will parse the Gherkin feature files, but not run them.\
+The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \
 	"*)
 	function bit get_dry_run();
 		return dry_run;
 	endfunction : get_dry_run
 
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's starting scenario number.\
+\
+The simulator command-line plusarg `+bathtub_start=<number>` sets the zero-based index of the scenario Bathtub will start running with.\
+`get_starting_scenario_number()` returns the starting number.\
 	"*)
 	function int get_starting_scenario_number();
 		return starting_scenario_number;
 	endfunction : get_starting_scenario_number
 
 	(* doc$markdown = "\
-docstring\
+Gets Bathtub's stopping scenario number.\
+\
+The simulator command-line plusarg `+bathtub_stop=<number>` sets the zero-based index of the scenario to stop running with.\
+`get_stopping_scenario_number()` returns the stopping number.\
 	"*)
 	function int get_stopping_scenario_number();
 		return stopping_scenario_number;
 	endfunction : get_stopping_scenario_number
 
 	(* doc$markdown = "\
-docstring\
+Gets the list of Bathtub's include tags.\
+\
+The simulator command-line plusarg `+bathtub_include=<tags>` sets the comma-separated list of Gherkin tags to include.\
+Only scenarios that have or inherit these tags will run.\
+`get_include_tags()` returns the list of tags.\
 	"*)
 	function strings_t get_include_tags();
 		get_include_tags = new("include_tags");
@@ -363,7 +385,11 @@ docstring\
 	endfunction : get_include_tags
 
 	(* doc$markdown = "\
-docstring\
+Gets the list of Bathtub's exclude tags.\
+\
+The simulator command-line plusarg `+bathtub_exclude=<tags>` sets the comma-separated list of Gherkin tags to exclude.\
+Scenarios that have or inherit these tags will not run.\
+`get_exclude_tags()` returns the list of tags.\
 	"*)
 	function strings_t get_exclude_tags();
 		get_exclude_tags = new("exclude_tags");
@@ -371,7 +397,11 @@ docstring\
 	endfunction : get_exclude_tags
 
 	(* doc$markdown = "\
-docstring\
+Concatenates steps to Bathtub's list of undefined steps.\
+\
+Bathtub maintains a list of steps in the feature files which do not have matching step definitions.\
+The Gherkin runner uses `concat_undefined_steps()` to concatenate a queue of `gherkin_pkg::step` objects to the list.\
+This is for internal use.\
 	"*)
 	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
 		undefined_steps = {undefined_steps, steps};
