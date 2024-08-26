@@ -310,7 +310,7 @@ The snippets can be used as the basis for actual step definitions.\
 	(* doc$markdown = "\
 Gets the plusarg options object.\
 \
-The plus arg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\
+The plusarg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\
 	"*)
 	function plusarg_options get_plusarg_opts();
 		return plusarg_opts;
