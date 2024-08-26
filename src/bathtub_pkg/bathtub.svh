@@ -39,9 +39,6 @@ typedef class gherkin_document_runner;
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
 `endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
-typedef class gherkin_doc_bundle;
-`include "bathtub_pkg/gherkin_doc_bundle.svh"
-
 typedef class plusarg_options;
 `include "bathtub_pkg/plusarg_options.svh"
 
@@ -84,6 +81,14 @@ class bathtub_test extends uvm_test;\
 endclass\
 ```\
 \
+Bathtub creates its own sequence, called `current_test_sequence`, which is an instance of class `bathtub_pkg::test_sequence`.\
+This sequence is the parent sequence of all sequences Bathtub creates, and provides context that persists for the duration of the simulation. \
+It contains UVM pools of various types so all the child sequences down to the step definitions can share information.\
+`current_test_sequence` also contains a reciprocal reference to the Bathtub object itself, so child sequences have access to it as well.\
+\
+Bathtub extends class `uvm_report_object` and by default serves as its own report object for the messages its prints through `` `uvm_info()``, `` `uvm_error()``, etc.\
+The Bathtub object's verbosity can be set with simulator command line plusarg `+bathtub_verbosity=<verbosity>` independently of `+UVM_VERBOSITY=<verbosity>`.\
+\
 ```mermaid\
 ---\
 title: Class Diagram\
@@ -91,23 +96,20 @@ title: Class Diagram\
 classDiagram\
     namespace bathtub_pkg{\
         class bathtub{\
-			#sequencer : uvm_sequencer_base\
 			#feature_files : string[*]\
-			gherkin_docs : gherkin_doc_bundle[*]\
-			sequencer : uvm_sequencer_base\
-			parent_sequence : uvm_sequence_base\
-			sequence_priority : int\
-			sequence_call_pre_post : bit\
-			dry_run : bit\
-			starting_scenario_number : int\
-			stopping_scenario_number : int\
-			bathtub_verbosity : uvm_verbosity\
-			report_object : uvm_report_object\
-			include_tags : string[*]\
-			exclude_tags : string[*]\
-			current_test_seq : test_sequence\
-			undefined_steps : gherkin_pkg::step[*]\
-			plusarg_opts : plusarg_options$ \
+			#sequencer : uvm_sequencer_base\
+			#parent_sequence : uvm_sequence_base\
+			#sequence_priority : int\
+			#sequence_call_pre_post : bit\
+			#dry_run : bit\
+			#starting_scenario_number : int\
+			#stopping_scenario_number : int\
+			#bathtub_verbosity : uvm_verbosity\
+			#report_object : uvm_report_object\
+			#include_tags : string[*]\
+			#exclude_tags : string[*]\
+			#undefined_steps : gherkin_pkg::step[*]\
+			#plusarg_opts : plusarg_options$ \
             +new()\
             +configure()\
             +run_test()\
@@ -117,14 +119,17 @@ classDiagram\
     namespace uvm_pkg{\
         class uvm_report_object\
     }\
+	namespace gherkin_pkg{\
+		class gherkin_doc_bundle\
+	}\
     bathtub --|> uvm_report_object\
     bathtub *-- test_sequence : current_test_seq\
+	test_sequence o-- bathtub : bt\
 ```\
 	"*)
 class bathtub extends uvm_report_object;
 
 	protected string feature_files[$];
-	protected gherkin_doc_bundle gherkin_docs[$];
 	protected uvm_sequencer_base sequencer;
 	protected uvm_sequence_base parent_sequence;
 	protected int sequence_priority;
