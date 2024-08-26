@@ -56,10 +56,74 @@ typedef class snippets;
 
 `include "bathtub_macros.sv"
 
+	(* doc$markdown = "\
+The simulation's entry point to Bathtub.\
+\
+The Bathtub class reads Gherkin feature files and runs them aginst the DUT.\
+In your UVM test or some other component, instantiate a Bathtub object, configure it with a sequencer (perhaps a virtual sequencer from your UVM environment), then run it.\
+Note that `bathtub` is a UVM object, not a `uvm_component`.\
+\
+Typical usage:\
+```sv\
+class bathtub_test extends uvm_test;\
+	bathtub_pkg::bathtub bathtub;\
+	uvm_env my_env;\
+\
+    virtual function void build_phase(uvm_phase phase);\
+        bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\");\
+        super.build_phase(phase);\
+        ...\
+    endfunction\
+\
+    task run_phase(uvm_phase phase);\
+        phase.raise_objection(this);\
+        bathtub.configure(my_env.my_sequencer);\
+        bathtub.run_test(phase);\
+        phase.drop_objection(this);\
+    endtask\
+endclass\
+```\
+\
+```mermaid\
+---\
+title: Class Diagram\
+---\
+classDiagram\
+    namespace bathtub_pkg{\
+        class bathtub{\
+			#sequencer : uvm_sequencer_base\
+			#feature_files : string[*]\
+			gherkin_docs : gherkin_doc_bundle[*]\
+			sequencer : uvm_sequencer_base\
+			parent_sequence : uvm_sequence_base\
+			sequence_priority : int\
+			sequence_call_pre_post : bit\
+			dry_run : bit\
+			starting_scenario_number : int\
+			stopping_scenario_number : int\
+			bathtub_verbosity : uvm_verbosity\
+			report_object : uvm_report_object\
+			include_tags : string[*]\
+			exclude_tags : string[*]\
+			current_test_seq : test_sequence\
+			undefined_steps : gherkin_pkg::step[*]\
+			plusarg_opts : plusarg_options$ \
+            +new()\
+            +configure()\
+            +run_test()\
+        }\
+        class test_sequence\
+    }\
+    namespace uvm_pkg{\
+        class uvm_report_object\
+    }\
+    bathtub --|> uvm_report_object\
+    bathtub *-- test_sequence : current_test_seq\
+```\
+	"*)
 class bathtub extends uvm_report_object;
 
 	protected string feature_files[$];
-
 	protected gherkin_doc_bundle gherkin_docs[$];
 	protected uvm_sequencer_base sequencer;
 	protected uvm_sequence_base parent_sequence;
@@ -74,14 +138,18 @@ class bathtub extends uvm_report_object;
 	protected string exclude_tags[$];
 	protected test_sequence current_test_seq;
 	protected gherkin_pkg::step undefined_steps[$];
-	
+
 	protected static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
 	`uvm_object_utils_begin(bathtub)
 		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
 		`uvm_field_int(dry_run, UVM_ALL_ON)
+		`uvm_field_int(sequence_priority, UVM_ALL_ON)
+		`uvm_field_int(sequence_call_pre_post, UVM_ALL_ON)
 		`uvm_field_int(starting_scenario_number, UVM_ALL_ON)
 		`uvm_field_int(stopping_scenario_number, UVM_ALL_ON)
+		`uvm_field_queue_string(include_tags, UVM_ALL_ON)
+		`uvm_field_queue_string(exclude_tags, UVM_ALL_ON)
 	`uvm_object_utils_end
 
 
@@ -140,7 +208,7 @@ Bathtub assigns `sequence_priority` to all its sequences.\
 
 
 	(* doc$markdown = "\
-Run the Bathtub test.\
+Runs the Bathtub test.\
 \
 `run_test()` causes the Bathtub object to read the provided feature files and execute them on the configured sequencer.\
 \
@@ -401,6 +469,7 @@ Concatenates steps to Bathtub's list of undefined steps.\
 \
 Bathtub maintains a list of steps in the feature files which do not have matching step definitions.\
 The Gherkin runner uses `concat_undefined_steps()` to concatenate a queue of `gherkin_pkg::step` objects to the list.\
+Bathtub uses the list to produce snippets at the end of `run_test()`.\
 This is for internal use.\
 	"*)
 	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
