@@ -66,29 +66,41 @@ class test_sequence extends context_sequence implements test_sequence_interface;
 		gherkin_parser parser;
 		gherkin_document_printer printer;
 		gherkin_document_runner runner;
+		strings_t feature_files;
+		strings_t include_tags;
+		strings_t exclude_tags;
+		string include_tags_q[$];
+		string exclude_tags_q[$];
 
-		foreach (bt.feature_files[i]) begin : iterate_over_feature_files
+		include_tags = bt.get_include_tags();
+		for (int i = 0; i < include_tags.size(); i++) include_tags_q.push_back(include_tags.get(i));
+		exclude_tags = bt.get_exclude_tags();
+		for (int i = 0; i < exclude_tags.size(); i++) exclude_tags_q.push_back(exclude_tags.get(i));
+		feature_files = bt.get_feature_files();
+		for (int i = 0; i < feature_files.size(); i++) begin : iterate_over_feature_files
 			gherkin_pkg::step undefined_steps[$];
 			
-			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", bt.feature_files[i]}, UVM_HIGH, bt.report_object)
+			`uvm_info_context(`BATHTUB__GET_SCOPE_NAME(-2), {"Feature file: ", feature_files.get(i)}, UVM_HIGH, bt.get_report_object())
 
-			parser = gherkin_parser::type_id::create("parser").configure(bt.report_object);
+			parser = gherkin_parser::type_id::create("parser").configure(bt.get_report_object());
 
-			parser.parse_feature_file(bt.feature_files[i], gherkin_doc_bundle);
+			parser.parse_feature_file(feature_files.get(i), gherkin_doc_bundle);
 
 			assert_gherkin_doc_is_not_null : assert (gherkin_doc_bundle.document);
 
-			if (bt.report_object.get_report_verbosity_level() >= UVM_HIGH) begin
+			if (bt.get_report_object().get_report_verbosity_level() >= UVM_HIGH) begin
 				printer = gherkin_document_printer::create_new("printer", gherkin_doc_bundle.document);
 				printer.print();
 			end
 
 			runner = gherkin_document_runner::create_new("runner", gherkin_doc_bundle.document);
-			runner.configure(bt.sequencer, this, bt.sequence_priority, bt.sequence_call_pre_post, phase, bt.dry_run, bt.starting_scenario_number, bt.stopping_scenario_number, bt.include_tags, bt.exclude_tags, bt.report_object);
+			runner.configure(bt.get_sequencer(), this, bt.get_sequence_priority(), bt.get_sequence_call_pre_post(),
+				phase, bt.get_dry_run(), bt.get_starting_scenario_number(), bt.get_stopping_scenario_number(),
+				include_tags_q, exclude_tags_q, bt.get_report_object());
 			runner.run();
 
 			runner.get_undefined_steps(undefined_steps);
-			bt.undefined_steps = {bt.undefined_steps, undefined_steps};
+			bt.concat_undefined_steps(undefined_steps);
 			
 `ifdef BATHTUB_VERBOSITY_TEST
 			parser.test_verbosity();
