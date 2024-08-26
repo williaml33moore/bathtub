@@ -125,6 +125,7 @@ classDiagram\
 ```\
 	"*)
 class bathtub extends uvm_report_object;
+	// =================================
 
 	protected string feature_files[$];
 	protected uvm_sequencer_base sequencer;
@@ -161,6 +162,7 @@ Constructor.\
 Initializes the Bathtub object with the given `name`.\
 	"*)
 	function new(string name = "bathtub");
+		// -------------------------------
 		super.new(name);
 
 		feature_files.delete();
@@ -178,6 +180,7 @@ Initializes the Bathtub object with the given `name`.\
 		current_test_seq = null;
 		undefined_steps.delete();
 	endfunction : new
+
 
 	(* doc$markdown = "\
 Configures how the Bathtub object runs its sequences.\
@@ -202,6 +205,7 @@ Bathtub assigns `sequence_priority` to all its sequences.\
 			int sequence_priority = 100,
 			bit sequence_call_pre_post = 1
 		);
+		// ------------------------------------------
 		this.sequencer = sequencer;
 		this.parent_sequence = parent_sequence;
 		this.sequence_priority = sequence_priority;
@@ -235,6 +239,7 @@ then before returning, `run_test()` outputs a step definition snippet for each o
 The snippets can be used as the basis for actual step definitions.\
 	"*)
 	virtual task run_test(uvm_phase phase);
+		// --------------------------------
 
 		// Process plusarg overrides
 		if (plusarg_opts.num_bathtub_features) feature_files = {feature_files, plusarg_opts.bathtub_features}; // Append
@@ -270,7 +275,15 @@ The snippets can be used as the basis for actual step definitions.\
 	endtask : run_test
 
 
+/*
+Writes snippets for undefined step definitions.
+
+As it runs, Bathtub accumulates a list of feature file steps which do not have matching step definitions.
+`write_snippets()` produces snippets for those steps at the end of `run_test()`, writing them to the log and to a separate file in the simulation directory.
+The snippets can be used as placeholders or starting points for actual step definitions.
+*/
 	protected virtual function void write_snippets();
+		// ------------------------------------------
         string file_name;
         bit[31:0] fd;
 
@@ -313,8 +326,10 @@ Gets the plusarg options object.\
 The plusarg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\
 	"*)
 	function plusarg_options get_plusarg_opts();
+		// -------------------------------------
 		return plusarg_opts;
 	endfunction : get_plusarg_opts
+
 
 	(* doc$markdown = "\
 Gets the list of feature files.\
@@ -322,9 +337,11 @@ Gets the list of feature files.\
 `strings_t` is a typedef for `uvm_queue#(string)`.\
 	"*)
 	function strings_t get_feature_files();
+		// --------------------------------
 		get_feature_files = new("feature_files");
 		foreach (feature_files[i]) get_feature_files.push_back(feature_files[i]);
 	endfunction : get_feature_files
+
 
 	(* doc$markdown = "\
 Concatenates strings to the end of the internal list of feature files to run.\
@@ -342,8 +359,10 @@ bathtub.run_test(phase);\
 ```\
 	"*)
 	function void concat_feature_files(string files[$]);
+		// ---------------------------------------------
 		feature_files = {feature_files, files};
 	endfunction : concat_feature_files
+
 
 	(* doc$markdown = "\
 Pushes a single string to the end of the internal list of feature files to run.\
@@ -357,8 +376,10 @@ bathtub.run_test(phase);\
 ```\
 	"*)
 	function void push_back_feature_file(string file);
+		// -------------------------------------------
 		feature_files.push_back(file);
 	endfunction : push_back_feature_file
+
 
 	(* doc$markdown = "\
 Sets the Bathtub object's report object.\
@@ -372,9 +393,11 @@ bathtub.set_report_object(bathtub); // Back to self\
 ```\
 	"*)
 	function void set_report_object(uvm_report_object report_object);
+		// ----------------------------------------------------------
 		this.report_object = report_object;
 	endfunction : set_report_object
 	
+
 	(* doc$markdown = "\
 Gets the Bathtub object's report object.\
 \
@@ -382,8 +405,10 @@ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()
 Use `get_report_object()` to get the current report object.\
 	"*)
 	function uvm_report_object get_report_object();
+		// ----------------------------------------
 		return report_object;
 	endfunction : get_report_object
+
 
 	(* doc$markdown = "\
 Gets Bathtub's configured sequencer.\
@@ -391,26 +416,32 @@ Gets Bathtub's configured sequencer.\
 Returns the sequencer on which Bathtub will execute all its sequences, as set by `configure()`.\
 	"*)
 	function uvm_sequencer_base get_sequencer();
+		// -------------------------------------
 		return sequencer;
 	endfunction : get_sequencer
 	
+
 	(* doc$markdown = "\
 Gets Bathtub's configured sequence priority.\
 \
 Returns the sequence priority Bathtub starts all its sequences with, as set by `configure()`.\
 	"*)
 	function int get_sequence_priority();
+		// ------------------------------
 		return sequence_priority;
 	endfunction : get_sequence_priority
 	
+
 	(* doc$markdown = "\
 Gets Bathtub's configured `call_pre_post` value.\
 \
 Returns the `call_pre_post` value Bathtub starts all its sequences with, as set by `configure()`.\
 	"*)
 	function bit get_sequence_call_pre_post();
+		// -----------------------------------
 		return sequence_call_pre_post;
 	endfunction : get_sequence_call_pre_post
+
 
 	(* doc$markdown = "\
 Gets Bathtub's dry-run status.\
@@ -419,8 +450,10 @@ If the simulation is run with the `+bathtub_dryrun` command-line plusarg, then B
 The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \
 	"*)
 	function bit get_dry_run();
+		// --------------------
 		return dry_run;
 	endfunction : get_dry_run
+
 
 	(* doc$markdown = "\
 Gets Bathtub's starting scenario number.\
@@ -430,8 +463,10 @@ This is useful for narrowing the simulation down to scenarios of interest, for e
 `get_starting_scenario_number()` returns the starting number.\
 	"*)
 	function int get_starting_scenario_number();
+		// -------------------------------------
 		return starting_scenario_number;
 	endfunction : get_starting_scenario_number
+
 
 	(* doc$markdown = "\
 Gets Bathtub's stopping scenario number.\
@@ -441,8 +476,10 @@ This is useful for narrowing the simulation down to scenarios of interest, for e
 `get_stopping_scenario_number()` returns the stopping number.\
 	"*)
 	function int get_stopping_scenario_number();
+		// -------------------------------------
 		return stopping_scenario_number;
 	endfunction : get_stopping_scenario_number
+
 
 	(* doc$markdown = "\
 Gets the list of Bathtub's include tags.\
@@ -452,9 +489,11 @@ Only scenarios that have or inherit these tags will run.\
 `get_include_tags()` returns the list of tags.\
 	"*)
 	function strings_t get_include_tags();
+		// -------------------------------
 		get_include_tags = new("include_tags");
 		foreach (include_tags[i]) get_include_tags.push_back(include_tags[i]);
 	endfunction : get_include_tags
+
 
 	(* doc$markdown = "\
 Gets the list of Bathtub's exclude tags.\
@@ -464,9 +503,11 @@ Scenarios that have or inherit these tags will not run.\
 `get_exclude_tags()` returns the list of tags.\
 	"*)
 	function strings_t get_exclude_tags();
+		// -------------------------------
 		get_exclude_tags = new("exclude_tags");
 		foreach (exclude_tags[i]) get_exclude_tags.push_back(exclude_tags[i]);
 	endfunction : get_exclude_tags
+
 
 	(* doc$markdown = "\
 Adds steps to Bathtub's list of undefined steps.\
@@ -477,6 +518,7 @@ Bathtub uses the list to produce snippets at the end of `run_test()`.\
 This is for internal use.\
 	"*)
 	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
+		// ----------------------------------------------------------
 		undefined_steps = {undefined_steps, steps};
 	endfunction : concat_undefined_steps
 
