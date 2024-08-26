@@ -119,9 +119,6 @@ classDiagram\
     namespace uvm_pkg{\
         class uvm_report_object\
     }\
-	namespace gherkin_pkg{\
-		class gherkin_doc_bundle\
-	}\
     bathtub --|> uvm_report_object\
     bathtub *-- test_sequence : current_test_seq\
 	test_sequence o-- bathtub : bt\
