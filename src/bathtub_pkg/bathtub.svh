@@ -86,7 +86,7 @@ This sequence is the parent sequence of all sequences Bathtub creates, and provi
 It contains UVM pools of various types so all the child sequences down to the step definitions can share information.\
 `current_test_sequence` also contains a reciprocal reference back to the Bathtub object, so child sequences have access to it as well.\
 \
-Bathtub extends class `uvm_report_object` and by default serves as its own report object for the messages its prints through `` `uvm_info()``, `` `uvm_error()``, etc.\
+Bathtub extends class `uvm_report_object` and by default serves as its own report object for the messages it prints through `` `uvm_info()``, `` `uvm_error()``, etc.\
 The Bathtub object's verbosity can be set with simulator command line plusarg `+bathtub_verbosity=<verbosity>` independently of `+UVM_VERBOSITY=<verbosity>`.\
 \
 ```mermaid\
