@@ -43,9 +43,9 @@ typedef class bathtub;
 `endif // __BATHTUB_SVH
 
 class test_sequence extends context_sequence implements test_sequence_interface;
-    bathtub bt;
-	gherkin_document_runner runner;
-    uvm_phase phase;
+    protected bathtub bt;
+	protected gherkin_document_runner runner;
+    protected uvm_phase phase;
 
 	function new(string name="test_sequence");
 		super.new(name);
@@ -108,6 +108,10 @@ class test_sequence extends context_sequence implements test_sequence_interface;
 `endif // BATHTUB_VERBOSITY_TEST
 		end
 	endtask : body
+
+	virtual function bathtub get_bathtub_object();
+		return this.bt;
+	endfunction : get_bathtub_object
 
 endclass : test_sequence
 

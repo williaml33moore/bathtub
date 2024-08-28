@@ -85,7 +85,7 @@ This list summarizes a subset of accessors and utilities available to the class'
 They are all detailed in their respective documentation sections.\
 ```sv\
 // Static step attributes\
-// See the `step_static_attributes_interface` Class Reference.
+// See the `step_static_attributes_interface` Class Reference.\
 this.get_step_static_attributes().get_keyword()\
 this.get_step_static_attributes().get_regexp()\
 this.get_step_static_attributes().get_expression()\
@@ -94,7 +94,7 @@ this.get_step_static_attributes().get_step_obj_name()\
 this.get_step_static_attributes().print_attributes()\
 \
 // Dynamic step attributes\
-// See the `step attributes_interface` Class Reference.
+// See the `step attributes_interface` Class Reference.\
 this.get_step_attributes().get_runtime_keyword()\
 this.get_step_attributes().get_text()\
 this.get_step_attributes().get_argument()\
@@ -110,6 +110,9 @@ this.get_step_attributes().get_current_feature_sequence()\
 this.get_step_attributes().get_current_rule_sequence()\
 this.get_step_attributes().get_current_scenario_sequence()\
 this.get_step_attributes().print_attributes()\
+\
+// Context sequences\
+this.get_current_test_sequence().get_bathtub_object()\
 \
 // Context sequence pools\
 // The \"*\" stands for \"test,\" \"feature,\" \"rule,\" or \"scenario.\"\
@@ -234,12 +237,15 @@ classDiagram\
             +string_pool : uvm_pool#(string, string)\
             +uvm_object_pool : uvm_pool#(string, uvm_object)\
         }\
-        class test_sequence\
+        class test_sequence{\
+			#bt : bathtub\
+		}\
         class feature_sequence\
         class rule_sequence\
         class scenario_sequence\
         class test_sequence_interface{\
             <<interface>>\
+			+get_bathtub_object() : bathtub\
         }\
         class feature_sequence_interface{\
             <<interface>>\
@@ -293,11 +299,11 @@ classDiagram\
     context_sequence ..|> pool_provider_interface\
 \
     pool_provider ..|> pool_provider_interface\
-    pool_provider "1" *-- "11" uvm_pool\
+    pool_provider \"1\" *-- \"11\" uvm_pool\
 \
     uvm_sequence --|> uvm_sequence_base\
 \
-    note for user_step_definition "Contains a `Given(), `When(), or `Then() macro"\
+    note for user_step_definition \"Contains a `Given(), `When(), or `Then() macro\"\
     style user_step_definition fill:#0ff\
 ```\
 \
