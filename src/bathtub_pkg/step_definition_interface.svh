@@ -246,7 +246,9 @@ classDiagram\
         class rule_sequence{\
 		    #rule : gherkin_pkg::rule\
 		}\
-        class scenario_sequence\
+        class scenario_sequence{\
+		    #scenario : gherkin_pkg::scenario\
+		}\
         class test_sequence_interface{\
             <<interface>>\
             +get_bathtub_object() : bathtub\
@@ -261,6 +263,7 @@ classDiagram\
         }\
         class scenario_sequence_interface{\
             <<interface>>\
+			+get_scenario() : gherkin_pkg::scenario\
         }\
         class context_sequence\
     }\

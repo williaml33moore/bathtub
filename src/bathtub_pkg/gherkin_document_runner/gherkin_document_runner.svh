@@ -398,7 +398,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 `endif
 			current_scenario_seq.set_priority(sequence_priority);
 
-			current_scenario_seq.configure(scenario, this, current_feature_seq);
+			current_scenario_seq.configure(scenario, this);
 			current_scenario_seq.start(current_scenario_seq.get_sequencer());
 			current_scenario_seq = null;
 		end
