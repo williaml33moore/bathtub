@@ -87,16 +87,7 @@ this.get_step_static_attributes().print_attributes();\
 \
 // Run-time step attributes\
 // See the `step attributes_interface` Class Reference.\
-this.get_step_attributes().get_runtime_keyword();\
-this.get_step_attributes().get_text();\
-this.get_step_attributes().get_argument();\
-this.get_step_attributes().get_static_attributes();\
-this.get_step_attributes().get_format();\
-this.get_step_attributes().get_static_keyword();\
-this.get_step_attributes().get_expression();\
-this.get_step_attributes().get_regexp();\
-this.get_step_attributes().get_step_obj();\
-this.get_step_attributes().get_step_obj_name();\
+this.get_step_attributes().get_step();\
 this.get_step_attributes().get_current_test_sequence();\
 this.get_step_attributes().get_current_feature_sequence();\
 this.get_step_attributes().get_current_rule_sequence();\
@@ -158,9 +149,7 @@ classDiagram\
             step_obj_name :  string\
         }\
         class step_nurture{\
-            #runtime_keyword : string\
-            #text : string\
-            #argument : gherkin_pkg::step_argument\
+            #step : gherkin_pkg::step\
             #current_test_seq : test_sequence_interface\
             #current_feature_seq : feature_sequence_interface\
             #current_rule_seq : rule_sequence_interface\
@@ -181,11 +170,7 @@ classDiagram\
         }\
         class step_attributes_interface{\
             <<interface>>\
-            +get_runtime_keyword() : string\
-            +get_text() : string\
-            +get_argument() : gherkin_pkg::step_argument\
-            +get_step_obj() : uvm_object_wrapper\
-            +get_step_obj_name() : string\
+            +get_step() : gherkin_pkg::step\
             +get_current_test_sequence() : test_sequence_interface\
             +get_current_feature_sequence() : feature_sequence_interface\
             +get_current_rule_sequence() : rule_sequence_interface\
