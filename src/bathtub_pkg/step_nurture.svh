@@ -27,14 +27,15 @@ SOFTWARE.
 
 import gherkin_pkg::gherkin_pkg_metadata;
 
-`include "uvm_macros.svh"
-`include "bathtub_macros.sv"
+typedef interface class test_sequence_interface;
+typedef interface class feature_sequence_interface;
+typedef interface class rule_sequence_interface;
+typedef interface class scenario_sequence_interface;
+typedef interface class step_definition_interface;
+
+`ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
 `include "bathtub_pkg/step_attributes_interface.svh"
-`include "bathtub_pkg/step_definition_interface.svh"
-`include "bathtub_pkg/test_sequence_interface.svh"
-`include "bathtub_pkg/feature_sequence_interface.svh"
-`include "bathtub_pkg/rule_sequence_interface.svh"
-`include "bathtub_pkg/scenario_sequence_interface.svh"
+`endif // __STEP_ATTRIBUTES_INTERFACE_SVH
 
 class step_nurture extends uvm_object implements step_attributes_interface;
 
@@ -96,5 +97,21 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	endfunction : print_attributes
 
 endclass : step_nurture
+
+`include "uvm_macros.svh"
+
+`include "bathtub_macros.sv"
+
+`include "bathtub_pkg/step_definition_interface.svh"
+
+`ifndef __TEST_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/test_sequence_interface.svh"
+`endif // __TEST_SEQUENCE_INTERFACE_SVH
+
+`include "bathtub_pkg/feature_sequence_interface.svh"
+
+`include "bathtub_pkg/rule_sequence_interface.svh"
+
+`include "bathtub_pkg/scenario_sequence_interface.svh"
 
 `endif // __STEP_NURTURE_SVH

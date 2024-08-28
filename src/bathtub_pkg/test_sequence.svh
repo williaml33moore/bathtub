@@ -25,22 +25,13 @@ SOFTWARE.
 `ifndef __TEST_SEQUENCE_SVH
 `define __TEST_SEQUENCE_SVH
 
-`include "bathtub_pkg/test_sequence_interface.svh"
-
 typedef class context_sequence;
-`include "bathtub_pkg/context_sequence.svh"
-
 typedef class gherkin_document_runner;
-`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
-// Prevent `include recursion
-`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
-`endif // __GHERKIN_DOCUMENT_RUNNER_SVH
-
 typedef class bathtub;
-`ifndef __BATHTUB_SVH
-// Prevent `include recursion
-`include "bathtub_pkg/bathtub.svh"
-`endif // __BATHTUB_SVH
+
+`ifndef __TEST_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/test_sequence_interface.svh"
+`endif // __TEST_SEQUENCE_INTERFACE_SVH
 
 class test_sequence extends context_sequence implements test_sequence_interface;
     protected bathtub bt;
@@ -114,5 +105,16 @@ class test_sequence extends context_sequence implements test_sequence_interface;
 	endfunction : get_bathtub_object
 
 endclass : test_sequence
+
+
+`include "bathtub_pkg/context_sequence.svh"
+
+`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
+`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
+`endif // __GHERKIN_DOCUMENT_RUNNER_SVH
+
+`ifndef __BATHTUB_SVH
+`include "bathtub_pkg/bathtub.svh"
+`endif // __BATHTUB_SVH
 
 `endif // __TEST_SEQUENCE_SVH

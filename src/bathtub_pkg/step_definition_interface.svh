@@ -25,22 +25,20 @@ SOFTWARE.
 `ifndef __STEP_DEFINITION_INTERFACE_SVH
 `define __STEP_DEFINITION_INTERFACE_SVH
 
-typedef interface class step_static_attributes_interface;
 `include "bathtub_pkg/step_static_attributes_interface.svh"
 
-typedef interface class step_attributes_interface;
+`ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
 `include "bathtub_pkg/step_attributes_interface.svh"
+`endif // __STEP_ATTRIBUTES_INTERFACE_SVH
 
-typedef interface class test_sequence_interface;
+`ifndef __TEST_SEQUENCE_INTERFACE_SVH
 `include "bathtub_pkg/test_sequence_interface.svh"
+`endif // __TEST_SEQUENCE_INTERFACE_SVH
 
-typedef interface class feature_sequence_interface;
 `include "bathtub_pkg/feature_sequence_interface.svh"
 
-typedef interface class rule_sequence_interface;
 `include "bathtub_pkg/rule_sequence_interface.svh"
 
-typedef interface class scenario_sequence_interface;
 `include "bathtub_pkg/scenario_sequence_interface.svh"
 
 (* doc$markdown = "\

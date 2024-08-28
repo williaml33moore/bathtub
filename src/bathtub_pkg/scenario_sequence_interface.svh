@@ -27,9 +27,6 @@ SOFTWARE.
 
 `include "bathtub_pkg/pool_provider_interface.svh"
 
-typedef interface class feature_sequence_interface;
-`include "bathtub_pkg/feature_sequence_interface.svh"
-
 interface class scenario_sequence_interface extends pool_provider_interface;
 	pure virtual function gherkin_pkg::scenario get_scenario();
 endclass : scenario_sequence_interface
