@@ -38,21 +38,31 @@ import gherkin_pkg::gherkin_pkg_metadata;
 
 class step_nurture extends uvm_object implements step_attributes_interface;
 
-	string runtime_keyword;
-	string text;
-	gherkin_pkg::step_argument argument;
-	step_static_attributes_interface static_attributes;
-	test_sequence_interface current_test_seq;
-	feature_sequence_interface current_feature_seq;
-	rule_sequence_interface current_rule_seq;
-	scenario_sequence_interface current_scenario_seq;
+	protected string runtime_keyword;
+	protected string text;
+	protected gherkin_pkg::step_argument argument;
+	protected test_sequence_interface current_test_seq;
+	protected feature_sequence_interface current_feature_seq;
+	protected rule_sequence_interface current_rule_seq;
+	protected scenario_sequence_interface current_scenario_seq;
 
-	function new(string name="step_nurture");
+	function new(
+			string name="step_nurture",
+			gherkin_pkg::step step = null,
+			step_definition_interface step_seq = null,
+			scenario_sequence_interface current_scenario_seq = null,
+			rule_sequence_interface current_rule_seq = null,
+			feature_sequence_interface current_feature_seq = null,
+			test_sequence_interface current_test_seq = null
+		);
 		super.new(name);
-		current_test_seq = null;
-		current_feature_seq = null;
-		current_rule_seq = null;
-		current_scenario_seq = null;
+		this.runtime_keyword = step.get_keyword();
+		this.text = step.get_text();
+		this.argument = step.get_argument();
+		this.current_scenario_seq = current_scenario_seq;
+		this.current_rule_seq = current_rule_seq;
+		this.current_feature_seq = current_feature_seq;
+		this.current_test_seq = current_test_seq;
 	endfunction : new
 
 	`uvm_object_utils_begin(step_nurture)
@@ -67,7 +77,6 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 		`uvm_message_add_string(text)
 		`uvm_message_add_object(argument)
 		`uvm_info_end
-		static_attributes.print_attributes(verbosity);
 	endfunction : print_attributes
 
 	virtual function string get_runtime_keyword();
@@ -94,87 +103,21 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 		this.argument = step_argument;
 	endfunction : set_argument
 
-	virtual function void set_static_attributes(step_static_attributes_interface static_attributes);
-		this.static_attributes = static_attributes;			
-	endfunction : set_static_attributes
-
-	virtual function step_static_attributes_interface get_static_attributes();
-		return this.static_attributes;			
-	endfunction : get_static_attributes
-
-	virtual function string get_format();
-		return static_attributes.get_expression();
-	endfunction : get_format
-
-	virtual function step_keyword_t get_static_keyword();
-		return static_attributes.get_keyword();
-	endfunction : get_static_keyword
-
-	virtual function string get_expression();
-		return static_attributes.get_expression();
-	endfunction : get_expression
-
-	virtual function string get_regexp();
-		return static_attributes.get_regexp();
-	endfunction : get_regexp
-	
-	virtual function uvm_object_wrapper get_step_obj();
-		return static_attributes.get_step_obj();
-	endfunction : get_step_obj
-
-	virtual function string get_step_obj_name();
-		return static_attributes.get_step_obj_name();
-	endfunction : get_step_obj_name
-
 	virtual function test_sequence_interface get_current_test_sequence();
 		return this.current_test_seq;
 	endfunction : get_current_test_sequence
-
-	virtual function void set_current_test_sequence(test_sequence_interface seq);
-		this.current_test_seq = seq;
-	endfunction : set_current_test_sequence
 
 	virtual function feature_sequence_interface get_current_feature_sequence();
 		return this.current_feature_seq;
 	endfunction : get_current_feature_sequence
 
-	virtual function void set_current_feature_sequence(feature_sequence_interface seq);
-		this.current_feature_seq = seq;
-	endfunction : set_current_feature_sequence
-
 	virtual function rule_sequence_interface get_current_rule_sequence();
 		return this.current_rule_seq;
 	endfunction : get_current_rule_sequence
 
-	virtual function void set_current_rule_sequence(rule_sequence_interface seq);
-		this.current_rule_seq = seq;
-	endfunction : set_current_rule_sequence
-
 	virtual function scenario_sequence_interface get_current_scenario_sequence();
 		return this.current_scenario_seq;
 	endfunction : get_current_scenario_sequence
-
-	virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
-		this.current_scenario_seq = seq;
-	endfunction : set_current_scenario_sequence
-
-	virtual function void configure(
-		gherkin_pkg::step step,
-		step_definition_interface step_seq,
-		scenario_sequence_interface current_scenario_seq = null,
-		rule_sequence_interface current_rule_seq = null,
-		feature_sequence_interface current_feature_seq = null,
-		test_sequence_interface current_test_seq = null
-		);
-		set_runtime_keyword(step.get_keyword());
-		set_text(step.get_text());
-		set_argument(step.get_argument());
-		set_static_attributes(step_seq.get_step_static_attributes());
-		set_current_scenario_sequence(current_scenario_seq);
-		set_current_rule_sequence(current_rule_seq);
-		set_current_feature_sequence(current_feature_seq);
-		set_current_test_sequence(current_test_seq);
-	endfunction : configure
 
 endclass : step_nurture
 

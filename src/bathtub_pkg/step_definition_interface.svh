@@ -81,53 +81,57 @@ endclass\
 The `step_definition_interface` class methods provide a rich API the user-defined step definition class can use for introspection,\
 and for observation and manipulation of the Bathtub environment.\
 The class diagram below illustrates the cascading stack of resources and the paths to reach them.\
-This list summarizes a subset of accessors and utilities available to the class' methods.\
+This list summarizes a selection of accessors and utilities available to the class' methods.\
 They are all detailed in their respective documentation sections.\
 ```sv\
 // Static step attributes\
 // See the `step_static_attributes_interface` Class Reference.\
-this.get_step_static_attributes().get_keyword()\
-this.get_step_static_attributes().get_regexp()\
-this.get_step_static_attributes().get_expression()\
-this.get_step_static_attributes().get_step_obj()\
-this.get_step_static_attributes().get_step_obj_name()\
-this.get_step_static_attributes().print_attributes()\
+this.get_step_static_attributes().get_keyword();\
+this.get_step_static_attributes().get_regexp();\
+this.get_step_static_attributes().get_expression();\
+this.get_step_static_attributes().get_step_obj();\
+this.get_step_static_attributes().get_step_obj_name();\
+this.get_step_static_attributes().print_attributes();\
 \
-// Dynamic step attributes\
+// Run-time step attributes\
 // See the `step attributes_interface` Class Reference.\
-this.get_step_attributes().get_runtime_keyword()\
-this.get_step_attributes().get_text()\
-this.get_step_attributes().get_argument()\
-this.get_step_attributes().get_static_attributes()\
-this.get_step_attributes().get_format()\
-this.get_step_attributes().get_static_keyword()\
-this.get_step_attributes().get_expression()\
-this.get_step_attributes().get_regexp()\
-this.get_step_attributes().get_step_obj()\
-this.get_step_attributes().get_step_obj_name()\
-this.get_step_attributes().get_current_test_sequence()\
-this.get_step_attributes().get_current_feature_sequence()\
-this.get_step_attributes().get_current_rule_sequence()\
-this.get_step_attributes().get_current_scenario_sequence()\
-this.get_step_attributes().print_attributes()\
+this.get_step_attributes().get_runtime_keyword();\
+this.get_step_attributes().get_text();\
+this.get_step_attributes().get_argument();\
+this.get_step_attributes().get_static_attributes();\
+this.get_step_attributes().get_format();\
+this.get_step_attributes().get_static_keyword();\
+this.get_step_attributes().get_expression();\
+this.get_step_attributes().get_regexp();\
+this.get_step_attributes().get_step_obj();\
+this.get_step_attributes().get_step_obj_name();\
+this.get_step_attributes().get_current_test_sequence();\
+this.get_step_attributes().get_current_feature_sequence();\
+this.get_step_attributes().get_current_rule_sequence();\
+this.get_step_attributes().get_current_scenario_sequence();\
+this.get_step_attributes().print_attributes();\
 \
 // Context sequences\
-this.get_current_test_sequence().get_bathtub_object()\
+// See the respective sequence Class References.\
+this.get_current_test_sequence().get_bathtub_object();\
+this.get_current_feature_sequence().get_feature();\
+this.get_current_rule_sequence().get_rule();\
+this.get_current_scenario_sequence().get_scenario();\
 \
 // Context sequence pools\
 // The \"*\" stands for \"test,\" \"feature,\" \"rule,\" or \"scenario.\"\
 // See the `pool_provider_interface` Class Reference.\
-this.get_current_*_sequence().get_shortint_pool()\
-this.get_current_*_sequence().get_int_pool()\
-this.get_current_*_sequence().get_longint_pool()\
-this.get_current_*_sequence().get_byte_pool()\
-this.get_current_*_sequence().get_integer_pool()\
-this.get_current_*_sequence().get_time_pool()\
-this.get_current_*_sequence().get_real_pool()\
-this.get_current_*_sequence().get_shortreal_pool()\
-this.get_current_*_sequence().get_realtime_pool()\
-this.get_current_*_sequence().get_string_pool()\
-this.get_current_*_sequence().get_uvm_object_pool()\
+this.get_current_*_sequence().get_shortint_pool();\
+this.get_current_*_sequence().get_int_pool();\
+this.get_current_*_sequence().get_longint_pool();\
+this.get_current_*_sequence().get_byte_pool();\
+this.get_current_*_sequence().get_integer_pool();\
+this.get_current_*_sequence().get_time_pool();\
+this.get_current_*_sequence().get_real_pool();\
+this.get_current_*_sequence().get_shortreal_pool();\
+this.get_current_*_sequence().get_realtime_pool();\
+this.get_current_*_sequence().get_string_pool();\
+this.get_current_*_sequence().get_uvm_object_pool();\
 ```\
 \
 ```mermaid\
@@ -318,17 +322,57 @@ classDiagram\
 \
 "*)
 interface class step_definition_interface;
+	// ===================================
+
+(* doc$markdown = "\
+Gets the step attributes object.\
+\
+While Bathtub is running a Gherkin feature file, when it encounters a step,\
+it packages the attributes of that step into a value object and provides it to the step definition sequence.\
+`get_step_attributes()` retrieves that step attributes object.\
+The step definition can use it to access the step text from the feature file and any Gherkin step arguments, i.e., doc strings or data tables.\
+Internally, this is how the step parameter macros extract in-line arguments from the step text.\
+"*)
 	pure virtual function step_attributes_interface get_step_attributes();
+		// ---------------------------------------------------------------
+
+
+(* doc$markdown = "\
+Sets the step attributes object.\
+\
+Assigns the step definition's step attributes object to `step_attributes`.\
+Intended for external use when Bathtub instantiates a step definition sequence, not for use inside the step definition.\
+"*)
 	pure virtual function void set_step_attributes(step_attributes_interface step_attributes);
+		// -----------------------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+docstring\
+"*)
 	pure virtual function step_static_attributes_interface get_step_static_attributes();
-	pure virtual function test_sequence_interface get_current_test_sequence();
-	pure virtual function void set_current_test_sequence(test_sequence_interface seq);
+		// -----------------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+docstring\
+"*)
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
-	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
+		// -------------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+docstring\
+"*)
 	pure virtual function rule_sequence_interface get_current_rule_sequence();
-	pure virtual function void set_current_rule_sequence(rule_sequence_interface seq);
+		// -------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+docstring\
+"*)
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
-	pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
+		// ---------------------------------------------------------------------------
 endclass : step_definition_interface
 
 `endif // __STEP_DEFINITION_INTERFACE_SVH

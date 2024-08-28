@@ -229,8 +229,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		end
 
 		if ($cast(step_seq, obj)) begin
-			step_nurture step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.configure(step, step_seq, current_scenario_seq, current_rule_seq, current_feature_seq, current_test_seq);
+			step_nurture step_attributes;
+			step_attributes = new("step_attributes", step, step_seq, current_scenario_seq, current_rule_seq, current_feature_seq, current_test_seq);
 			step_seq.set_step_attributes(step_attributes);
 		end
 		else begin

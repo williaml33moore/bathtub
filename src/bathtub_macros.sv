@@ -71,27 +71,15 @@ endfunction : set_step_attributes\
 virtual function bathtub_pkg::test_sequence_interface get_current_test_sequence();\
 return this.__step_attributes.get_current_test_sequence();\
 endfunction : get_current_test_sequence\
-virtual function void set_current_test_sequence(bathtub_pkg::test_sequence_interface seq);\
-this.__step_attributes.set_current_test_sequence(seq);\
-endfunction : set_current_test_sequence\
 virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
 return this.__step_attributes.get_current_feature_sequence();\
 endfunction : get_current_feature_sequence\
-virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq);\
-this.__step_attributes.set_current_feature_sequence(seq);\
-endfunction : set_current_feature_sequence\
 virtual function bathtub_pkg::rule_sequence_interface get_current_rule_sequence();\
 return this.__step_attributes.get_current_rule_sequence();\
 endfunction : get_current_rule_sequence\
-virtual function void set_current_rule_sequence(bathtub_pkg::rule_sequence_interface seq);\
-this.__step_attributes.set_current_rule_sequence(seq);\
-endfunction : set_current_rule_sequence\
 virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence();\
 return this.__step_attributes.get_current_scenario_sequence();\
-endfunction : get_current_scenario_sequence\
-virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq);\
-this.__step_attributes.set_current_scenario_sequence(seq);\
-endfunction : set_current_scenario_sequence
+endfunction : get_current_scenario_sequence
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
 `define BATHTUB__REGISTER_STEP_DEF(k, e) static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type()); bathtub_pkg::step_attributes_interface __step_attributes; virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes(); return __step_static_attributes; endfunction : get_step_static_attributes virtual function bathtub_pkg::step_attributes_interface get_step_attributes(); return __step_attributes; endfunction : get_step_attributes virtual function void set_step_attributes(bathtub_pkg::step_attributes_interface step_attributes); this.__step_attributes = step_attributes; endfunction : set_step_attributes virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence(); return this.__step_attributes.get_current_feature_sequence(); endfunction : get_current_feature_sequence virtual function void set_current_feature_sequence(bathtub_pkg::feature_sequence_interface seq); this.__step_attributes.set_current_feature_sequence(seq); endfunction : set_current_feature_sequence virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence(); return this.__step_attributes.get_current_scenario_sequence(); endfunction : get_current_scenario_sequence virtual function void set_current_scenario_sequence(bathtub_pkg::scenario_sequence_interface seq); this.__step_attributes.set_current_scenario_sequence(seq); endfunction : set_current_scenario_sequence
@@ -138,14 +126,16 @@ endfunction : set_current_scenario_sequence
 
 `ifdef BATHTUB__MULTILINE_MACRO_IS_OK
 
-`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=(get_step_attributes() ? get_step_attributes().get_expression() : ""))\
+`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=(get_step_static_attributes() ? get_step_static_attributes().get_expression() : ""))\
 begin : step_parameter_get_args\
     bathtub_pkg::step_parameters_interface __step_params;\
     int __next = 0;\
+    check_step_static_attributes_not_null : assert (get_step_static_attributes() != null) else $error("step static attributes object is null");\
+    check_step_attributes_not_null : assert (get_step_attributes() != null) else $error("step run-time attributes object is null");\
 	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
-`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=get_step_attributes().get_expression()) begin : step_parameter_get_args    bathtub_pkg::step_parameters __step_params;    int __next = 0;	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
+`define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=get_step_static_attributes().get_expression()) begin : step_parameter_get_args    bathtub_pkg::step_parameters __step_params;    int __next = 0;	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
 `endif // BATHTUB__MULTILINE_MACRO_IS_OK
 
 `define BATHTUB__STEP_PARAMETER_GET_ARG_OBJECT(i) __step_params.get_arg(i)
