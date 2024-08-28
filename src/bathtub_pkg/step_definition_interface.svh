@@ -156,24 +156,24 @@ classDiagram\
         }\
         class step_nature{\
             step_keyword_t : keyword\
-	        expression : string\
-	        regexp : string\
-	        step_obj :  uvm_object_wrapper\
-        	step_obj_name :  string\
+            expression : string\
+            regexp : string\
+            step_obj :  uvm_object_wrapper\
+            step_obj_name :  string\
         }\
         class step_nurture{\
             +runtime_keyword : string\
             +text : string\
             +argument : gherkin_pkg::step_argument\
-	        +static_attributes : step_static_attributes_interface\
-	        +current_test_seq : test_sequence_interface\
-	        +current_feature_seq : feature_sequence_interface\
-	        +current_rule_seq : rule_sequence_interface\
-	        +current_scenario_seq : scenario_sequence_interface\
+            +static_attributes : step_static_attributes_interface\
+            +current_test_seq : test_sequence_interface\
+            +current_feature_seq : feature_sequence_interface\
+            +current_rule_seq : rule_sequence_interface\
+            +current_scenario_seq : scenario_sequence_interface\
         }\
         class step_static_attributes_interface{\
             <<interface>>\
-        	+set_keyword(step_keyword_t keyword) : void\
+            +set_keyword(step_keyword_t keyword) : void\
             +get_keyword() : step_keyword_t\
             +set_regexp(string regexp) : void\
             +get_regexp() : string\
@@ -216,9 +216,9 @@ classDiagram\
             +get_int_pool() : uvm_pool#(string, int)\
             +get_longint_pool() : uvm_pool#(string, longint)\
             +get_byte_pool() : uvm_pool#(string, byte)\
-            +get_integer_pool()	: uvm_pool#(string, integer)\
+            +get_integer_pool() : uvm_pool#(string, integer)\
             +get_time_pool() : uvm_pool#(string, time) \
-            +get_real_pool() :	uvm_pool#(string, real)\
+            +get_real_pool() : uvm_pool#(string, real)\
             +get_shortreal_pool() : uvm_pool#(string, shortreal) \
             +get_realtime_pool() : uvm_pool#(string, realtime)\
             +get_string_pool() : uvm_pool#(string, string)\
@@ -229,29 +229,35 @@ classDiagram\
             +int_pool : uvm_pool#(string, int)\
             +longint_pool : uvm_pool#(string, longint)\
             +byte_pool : uvm_pool#(string, byte)\
-            +integer_pool	: uvm_pool#(string, integer)\
+            +integer_pool : uvm_pool#(string, integer)\
             +time_pool : uvm_pool#(string, time) \
-            +real_pool :	uvm_pool#(string, real)\
+            +real_pool : uvm_pool#(string, real)\
             +hortreal_pool : uvm_pool#(string, shortreal) \
             +realtime_pool : uvm_pool#(string, realtime)\
             +string_pool : uvm_pool#(string, string)\
             +uvm_object_pool : uvm_pool#(string, uvm_object)\
         }\
         class test_sequence{\
-			#bt : bathtub\
+            #bt : bathtub\
+        }\
+        class feature_sequence{\
+            #feature : gherkin_pkg::feature\
+        }\
+        class rule_sequence{\
+		    #rule : gherkin_pkg::rule\
 		}\
-        class feature_sequence\
-        class rule_sequence\
         class scenario_sequence\
         class test_sequence_interface{\
             <<interface>>\
-			+get_bathtub_object() : bathtub\
+            +get_bathtub_object() : bathtub\
         }\
         class feature_sequence_interface{\
             <<interface>>\
+            +get_feature() : gherkin_pkg::feature\
         }\
         class rule_sequence_interface{\
             <<interface>>\
+	        +get_rule() : gherkin_pkg::rule\
         }\
         class scenario_sequence_interface{\
             <<interface>>\

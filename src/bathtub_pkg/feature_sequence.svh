@@ -37,8 +37,8 @@ typedef class gherkin_document_runner;
 `endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
 class feature_sequence extends context_sequence implements feature_sequence_interface;
-	gherkin_pkg::feature feature;
-	gherkin_document_runner runner;
+	protected gherkin_pkg::feature feature;
+	protected gherkin_document_runner runner;
 
 	function new(string name="feature_sequence");
 		super.new(name);
@@ -58,6 +58,10 @@ class feature_sequence extends context_sequence implements feature_sequence_inte
 			feature.accept(runner); // runner.visit_feature(feature)
 		end
 	endtask : body
+
+	virtual function gherkin_pkg::feature get_feature();
+		return this.feature;
+	endfunction : get_feature
 	
 endclass : feature_sequence
 

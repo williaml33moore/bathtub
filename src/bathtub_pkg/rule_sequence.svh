@@ -37,8 +37,8 @@ typedef class gherkin_document_runner;
 `endif // __GHERKIN_DOCUMENT_RUNNER_SVH
 
 class rule_sequence extends context_sequence implements rule_sequence_interface;
-	gherkin_pkg::rule rule;
-	gherkin_document_runner runner;
+	protected gherkin_pkg::rule rule;
+	protected gherkin_document_runner runner;
 
 	function new(string name="rule_sequence");
 		super.new(name);
@@ -77,6 +77,11 @@ class rule_sequence extends context_sequence implements rule_sequence_interface;
 			only_scenarios[i].accept(runner);
 		end
 	endtask : body
+
+	
+	virtual function gherkin_pkg::rule get_rule();
+		return this.rule;
+	endfunction : get_rule
 	
 endclass : rule_sequence
 

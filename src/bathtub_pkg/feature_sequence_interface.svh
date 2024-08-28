@@ -28,6 +28,7 @@ SOFTWARE.
 `include "bathtub_pkg/pool_provider_interface.svh"
 
 interface class feature_sequence_interface extends pool_provider_interface;
+	pure virtual function gherkin_pkg::feature get_feature();
 endclass : feature_sequence_interface
 
 `endif // __FEATURE_SEQUENCE_INTERFACE_SVH
