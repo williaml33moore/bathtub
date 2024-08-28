@@ -132,7 +132,7 @@ begin : step_parameter_get_args\
     int __next = 0;\
     check_step_static_attributes_not_null : assert (get_step_static_attributes() != null) else $error("step static attributes object is null");\
     check_step_attributes_not_null : assert (get_step_attributes() != null) else $error("step run-time attributes object is null");\
-	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);
+	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_step().get_text(), f);
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
 `define BATHTUB__STEP_PARAMETER_GET_ARGS_BEGIN(f=get_step_static_attributes().get_expression()) begin : step_parameter_get_args    bathtub_pkg::step_parameters __step_params;    int __next = 0;	__step_params = bathtub_pkg::step_parameters::create_new("__step_params", get_step_attributes().get_text(), f);

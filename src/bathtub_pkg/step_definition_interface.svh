@@ -25,6 +25,9 @@ SOFTWARE.
 `ifndef __STEP_DEFINITION_INTERFACE_SVH
 `define __STEP_DEFINITION_INTERFACE_SVH
 
+typedef interface class step_static_attributes_interface;
+`include "bathtub_pkg/step_static_attributes_interface.svh"
+
 typedef interface class step_attributes_interface;
 `include "bathtub_pkg/step_attributes_interface.svh"
 
@@ -166,14 +169,13 @@ classDiagram\
             step_obj_name :  string\
         }\
         class step_nurture{\
-            +runtime_keyword : string\
-            +text : string\
-            +argument : gherkin_pkg::step_argument\
-            +static_attributes : step_static_attributes_interface\
-            +current_test_seq : test_sequence_interface\
-            +current_feature_seq : feature_sequence_interface\
-            +current_rule_seq : rule_sequence_interface\
-            +current_scenario_seq : scenario_sequence_interface\
+            #runtime_keyword : string\
+            #text : string\
+            #argument : gherkin_pkg::step_argument\
+            #current_test_seq : test_sequence_interface\
+            #current_feature_seq : feature_sequence_interface\
+            #current_rule_seq : rule_sequence_interface\
+            #current_scenario_seq : scenario_sequence_interface\
         }\
         class step_static_attributes_interface{\
             <<interface>>\
@@ -191,27 +193,14 @@ classDiagram\
         class step_attributes_interface{\
             <<interface>>\
             +get_runtime_keyword() : string\
-            +set_runtime_keyword(string runtime_keyword) : void\
             +get_text() : string\
-            +set_text(string step_text) : void\
             +get_argument() : gherkin_pkg::step_argument\
-            +set_argument(gherkin_pkg::step_argument step_argument) : void\
-            +get_static_attributes() : step_static_attributes_interface\
-            +set_static_attributes(step_static_attributes_interface static_attributes) : void\
-            +get_format() : string\
-            +get_static_keyword() : step_keyword_t\
-            +get_expression() : string\
-            +get_regexp() : string\
             +get_step_obj() : uvm_object_wrapper\
             +get_step_obj_name() : string\
             +get_current_test_sequence() : test_sequence_interface\
-            +set_current_test_sequence(test_sequence_interface seq) : void\
             +get_current_feature_sequence() : feature_sequence_interface\
-            +set_current_feature_sequence(feature_sequence_interface seq) : void\
             +get_current_rule_sequence() : rule_sequence_interface\
-            +set_current_rule_sequence(rule_sequence_interface seq) : void\
             +get_current_scenario_sequence() : scenario_sequence_interface\
-            +set_current_scenario_sequence(scenario_sequence_interface seq) : void\
             +print_attributes(uvm_verbosity verbosity) : void\
         }\
         class pool_provider_interface{\
@@ -352,6 +341,13 @@ docstring\
 "*)
 	pure virtual function step_static_attributes_interface get_step_static_attributes();
 		// -----------------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+docstring\
+"*)
+	pure virtual function test_sequence_interface get_current_test_sequence();
+		// -------------------------------------------------------------------
 
 
 (* doc$markdown = "\

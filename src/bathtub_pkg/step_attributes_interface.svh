@@ -37,19 +37,12 @@ typedef interface class rule_sequence_interface;
 typedef interface class scenario_sequence_interface;
 `include "bathtub_pkg/scenario_sequence_interface.svh"
 
-typedef interface class step_static_attributes_interface;
-`include "bathtub_pkg/step_static_attributes_interface.svh"
-
 interface class step_attributes_interface;
-	pure virtual function string get_runtime_keyword();
-	pure virtual function string get_text();
-	pure virtual function gherkin_pkg::step_argument get_argument();
-	
+	pure virtual function gherkin_pkg::step get_step();
 	pure virtual function test_sequence_interface get_current_test_sequence();
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
 	pure virtual function rule_sequence_interface get_current_rule_sequence();
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
-
 	pure virtual function void print_attributes(uvm_verbosity verbosity);
 endclass : step_attributes_interface
 
