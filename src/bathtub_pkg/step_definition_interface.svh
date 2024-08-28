@@ -25,21 +25,12 @@ SOFTWARE.
 `ifndef __STEP_DEFINITION_INTERFACE_SVH
 `define __STEP_DEFINITION_INTERFACE_SVH
 
-`include "bathtub_pkg/step_static_attributes_interface.svh"
-
-`ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
-`include "bathtub_pkg/step_attributes_interface.svh"
-`endif // __STEP_ATTRIBUTES_INTERFACE_SVH
-
-`ifndef __TEST_SEQUENCE_INTERFACE_SVH
-`include "bathtub_pkg/test_sequence_interface.svh"
-`endif // __TEST_SEQUENCE_INTERFACE_SVH
-
-`include "bathtub_pkg/feature_sequence_interface.svh"
-
-`include "bathtub_pkg/rule_sequence_interface.svh"
-
-`include "bathtub_pkg/scenario_sequence_interface.svh"
+typedef interface class step_static_attributes_interface;
+typedef interface class step_attributes_interface;
+typedef interface class test_sequence_interface;
+typedef interface class feature_sequence_interface;
+typedef interface class rule_sequence_interface;
+typedef interface class scenario_sequence_interface;
 
 (* doc$markdown = "\
 Interface class for the user's step definition classes.\
@@ -369,4 +360,19 @@ docstring\
 		// ---------------------------------------------------------------------------
 endclass : step_definition_interface
 
+`include "bathtub_pkg/step_static_attributes_interface.svh"
+
+`ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
+`include "bathtub_pkg/step_attributes_interface.svh"
+`endif // __STEP_ATTRIBUTES_INTERFACE_SVH
+
+`ifndef __TEST_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/test_sequence_interface.svh"
+`endif // __TEST_SEQUENCE_INTERFACE_SVH
+
+`include "bathtub_pkg/feature_sequence_interface.svh"
+
+`include "bathtub_pkg/rule_sequence_interface.svh"
+
+`include "bathtub_pkg/scenario_sequence_interface.svh"
 `endif // __STEP_DEFINITION_INTERFACE_SVH
