@@ -109,8 +109,7 @@ module mock_vsequences_unit_test;
       step_string = $sformatf("%s a step definition with parameters %d, %f, and %s", "Given", 42, 98.6, "Gherkin");
       parser.parse_step_string(step_string, step_bundle);
       my_step_def_vseq = mock_step_def_vseq::type_id::create("my_step_def_vseq");
-			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");
-      step_attributes.configure(step_bundle.step, my_step_def_vseq);
+			step_attributes = new("step_attributes", step_bundle.step);
 			my_step_def_vseq.set_step_attributes(step_attributes);
 
       fork

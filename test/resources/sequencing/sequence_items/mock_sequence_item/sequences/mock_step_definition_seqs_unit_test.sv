@@ -88,8 +88,7 @@ module mock_sequences_unit_test;
       parser = parser.configure();
       step_string = $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin");
       parser.parse_step_string(step_string, step_bundle);
-			step_attributes = bathtub_pkg::step_nurture::type_id::create("step_attributes");
-      step_attributes.configure(step_bundle.step, my_step_def_seq);
+			step_attributes = new("step_attributes", step_bundle.step);
 			my_step_def_seq.set_step_attributes(step_attributes);
 `ifdef UVM_VERSION_1_0
       my_step_def_seq.starting_phase = phase;
@@ -116,7 +115,7 @@ module mock_sequences_unit_test;
           object_sqr.item_done();
           `FAIL_UNLESS($cast(obj_item, item))
           `FAIL_UNLESS($cast(actual_step_def, obj_item.get_payload()));
-          `FAIL_UNLESS_STR_EQUAL({actual_step_def.get_step_attributes().get_runtime_keyword(), " ", actual_step_def.get_step_attributes().get_text()},
+          `FAIL_UNLESS_STR_EQUAL({actual_step_def.get_step_attributes().get_step().get_keyword(), " ", actual_step_def.get_step_attributes().get_step().get_text()},
             $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin"))
         end
       join

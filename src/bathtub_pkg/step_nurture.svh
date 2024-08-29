@@ -48,7 +48,6 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	function new(
 			string name="step_nurture",
 			gherkin_pkg::step step = null,
-			step_definition_interface step_seq = null,
 			scenario_sequence_interface current_scenario_seq = null,
 			rule_sequence_interface current_rule_seq = null,
 			feature_sequence_interface current_feature_seq = null,
@@ -89,10 +88,6 @@ class step_nurture extends uvm_object implements step_attributes_interface;
 	virtual function void print_attributes(uvm_verbosity verbosity);
 		`uvm_info_begin(get_name(), "", verbosity)
 		`uvm_message_add_object(step)
-		`uvm_message_add_object(current_scenario_seq)
-		`uvm_message_add_object(current_rule_seq)
-		`uvm_message_add_object(current_feature_seq)
-		`uvm_message_add_object(current_test_seq)
 		`uvm_info_end
 	endfunction : print_attributes
 
