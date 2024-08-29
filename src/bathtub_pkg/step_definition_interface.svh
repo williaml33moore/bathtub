@@ -195,7 +195,7 @@ classDiagram\
             +integer_pool : uvm_pool#(string, integer)\
             +time_pool : uvm_pool#(string, time) \
             +real_pool : uvm_pool#(string, real)\
-            +hortreal_pool : uvm_pool#(string, shortreal) \
+            +shortreal_pool : uvm_pool#(string, shortreal) \
             +realtime_pool : uvm_pool#(string, realtime)\
             +string_pool : uvm_pool#(string, string)\
             +uvm_object_pool : uvm_pool#(string, uvm_object)\
@@ -284,7 +284,7 @@ interface class step_definition_interface;
 	// ===================================
 
 (* doc$markdown = "\
-Gets the step attributes object.\
+Gets the run-time step attributes object.\
 \
 While Bathtub is running a Gherkin feature file, when it encounters a step,\
 it packages the attributes of that step into a value object and provides it to the step definition sequence.\
@@ -300,42 +300,76 @@ Internally, this is how the step parameter macros extract in-line arguments from
 Sets the step attributes object.\
 \
 Assigns the step definition's step attributes object to `step_attributes`.\
-Intended for external use when Bathtub instantiates a step definition sequence, not for use inside the step definition.\
+Intended for external use when Bathtub instantiates and configures a step definition sequence, not for use inside the step definition.\
 "*)
 	pure virtual function void set_step_attributes(step_attributes_interface step_attributes);
 		// -----------------------------------------------------------------------------------
 
 
 (* doc$markdown = "\
-docstring\
+Gets the static step attributes object.\
+\
+The `` `Given(string)``, `` `When(string)``, or `` `Then(string)`` macro in the user's step definition class specifies the keyword and matching expression string for that step definition.\
+Those are considered the static attributes of the step definition.\
+There are three more static attributes: the  matching expression string formulated as a POSIX regular expression, the UVM object wrapper of the step definition class, and the name of the class.\
+Every instance of the step definition sequences has different run-time attributes, but they all share the same static attributes.\
+The static attributes are stored in a value object that implements interface class `step_static_attributes_interface`.\
+`get_step_static_attributes()` allows step definition objects to retrieve the static step attributes object.\
+The step definition can use it introspectively to access the expression string, the class name, etc.\
+Internally, this is how the step parameter macros know how to extract and interpret in-line arguments from the step text.\
 "*)
 	pure virtual function step_static_attributes_interface get_step_static_attributes();
 		// -----------------------------------------------------------------------------
 
 
 (* doc$markdown = "\
-docstring\
+Gets a reference to the test context sequence.\
+\
+Returns a reference to the test-level context sequence, whose life spans the duration of the Bathtub test run.\
+The test-level context holds a reference to the Bathtub object.\
+All the context sequences have a set of UVM pools the step definitions can use to store, retrieve, and share data among themselves.\
+The test-level context has the highest scope.\
 "*)
 	pure virtual function test_sequence_interface get_current_test_sequence();
 		// -------------------------------------------------------------------
 
 
 (* doc$markdown = "\
-docstring\
+Gets a reference to the current feature context sequence.\
+\
+Returns a reference to the feature-level context sequence, whose life spans the duration of the currently running Gherkin feature.\
+The feature-level context holds a reference to the `gherkin_pkg::feature` object representing the current feature file.\
+All the context sequences have a set of UVM pools the step definitions can use to store, retrieve, and share data among themselves.\
+The feature-level context has the second highest scope.\
+The test-level sequence is the feature-level sequence's parent sequence.\
 "*)
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
 		// -------------------------------------------------------------------------
 
 
 (* doc$markdown = "\
-docstring\
+Gets a reference to the current rule context sequence.\
+\
+Returns a reference to the rule-level context sequence, whose life spans the duration of the currently running Gherkin rule.\
+If there is no rule, `get_current_rule_sequenc()` returns null.\
+The rule-level context holds a reference to the `gherkin_pkg::rule` object representing the current rule.\
+All the context sequences have a set of UVM pools the step definitions can use to store, retrieve, and share data among themselves.\
+The rule-level context has the third highest scope.\
+The feature-level sequence is the rule-level sequence's parent sequence.\
 "*)
 	pure virtual function rule_sequence_interface get_current_rule_sequence();
 		// -------------------------------------------------------------------
 
 
 (* doc$markdown = "\
-docstring\
+Gets a reference to the current scenario context sequence.\
+\
+Returns a reference to the scenario-level context sequence, whose life spans the duration of the currently running Gherkin scenario.\
+The scenario-level context holds a reference to the `gherkin_pkg::scenario` object representing the current scenario.\
+All the context sequences have a set of UVM pools the step definitions can use to store, retrieve, and share data among themselves.\
+If the scenario is part of a rule, the rule-level sequence is the scenario-level sequence's parent sequence.\
+If there is no rule, the feature-level sequence is the scenario-level sequence's parent sequence.\
+The scenario-level sequence is the parent of the step definition sequence.\
 "*)
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
 		// ---------------------------------------------------------------------------
