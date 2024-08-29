@@ -31,14 +31,8 @@ import uvm_pkg::*;
 
 interface class step_static_attributes_interface;
 	
-	// Set keyword
-	pure virtual function void set_keyword(step_keyword_t keyword);
-
 	// Get keyword
 	pure virtual function step_keyword_t get_keyword();
-
-	// Set regexp
-	pure virtual function void set_regexp(string regexp);
 
 	// Get regexp
 	pure virtual function string get_regexp();
@@ -46,15 +40,9 @@ interface class step_static_attributes_interface;
 	// Get expression
 	pure virtual function string get_expression();
 
-	// Set expression
-	pure virtual function void set_expression(string expression);
-
 	// Get step_obj
 	pure virtual function uvm_object_wrapper get_step_obj();
 
-	// Set obj_name
-	pure virtual function void set_step_obj(uvm_object_wrapper step_obj);
-	
 	// Get step_obj_name
 	pure virtual function string get_step_obj_name();
 	

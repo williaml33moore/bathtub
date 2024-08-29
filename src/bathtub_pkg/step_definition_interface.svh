@@ -142,11 +142,11 @@ classDiagram\
             +set_current_scenario_sequence(scenario_sequence_interface seq) : void\
         }\
         class step_nature{\
-            step_keyword_t : keyword\
-            expression : string\
-            regexp : string\
-            step_obj :  uvm_object_wrapper\
-            step_obj_name :  string\
+            #step_keyword_t : keyword\
+            #expression : string\
+            #regexp : string\
+            #step_obj :  uvm_object_wrapper\
+            #step_obj_name :  string\
         }\
         class step_nurture{\
             #step : gherkin_pkg::step\
@@ -157,14 +157,10 @@ classDiagram\
         }\
         class step_static_attributes_interface{\
             <<interface>>\
-            +set_keyword(step_keyword_t keyword) : void\
             +get_keyword() : step_keyword_t\
-            +set_regexp(string regexp) : void\
             +get_regexp() : string\
             +get_expression() : string\
-            +set_expression(string expression) : void\
             +get_step_obj() : uvm_object_wrapper\
-            +set_step_obj(uvm_object_wrapper step_obj) : void\
             +get_step_obj_name() : string\
             +print_attributes(uvm_verbosity verbosity) : void\
         }\
