@@ -76,33 +76,33 @@ The class diagram below illustrates the cascading stack of resources and the pat
 This list summarizes a selection of accessors and utilities available to the class' methods.\
 They are all detailed in their respective documentation sections.\
 ```sv\
-// Static step attributes\
-// See the `step_static_attributes_interface` Class Reference.\
-this.get_step_static_attributes().get_keyword();\
-this.get_step_static_attributes().get_regexp();\
-this.get_step_static_attributes().get_expression();\
-this.get_step_static_attributes().get_step_obj();\
-this.get_step_static_attributes().get_step_obj_name();\
-this.get_step_static_attributes().print_attributes();\
-\
 // Run-time step attributes\
-// See the `step attributes_interface` Class Reference.\
-this.get_step_attributes().get_step();\
-this.get_step_attributes().get_current_test_sequence();\
-this.get_step_attributes().get_current_feature_sequence();\
-this.get_step_attributes().get_current_rule_sequence();\
-this.get_step_attributes().get_current_scenario_sequence();\
-this.get_step_attributes().print_attributes();\
+this.get_step_keyword();\
+this.get_step_text();\
+this.get_step_argument_data_table();\
+this.get_step_argument_doc_string();\
+\
+// Static step attributes\
+this.get_step_definition_keyword();\
+this.get_step_definition_expression();\
+this.get_step_definition_regexp();\
 \
 // Context sequences\
 // See the respective sequence Class References.\
-this.get_current_test_sequence().get_bathtub_object();\
-this.get_current_feature_sequence().get_feature();\
-this.get_current_rule_sequence().get_rule();\
+this.get_current_scenario_sequence();\
+this.get_current_rule_sequence();\
+this.get_current_feature_sequence();\
+this.get_current_test_sequence();\
+\
+// Gherkin element objects\
+// See the respective sequence Class References.\
 this.get_current_scenario_sequence().get_scenario();\
+this.get_current_rule_sequence().get_rule();\
+this.get_current_feature_sequence().get_feature();\
+this.get_current_test_sequence().get_bathtub_object();\
 \
 // Context sequence pools\
-// The \"*\" stands for \"test,\" \"feature,\" \"rule,\" or \"scenario.\"\
+// The \"*\" stands for \"scenario,\" \"rule,\", \"feature,\", or \"test.\"\
 // See the `pool_provider_interface` Class Reference.\
 this.get_current_*_sequence().get_shortint_pool();\
 this.get_current_*_sequence().get_int_pool();\
@@ -115,6 +115,11 @@ this.get_current_*_sequence().get_shortreal_pool();\
 this.get_current_*_sequence().get_realtime_pool();\
 this.get_current_*_sequence().get_string_pool();\
 this.get_current_*_sequence().get_uvm_object_pool();\
+\
+// Low-level attributes interfaces\
+// See the `step attributes_interface` and `step_static_attributes_interface` Class References.\
+this.get_step_attributes().get_step();\
+this.get_step_static_attributes().get_step();\
 ```\
 \
 ```mermaid\
@@ -129,12 +134,19 @@ classDiagram\
         }\
         class step_definition_interface{\
             <<interface>>\
+            +get_step_keyword() : string\
+            +get_step_text() : string\
+            +get_step_argument_data_table() : gherkin_pkg::data_table\
+            +get_step_argument_doc_string() : gherkin_pkg::doc_string\
+            +get_step_definition_keyword() : step_keyword_t\
+            +get_step_definition_expression() : string\
+            +get_step_definition_regexp() : string\
+            +get_current_scenario_sequence() : scenario_sequence_interface\
+            +get_current_rule_sequence() : rule_sequence_interface\
+            +get_current_feature_sequence() : feature_sequence_interface\
+            +get_current_test_sequence() : test_sequence_interface\
             +get_step_attributes() : step_attributes_interface\
             +get_step_static_attributes() : step_static_attributes_interface\
-            +get_current_test_sequence() : test_sequence_interface\
-            +get_current_feature_sequence() : feature_sequence_interface\
-            +get_current_rule_sequence() : rule_sequence_interface\
-            +get_current_scenario_sequence() : scenario_sequence_interface\
         }\
         class step_nature{\
             #step_keyword_t : keyword\
@@ -278,7 +290,7 @@ classDiagram\
 \
 Gherkin feature files have a hierarchical structure of nested elements.\
 For example, here are two feature files, each with one feature.\
-The features have multiple scenarios and rules, the rules have multiple scenarios, and the scenarios have multiple steps.\
+The features have multiple scenarios and rules, the rules have multiple scenarios, and the scenarios have multiple _When_ and _Then_ steps.\
 \
 ```gherkin\
 # file_1.feature\
@@ -318,7 +330,7 @@ Feature: This is the second feature\
 ```\
 \
 We can visualize the feature files as a tree.\
-The \"Test\" at the root of the tree is an abstract concept that corresponds to the Bathtub object in the user's UVM test.\
+The \"Test\" at the root of the tree represents the Bathtub object in the user's UVM test.\
 The feature files are its children.\
 The details of the second feature file are omitted for clarity.\
 \
@@ -404,7 +416,7 @@ title: Run-time Context Sequences\
 ---\
 classDiagram\
     class Test{\
-        User calls bathtub_pkg::bathtub::run_test()\
+        bathtub\
     }\
     class feature_1[\"Feature\"]{\
         \"This is the first feature\"\
@@ -436,7 +448,7 @@ classDiagram\
         +*_pool : uvm_pool[0..11]\
     }\
     class step_seq[\"step_seq : user_step_definition\"]{\
-        keyword: \"Then\"\
+        keyword: Then\
         expression: \"the received data should be 0x%x\"\
     }\
     %%class gherkin_step[\"gherkin_pkg::step\"]{\
@@ -456,7 +468,7 @@ classDiagram\
     %%    #rules : gherkin_pkg::rule[*]\
     %%}\
     Test --> feature_1:child\
-    test_seq .. Test\
+    test_seq --> Test:get_bathtub_object()\
     feature_1 --> rule_2:child\
     feature_seq --> feature_1:get_feature()\
     rule_2 --> scenario_4:child\
@@ -494,8 +506,8 @@ The context sequences have three purposes.\
 \
 First, they run their associated Gherkin elements.\
 The Gherkin elements are inert value objects comprised of strings parsed from the feature files.\
-The context sequences are UVM sequences with active `body()` tasks that execute the Gherkin objects.\
-For example if a Gherkin `feature` object has two rules, the `feature_sequence` contains the code that iterates over those rules, running each.\
+The context sequences are UVM sequences with active `body()` tasks that execute the Gherkin value objects.\
+For example, the `feature_sequence` contains the code that iterates over the Gherkin feature object's child scenarios and rules, running each.\
 \
 Second, the context sequences hold references to their associated Gherkin objects.\
 The user's step definition sequences can access the strings in the Gherkin objects through the context sequences.\
@@ -529,7 +541,7 @@ int expected_data_word = get_current_scenario_sequence().get_int_pool().get(\"da
 ```\
 The pools give the step definitions a great deal of freedom to store, retrieve, and even delete data across all the different contexts.\
 Use this power mindfully and sparingly.\
-It has the potential to introduce fragility, dependencies, and order sensitivity to your Bathtub runs.\
+It has the potential to introduce fragility, coupling, and order sensitivity to your Bathtub runs.\
 For example, you have to be careful that one step doesn't try to read a value from a pool before another step has written it.\
 Or, a step could accidentally overwrite a value written by an earlier step.\
 That being said, this sharing of state is a necessary evil and a common practice in BDD tools.\
@@ -537,6 +549,8 @@ That being said, this sharing of state is a necessary evil and a common practice
 Like the step definitions, each context sequence has a limited lifespan.\
 It is created when the test/feature/rule/scenario starts, and is destroyed when the test/feature/rule/scenario ends.\
 Its data pools are destroyed when the context sequence ends.\
+This actually helps guard against data leakage across Gherkin elements;\
+one scenario can't be contaminated by a previous scenario's pools because they have been destroyed.\
 The contexts represent different scopes.\
 The test sequence spans the lifetimes of all its child features.\
 Each feature sequence spans the lifetimes of all its child rules and scenarios.\
@@ -551,7 +565,7 @@ interface class step_definition_interface;
 Gets the run-time step keyword.\
 \
 Retrieves the actual step keyword from the Gherkin feature file.\
-Could be \"Given,\" \"When,\" \"Then,\" \"And,\" \"But,\" or \"*.\"\
+Could be \"Given,\" \"When,\" \"Then,\" \"And,\" \"But,\" or \"*\".\
 Note that the actual keyword may or may not match the static keyword returned by `get_step_definition_keyword()`.\
 "*)
     pure virtual function string get_step_keyword();
@@ -563,7 +577,7 @@ Gets the run-time step text.\
 \
 Retrieves the actual step text from the Gherkin feature file, i.e., the text following the step keyword.\
 The keyword is not part of the text.\
-The step text should match the static regular expression returned by `get_step_static_expression()`.\
+The step text should match the static expressions returned by `get_step_definition_expression()` and `get_step_definition_regexp()`.\
 "*)
     pure virtual function string get_step_text();
         // --------------------------------------
@@ -609,7 +623,7 @@ See the `gherkin_pkg` Package Reference for `doc_string` class details.\
 Gets the static step keyword.\
 \
 Retrieves the Gherkin keyword from the user's step definition class.\
-It is a static property of the class, and is determined by the user's choice of macro `` `Given``, `` `When()``, or `` `Then()``.\
+It is a static property of the class, and is determined by the user's choice of macro: `` `Given``, `` `When()``, or `` `Then()``.\
 This keyword is an enum of type `bathtub_pkg::step_keyword_t`, not a string.\
 Possible values are `Given`, `When`, or `Then`.\
 "*)
@@ -625,6 +639,17 @@ It is a static property of the class, and is the argument to the `` `Given``, ``
 The expression could be a POSIX regular expression surrounded by slashes (\"/\"),\
 or a SystemVerilog format specification with escape sequences like `%d` and `%s`.\
 Taking the regular expression or format specification into account, the expression matches the run-time step text as returned by `get_step_text()`.\
+\
+In this example, the expression is \"this expression matches %s\" and it is a SystemVerilog format specification.\
+```sv\
+class user_step_definition extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;\
+	`When(\"this expression matches %s\")\
+```\
+In this example, the expression is \"/^this expression matches .*$/\" and it is a POSIX regular expression.\
+```sv\
+class user_step_definition extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;\
+	`When(\"/^this expression matches .*$/\")\
+```\
 "*)
 	pure virtual function string get_step_definition_expression();
         // -------------------------------------------------------
@@ -641,6 +666,14 @@ If the expression is a SystemVerilog format specification with escape sequences 
 then the regular expression is the expression translated into a POSIX regular expression pattern.\
 The regular expression matches the run-time step text as returned by `get_step_text()`.\
 Note that the regular expression is stored in the UVM resource database as the \"scope\" lookup string for the step definition class.\
+\
+In this example, the expression is, \"the user types the single character %c\",\
+and `get_step_definition_regexp()` returns the translated POSIX regular expression, \"/^the user types the single character (.)$/\".\
+Note that the SystemVerilog escape sequence `%c` has been translated into a grouped regular expression `(.)`.\
+```sv\
+class user_step_definition extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;\
+	`When(\"the user types the single character %c\")\
+```\
 "*)
 	pure virtual function string get_step_definition_regexp();
         // ---------------------------------------------------
@@ -664,7 +697,7 @@ The scenario-level sequence is the parent of the step definition sequence.\
 Gets a reference to the current rule context sequence.\
 \
 Returns a reference to the rule-level context sequence, whose life spans the duration of the currently running Gherkin rule.\
-If there is no rule, `get_current_rule_sequenc()` returns null.\
+If there is no rule, `get_current_rule_sequence()` returns null.\
 The rule-level context holds a reference to the `gherkin_pkg::rule` object representing the current rule.\
 All the context sequences have a set of UVM pools the step definitions can use to store, retrieve, and share data among themselves.\
 The rule-level context has the third highest scope.\
@@ -707,7 +740,7 @@ it packages the attributes of that step into a value object and provides it to t
 `get_step_attributes()` retrieves that step attributes object.\
 The step definition can use it to access the step text from the feature file and any Gherkin step arguments, i.e., doc strings or data tables.\
 Internally, this is how the step parameter macros extract in-line arguments from the step text.\
-The facade methods `get_step_keyword()`, `get_step_text()`, `get_step_argument_data_table()`, and `get_step_argument_doc_string()` all delegate to the attributes object.\
+The facade methods `get_step_keyword()`, `get_step_text()`, `get_step_argument_data_table()`, `get_step_argument_doc_string()`, and the context sequence accessors all delegate to the attributes object.\
 "*)
 	pure virtual function step_attributes_interface get_step_attributes();
 		// ---------------------------------------------------------------
@@ -718,7 +751,7 @@ Gets the static step attributes object.\
 \
 The `` `Given(string)``, `` `When(string)``, or `` `Then(string)`` macro in the user's step definition class specifies the keyword and matching expression string for that step definition.\
 Those are considered the static attributes of the step definition.\
-There are three more static attributes: the  matching expression string formulated as a POSIX regular expression, the UVM object wrapper of the step definition class, and the name of the class.\
+There are three more static attributes: the  matching expression string translated into a POSIX regular expression, the UVM object wrapper of the step definition class, and the name of the class.\
 Every instance of a step definition sequence class has different run-time attributes, but they all share the same static class attributes.\
 The static attributes are stored in a value object that implements interface class `step_static_attributes_interface`.\
 `get_step_static_attributes()` allows step definition objects to retrieve the static step attributes object.\
