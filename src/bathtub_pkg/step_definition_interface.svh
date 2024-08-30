@@ -566,16 +566,6 @@ Internally, this is how the step parameter macros extract in-line arguments from
 
 
 (* doc$markdown = "\
-Sets the step attributes object.\
-\
-Assigns the step definition's step attributes object to `step_attributes`.\
-Intended for external use when Bathtub instantiates and configures a step definition sequence, not for use inside the step definition.\
-"*)
-	pure virtual function void set_step_attributes(step_attributes_interface step_attributes);
-		// -----------------------------------------------------------------------------------
-
-
-(* doc$markdown = "\
 Gets the static step attributes object.\
 \
 The `` `Given(string)``, `` `When(string)``, or `` `Then(string)`` macro in the user's step definition class specifies the keyword and matching expression string for that step definition.\

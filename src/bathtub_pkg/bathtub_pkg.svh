@@ -29,6 +29,7 @@ import uvm_pkg::*;
 
 typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
 typedef uvm_queue#(string) strings_t;
+typedef uvm_pool#(uvm_sequence_base, step_nurture) step_attributes_pool_t;
 
 parameter byte CR = 13; // ASCII carriage return
 parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
