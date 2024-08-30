@@ -279,6 +279,240 @@ classDiagram\
     style user_step_definition fill:#0ff\
 ```\
 \
+\### Context Sequences and Pools\
+\
+Gherkin feature files have a hierarchical structure of nested elements.\
+For example, here are two feature files, each with one feature.\
+The features have multiple scenarios and rules, the rules have multiple scenarios, and the scenarios have multiple steps.\
+\
+```gherkin\
+# file_1.feature\
+Feature: This is the first feature\
+    Scenario: This is the first scenario\
+        When the host transmits 0x00112233 # step 1\
+        Then the received data should be 0x00112233 # step 2\
+    Rule: This is the first rule\
+        Scenario: This is the second scenario\
+            When the host transmits 0x44556677 # step 3\
+            Then the received data should be 0x44556677 # step 4\
+        Scenario: This is the third scenario\
+            When the host transmits 0x8899aabb # step 5\
+            Then the received data should be 0x8899aabb # step 6\
+    Rule: This is the second rule\
+        Scenario: This is the fourth scenario\
+            When the host transmits 0xccddeeff # step 7\
+            Then the received data should be 0xccddeeff # step 8\
+```\
+```gherkin\
+# file_2.feature\
+Feature: This is the second feature\
+    Scenario: This is the first scenario\
+        When the host transmits 0xffeeddcc # step 9\
+        Then the received data should be 0xffeeddcc # step 10\
+    Rule: This is the first rule\
+        Scenario: This is the second scenario\
+            When the host transmits 0xbbaa9988 # step 11\
+            Then the received data should be 0xbbaa9988 # step 12\
+        Scenario: This is the third scenario\
+            When the host transmits 0x77665544 # step 13\
+            Then the received data should be 0x77665544 # step 14\
+    Rule: This is the second rule\
+        Scenario: This is the fourth scenario\
+            When the host transmits 0x33221100 # step 15\
+            Then the received data should be 0x33221100 # step 16\
+```\
+\
+We can visualize the feature files as a tree.\
+The \"Test\" at the root of the tree is an abstract concept that corresponds to the Bathtub object in the user's UVM test.\
+The feature files are its children.\
+The details of the second feature file are omitted for clarity.\
+\
+```mermaid\
+---\
+title: Context Sequences\
+---\
+classDiagram\
+    class Test\
+    class feature_1[\"Feature\"]{\
+        \"This is the first feature\"\
+    }\
+    class feature_2[\"Feature\"]{\
+        \"This is the second feature\"\
+    }\
+    class rule_1[\"Rule\"]{\
+        \"This is the first rule\"\
+    }\
+    class rule_2[\"Rule\"]{\
+        \"This is the second rule\"\
+    }\
+    class scenario_1[\"Scenario\"]{\
+        \"This is the first scenario\"\
+    }\
+    class scenario_2[\"Scenario\"]{\
+        \"This is the second scenario\"\
+    }\
+    class scenario_3[\"Scenario\"]{\
+        \"This is the third scenario\"\
+    }\
+    class scenario_4[\"Scenario\"]{\
+        \"This is the fourth scenario\"\
+    }\
+    class step_1[\"Step\"]{\
+        step 1\
+    }\
+    class step_2[\"Step\"]{\
+        step 2\
+    }\
+    class step_3[\"Step\"]{\
+        step 3\
+    }\
+    class step_4[\"Step\"]{\
+        step 4\
+    }\
+    class step_5[\"Step\"]{\
+        step 5\
+    }\
+    class step_6[\"Step\"]{\
+        step 6\
+    }\
+    class step_7[\"Step\"]{\
+        step 7\
+    }\
+    class step_8[\"Step\"]{\
+        step 8\
+    }\
+    Test --> feature_1\
+    feature_1 --> scenario_1\
+    feature_1 --> rule_1\
+    rule_1 --> scenario_2\
+    rule_1 --> scenario_3\
+    feature_1 --> rule_2\
+    rule_2 --> scenario_4\
+    scenario_1 --> step_1\
+    scenario_1 --> step_2\
+    scenario_2 --> step_3\
+    scenario_2 --> step_4\
+    scenario_3 --> step_5\
+    scenario_3 --> step_6\
+    scenario_4 --> step_7\
+    scenario_4 --> step_8\
+    Test --> feature_2\
+```\
+\
+Bathtub traverses the tree and when it reaches a step, it matches the step text to the user's step definition sequence class,\
+instantiates the step sequence, and runs it on a sequencer.\
+This object diagram depicts a snapshot of the moment Bathtub runs step 8, \"Then the received data should be 0xccddeeff.\"\
+\
+```mermaid\
+---\
+title: Run-time Context Sequences\
+---\
+classDiagram\
+    class Test{\
+        User calls bathtub_pkg::bathtub::run_test()\
+    }\
+    class feature_1[\"Feature\"]{\
+        \"This is the first feature\"\
+    }\
+    class rule_2[\"Rule\"]{\
+        \"This is the second rule\"\
+    }\
+    class scenario_4[\"Scenario\"]{\
+        \"This is the fourth scenario\"\
+    }\
+    class step_8[\"Step\"]{\
+        \"Then the received data should be 0xccddeeff\"\
+    }\
+    class step_nurture[\"step_attributes : bathtub_pkg::step_attributes_interface\"]\
+    class test_seq[\"current_test_seq : bathtub_pkg::test_sequence\"] {\
+        #bt : bathtub_pkg::bathtub\
+        +*_pool : uvm_pool[0..11]\
+    }\
+    class feature_seq[\"current_feature_seq : bathtub_pkg::feature_sequence\"] {\
+        #feature : gherkin_pkg::feature\
+        +*_pool : uvm_pool[0..11]\
+    }\
+    class rule_seq[\"current_rule_seq : bathtub_pkg::rule_sequence\"]{\
+        #rule : gherkin_pkg::rule\
+        +*_pool : uvm_pool[0..11]\
+    }\
+    class scenario_seq[\"current_scenario_seq : bathtub_pkg::scenario_sequence\"]{\
+        #scenario : gherkin_pkg::scenario\
+        +*_pool : uvm_pool[0..11]\
+    }\
+    class step_seq[\"step_seq : user_step_definition\"]{\
+        keyword: \"Then\"\
+        expression: \"the received data should be 0x%x\"\
+    }\
+    %%class gherkin_step[\"gherkin_pkg::step\"]{\
+    %%    #keyword : string\
+    %%    #text : string\
+    %%}\
+    %%class gherkin_scenario[\"gherkin_pkg::scenario\"]{\
+    %%    #name : string\
+    %%    #steps : gherkin_pkg::step[*]\
+    %%}\
+    %%class gherkin_rule[\"gherkin_pkg::rule\"]{\
+    %%    #name : string\
+    %%    #scenarios : gherkgin_pkg::scenario[*]\
+    %%}\
+    %%class gherkin_feature[\"gherkin_pkg::feature\"]{\
+    %%    #name : string\
+    %%    #rules : gherkin_pkg::rule[*]\
+    %%}\
+    Test --> feature_1:child\
+    test_seq .. Test\
+    feature_1 --> rule_2:child\
+    feature_seq --> feature_1:get_feature()\
+    rule_2 --> scenario_4:child\
+    rule_seq --> rule_2:get_rule()\
+    scenario_4 --> step_8:child\
+    scenario_seq --> scenario_4:get_scenario()\
+    step_nurture --> test_seq:get_current_test_seq()\
+    step_nurture --> feature_seq:get_current_feature_seq()\
+    step_nurture --> rule_seq:get_current_rule_seq()\
+    step_nurture --> scenario_seq:get_current_scenario_seq()\
+    step_nurture --> step_8:get_step()\
+    step_seq --> scenario_seq:parent\
+    step_seq --> step_nurture:get_step_attributes()\
+    scenario_seq --> rule_seq:parent\
+    rule_seq --> feature_seq:parent\
+    feature_seq --> test_seq:parent\
+    style step_seq fill:#0ff\
+    style Test fill:#8f0\
+    style feature_1 fill:#8f0\
+    style rule_2 fill:#8f0\
+    style scenario_4 fill:#8f0\
+    style step_8 fill:#8f0\
+    %%step_8 --|> gherkin_step\
+    %%scenario_4 --|> gherkin_scenario\
+    %%rule_2 --|> gherkin_rule\
+    %%feature_1 --|> gherkin_feature\
+```\
+\
+The complete Gherkin tree path of Test --> Feature --> Rule --> Scenario --> Step is shown at the bottom.\
+The matching `user_step_definition` instance is shown at the top.\
+Every test/feature/rule/scenario element in the Gherkin tree path has an associated context sequence, shown in the middle of the diagram.\
+The context sequences are themselves linked together in their own chain of parentage.\
+\
+The context sequences have three purposes.\
+\
+First, they run their associated Gherkin elements.\
+The Gherkin elements are inert value objects comprised of strings parsed from the feature files.\
+The context sequences are UVM sequences with active `body()` tasks that execute the Gherkin objects.\
+For example if a Gherkin `feature` object has two rules, the `feature_sequence` contains the code that iterates over those rules, running each.\
+\
+Second, the context sequences hold references to their associated Gherkin objects.\
+The user's step definition sequences can access the strings in the Gherkin objects through the context sequences.\
+With this powerful capability, the step definitions can read the complete Gherkin code and act on it.\
+Note that the Gherkin objects are immutable, so the step definitions can't alter or break the Gherkin tree.\
+\
+Third, the context sequences contain a set of UVM pools specialized for eleven different SystemVerilog data types:\
+`shortint`, `int`, `longint`, `byte`, `integer`, `time`, `real`, `shortreal`, `realtime`, `string`, and `uvm_object`.\
+Note the variety of two-state, four-state, integer, and real scalar types, plus one object type.\
+The user step sequences can use these pools, at any level, to share data among themselves.\
+\
+Each context sequence is created when the test/feature/rule/scenario starts, and is destroyed when the test/feature/rule/scenario ends.\
 "*)
 interface class step_definition_interface;
 	// ===================================
