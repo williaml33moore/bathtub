@@ -130,16 +130,11 @@ classDiagram\
         class step_definition_interface{\
             <<interface>>\
             +get_step_attributes() : step_attributes_interface\
-            +set_step_attributes(step_attributes_interface step_attributes) : void\
             +get_step_static_attributes() : step_static_attributes_interface\
             +get_current_test_sequence() : test_sequence_interface\
-            +set_current_test_sequence(test_sequence_interface seq) : void\
             +get_current_feature_sequence() : feature_sequence_interface\
-            +set_current_feature_sequence(feature_sequence_interface seq) : void\
             +get_current_rule_sequence() : rule_sequence_interface\
-            +set_current_rule_sequence(rule_sequence_interface seq) : void\
             +get_current_scenario_sequence() : scenario_sequence_interface\
-            +set_current_scenario_sequence(scenario_sequence_interface seq) : void\
         }\
         class step_nature{\
             #step_keyword_t : keyword\
@@ -551,6 +546,50 @@ When all of a parent sequence's children complete, then the sequence completes.\
 "*)
 interface class step_definition_interface;
 	// ===================================
+
+(* doc$markdown = "\
+Gets the run-time step keyword.\
+\
+Retrieves the actual step keyword from the Gherkin feature file.\
+Could be \"Given,\" \"When,\" \"Then,\" \"And,\" \"But,\" or \"*.\"\
+Note that the actual keyword may or may not match the static keyword returned by `get_step_static_keyword()`.\
+"*)
+    pure virtual function string get_step_keyword();
+        // -----------------------------------------
+
+
+(* doc$markdown = "\
+Gets the run-time step text.\
+\
+Retrieves the actual step text from the Gherkin feature file, i.e., the step text following the keyword.\
+The keyword is not part of the text.\
+The step text should match the static regular expression returned by `get_step_static_expression()`.\
+"*)
+    pure virtual function string get_step_text();
+        // --------------------------------------
+
+
+(* doc$markdown = "\
+Gets the run-time step data table argument.\
+\
+Retrieves the step data table argument from the Gherkin feature file.\
+Returns null if the step has no data table argument.\
+See the `gherkin_pkg` Package Reference for `data_table` class details.\
+"*)
+    pure virtual function gherkin_pkg::data_table get_step_argument_data_table();
+        // ----------------------------------------------------------------------
+
+
+(* doc$markdown = "\
+Gets the run-time step doc string argument.\
+\
+Retrieves the step doc string argument from the Gherkin feature file.\
+Returns null if the step has no doc string argument.\
+See the `gherkin_pkg` Package Reference for `doc_string` class details.\
+"*)
+    pure virtual function gherkin_pkg::doc_string get_step_argument_doc_string();
+        // ----------------------------------------------------------------------
+
 
 (* doc$markdown = "\
 Gets the run-time step attributes object.\

@@ -54,36 +54,37 @@ virtual class step_definition_seq extends uvm_sequence implements step_definitio
         return null;
     endfunction : get_step_attributes
 
-    virtual function void set_step_attributes(step_attributes_interface step_attributes);
-    endfunction : set_step_attributes
-
     virtual function test_sequence_interface get_current_test_sequence();
         return null;
     endfunction : get_current_test_sequence
-
-    virtual function void set_current_test_sequence(test_sequence_interface seq);
-    endfunction : set_current_test_sequence
 
     virtual function rule_sequence_interface get_current_rule_sequence();
         return null;
     endfunction : get_current_rule_sequence
 
-    virtual function void set_current_rule_sequence(rule_sequence_interface seq);
-    endfunction : set_current_rule_sequence
-
     virtual function feature_sequence_interface get_current_feature_sequence();
         return null;
     endfunction : get_current_feature_sequence
-
-    virtual function void set_current_feature_sequence(feature_sequence_interface seq);
-    endfunction : set_current_feature_sequence
 
     virtual function scenario_sequence_interface get_current_scenario_sequence();
         return null;
     endfunction : get_current_scenario_sequence
 
-    virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
-    endfunction : set_current_scenario_sequence
+    virtual function string get_step_keyword();
+        return "";
+    endfunction : get_step_keyword
+
+    virtual function string get_step_text();
+        return "";
+    endfunction : get_step_text
+
+    virtual function gherkin_pkg::data_table get_step_argument_data_table();
+        return null;
+    endfunction : get_step_argument_data_table
+
+    virtual function gherkin_pkg::doc_string get_step_argument_doc_string();
+        return null;
+    endfunction : get_step_argument_doc_string
 
     // Declare the correct virtual sequencer type here
     `uvm_declare_p_sequencer(uvm_sequencer)
