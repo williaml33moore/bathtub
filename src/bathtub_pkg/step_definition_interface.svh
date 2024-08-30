@@ -524,15 +524,13 @@ Then the received data should be 0xccddeeff # step 8\
 The _When_ step can store its data word in the scenario's `int` pool, and the _Then_ step can retrieve it.\
 Recall that the pools are `uvm_pkg::uvm_pool()` objects that provide `add()` and `get()` methods, among others.\
 ```sv\
-// _When_ step\
+// When step\
 //   Store 0xccddeeff in the scenario pool:\
 get_current_scenario_sequence().get_int_pool().add(\"data_word\", transmit_data_word);\
 ---\
-// _Then_ step\
-int expected_data_word;\
-...\
+// Then step\
 //   Retrieve 0xccddeeff from the scenario pool:\
-expected_data_word = get_current_scenario_sequence().get_int_pool().get(\"data_word\");\
+int expected_data_word = get_current_scenario_sequence().get_int_pool().get(\"data_word\");\
 ```\
 The pools give the step definitions a great deal of freedom to store, retrieve, and even delete data across all the different contexts.\
 Use this power mindfully and sparingly.\
@@ -548,7 +546,7 @@ The contexts represent different scopes.\
 The test sequence spans the lifetimes of all its child features.\
 Each feature sequence spans the lifetimes of all its child rules and scenarios.\
 Each rule sequence spans the lifetimes of all its scenarios.\
-Each scenario sequence spans the liftimes of all its steps.\
+Each scenario sequence spans the lifetimes of all its steps.\
 When all of a parent sequence's children complete, then the sequence completes.\
 "*)
 interface class step_definition_interface;
