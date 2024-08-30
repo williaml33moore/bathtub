@@ -279,7 +279,7 @@ classDiagram\
     style user_step_definition fill:#0ff\
 ```\
 \
-\### Context Sequences and Pools\
+### Context Sequences and Pools\
 \
 Gherkin feature files have a hierarchical structure of nested elements.\
 For example, here are two feature files, each with one feature.\
@@ -511,8 +511,45 @@ Third, the context sequences contain a set of UVM pools specialized for eleven d
 `shortint`, `int`, `longint`, `byte`, `integer`, `time`, `real`, `shortreal`, `realtime`, `string`, and `uvm_object`.\
 Note the variety of two-state, four-state, integer, and real scalar types, plus one object type.\
 The user step sequences can use these pools, at any level, to share data among themselves.\
+Step sequences are run sequentially.\
+Each one must finish before the next can start.\
+When each finishes, it is destroyed in the sense that all of its local variables go out of scope.\
+In order to pass data to future sequences, a step sequence can store it in an appropriate pool with a name and a value.\
+Subsequent sequences that know the pool and name can retrieve the data.\
+Consider our sample steps 7 and 8:\
+```gherkin\
+When the host transmits 0xccddeeff # step 7\
+Then the received data should be 0xccddeeff # step 8\
+```\
+The _When_ step can store its data word in the scenario's `int` pool, and the _Then_ step can retrieve it.\
+Recall that the pools are `uvm_pkg::uvm_pool()` objects that provide `add()` and `get()` methods, among others.\
+```sv\
+// _When_ step\
+//   Store 0xccddeeff in the scenario pool:\
+get_current_scenario_sequence().get_int_pool().add(\"data_word\", transmit_data_word);\
+---\
+// _Then_ step\
+int expected_data_word;\
+...\
+//   Retrieve 0xccddeeff from the scenario pool:\
+expected_data_word = get_current_scenario_sequence().get_int_pool().get(\"data_word\");\
+```\
+The pools give the step definitions a great deal of freedom to store, retrieve, and even delete data across all the different contexts.\
+Use this power mindfully and sparingly.\
+It has the potential to introduce fragility, dependencies, and order sensitivity to your Bathtub runs.\
+For example, you have to be careful that one step doesn't try to read a value from a pool before another step has written it.\
+Or, a step could accidentally overwrite a value written by an earlier step.\
+That being said, this sharing of state is a necessary evil and a common practice in BDD tools.\
 \
-Each context sequence is created when the test/feature/rule/scenario starts, and is destroyed when the test/feature/rule/scenario ends.\
+Like the step definitions, each context sequence has a limited lifespan.\
+It is created when the test/feature/rule/scenario starts, and is destroyed when the test/feature/rule/scenario ends.\
+Its data pools are destroyed when the context sequence ends.\
+The contexts represent different scopes.\
+The test sequence spans the lifetimes of all its child features.\
+Each feature sequence spans the lifetimes of all its child rules and scenarios.\
+Each rule sequence spans the lifetimes of all its scenarios.\
+Each scenario sequence spans the liftimes of all its steps.\
+When all of a parent sequence's children complete, then the sequence completes.\
 "*)
 interface class step_definition_interface;
 	// ===================================
