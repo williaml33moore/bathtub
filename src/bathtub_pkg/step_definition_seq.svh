@@ -85,6 +85,19 @@ virtual class step_definition_seq extends uvm_sequence implements step_definitio
     virtual function gherkin_pkg::doc_string get_step_argument_doc_string();
         return null;
     endfunction : get_step_argument_doc_string
+    
+    virtual function step_keyword_t get_step_definition_keyword();
+        return Given;
+    endfunction : get_step_definition_keyword
+
+	virtual function string get_step_definition_expression();
+        return "";
+    endfunction : get_step_definition_expression
+
+	virtual function string get_step_definition_regexp();
+        return "";
+    endfunction : get_step_definition_regexp
+
 
     // Declare the correct virtual sequencer type here
     `uvm_declare_p_sequencer(uvm_sequencer)

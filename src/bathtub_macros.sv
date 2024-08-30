@@ -62,6 +62,7 @@ static bathtub_pkg::step_static_attributes_interface __step_static_attributes = 
 virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
     return __step_static_attributes;\
 endfunction : get_step_static_attributes\
+\
 virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
     static bathtub_pkg::step_attributes_interface __step_attributes = null;\
     static bathtub_pkg::step_attributes_pool_t global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();\
@@ -72,30 +73,50 @@ virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
     if (!__step_attributes) `uvm_warning("get_step_attributes", "step_attributes is null");\
     return __step_attributes;\
 endfunction : get_step_attributes\
+\
 virtual function bathtub_pkg::test_sequence_interface get_current_test_sequence();\
     return this.get_step_attributes().get_current_test_sequence();\
 endfunction : get_current_test_sequence\
+\
 virtual function bathtub_pkg::feature_sequence_interface get_current_feature_sequence();\
     return this.get_step_attributes().get_current_feature_sequence();\
 endfunction : get_current_feature_sequence\
+\
 virtual function bathtub_pkg::rule_sequence_interface get_current_rule_sequence();\
     return this.get_step_attributes().get_current_rule_sequence();\
 endfunction : get_current_rule_sequence\
+\
 virtual function bathtub_pkg::scenario_sequence_interface get_current_scenario_sequence();\
     return this.get_step_attributes().get_current_scenario_sequence();\
 endfunction : get_current_scenario_sequence\
+\
 virtual function string get_step_keyword();\
     return this.get_step_attributes().get_step().get_keyword();\
 endfunction : get_step_keyword\
+\
 virtual function string get_step_text();\
     return this.get_step_attributes().get_step().get_text();\
 endfunction : get_step_text\
+\
 virtual function gherkin_pkg::data_table get_step_argument_data_table();\
     if (!$cast(get_step_argument_data_table, this.get_step_attributes().get_step().get_argument())) return null;\
 endfunction : get_step_argument_data_table\
+\
 virtual function gherkin_pkg::doc_string get_step_argument_doc_string();\
     if (!$cast(get_step_argument_doc_string, this.get_step_attributes().get_step().get_argument())) return null;\
 endfunction : get_step_argument_doc_string\
+\
+virtual function bathtub_pkg::step_keyword_t get_step_definition_keyword();\
+    return this.get_step_static_attributes().get_keyword();\
+endfunction : get_step_definition_keyword\
+\
+virtual function string get_step_definition_expression();\
+    return this.get_step_static_attributes().get_expression();\
+endfunction : get_step_definition_expression\
+\
+virtual function string get_step_definition_regexp();\
+    return this.get_step_static_attributes().get_regexp();\
+endfunction : get_step_definition_regexp\
 //
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
@@ -136,6 +157,15 @@ endfunction : get_step_argument_data_table\
 virtual function gherkin_pkg::doc_string get_step_argument_doc_string();\
     return null;\
 endfunction : get_step_argument_doc_string\
+virtual function bathtub_pkg::step_keyword_t get_step_definition_keyword();\
+    return bathtub_pkg::Given;\
+endfunction : get_step_definition_keyword\
+virtual function string get_step_definition_expression();\
+    return "";\
+endfunction : get_step_definition_expression\
+virtual function string get_step_definition_regexp();\
+    return "";\
+endfunction : get_step_definition_regexp\
 //
 
 `else // BATHTUB__MULTILINE_MACRO_IS_OK
