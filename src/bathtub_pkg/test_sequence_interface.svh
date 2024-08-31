@@ -25,9 +25,16 @@ SOFTWARE.
 `ifndef __TEST_SEQUENCE_INTERFACE_SVH
 `define __TEST_SEQUENCE_INTERFACE_SVH
 
+typedef class bathtub;
+
 `include "bathtub_pkg/pool_provider_interface.svh"
 
 interface class test_sequence_interface extends pool_provider_interface;
+	pure virtual function bathtub get_bathtub_object();
 endclass : test_sequence_interface
+
+`ifndef __BATHTUB_SVH
+`include "bathtub_pkg/bathtub.svh"
+`endif // __BATHTUB_SVH
 
 `endif // __TEST_SEQUENCE_INTERFACE_SVH

@@ -91,6 +91,8 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	string rule_tags[$];
 	string scenario_outline_tags[$];
 	gherkin_pkg::step undefined_steps[$];
+	step_attributes_pool_t global_step_attributes_pool;
+	
 
 	`uvm_object_utils_begin(gherkin_document_runner)
 		`uvm_field_object(document, UVM_ALL_ON)
@@ -110,6 +112,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		starting_scenario_number = 0;
 		stopping_scenario_number = 0;
 		report_object = null;
+		global_step_attributes_pool = step_attributes_pool_t::get_global_pool();
 	endfunction : new
 
 
@@ -229,9 +232,9 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 		end
 
 		if ($cast(step_seq, obj)) begin
-			step_nurture step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.configure(step, step_seq, current_scenario_seq, current_rule_seq, current_feature_seq, current_test_seq);
-			step_seq.set_step_attributes(step_attributes);
+			step_nurture step_attributes;
+			step_attributes = new("step_attributes", step, current_scenario_seq, current_rule_seq, current_feature_seq, current_test_seq);
+			global_step_attributes_pool.add(seq, step_attributes);
 		end
 		else begin
 			`uvm_error_context(`BATHTUB__GET_SCOPE_NAME(), $sformatf("Matched an object in `uvm_resource_db` that is not a valid step sequence."), report_object)
@@ -398,7 +401,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 `endif
 			current_scenario_seq.set_priority(sequence_priority);
 
-			current_scenario_seq.configure(scenario, this, current_feature_seq);
+			current_scenario_seq.configure(scenario, this);
 			current_scenario_seq.start(current_scenario_seq.get_sequencer());
 			current_scenario_seq = null;
 		end

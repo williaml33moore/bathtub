@@ -28,6 +28,7 @@ SOFTWARE.
 `include "bathtub_pkg/pool_provider_interface.svh"
 
 interface class rule_sequence_interface extends pool_provider_interface;
+	pure virtual function gherkin_pkg::rule get_rule();
 endclass : rule_sequence_interface
 
 `endif // __RULE_SEQUENCE_INTERFACE_SVH

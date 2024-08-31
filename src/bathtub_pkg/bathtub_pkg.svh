@@ -26,9 +26,11 @@ SOFTWARE.
 `define __BATHTUB_PKG_SVH
 
 import uvm_pkg::*;
+typedef class step_nurture;
 
 typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
 typedef uvm_queue#(string) strings_t;
+typedef uvm_pool#(uvm_sequence_base, step_nurture) step_attributes_pool_t;
 
 parameter byte CR = 13; // ASCII carriage return
 parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
@@ -40,5 +42,7 @@ const struct {
     file : "`__FILE__",
     string : ""
 };
+
+`include "bathtub_pkg/step_nurture.svh"
 
 `endif // __BATHTUB_PKG_SVH

@@ -37,32 +37,21 @@ typedef class context_sequence;
 `include "bathtub_pkg/context_sequence.svh"
 
 class scenario_sequence extends context_sequence implements scenario_sequence_interface;
-	gherkin_pkg::scenario scenario;
-	gherkin_document_runner runner;
-	feature_sequence_interface current_feature_seq;
+	protected gherkin_pkg::scenario scenario;
+	protected gherkin_document_runner runner;
 
 	function new(string name="scenario_sequence");
 		super.new(name);
 		scenario = null;
 		runner = null;
-		current_feature_seq = null;
 	endfunction : new
 
 	`uvm_object_utils(scenario_sequence)
 
-	virtual function void configure(gherkin_pkg::scenario scenario, gherkin_document_runner runner, feature_sequence_interface current_feature_seq);
+	virtual function void configure(gherkin_pkg::scenario scenario, gherkin_document_runner runner);
 		this.scenario = scenario;
 		this.runner = runner;
-		this.current_feature_seq = current_feature_seq;
 	endfunction : configure
-
-	virtual function void set_current_feature_sequence(feature_sequence_interface seq);
-		this.current_feature_seq = seq;
-	endfunction : set_current_feature_sequence
-
-	virtual function feature_sequence_interface get_current_feature_sequence();
-		return this.current_feature_seq;
-	endfunction : get_current_feature_sequence
 
 	virtual task body();
 		if (scenario != null) begin
@@ -81,6 +70,10 @@ class scenario_sequence extends context_sequence implements scenario_sequence_in
 
 		end
 	endtask : body
+
+	virtual function gherkin_pkg::scenario get_scenario();
+		return this.scenario;
+	endfunction : get_scenario
 
 endclass : scenario_sequence
 

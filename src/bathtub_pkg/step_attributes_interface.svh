@@ -25,48 +25,36 @@ SOFTWARE.
 `ifndef __STEP_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_ATTRIBUTES_INTERFACE_SVH
 
+import uvm_pkg::*;
+
 typedef interface class test_sequence_interface;
-`include "bathtub_pkg/test_sequence_interface.svh"
-
 typedef interface class feature_sequence_interface;
-`include "bathtub_pkg/feature_sequence_interface.svh"
-
 typedef interface class rule_sequence_interface;
-`include "bathtub_pkg/rule_sequence_interface.svh"
-
 typedef interface class scenario_sequence_interface;
-`include "bathtub_pkg/scenario_sequence_interface.svh"
-
-typedef interface class step_static_attributes_interface;
-`include "bathtub_pkg/step_static_attributes_interface.svh"
 
 interface class step_attributes_interface;
-	pure virtual function string get_runtime_keyword();
-	pure virtual function void set_runtime_keyword(string runtime_keyword);
-	pure virtual function string get_text();
-	pure virtual function void set_text(string step_text);
-	pure virtual function gherkin_pkg::step_argument get_argument();
-	pure virtual function void set_argument(gherkin_pkg::step_argument step_argument);
-	pure virtual function step_static_attributes_interface get_static_attributes();
-	pure virtual function void set_static_attributes(step_static_attributes_interface static_attributes);
-	pure virtual function string get_format();
-			
-	pure virtual function step_keyword_t get_static_keyword();
-	pure virtual function string get_expression();
-	pure virtual function string get_regexp();
-	pure virtual function uvm_object_wrapper get_step_obj();
-	pure virtual function string get_step_obj_name();
-	
+	pure virtual function gherkin_pkg::step get_step();
 	pure virtual function test_sequence_interface get_current_test_sequence();
-	pure virtual function void set_current_test_sequence(test_sequence_interface seq);
 	pure virtual function feature_sequence_interface get_current_feature_sequence();
-	pure virtual function void set_current_feature_sequence(feature_sequence_interface seq);
 	pure virtual function rule_sequence_interface get_current_rule_sequence();
-	pure virtual function void set_current_rule_sequence(rule_sequence_interface seq);
 	pure virtual function scenario_sequence_interface get_current_scenario_sequence();
-	pure virtual function void set_current_scenario_sequence(scenario_sequence_interface seq);
-
 	pure virtual function void print_attributes(uvm_verbosity verbosity);
 endclass : step_attributes_interface
+
+`ifndef __TEST_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/test_sequence_interface.svh"
+`endif // __TEST_SEQUENCE_INTERFACE_SVH
+
+`ifndef __FEATURE_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/feature_sequence_interface.svh"
+`endif // __FEATURE_SEQUENCE_INTERFACE_SVH
+
+`ifndef __RULE_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/rule_sequence_interface.svh"
+`endif // __RULE_SEQUENCE_INTERFACE_SVH
+
+`ifndef __SCENARIO_SEQUENCE_INTERFACE_SVH
+`include "bathtub_pkg/scenario_sequence_interface.svh"
+`endif // __SCENARIO_SEQUENCE_INTERFACE_SVH
 
 `endif // __STEP_ATTRIBUTES_INTERFACE_SVH
