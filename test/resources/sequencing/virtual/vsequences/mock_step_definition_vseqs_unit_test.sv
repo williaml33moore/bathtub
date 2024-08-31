@@ -32,6 +32,7 @@ module mock_vsequences_unit_test;
   mock_string_sequencer string_sqr;
   mock_object_sequencer object_sqr;
   mock_vsequencer vsequencer;
+  bathtub_pkg::step_attributes_pool_t global_step_attributes_pool;
 
   //===================================
   // This is the UUT that we're 
@@ -64,6 +65,7 @@ module mock_vsequences_unit_test;
   task setup();
     svunit_ut.setup();
     /* Place Setup Code Here */
+    global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();
 
   endtask
 
@@ -110,7 +112,7 @@ module mock_vsequences_unit_test;
       parser.parse_step_string(step_string, step_bundle);
       my_step_def_vseq = mock_step_def_vseq::type_id::create("my_step_def_vseq");
 			step_attributes = new("step_attributes", step_bundle.step);
-			my_step_def_vseq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_step_def_vseq, step_attributes);
 
       fork
         begin

@@ -22,6 +22,7 @@ module mock_sequences_unit_test;
 
   mock_object_sequencer object_sqr;
   uvm_phase phase;
+  bathtub_pkg::step_attributes_pool_t global_step_attributes_pool;
 
   //===================================
   // This is the UUT that we're 
@@ -48,6 +49,7 @@ module mock_sequences_unit_test;
     svunit_ut.setup();
     /* Place Setup Code Here */
     my_step_def_seq = mock_step_def_seq::type_id::create("my_step_def_seq");
+    global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();
   endtask
 
 
@@ -83,13 +85,13 @@ module mock_sequences_unit_test;
       bathtub_pkg::gherkin_step_bundle step_bundle;
       bathtub_pkg::gherkin_parser parser;
       bathtub_pkg::step_nurture step_attributes;
-    
+
       parser = new("parser");
       parser = parser.configure();
       step_string = $sformatf("%s a step definition with parameters %0d, %f, and %s", "Given", 42, 98.6, "Gherkin");
       parser.parse_step_string(step_string, step_bundle);
 			step_attributes = new("step_attributes", step_bundle.step);
-			my_step_def_seq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_step_def_seq, step_attributes);
 `ifdef UVM_VERSION_1_0
       my_step_def_seq.starting_phase = phase;
 `elsif UVM_VERSION_1_1

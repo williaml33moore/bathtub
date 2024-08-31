@@ -59,12 +59,12 @@ SOFTWARE.
 
 `define BATHTUB__REGISTER_STEP_DEF(k, e)\
 static bathtub_pkg::step_static_attributes_interface __step_static_attributes = bathtub_pkg::step_nature::register_step(k, e, get_type());\
+protected bathtub_pkg::step_attributes_interface __step_attributes = null;\
 virtual function bathtub_pkg::step_static_attributes_interface get_step_static_attributes();\
     return __step_static_attributes;\
 endfunction : get_step_static_attributes\
 \
 virtual function bathtub_pkg::step_attributes_interface get_step_attributes();\
-    static bathtub_pkg::step_attributes_interface __step_attributes = null;\
     static bathtub_pkg::step_attributes_pool_t global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();\
     if (__step_attributes) return __step_attributes;\
     if (!global_step_attributes_pool.exists(this)) `uvm_warning("get_step_attributes", "No step_attributes for this sequence found in the global step_attributes pool");\

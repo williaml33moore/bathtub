@@ -26,6 +26,7 @@ SOFTWARE.
 `define __BATHTUB_PKG_SVH
 
 import uvm_pkg::*;
+typedef class step_nurture;
 
 typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
 typedef uvm_queue#(string) strings_t;
@@ -41,5 +42,7 @@ const struct {
     file : "`__FILE__",
     string : ""
 };
+
+`include "bathtub_pkg/step_nurture.svh"
 
 `endif // __BATHTUB_PKG_SVH

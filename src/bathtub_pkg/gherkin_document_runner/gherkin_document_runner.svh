@@ -91,7 +91,7 @@ class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor
 	string rule_tags[$];
 	string scenario_outline_tags[$];
 	gherkin_pkg::step undefined_steps[$];
-	uvm_pool#(uvm_sequence_base, step_nurture) global_step_attributes_pool;
+	step_attributes_pool_t global_step_attributes_pool;
 	
 
 	`uvm_object_utils_begin(gherkin_document_runner)

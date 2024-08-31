@@ -16,6 +16,7 @@ module step_definitions_unit_test;
 
   
   uvm_sequencer sequencer;
+  bathtub_pkg::step_attributes_pool_t global_step_attributes_pool;
 
 
   //===================================
@@ -38,6 +39,7 @@ module step_definitions_unit_test;
   task setup();
     svunit_ut.setup();
     /* Place Setup Code Here */
+    global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();
   endtask
 
 
@@ -98,7 +100,7 @@ module step_definitions_unit_test;
       my_hello_parameters_vseq = hello_parameters_vseq::type_id::create("my_hello_parameters_vseq");
       step = new("step", '{"Given", hello_parameters_vseq::magic_step_text, null});
 			step_attributes = new("step_attributes", step);
-			my_hello_parameters_vseq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_hello_parameters_vseq, step_attributes);
 
       my_hello_parameters_vseq.start(null);
 
@@ -119,7 +121,7 @@ module step_definitions_unit_test;
       pools = scenario_sequence::type_id::create("pool");
       step = new("step", '{"Given", {hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"}, null});
 			step_attributes = new("step_attributes", step, pools);
-			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_hello_parameters_pool_vseq, step_attributes);
 
       my_hello_parameters_pool_vseq.start(null);
       
@@ -153,7 +155,7 @@ module step_definitions_unit_test;
       my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
       pools = scenario_sequence::type_id::create("pools");
 			step_attributes = new("step_attributes", step_bundle.step, pools);
-			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_hello_parameters_pool_vseq, step_attributes);
 
       my_hello_parameters_pool_vseq.start(null);
       
@@ -186,7 +188,7 @@ module step_definitions_unit_test;
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_seq_item_vseq = hello_parameters_seq_item_vseq::type_id::create("my_hello_parameters_seq_item_vseq");
 			step_attributes = new("step_attributes", step_bundle.step);
-			my_hello_parameters_seq_item_vseq.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_hello_parameters_seq_item_vseq, step_attributes);
 
       fork
         begin
@@ -235,7 +237,7 @@ module step_definitions_unit_test;
       parser.parse_step_string(step_string, step_bundle);
       my_sequence = hello_parameters_seq_item_uvm_do_vseq::type_id::create("my_sequence");
 			step_attributes = new("step_attributes", step_bundle.step);
-			my_sequence.set_step_attributes(step_attributes);
+			global_step_attributes_pool.add(my_sequence, step_attributes);
 
       fork
         begin
