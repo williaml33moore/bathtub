@@ -59,5 +59,9 @@ Check them out if you'd like to learn more.
 * _[Formulation: Document Examples with Given/When/Then](http://bddbooks.com/#formulation)_, by Seb Rose and Gáspár Nagy
 * _[The Cucumber Book](https://learning.oreilly.com/library/view/the-cucumber-book/9781680502497/)_, by Matt Wynne, Aslak Hellesøy, and Steve Tooke
 
-
+# Bathtub
+External Bathtub resources.
+* The paper "[Gherkin Implementation in SystemVerilog Brings Agile Behavior-Driven Development to UVM](https://dvcon-proceedings.org/document/gherkin-implementation-in-systemverilog-brings-agile-behavior-driven-development-to-uvm/)" from DVCon U.S. 2024
+* The [presentation](https://dvcon-proceedings.org/document/gherkin-implementation-in-systemverilog-brings-agile-behavior-driven-development-to-uvm-2/) slides from DVCon U.S. 2024
+* The backup [video recording](https://youtu.be/PMcXauT0Igo) of the DVCon presentation, on YouTube
 
