@@ -21,7 +21,7 @@ In 2022 I was researching possible solutions to widespread nagging problems with
 I discovered living documentation and BDD and was intrigued and also a little jealous because as a SystemVerilog enthusiast, I felt left out.
 So I ported Gherkin to SystemVerilog at my previous employer, [Everactive](https://everactive.com), and got it working on a limited experimental basis on our current project at that time.
 I don't work there anymore but before I left, they were gracious enough to release Bathtub as [open-source software](https://github.com/everactive/bathtub) so I could continue to develop it and share it with the design verification community.
-I published a paper on Bathtub and presented it at [DVCon U.S. 2024](https://dvcon.org), the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper](https://dvcon.org/press-release-march-20-2024) award!
+I published a paper on Bathtub called "[Gherkin Implementation in SystemVerilog Brings Agile Behavior-Driven Development to UVM](https://dvcon-proceedings.org/document/gherkin-implementation-in-systemverilog-brings-agile-behavior-driven-development-to-uvm/)" ([slides](https://dvcon-proceedings.org/document/gherkin-implementation-in-systemverilog-brings-agile-behavior-driven-development-to-uvm-2/)) and presented it at [DVCon U.S. 2024](https://dvcon.org), the premier conference for IC design and verification professionals, and to my joy it won the third place [Stuart Sutherland Best Paper](https://dvcon.org/press-release-march-20-2024) award!
 
 I have tons of plans for this tool and I'm excited to be on this adventure.
 
