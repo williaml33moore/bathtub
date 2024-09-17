@@ -98,7 +98,7 @@ It's built on top of UVM so it integrates seamlessly with existing verification 
 Users run it in their simulators along with their RTL models; it reads and parses their Gherkin files, and executes them as tests.
 
 A slightly deeper dive for the UVM community.
-Assuming you already have a working UVM test bench, you need to do a few things to add Bathtub to it.
+Assuming you already have a working UVM testbench, you need to do a few things to add Bathtub to it.
 First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
 These are called step definitions and they effectively map your natural language Gherkin steps to runnable SystemVerilog code.
 Bathtub provides macros that simplify step definition creation.
