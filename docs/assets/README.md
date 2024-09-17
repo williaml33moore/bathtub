@@ -1,3 +1,6 @@
+---
+published: false
+---
 # assets
 ## Contents
 | Name | Description |
