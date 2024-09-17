@@ -58,6 +58,7 @@ Check them out if you'd like to learn more.
 * _[Discovery: Explore Behaviour Using Examples](http://bddbooks.com/#discovery)_, by Gáspár Nagy and Seb Rose
 * _[Formulation: Document Examples with Given/When/Then](http://bddbooks.com/#formulation)_, by Seb Rose and Gáspár Nagy
 * _[The Cucumber Book](https://learning.oreilly.com/library/view/the-cucumber-book/9781680502497/)_, by Matt Wynne, Aslak Hellesøy, and Steve Tooke
+* 🆕 _[Next Level Testbenches: Design Patterns in SystemVerilog and UVM](https://a.co/d/am6DyTg)_, by Mark Glasser
 
 # Bathtub
 External Bathtub resources.
