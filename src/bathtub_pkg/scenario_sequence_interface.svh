@@ -27,8 +27,29 @@ SOFTWARE.
 
 `include "bathtub_pkg/pool_provider_interface.svh"
 
+(* doc$markdown = "\
+    \ Interface for scenario-level context sequences.\n\
+    \ \n\
+    \ The scenario-level context sequences implement this interface.\n\
+    \ A user step definition sequence can access the current scenario-level context sequence through its `get_current_scenario_sequence()` function.\n\
+    \ "
+*)
 interface class scenario_sequence_interface extends pool_provider_interface;
-	pure virtual function gherkin_pkg::scenario get_scenario();
+	// =====================================================================
+
+	(* doc$markdown = "\
+        \ Gets a reference to the scenario object.\n\
+        \ \n\
+        \ When Bathtub parses a scenario in a Gherkin feature file, Bathtub creates a `gherkin_pkg::scenario` object for it.\n\
+        \ The scenario-level context sequence contains a reference to the scenario object.\n\
+        \ A user step definition sequence can retrieve a reference to the scneario object with the context sequence's implementation of this function, e.g.:\n\
+        \ ```sv\n\
+        \ gherkin_pkg::scenario my_scenario = get_current_scenario_sequence().get_scenario();\n\
+        \ ```\n\
+        \ "
+    *)
+    pure virtual function gherkin_pkg::scenario get_scenario();
+		// ----------------------------------------------------
 endclass : scenario_sequence_interface
 
 `endif // __SCENARIO_SEQUENCE_INTERFACE_SVH

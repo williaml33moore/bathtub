@@ -44,7 +44,7 @@ interface class test_sequence_interface extends pool_provider_interface;
         \ \n\
         \ The user typically instantiates a `bathtub_pkg::bathtub` object from their test or some other top-level component or module.\n\
         \ The Bathtub object runs the Gherkin test via the context sequences.\n\
-        \ A user step definition sequence can retrieve a reference to the Bathtub object with this function, e.g.:\n\
+        \ A user step definition sequence can retrieve a reference to the Bathtub object with the context sequence's implementation of this function, e.g.:\n\
         \ ```sv\n\
         \ bathtub_pkg::bathtub my_bathtub = get_current_test_sequence().get_bathtub_object();\n\
         \ ```\n\

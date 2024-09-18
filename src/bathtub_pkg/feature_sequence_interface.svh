@@ -27,8 +27,29 @@ SOFTWARE.
 
 `include "bathtub_pkg/pool_provider_interface.svh"
 
+(* doc$markdown = "\
+    \ Interface for feature-level context sequences.\n\
+    \ \n\
+    \ The feature-level context sequences implement this interface.\n\
+    \ A user step definition sequence can access the current feature-level context sequence through its `get_current_feature_sequence()` function.\n\
+    \ "
+*)
 interface class feature_sequence_interface extends pool_provider_interface;
-	pure virtual function gherkin_pkg::feature get_feature();
+	// ====================================================================
+
+	(* doc$markdown = "\
+        \ Gets a reference to the feature object.\n\
+        \ \n\
+        \ When Bathtub parses a Gherkin feature file, Bathtub creates a `gherkin_pkg::feature` object for it.\n\
+        \ The feature-level context sequence contains a reference to the feature object.\n\
+        \ A user step definition sequence can retrieve a reference to the feature object with the context sequence's implementation of this function, e.g.:\n\
+        \ ```sv\n\
+        \ gherkin_pkg::feature my_feature = get_current_feature_sequence().get_feature();\n\
+        \ ```\n\
+        \ "
+    *)
+    pure virtual function gherkin_pkg::feature get_feature();
+		// --------------------------------------------------
 endclass : feature_sequence_interface
 
 `endif // __FEATURE_SEQUENCE_INTERFACE_SVH
