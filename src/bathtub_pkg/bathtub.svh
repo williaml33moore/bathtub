@@ -28,30 +28,14 @@ SOFTWARE.
 import uvm_pkg::*;
 
 typedef class gherkin_parser;
-`include "bathtub_pkg/gherkin_parser/gherkin_parser.svh"
-
 typedef class gherkin_document_printer;
-`include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
-
 typedef class gherkin_document_runner;
-`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
-// Prevent `include recursion
-`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
-`endif // __GHERKIN_DOCUMENT_RUNNER_SVH
-
 typedef class plusarg_options;
-`include "bathtub_pkg/plusarg_options.svh"
-
 typedef class test_sequence;
-`ifndef __TEST_SEQUENCE_SVH
-// Prevent `include recursion
-`include "bathtub_pkg/test_sequence.svh"
-`endif // __TEST_SEQUENCE_SVH
-
 typedef class snippets;
-`include "bathtub_pkg/snippets.svh"
 
 `include "bathtub_macros.sv"
+`include "bathtub_pkg/bathtub_pkg.svh"
 
 (* doc$markdown = "\
     \ The simulation's entry point to Bathtub.\n\
@@ -542,5 +526,18 @@ class bathtub extends uvm_report_object;
 	endfunction : concat_undefined_steps
 
 endclass : bathtub
+
+`include "bathtub_pkg/gherkin_parser/gherkin_parser.svh"
+`include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
+`include "bathtub_pkg/plusarg_options.svh"
+`include "bathtub_pkg/snippets.svh"
+
+`ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
+`include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"
+`endif
+
+`ifndef __TEST_SEQUENCE_SVH
+`include "bathtub_pkg/test_sequence.svh"
+`endif
 
 `endif // __BATHTUB_SVH
