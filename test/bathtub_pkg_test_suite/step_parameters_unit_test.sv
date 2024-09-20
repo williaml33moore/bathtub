@@ -248,7 +248,6 @@ module step_parameters_unit_test;
 	step_parameters = bathtub_pkg::step_parameters::create_new("step_parameters", str, format);
 
 	(* When = "I extract the raw text from the `step_parameters` object" *)
-	step_parameters.get_arg(0).print();
 	actual_int_text = step_parameters.get_arg(0).get_raw_text();
 	actual_real_text = step_parameters.get_arg(1).get_raw_text();
 	actual_string_text = step_parameters.get_arg(2).get_raw_text();
