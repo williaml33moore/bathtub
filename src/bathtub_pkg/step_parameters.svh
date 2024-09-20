@@ -112,7 +112,7 @@ class step_parameters extends uvm_object implements step_parameters_interface;
 					sscanf_code = $sscanf(text_tokens[i], format_tokens[i], int_arg);
 
 					if (sscanf_code == 1) begin
-						step_argv.push_back(step_parameter_arg::create_new_int_arg("anonymous", int_arg));
+						step_argv.push_back(step_parameter_arg::create_new_int_arg("anonymous", text_tokens[i], int_arg));
 					end
 					else begin
 						$fatal(1, $sformatf("Unexpected result (%0d) while parsing string '%s' with format '%s'",
@@ -125,7 +125,7 @@ class step_parameters extends uvm_object implements step_parameters_interface;
 					sscanf_code = $sscanf(text_tokens[i], format_tokens[i], real_arg);
 
 					if (sscanf_code == 1) begin
-						step_argv.push_back(step_parameter_arg::create_new_real_arg("anonymous", real_arg));
+						step_argv.push_back(step_parameter_arg::create_new_real_arg("anonymous", text_tokens[i], real_arg));
 					end
 					else begin
 						$fatal(1, $sformatf("Unexpected result (%0d) while parsing string '%s' with format '%s'",
@@ -138,7 +138,7 @@ class step_parameters extends uvm_object implements step_parameters_interface;
 					sscanf_code = $sscanf(text_tokens[i], format_tokens[i], string_arg);
 
 					if (sscanf_code == 1) begin
-						step_argv.push_back(step_parameter_arg::create_new_string_arg("anonymous", string_arg));
+						step_argv.push_back(step_parameter_arg::create_new_string_arg("anonymous", text_tokens[i], string_arg));
 					end
 					else begin
 						$fatal(1, $sformatf("Unexpected result (%0d) while parsing string '%s' with format '%s'",

@@ -232,8 +232,8 @@ module step_parameters_unit_test;
 	string actual_real_text;
 	string actual_string_text;
 	
-	int expected_int_text;
-	real expected_real_text;
+	string expected_int_text;
+	string expected_real_text;
 	string expected_string_text;
 	
 	string str;
@@ -243,14 +243,15 @@ module step_parameters_unit_test;
 	raw_int_text = "42";
 	raw_real_text = "92.7";
 	raw_string_text = "puppy";
-	format = "int= %d , real= %f , string= %s";
+	format = "int= %s , real= %s , string= %s";
 	str = $sformatf(format, raw_int_text, raw_real_text, raw_string_text);
 	step_parameters = bathtub_pkg::step_parameters::create_new("step_parameters", str, format);
 
 	(* When = "I extract the raw text from the `step_parameters` object" *)
-	actual_int_text = step_parameters.get_arg(0).raw_text;
-	actual_real_text = step_parameters.get_arg(1).raw_text;
-	actual_string_text = step_parameters.get_arg(2).raw_text;
+	step_parameters.get_arg(0).print();
+	actual_int_text = step_parameters.get_arg(0).get_raw_text();
+	actual_real_text = step_parameters.get_arg(1).get_raw_text();
+	actual_string_text = step_parameters.get_arg(2).get_raw_text();
 
 	expected_int_text = "42";
 	expected_real_text = "92.7";
