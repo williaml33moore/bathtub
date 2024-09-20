@@ -2,6 +2,7 @@
 MIT License
 
 Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +43,7 @@ typedef class snippets;
     \ \n\
     \ The Bathtub class reads Gherkin feature files and runs them aginst the DUT.\n\
     \ In your UVM test or some other component, instantiate a Bathtub object, configure it with a sequencer (perhaps a virtual sequencer from your UVM environment), then run it.\n\
-    \ Note that `bathtub` is a UVM object, not a `uvm_component`.\n\
+    \ Note that `bathtub` is a `uvm_component`.\n\
     \ \n\
     \ Typical usage:\n\
     \ ```sv\n\
@@ -51,7 +52,7 @@ typedef class snippets;
     \ 	uvm_env my_env;\n\
     \ \n\
     \     virtual function void build_phase(uvm_phase phase);\n\
-    \         bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\");\n\
+    \         bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\", this);\n\
     \         super.build_phase(phase);\n\
     \         ...\n\
     \     endfunction\n\
@@ -70,7 +71,7 @@ typedef class snippets;
     \ It contains UVM pools of various types so all the child sequences down to the step definitions can share information.\n\
     \ `current_test_sequence` also contains a reciprocal reference back to the Bathtub object, so child sequences have access to it as well.\n\
     \ \n\
-    \ Bathtub extends class `uvm_report_object` and by default serves as its own report object for the messages it prints through `` `uvm_info()``, `` `uvm_error()``, etc.\n\
+    \ Bathtub is a subclass of `uvm_report_object` and by default serves as its own report object for the messages it prints through `` `uvm_info() ``, `` `uvm_error() ``, etc.\n\
     \ The Bathtub object's verbosity can be set with simulator command line plusarg `+bathtub_verbosity=<verbosity>` independently of `+UVM_VERBOSITY=<verbosity>`.\n\
     \ \n\
     \ ```mermaid\n\
@@ -109,7 +110,7 @@ typedef class snippets;
     \ ```\n\
     \ "
 *)
-class bathtub extends uvm_report_object;
+class bathtub extends uvm_component;
 	// =================================
 
 	protected string feature_files[$];
@@ -129,7 +130,7 @@ class bathtub extends uvm_report_object;
 
 	protected static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
-	`uvm_object_utils_begin(bathtub)
+	`uvm_component_utils_begin(bathtub)
 		`uvm_field_queue_string(feature_files, UVM_ALL_ON)
 		`uvm_field_int(dry_run, UVM_ALL_ON)
 		`uvm_field_int(sequence_priority, UVM_ALL_ON)
@@ -138,7 +139,7 @@ class bathtub extends uvm_report_object;
 		`uvm_field_int(stopping_scenario_number, UVM_ALL_ON)
 		`uvm_field_queue_string(include_tags, UVM_ALL_ON)
 		`uvm_field_queue_string(exclude_tags, UVM_ALL_ON)
-	`uvm_object_utils_end
+	`uvm_component_utils_end
 
 
 	(* doc$markdown = "\
@@ -147,9 +148,9 @@ class bathtub extends uvm_report_object;
         \ Initializes the Bathtub object with the given `name`.\n\
         \ "
 	*)
-	function new(string name = "bathtub");
+	function new(string name="bathtub", uvm_component parent);
 		// -------------------------------
-		super.new(name);
+		super.new(name, parent);
 
 		feature_files.delete();
 		sequencer = null;
@@ -376,7 +377,7 @@ class bathtub extends uvm_report_object;
 	(* doc$markdown = "\
         \ Sets the Bathtub object's report object.\n\
         \ \n\
-        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()``, `` `uvm_error()``, etc.) it issues.\n\
+        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues.\n\
         \ This accessor assigns a different report object.\n\
         \ e.g.\n\
         \ ```sv\n\
@@ -394,7 +395,7 @@ class bathtub extends uvm_report_object;
 	(* doc$markdown = "\
         \ Gets the Bathtub object's report object.\n\
         \ \n\
-        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info()``, `` `uvm_error()``, etc.) it issues, but the report object could be reassigned by `set_report_object()`.\n\
+        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues, but the report object could be reassigned by `set_report_object()`.\n\
         \ Use `get_report_object()` to get the current report object.\n\
         \ "
 	*)

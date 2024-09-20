@@ -53,8 +53,8 @@ typedef interface class scenario_sequence_interface;
     \ This is an example of a working step definition that satisfies the Bathtub criteria.\n\
     \ It extends `uvm_sequence`, which itself is a child of `uvm_sequence_base`,\n\
     \ it implements `step_definition_interface` in the declaration,\n\
-    \ and it contains a `` `When()`` macro which expands into implementations of the required `step_definition_interface` class methods.\n\
-    \ Every UVM class must include an object utility macro like `` `uvm_object_utils()`` or equivalent, and a constructor `new()`.\n\
+    \ and it contains a `` `When() `` macro which expands into implementations of the required `step_definition_interface` class methods.\n\
+    \ Every UVM class must include an object utility macro like `` `uvm_object_utils() `` or equivalent, and a constructor `new()`.\n\
     \ Finally every UVM sequence class will override the `uvm_sequence_base::body()` task in order to provide its unique behavior.\n\
     \ ```sv\n\
     \ class user_step_definition extends uvm_pkg::uvm_sequence implements bathtub_pkg::step_definition_interface;\n\
@@ -546,7 +546,8 @@ typedef interface class scenario_sequence_interface;
     \ It has the potential to introduce fragility, coupling, and order sensitivity to your Bathtub runs.\n\
     \ For example, you have to be careful that one step doesn't try to read a value from a pool before another step has written it.\n\
     \ Or, a step could accidentally overwrite a value written by an earlier step.\n\
-    \ That being said, this sharing of state is a necessary evil and a common practice in BDD tools.\n\
+    \ That being said, this sharing of state is a necessary evil common in BDD tools.\n\
+    \ The best practice is to use only the lowest level scenario pools to share state among steps.\n\
     \ \n\
     \ Like the step definitions, each context sequence has a limited lifespan.\n\
     \ It is created when the test/feature/rule/scenario starts, and is destroyed when the test/feature/rule/scenario ends.\n\
@@ -630,7 +631,7 @@ interface class step_definition_interface;
         \ Gets the static step keyword.\n\
         \ \n\
         \ Retrieves the Gherkin keyword from the user's step definition class.\n\
-        \ It is a static property of the class, and is determined by the user's choice of macro: `` `Given``, `` `When()``, or `` `Then()``.\n\
+        \ It is a static property of the class, and is determined by the user's choice of macro: `` `Given() ``, `` `When() ``, or `` `Then() ``.\n\
         \ This keyword is an enum of type `bathtub_pkg::step_keyword_t`, not a string.\n\
         \ Possible values are `Given`, `When`, or `Then`.\n\
         \ "
@@ -643,7 +644,7 @@ interface class step_definition_interface;
         \ Gets the static step definition expression.\n\
         \ \n\
         \ Retrieves the step definition expression from the user's step definition class.\n\
-        \ It is a static property of the class, and is the argument to the `` `Given``, `` `When()``, and `` `Then()`` macros.\n\
+        \ It is a static property of the class, and is the argument to the `` `Given() ``, `` `When() ``, and `` `Then() `` macros.\n\
         \ The expression could be a POSIX regular expression surrounded by slashes (\"/\"),\n\
         \ or a SystemVerilog format specification with escape sequences like `%d` and `%s`.\n\
         \ Taking the regular expression or format specification into account, the expression matches the run-time step text as returned by `get_step_text()`.\n\
@@ -668,7 +669,7 @@ interface class step_definition_interface;
         \ Gets the static step definition regular expression.\n\
         \ \n\
         \ Retrieves the step definition regular expression from the user's step definition class.\n\
-        \ It is a static property of the class, and is derived from the step definition expression argument to the `` `Given``, `` `When()``, and `` `Then()`` macros.\n\
+        \ It is a static property of the class, and is derived from the step definition expression argument to the `` `Given() ``, `` `When() ``, and `` `Then() `` macros.\n\
         \ If the expression is a POSIX regular expression surrounded by slashes (\"/\"),\n\
         \ then the regular expression from `get_step_definition_regexp()` is identical to the expression from `get_step_definition_expression()`.\n\
         \ If the expression is a SystemVerilog format specification with escape sequences like `%d` and `%s`,\n\
@@ -764,7 +765,7 @@ interface class step_definition_interface;
     (* doc$markdown = "\
         \ Gets the static step attributes object.\n\
         \ \n\
-        \ The `` `Given(string)``, `` `When(string)``, or `` `Then(string)`` macro in the user's step definition class specifies the keyword and matching expression string for that step definition.\n\
+        \ The `` `Given(string) ``, `` `When(string) ``, or `` `Then(string) `` macro in the user's step definition class specifies the keyword and matching expression string for that step definition.\n\
         \ Those are considered the static attributes of the step definition.\n\
         \ There are three more static attributes: the  matching expression string translated into a POSIX regular expression, the UVM object wrapper of the step definition class, and the name of the class.\n\
         \ Every instance of a step definition sequence class has different run-time attributes, but they all share the same static class attributes.\n\

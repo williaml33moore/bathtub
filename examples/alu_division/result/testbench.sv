@@ -102,7 +102,7 @@ module top();
     endfunction : new
 
     virtual function void build_phase(uvm_phase phase);
-      bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
+      bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
       super.build_phase(phase);
       my_alu_env = alu_env::type_id::create("my_alu_env", this);
     endfunction : build_phase

@@ -40,7 +40,7 @@ class bathtub_test extends test;
 
         super.build_phase(phase);
 
-        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
+        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
 
         virtual_sequencer = tb_virtual_sequencer::type_id::create("virtual_sequencer", this);
 
