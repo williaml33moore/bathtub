@@ -222,6 +222,52 @@ module step_parameters_unit_test;
 	`SVTEST_END
 
 
+	`SVTEST(Getting_raw_text_from_a_step_parameters_object)
+	// =====================================================
+	string raw_int_text;
+	string raw_real_text;
+	string raw_string_text;
+
+	string actual_int_text;
+	string actual_real_text;
+	string actual_string_text;
+	
+	int expected_int_text;
+	real expected_real_text;
+	string expected_string_text;
+	
+	string str;
+	string format;
+
+	(* Given = "a new `step_parameters` object whose values are 42, 92.7, and 'puppy'" *)
+	raw_int_text = "42";
+	raw_real_text = "92.7";
+	raw_string_text = "puppy";
+	format = "int= %d , real= %f , string= %s";
+	str = $sformatf(format, raw_int_text, raw_real_text, raw_string_text);
+	step_parameters = bathtub_pkg::step_parameters::create_new("step_parameters", str, format);
+
+	(* When = "I extract the raw text from the `step_parameters` object" *)
+	actual_int_text = step_parameters.get_arg(0).raw_text;
+	actual_real_text = step_parameters.get_arg(1).raw_text;
+	actual_string_text = step_parameters.get_arg(2).raw_text;
+
+	expected_int_text = "42";
+	expected_real_text = "92.7";
+	expected_string_text = "puppy";
+
+	(* Then = "integer value should be 42" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_int_text, expected_int_text)
+
+	(* And = "real value should be 92.7" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_real_text, expected_real_text)
+
+	(* And = "string value should be 'puppy'" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_string_text, expected_string_text)
+
+	`SVTEST_END
+
+
 	// ---
 	`SVUNIT_TESTS_END
 
