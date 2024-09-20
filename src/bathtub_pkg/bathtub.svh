@@ -148,7 +148,7 @@ class bathtub extends uvm_component;
         \ Initializes the Bathtub object with the given `name`.\n\
         \ "
 	*)
-	function new(string name="bathtub", uvm_component parent);
+	function new(string name="bathtub", uvm_component parent=null);
 		// -------------------------------
 		super.new(name, parent);
 
