@@ -85,9 +85,22 @@ class step_parameter_arg extends uvm_object;
 	endfunction : create_new_string_arg
 
 
-	// static function step_parameter_arg create_copy(uvm_object rhs);
+	static function step_parameter_arg create_copy(string name="", uvm_object rhs);
+		step_parameter_arg rhs_;
+		int success;
 
-	// endfunction : create_copy
+		success = $cast(rhs_, rhs);
+		rhs_type_check : assert (success) else `uvm_fatal("TYPE_MISMATCH", "rhs argument is not type step_parameter_arg")
+
+		rhs_ = new(name,
+			rhs_.get_raw_text(),
+			rhs_.get_arg_type(),
+			rhs_.int_value(),
+			rhs_.real_value(),
+			rhs_.get_string_value()
+		);
+		return rhs_;
+	endfunction : create_copy
 
 
 	virtual function string get_raw_text ();
