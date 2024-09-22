@@ -48,14 +48,19 @@ class step_parameter_arg extends uvm_object;
 		this._real_value = real_arg;
 		this._string_value = string_arg;
 	endfunction : new
-	
+
+	`ifdef UVM_VERSION // Covers 1800.2-2017 and up
+	parameter IMMUTABLE_UVM_FLAGS = UVM_NOPACK | UVM_NOCOPY | UVM_NOSET;
+	`else
+	parameter IMMUTABLE_UVM_FLAGS = UVM_NOPACK | UVM_NOCOPY | UVM_READONLY;
+	`endif
 
 	`uvm_field_utils_begin(step_parameter_arg)
-		`uvm_field_string(_raw_text, UVM_ALL_ON | UVM_NOPACK | UVM_NOCOPY | UVM_READONLY)
-		`uvm_field_enum(arg_type_t, _arg_type, UVM_ALL_ON | UVM_NOPACK | UVM_NOCOPY | UVM_READONLY)
-		`uvm_field_int(_int_value, UVM_ALL_ON | UVM_NOPACK | UVM_NOCOPY | UVM_READONLY)
-		`uvm_field_real(_real_value, UVM_ALL_ON | UVM_NOPACK | UVM_NOCOPY | UVM_READONLY)
-		`uvm_field_string(_string_value, UVM_ALL_ON | UVM_NOPACK | UVM_NOCOPY | UVM_READONLY)
+		`uvm_field_string(_raw_text, UVM_ALL_ON | IMMUTABLE_UVM_FLAGS)
+		`uvm_field_enum(arg_type_t, _arg_type, UVM_ALL_ON | IMMUTABLE_UVM_FLAGS)
+		`uvm_field_int(_int_value, UVM_ALL_ON | IMMUTABLE_UVM_FLAGS)
+		`uvm_field_real(_real_value, UVM_ALL_ON | IMMUTABLE_UVM_FLAGS)
+		`uvm_field_string(_string_value, UVM_ALL_ON | IMMUTABLE_UVM_FLAGS)
 	`uvm_field_utils_end
 
 
