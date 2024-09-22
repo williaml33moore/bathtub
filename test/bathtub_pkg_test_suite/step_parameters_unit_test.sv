@@ -222,6 +222,92 @@ module step_parameters_unit_test;
 	`SVTEST_END
 
 
+	`SVTEST(Getting_raw_text_from_a_step_parameters_object)
+	// =====================================================
+	string raw_int_text;
+	string raw_real_text;
+	string raw_string_text;
+
+	string actual_int_text;
+	string actual_real_text;
+	string actual_string_text;
+	
+	string expected_int_text;
+	string expected_real_text;
+	string expected_string_text;
+	
+	string str;
+	string format;
+
+	(* Given = "a new `step_parameters` object whose values are 42, 92.7, and 'puppy'" *)
+	raw_int_text = "42";
+	raw_real_text = "92.7";
+	raw_string_text = "puppy";
+	format = "int= %s , real= %s , string= %s";
+	str = $sformatf(format, raw_int_text, raw_real_text, raw_string_text);
+	step_parameters = bathtub_pkg::step_parameters::create_new("step_parameters", str, format);
+
+	(* When = "I extract the raw text from the `step_parameters` object" *)
+	actual_int_text = step_parameters.get_arg(0).get_raw_text();
+	actual_real_text = step_parameters.get_arg(1).get_raw_text();
+	actual_string_text = step_parameters.get_arg(2).get_raw_text();
+
+	expected_int_text = "42";
+	expected_real_text = "92.7";
+	expected_string_text = "puppy";
+
+	(* Then = "integer value should be 42" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_int_text, expected_int_text)
+
+	(* And = "real value should be 92.7" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_real_text, expected_real_text)
+
+	(* And = "string value should be 'puppy'" *)
+	`FAIL_UNLESS_STR_EQUAL(actual_string_text, expected_string_text)
+
+	`SVTEST_END
+
+
+	`SVTEST(step_parameters_object_copy_creator)
+	// =====================================================
+	string raw_int_text;
+	string raw_real_text;
+	string raw_string_text;
+
+	string actual_int_text;
+	string actual_real_text;
+	string actual_string_text;
+	
+	string str;
+	string format;
+
+	step_parameter_arg original;
+	step_parameter_arg copy;
+
+	(* Given = "a new `step_parameters` object whose values are 42, 92.7, and 'puppy'" *)
+	raw_int_text = "42";
+	raw_real_text = "92.7";
+	raw_string_text = "puppy";
+	format = "int= %s , real= %s , string= %s";
+	str = $sformatf(format, raw_int_text, raw_real_text, raw_string_text);
+	step_parameters = bathtub_pkg::step_parameters::create_new("step_parameters", str, format);
+
+	for (int i = 0; i < step_parameters.num_args(); i++) begin
+		original = step_parameters.get_arg(i);
+		(* When = "I copy the objects" *)
+		copy = bathtub_pkg::step_parameter_arg::create_copy("copy", original);
+
+		(* Then = "The copies should be equal to the originals" *)
+		`FAIL_UNLESS_STR_EQUAL(copy.get_raw_text(), original.get_raw_text())
+		`FAIL_UNLESS_EQUAL(copy.get_arg_type(), original.get_arg_type())
+		`FAIL_UNLESS_EQUAL(copy.int_value, original.int_value)
+		`FAIL_UNLESS_EQUAL(copy.real_value, original.real_value)
+		`FAIL_UNLESS_STR_EQUAL(copy.get_string_value(), original.get_string_value())
+	end
+
+	`SVTEST_END
+
+
 	// ---
 	`SVUNIT_TESTS_END
 
