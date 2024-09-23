@@ -76,7 +76,7 @@ def uvm_versions_from_config():
             opts = ''
             if simulator['name'] == 'Xcelium' and '1800.2-2020-1.0' in uvm_version:
                 opts.append('+define+UVM_USE_PROCESS_CONTAINER')
-            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': True, 'opts': ' '.join(opts)}
+            yield {'name': simulator['name'], 'uvm_home': uvm_version, 'is_builtin': True, 'opts': ' '.join(opts)}
             
     for uvm_version in test_config['uvm_versions']:
         for simulator in test_config['simulators']:
@@ -85,10 +85,11 @@ def uvm_versions_from_config():
                 opts.append('-uvmnocdnsextra')
             if simulator['name'] == 'Xcelium' and '1800.2-2020-1.0' in uvm_version:
                 opts.append('+define+UVM_USE_PROCESS_CONTAINER')
-            yield {'simulator': simulator_from_name(simulator['name']), 'uvm_home': uvm_version, 'is_builtin': False, 'opts': ' '.join(opts)}
+            yield {'name': simulator['name'], 'uvm_home': uvm_version, 'is_builtin': False, 'opts': ' '.join(opts)}
 
 @pytest.fixture(params=uvm_versions_from_config())
 def uvm_version(request):
+    request.param['simulator'] = simulator_from_name(request.param['name'])
     return request.param
 
 @pytest.fixture

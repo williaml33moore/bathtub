@@ -39,7 +39,6 @@ def test_basic_e2e(tmp_path, uvm_version, testname, features):
     uvm_home = uvm_version['uvm_home']
     version_opts = uvm_version['opts']
 
-    simulator.reset()
     simulator.uvm(uvm_home).extend_args([
         version_opts,
         '-f ' + str(test_path / 'basic.f'),
