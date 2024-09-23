@@ -34,6 +34,7 @@ typedef class gherkin_document_runner;
 typedef class plusarg_options;
 typedef class test_sequence;
 typedef class snippets;
+typedef class bathtub_sequence;
 
 `include "bathtub_macros.sv"
 `include "bathtub_pkg/bathtub_pkg.svh"
@@ -127,6 +128,7 @@ class bathtub extends uvm_component;
 	protected string exclude_tags[$];
 	protected test_sequence current_test_seq;
 	protected gherkin_pkg::step undefined_steps[$];
+        protected bathtub_sequence bathtub_seq;
 
 	protected static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -166,6 +168,7 @@ class bathtub extends uvm_component;
 		report_object = null;
 		current_test_seq = null;
 		undefined_steps.delete();
+                bathtub_seq = null;
 	endfunction : new
 
 
@@ -526,12 +529,23 @@ class bathtub extends uvm_component;
 		undefined_steps = {undefined_steps, steps};
 	endfunction : concat_undefined_steps
 
+
+        function uvm_sequence_base as_sequence();
+                // -----------------------------------
+                if (bathtub_seq == null) begin
+                        bathtub_seq = bathtub_sequence::type_id::create("bathtub_seq");
+                        bathtub_seq.configure(this);
+                end
+                return bathtub_seq;
+        endfunction : as_sequence
+
 endclass : bathtub
 
 `include "bathtub_pkg/gherkin_parser/gherkin_parser.svh"
 `include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
 `include "bathtub_pkg/plusarg_options.svh"
 `include "bathtub_pkg/snippets.svh"
+`include "bathtub_pkg/bathtub_sequence.svh"
 
 `ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"

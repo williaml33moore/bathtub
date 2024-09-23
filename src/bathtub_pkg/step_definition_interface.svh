@@ -32,7 +32,9 @@ typedef interface class feature_sequence_interface;
 typedef interface class rule_sequence_interface;
 typedef interface class scenario_sequence_interface;
 
+`ifndef __BATHTUB_PKG_SVH
 `include "bathtub_pkg/bathtub_pkg.svh"
+`endif
 
 (* doc$markdown = "\
     \ Interface class for the user's step definition classes.\n\
