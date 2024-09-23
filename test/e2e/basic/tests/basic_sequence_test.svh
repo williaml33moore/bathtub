@@ -41,7 +41,7 @@ class basic_sequence_test extends uvm_test;
         super.build_phase(phase);
         env = basic_env::type_id::create("env", this);
         
-        uvm_config_db#(uvm_sequence_base)::set(this, "env.seqr.run_phase",
+        uvm_config_db#(uvm_sequence_base)::set(this, "env.seqr.main_phase",
             "default_sequence", bathtub.as_sequence());
     endfunction : build_phase
 

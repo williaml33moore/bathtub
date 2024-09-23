@@ -530,6 +530,46 @@ class bathtub extends uvm_component;
 	endfunction : concat_undefined_steps
 
 
+        (* doc$markdown = "\
+        \ Gets a sequence that can configure and run Bathtub.\n\
+        \ \n\
+        \ The classic way to run Bathtub is with the `run_test()` method.\n\
+        \ This `as_sequence()` method presents an alternative way to run Bathtub.\n\
+        \ Given a `bathtub` instance, `as_sequence()` returns a `uvm_sequence` object.\n\
+        \ The user can start that sequence like any other sequence.\n\
+        \ The sequence automatically configures and runs Bathtub, so the user doesn't have to call `run_test()` or `configure()`.\n\
+        \ The Bathtub sequence may even be run implicitly by providing it as the default sequence instance (not type) to the user's sequencer.\n\
+        \ \n\
+        \ This example explicitly runs the Bathtub sequence with `start()`.\n\
+        \ ```sv\n\
+        \ virtual function void build_phase(uvm_phase phase);\n\
+        \     super.build_phase(phase);\n\
+        \     bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\", this);\n\
+        \     env = basic_env::type_id::create(\"env\", this);\n\
+        \ endfunction\n\
+        \ \n\
+        \ virtual task main_phase(uvm_phase phase);\n\
+        \     uvm_sequence_base bathtub_seq;\n\
+        \ \n\
+        \     bathtub_seq = bathtub.as_sequence();\n\
+        \     bathtub_seq.set_starting_phase(phase);\n\
+        \     bathtub_seq.start(env.seqr);\n\
+        \ endtask\n\
+        \ ```\n\
+        \ \n\
+        \ This example configures the sequencer so that the Bathtub sequence is the default sequence that runs implicitly.\n\
+        \ ```sv\n\
+        \ virtual function void build_phase(uvm_phase phase);\n\
+        \     super.build_phase(phase);\n\
+        \     bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\", this);\n\
+        \     env = basic_env::type_id::create(\"env\", this);\n\
+        \ \n\
+        \     uvm_config_db#(uvm_sequence_base)::set(this, \"env.seqr.main_phase\",\n\
+        \         \"default_sequence\", bathtub.as_sequence());\n\
+        \ endfunction\n\
+        \ ```\n\
+        \ "
+        *)
         function uvm_sequence_base as_sequence();
                 // -----------------------------------
                 if (bathtub_seq == null) begin
