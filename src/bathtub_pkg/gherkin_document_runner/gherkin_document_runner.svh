@@ -56,13 +56,18 @@ typedef class scenario_sequence;
 `endif // __SCENARIO_SEQUENCE_SVH
 
 typedef class step_nurture;
+`ifndef __STEP_NURTURE_SVH
+// Prevent `include recursion
 `include "bathtub_pkg/step_nurture.svh"
+`endif // __STEP_NURTURE_SVH
 
 typedef interface class step_definition_interface;
 `include "bathtub_pkg/step_definition_interface.svh"
 
 typedef class bathtub_utils;
 `include "bathtub_pkg/bathtub_utils.svh"
+
+`include "bathtub_pkg/step_attributes_pool_t.svh"
 
 class gherkin_document_runner extends uvm_object implements gherkin_pkg::visitor;
 
