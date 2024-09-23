@@ -37,7 +37,14 @@ typedef class snippets;
 typedef class bathtub_sequence;
 
 `include "bathtub_macros.sv"
+
+`ifndef __BATHTUB_PKG_SVH
 `include "bathtub_pkg/bathtub_pkg.svh"
+`endif
+
+`ifndef __BATHTUB_INTERFACE_SVH
+`include "bathtub_pkg/bathtub_interface.svh"
+`endif
 
 (* doc$markdown = "\
     \ The simulation's entry point to Bathtub.\n\
@@ -111,8 +118,8 @@ typedef class bathtub_sequence;
     \ ```\n\
     \ "
 *)
-class bathtub extends uvm_component;
-	// =================================
+class bathtub extends uvm_component implements bathtub_interface;
+	// ==========================================================
 
 	protected string feature_files[$];
 	protected uvm_sequencer_base sequencer;
@@ -151,7 +158,7 @@ class bathtub extends uvm_component;
 		\ "
 	*)
 	function new(string name="bathtub", uvm_component parent=null);
-		// -------------------------------
+		// --------------------------------------------------------
 		super.new(name, parent);
 
 		feature_files.delete();
@@ -318,8 +325,8 @@ class bathtub extends uvm_component;
 		\ The plusarg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\n\
 		\ "
 	*)
-	function plusarg_options get_plusarg_opts();
-		// -------------------------------------
+	virtual function plusarg_options get_plusarg_opts();
+		// ---------------------------------------------
 		return plusarg_opts;
 	endfunction : get_plusarg_opts
 
@@ -330,8 +337,8 @@ class bathtub extends uvm_component;
 		\ `strings_t` is a typedef for `uvm_queue#(string)`.\n\
 		\ "
 	*)
-	function strings_t get_feature_files();
-		// --------------------------------
+	virtual function strings_t get_feature_files();
+		// ----------------------------------------
 		get_feature_files = new("feature_files");
 		foreach (feature_files[i]) get_feature_files.push_back(feature_files[i]);
 	endfunction : get_feature_files
@@ -353,8 +360,8 @@ class bathtub extends uvm_component;
 		\ ```\n\
 		\ "
 	*)
-	function void concat_feature_files(string files[$]);
-		// ---------------------------------------------
+	virtual function void concat_feature_files(string files[$]);
+		// -----------------------------------------------------
 		feature_files = {feature_files, files};
 	endfunction : concat_feature_files
 
@@ -371,8 +378,8 @@ class bathtub extends uvm_component;
 		\ ```\n\
 		\ "
 	*)
-	function void push_back_feature_file(string file);
-		// -------------------------------------------
+	virtual function void push_back_feature_file(string file);
+		// ---------------------------------------------------
 		feature_files.push_back(file);
 	endfunction : push_back_feature_file
 
@@ -389,8 +396,8 @@ class bathtub extends uvm_component;
 		\ ```\n\
 		\ "
 	*)
-	function void set_report_object(uvm_report_object report_object);
-		// ----------------------------------------------------------
+	virtual function void set_report_object(uvm_report_object report_object);
+		// ------------------------------------------------------------------
 		this.report_object = report_object;
 	endfunction : set_report_object
 	
@@ -402,8 +409,8 @@ class bathtub extends uvm_component;
 		\ Use `get_report_object()` to get the current report object.\n\
 		\ "
 	*)
-	function uvm_report_object get_report_object();
-		// ----------------------------------------
+	virtual function uvm_report_object get_report_object();
+		// ------------------------------------------------
 		return report_object;
 	endfunction : get_report_object
 
@@ -414,8 +421,8 @@ class bathtub extends uvm_component;
 		\ Returns the sequencer on which Bathtub will execute all its sequences, as set by `configure()`.\n\
 		\ "
 	*)
-	function uvm_sequencer_base get_sequencer();
-		// -------------------------------------
+	virtual function uvm_sequencer_base get_sequencer();
+		// ---------------------------------------------
 		return sequencer;
 	endfunction : get_sequencer
 	
@@ -426,8 +433,8 @@ class bathtub extends uvm_component;
 		\ Returns the sequence priority Bathtub starts all its sequences with, as set by `configure()`.\n\
 		\ "
 	*)
-	function int get_sequence_priority();
-		// ------------------------------
+	virtual function int get_sequence_priority();
+		// --------------------------------------
 		return sequence_priority;
 	endfunction : get_sequence_priority
 	
@@ -438,8 +445,8 @@ class bathtub extends uvm_component;
 		\ Returns the `call_pre_post` value Bathtub starts all its sequences with, as set by `configure()`.\n\
 		\ "
 	*)
-	function bit get_sequence_call_pre_post();
-		// -----------------------------------
+	virtual function bit get_sequence_call_pre_post();
+		// -------------------------------------------
 		return sequence_call_pre_post;
 	endfunction : get_sequence_call_pre_post
 
@@ -451,8 +458,8 @@ class bathtub extends uvm_component;
 		\ The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \n\
 		\ "
 	*)
-	function bit get_dry_run();
-		// --------------------
+	virtual function bit get_dry_run();
+		// ----------------------------
 		return dry_run;
 	endfunction : get_dry_run
 
@@ -465,8 +472,8 @@ class bathtub extends uvm_component;
 		\ `get_starting_scenario_number()` returns the starting number.\n\
 		\ "
 	*)
-	function int get_starting_scenario_number();
-		// -------------------------------------
+	virtual function int get_starting_scenario_number();
+		// ---------------------------------------------
 		return starting_scenario_number;
 	endfunction : get_starting_scenario_number
 
@@ -479,8 +486,8 @@ class bathtub extends uvm_component;
 		\ `get_stopping_scenario_number()` returns the stopping number.\n\
 		\ "
 	*)
-	function int get_stopping_scenario_number();
-		// -------------------------------------
+	virtual function int get_stopping_scenario_number();
+		// ---------------------------------------------
 		return stopping_scenario_number;
 	endfunction : get_stopping_scenario_number
 
@@ -493,8 +500,8 @@ class bathtub extends uvm_component;
 		\ `get_include_tags()` returns the list of tags.\n\
 		\ "
 	*)
-	function strings_t get_include_tags();
-		// -------------------------------
+	virtual function strings_t get_include_tags();
+		// ---------------------------------------
 		get_include_tags = new("include_tags");
 		foreach (include_tags[i]) get_include_tags.push_back(include_tags[i]);
 	endfunction : get_include_tags
@@ -508,8 +515,8 @@ class bathtub extends uvm_component;
 		\ `get_exclude_tags()` returns the list of tags.\n\
 		\ "
 	*)
-	function strings_t get_exclude_tags();
-		// -------------------------------
+	virtual function strings_t get_exclude_tags();
+		// ---------------------------------------
 		get_exclude_tags = new("exclude_tags");
 		foreach (exclude_tags[i]) get_exclude_tags.push_back(exclude_tags[i]);
 	endfunction : get_exclude_tags
@@ -524,8 +531,8 @@ class bathtub extends uvm_component;
 		\ This is for internal use.\n\
 		\ "
 	*)
-	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
-		// ----------------------------------------------------------
+	virtual function void concat_undefined_steps(gherkin_pkg::step steps[$]);
+		// ------------------------------------------------------------------
 		undefined_steps = {undefined_steps, steps};
 	endfunction : concat_undefined_steps
 
@@ -570,8 +577,8 @@ class bathtub extends uvm_component;
 		\ ```\n\
 		\ "
 	*)
-	function uvm_sequence_base as_sequence();
-		// ----------------------------------
+	virtual function uvm_sequence_base as_sequence();
+		// ------------------------------------------
 		if (bathtub_seq == null) begin
 			bathtub_seq = bathtub_sequence::type_id::create("bathtub_seq");
 			bathtub_seq.configure(this);
@@ -585,7 +592,10 @@ endclass : bathtub
 `include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
 `include "bathtub_pkg/plusarg_options.svh"
 `include "bathtub_pkg/snippets.svh"
+
+`ifndef __BATHTUB_SEQUENCE_SVH
 `include "bathtub_pkg/bathtub_sequence.svh"
+`endif
 
 `ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2023 Everactive
+Copyright (c) 2024 William L. Moore
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-`ifndef __BATHTUB_PKG_SVH
-`define __BATHTUB_PKG_SVH
+`ifndef __STEP_ATTRIBUTES_POOL_T_SVH
+`define __STEP_ATTRIBUTES_POOL_T_SVH
 
 import uvm_pkg::*;
+typedef class step_nurture;
 
-typedef enum {Given, When, Then, And, But, \* } step_keyword_t;
-typedef uvm_queue#(string) strings_t;
+typedef uvm_pool#(uvm_sequence_base, step_nurture) step_attributes_pool_t;
 
-parameter byte CR = 13; // ASCII carriage return
-parameter string STEP_DEF_RESOURCE_NAME = "bathtub_pkg::step_definition_interface";
+`include "bathtub_pkg/step_nurture.svh"
 
-// Metadata object
-const struct {
-    string file;
-} bathtub_pkg_metadata = '{
-    file : "`__FILE__",
-    string : ""
-};
-
-`endif // __BATHTUB_PKG_SVH
+`endif // __STEP_ATTRIBUTES_POOL_T_SVH

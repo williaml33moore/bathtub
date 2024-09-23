@@ -28,8 +28,11 @@ SOFTWARE.
 import uvm_pkg::*;
 import gherkin_pkg::gherkin_pkg_metadata;
 
-`include "bathtub_pkg/bathtub_pkg.svh"
 `include "uvm_macros.svh"
+
+`ifndef __BATHTUB_PKG_SVH
+`include "bathtub_pkg/bathtub_pkg.svh"
+`endif
 
 class gherkin_document_printer extends uvm_object implements gherkin_pkg::visitor;
 
