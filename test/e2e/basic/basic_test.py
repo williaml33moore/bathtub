@@ -28,11 +28,19 @@ import shutil
 
 test_path = Path(os.path.dirname(__file__))
 
-@pytest.mark.parametrize("testname, features", [('basic_test', ['basic.feature'])])
-def test_basic_e2e(tmp_path, simulator, testname, features):
+@pytest.mark.parametrize("testname, features", [('basic_test', ['basic.feature']),
+                                                ('basic_sequence_test', ['basic.feature']),
+                                                ('basic_sequence_start_test', ['basic.feature']),
+                                                ])
+def test_basic_e2e(tmp_path, uvm_version, testname, features):
     """Basic end-to-end test"""
 
-    simulator.uvm().extend_args([
+    simulator = uvm_version['simulator']
+    uvm_home = uvm_version['uvm_home']
+    version_opts = uvm_version['opts']
+
+    simulator.uvm(uvm_home).extend_args([
+        version_opts,
         '-f ' + str(test_path / 'basic.f'),
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic',
         '-incdir $BATHTUB_VIP_DIR/test/e2e/basic/tests',

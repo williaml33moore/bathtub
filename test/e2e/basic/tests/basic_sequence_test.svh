@@ -20,10 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
+*/  
 
-typedef class basic_test;
-typedef class basic_sequence_test;
-`include "basic_test.svh"
-`include "basic_sequence_test.svh"
-`include "basic_sequence_start_test.svh"
+`ifndef __BASIC_SEQUENCE_TEST_SVH
+`define __BASIC_SEQUENCE_TEST_SVH
+
+typedef class basic_env;
+
+class basic_sequence_test extends uvm_test;
+    `uvm_component_utils(basic_sequence_test)
+    basic_env env; // uvm_env containing the virtual sequencer
+    bathtub_pkg::bathtub bathtub;
+
+    function new(string name = "basic_sequence_test", uvm_component parent = null);
+        super.new(name, parent);
+    endfunction : new
+
+    virtual function void build_phase(uvm_phase phase);
+        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
+        super.build_phase(phase);
+        env = basic_env::type_id::create("env", this);
+        
+        uvm_config_db#(uvm_sequence_base)::set(this, "env.seqr.main_phase",
+            "default_sequence", bathtub.as_sequence());
+    endfunction : build_phase
+
+endclass : basic_sequence_test
+
+`include "basic_env.svh"
+
+`endif // __BASIC_SEQUENCE_TEST_SVH
+  

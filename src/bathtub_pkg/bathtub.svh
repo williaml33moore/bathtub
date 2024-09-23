@@ -34,6 +34,7 @@ typedef class gherkin_document_runner;
 typedef class plusarg_options;
 typedef class test_sequence;
 typedef class snippets;
+typedef class bathtub_sequence;
 
 `include "bathtub_macros.sv"
 `include "bathtub_pkg/bathtub_pkg.svh"
@@ -127,6 +128,7 @@ class bathtub extends uvm_component;
 	protected string exclude_tags[$];
 	protected test_sequence current_test_seq;
 	protected gherkin_pkg::step undefined_steps[$];
+	protected bathtub_sequence bathtub_seq;
 
 	protected static plusarg_options plusarg_opts = plusarg_options::create().populate();
 
@@ -143,10 +145,10 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Constructor.\n\
-        \ \n\
-        \ Initializes the Bathtub object with the given `name`.\n\
-        \ "
+		\ Constructor.\n\
+		\ \n\
+		\ Initializes the Bathtub object with the given `name`.\n\
+		\ "
 	*)
 	function new(string name="bathtub", uvm_component parent=null);
 		// -------------------------------
@@ -166,26 +168,27 @@ class bathtub extends uvm_component;
 		report_object = null;
 		current_test_seq = null;
 		undefined_steps.delete();
+		bathtub_seq = null;
 	endfunction : new
 
 
 	(* doc$markdown = "\
-        \ Configures how the Bathtub object runs its sequences.\n\
-        \ \n\
-        \ Parameters `sequencer`, `parent_sequence`, `sequence_priority`, and `sequence_call_pre_post` are all related to the respective arguments of `uvm_sequence_base::start()`.\n\
-        \ These parameters all influence how Bathtub executes its context and step definition sequences.\n\
-        \ Call this function before calling `run_test()`.\n\
-        \ \n\
-        \ `sequencer` is the sequencer on which Bathtub will execute all its sequences.\n\
-        \ This is the only required argument.\n\
-        \ \n\
-        \ The Bathtub object creates its own context sequence called `current_test_seq`.\n\
-        \ If `parent_sequence` is null, then `current_test_seq` is a root parent, otherwise it is a child of `parent_sequence`.\n\
-        \ \n\
-        \ Bathtub assigns `sequence_priority` to all its sequences.\n\
-        \ \n\
-        \ `sequence_call_pre_post` determines whether the sequences' `pre_body()` and `post_body()` tasks are called.\n\
-        \ "
+		\ Configures how the Bathtub object runs its sequences.\n\
+		\ \n\
+		\ Parameters `sequencer`, `parent_sequence`, `sequence_priority`, and `sequence_call_pre_post` are all related to the respective arguments of `uvm_sequence_base::start()`.\n\
+		\ These parameters all influence how Bathtub executes its context and step definition sequences.\n\
+		\ Call this function before calling `run_test()`.\n\
+		\ \n\
+		\ `sequencer` is the sequencer on which Bathtub will execute all its sequences.\n\
+		\ This is the only required argument.\n\
+		\ \n\
+		\ The Bathtub object creates its own context sequence called `current_test_seq`.\n\
+		\ If `parent_sequence` is null, then `current_test_seq` is a root parent, otherwise it is a child of `parent_sequence`.\n\
+		\ \n\
+		\ Bathtub assigns `sequence_priority` to all its sequences.\n\
+		\ \n\
+		\ `sequence_call_pre_post` determines whether the sequences' `pre_body()` and `post_body()` tasks are called.\n\
+		\ "
 	*)
 	virtual function void configure(
 			uvm_sequencer_base sequencer,
@@ -202,30 +205,30 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Runs the Bathtub test.\n\
-        \ \n\
-        \ `run_test()` causes the Bathtub object to read the provided feature files and execute them on the configured sequencer.\n\
-        \ \n\
-        \ This task is typically called from a UVM test or component's phase implementation method, such as `run_phase()`.\n\
-        \ The `phase` argument is passed along from the phase method's parameter.\n\
-        \ Be sure to call `configure()` prior to calling `run_test()`.\n\
-        \ \n\
-        \ Typical usage:\n\
-        \ ```sv\n\
-        \ class bathtub_test extends uvm_test;\n\
-        \     ...\n\
-        \     task run_phase(uvm_phase phase);\n\
-        \         phase.raise_objection(this);\n\
-        \         bathtub.configure(my_env.my_sequencer);\n\
-        \         bathtub.run_test(phase);\n\
-        \         phase.drop_objection(this);\n\
-        \     endtask\n\
-        \ endclass\n\
-        \ ```\n\
-        \ If Bathtub encounters any feature file steps that don't have step definitions registered in the resource database,\n\
-        \ then before returning, `run_test()` outputs a step definition snippet for each of the steps in the log file and in a separate file called `bathtub_snippets.svh`.\n\
-        \ The snippets can be used as the basis for actual step definitions.\n\
-        \ "
+		\ Runs the Bathtub test.\n\
+		\ \n\
+		\ `run_test()` causes the Bathtub object to read the provided feature files and execute them on the configured sequencer.\n\
+		\ \n\
+		\ This task is typically called from a UVM test or component's phase implementation method, such as `run_phase()`.\n\
+		\ The `phase` argument is passed along from the phase method's parameter.\n\
+		\ Be sure to call `configure()` prior to calling `run_test()`.\n\
+		\ \n\
+		\ Typical usage:\n\
+		\ ```sv\n\
+		\ class bathtub_test extends uvm_test;\n\
+		\     ...\n\
+		\     task run_phase(uvm_phase phase);\n\
+		\         phase.raise_objection(this);\n\
+		\         bathtub.configure(my_env.my_sequencer);\n\
+		\         bathtub.run_test(phase);\n\
+		\         phase.drop_objection(this);\n\
+		\     endtask\n\
+		\ endclass\n\
+		\ ```\n\
+		\ If Bathtub encounters any feature file steps that don't have step definitions registered in the resource database,\n\
+		\ then before returning, `run_test()` outputs a step definition snippet for each of the steps in the log file and in a separate file called `bathtub_snippets.svh`.\n\
+		\ The snippets can be used as the basis for actual step definitions.\n\
+		\ "
 	*)
 	virtual task run_test(uvm_phase phase);
 		// --------------------------------
@@ -273,14 +276,14 @@ class bathtub extends uvm_component;
      */
 	protected virtual function void write_snippets();
 		// ------------------------------------------
-        string file_name;
-        bit[31:0] fd;
+	string file_name;
+	bit[31:0] fd;
 
-        file_name = "bathtub_snippets.svh";
-        
-        fd = $fopen(file_name, "w");
-        if (fd == 0)
-            $fatal(0, "Could not open file '%s' for writing.", file_name);
+	file_name = "bathtub_snippets.svh";
+	
+	fd = $fopen(file_name, "w");
+	if (fd == 0)
+	    $fatal(0, "Could not open file '%s' for writing.", file_name);
 
 		if (undefined_steps.size() == 0) begin
 			$fclose(fd);
@@ -300,20 +303,20 @@ class bathtub extends uvm_component;
 			string snippet;
 
 			snippet = snippets::create_snippet(undefined_steps[i]);
-            $display(snippet);
-            $fdisplay(fd, snippet);
+	    $display(snippet);
+	    $fdisplay(fd, snippet);
 		end
 		$display("```");
 
-        $fclose(fd);
+	$fclose(fd);
 	endfunction : write_snippets
 
 
 	(* doc$markdown = "\
-        \ Gets the plusarg options object.\n\
-        \ \n\
-        \ The plusarg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\n\
-        \ "
+		\ Gets the plusarg options object.\n\
+		\ \n\
+		\ The plusarg options object contains values passed as `+bathtub_*` plusargs on the simulator command line.\n\
+		\ "
 	*)
 	function plusarg_options get_plusarg_opts();
 		// -------------------------------------
@@ -322,10 +325,10 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets the list of feature files.\n\
-        \ \n\
-        \ `strings_t` is a typedef for `uvm_queue#(string)`.\n\
-        \ "
+		\ Gets the list of feature files.\n\
+		\ \n\
+		\ `strings_t` is a typedef for `uvm_queue#(string)`.\n\
+		\ "
 	*)
 	function strings_t get_feature_files();
 		// --------------------------------
@@ -335,20 +338,20 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Concatenates strings to the end of the internal list of feature files to run.\n\
-        \ \n\
-        \ `files` is a queue of strings.\n\
-        \ Each string should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\n\
-        \ \n\
-        \ e.g.\n\
-        \ ```sv\n\
-        \ bathtub.concat_feature_files('{\"path/to/features/feature_A.feature\"});\n\
-        \ bathtub.concat_feature_files('{\"path/to/features/feature_B.feature\", \"path/to/features/feature_C.feature\"});\n\
-        \ bathtub.concat_feature_files('{\"path/to/features/feature_D.feature path/to/features/feature_E.feature\"});\n\
-        \ bathtub.concat_feature_files(my_queue_of_strings);\n\
-        \ bathtub.run_test(phase);\n\
-        \ ```\n\
-        \ "
+		\ Concatenates strings to the end of the internal list of feature files to run.\n\
+		\ \n\
+		\ `files` is a queue of strings.\n\
+		\ Each string should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\n\
+		\ \n\
+		\ e.g.\n\
+		\ ```sv\n\
+		\ bathtub.concat_feature_files('{\"path/to/features/feature_A.feature\"});\n\
+		\ bathtub.concat_feature_files('{\"path/to/features/feature_B.feature\", \"path/to/features/feature_C.feature\"});\n\
+		\ bathtub.concat_feature_files('{\"path/to/features/feature_D.feature path/to/features/feature_E.feature\"});\n\
+		\ bathtub.concat_feature_files(my_queue_of_strings);\n\
+		\ bathtub.run_test(phase);\n\
+		\ ```\n\
+		\ "
 	*)
 	function void concat_feature_files(string files[$]);
 		// ---------------------------------------------
@@ -357,16 +360,16 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Pushes a single string to the end of the internal list of feature files to run.\n\
-        \ \n\
-        \ `file` should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\n\
-        \ e.g.\n\
-        \ ```sv\n\
-        \ bathtub.push_back_feature_file(\"path/to/features/feature_A.feature\");\n\
-        \ bathtub.push_back_feature_file(\"path/to/features/feature_B.feature path/to/features/feature_C.feature\");\n\
-        \ bathtub.run_test(phase);\n\
-        \ ```\n\
-        \ "
+		\ Pushes a single string to the end of the internal list of feature files to run.\n\
+		\ \n\
+		\ `file` should be a single filename or a whitespace-separated list of filenames for Gherkin feature files.\n\
+		\ e.g.\n\
+		\ ```sv\n\
+		\ bathtub.push_back_feature_file(\"path/to/features/feature_A.feature\");\n\
+		\ bathtub.push_back_feature_file(\"path/to/features/feature_B.feature path/to/features/feature_C.feature\");\n\
+		\ bathtub.run_test(phase);\n\
+		\ ```\n\
+		\ "
 	*)
 	function void push_back_feature_file(string file);
 		// -------------------------------------------
@@ -375,16 +378,16 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Sets the Bathtub object's report object.\n\
-        \ \n\
-        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues.\n\
-        \ This accessor assigns a different report object.\n\
-        \ e.g.\n\
-        \ ```sv\n\
-        \ bathtub.set_report_object(uvm_root::get()); // Global object\n\
-        \ bathtub.set_report_object(bathtub); // Back to self\n\
-        \ ```\n\
-        \ "
+		\ Sets the Bathtub object's report object.\n\
+		\ \n\
+		\ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues.\n\
+		\ This accessor assigns a different report object.\n\
+		\ e.g.\n\
+		\ ```sv\n\
+		\ bathtub.set_report_object(uvm_root::get()); // Global object\n\
+		\ bathtub.set_report_object(bathtub); // Back to self\n\
+		\ ```\n\
+		\ "
 	*)
 	function void set_report_object(uvm_report_object report_object);
 		// ----------------------------------------------------------
@@ -393,11 +396,11 @@ class bathtub extends uvm_component;
 	
 
 	(* doc$markdown = "\
-        \ Gets the Bathtub object's report object.\n\
-        \ \n\
-        \ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues, but the report object could be reassigned by `set_report_object()`.\n\
-        \ Use `get_report_object()` to get the current report object.\n\
-        \ "
+		\ Gets the Bathtub object's report object.\n\
+		\ \n\
+		\ By default, Bathtub is its own UVM report object for the reports (`` `uvm_info() ``, `` `uvm_error() ``, etc.) it issues, but the report object could be reassigned by `set_report_object()`.\n\
+		\ Use `get_report_object()` to get the current report object.\n\
+		\ "
 	*)
 	function uvm_report_object get_report_object();
 		// ----------------------------------------
@@ -406,10 +409,10 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's configured sequencer.\n\
-        \ \n\
-        \ Returns the sequencer on which Bathtub will execute all its sequences, as set by `configure()`.\n\
-        \ "
+		\ Gets Bathtub's configured sequencer.\n\
+		\ \n\
+		\ Returns the sequencer on which Bathtub will execute all its sequences, as set by `configure()`.\n\
+		\ "
 	*)
 	function uvm_sequencer_base get_sequencer();
 		// -------------------------------------
@@ -418,10 +421,10 @@ class bathtub extends uvm_component;
 	
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's configured sequence priority.\n\
-        \ \n\
-        \ Returns the sequence priority Bathtub starts all its sequences with, as set by `configure()`.\n\
-        \ "
+		\ Gets Bathtub's configured sequence priority.\n\
+		\ \n\
+		\ Returns the sequence priority Bathtub starts all its sequences with, as set by `configure()`.\n\
+		\ "
 	*)
 	function int get_sequence_priority();
 		// ------------------------------
@@ -430,10 +433,10 @@ class bathtub extends uvm_component;
 	
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's configured `call_pre_post` value.\n\
-        \ \n\
-        \ Returns the `call_pre_post` value Bathtub starts all its sequences with, as set by `configure()`.\n\
-        \ "
+		\ Gets Bathtub's configured `call_pre_post` value.\n\
+		\ \n\
+		\ Returns the `call_pre_post` value Bathtub starts all its sequences with, as set by `configure()`.\n\
+		\ "
 	*)
 	function bit get_sequence_call_pre_post();
 		// -----------------------------------
@@ -442,11 +445,11 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's dry-run status.\n\
-        \ \n\
-        \ If the simulation is run with the `+bathtub_dryrun` command-line plusarg, then Bathtub will parse the Gherkin feature files, but not run them.\n\
-        \ The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \n\
-        \ "
+		\ Gets Bathtub's dry-run status.\n\
+		\ \n\
+		\ If the simulation is run with the `+bathtub_dryrun` command-line plusarg, then Bathtub will parse the Gherkin feature files, but not run them.\n\
+		\ The `get_dry_run()` function returns the dry-run status: 1=dry-run; 0=run. \n\
+		\ "
 	*)
 	function bit get_dry_run();
 		// --------------------
@@ -455,12 +458,12 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's starting scenario number.\n\
-        \ \n\
-        \ The simulator command-line plusarg `+bathtub_start=<number>` sets the zero-based index of the scenario Bathtub will start running with.\n\
-        \ This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\n\
-        \ `get_starting_scenario_number()` returns the starting number.\n\
-        \ "
+		\ Gets Bathtub's starting scenario number.\n\
+		\ \n\
+		\ The simulator command-line plusarg `+bathtub_start=<number>` sets the zero-based index of the scenario Bathtub will start running with.\n\
+		\ This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\n\
+		\ `get_starting_scenario_number()` returns the starting number.\n\
+		\ "
 	*)
 	function int get_starting_scenario_number();
 		// -------------------------------------
@@ -469,12 +472,12 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets Bathtub's stopping scenario number.\n\
-        \ \n\
-        \ The simulator command-line plusarg `+bathtub_stop=<number>` sets the zero-based index of the scenario to stop running with.\n\
-        \ This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\n\
-        \ `get_stopping_scenario_number()` returns the stopping number.\n\
-        \ "
+		\ Gets Bathtub's stopping scenario number.\n\
+		\ \n\
+		\ The simulator command-line plusarg `+bathtub_stop=<number>` sets the zero-based index of the scenario to stop running with.\n\
+		\ This is useful for narrowing the simulation down to scenarios of interest, for example to reproduce failures quickly.\n\
+		\ `get_stopping_scenario_number()` returns the stopping number.\n\
+		\ "
 	*)
 	function int get_stopping_scenario_number();
 		// -------------------------------------
@@ -483,12 +486,12 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets the list of Bathtub's include tags.\n\
-        \ \n\
-        \ The simulator command-line plusarg `+bathtub_include=<tags>` sets the comma-separated list of Gherkin tags to include.\n\
-        \ Only scenarios that have or inherit these tags will run.\n\
-        \ `get_include_tags()` returns the list of tags.\n\
-        \ "
+		\ Gets the list of Bathtub's include tags.\n\
+		\ \n\
+		\ The simulator command-line plusarg `+bathtub_include=<tags>` sets the comma-separated list of Gherkin tags to include.\n\
+		\ Only scenarios that have or inherit these tags will run.\n\
+		\ `get_include_tags()` returns the list of tags.\n\
+		\ "
 	*)
 	function strings_t get_include_tags();
 		// -------------------------------
@@ -498,12 +501,12 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Gets the list of Bathtub's exclude tags.\n\
-        \ \n\
-        \ The simulator command-line plusarg `+bathtub_exclude=<tags>` sets the comma-separated list of Gherkin tags to exclude.\n\
-        \ Scenarios that have or inherit these tags will not run.\n\
-        \ `get_exclude_tags()` returns the list of tags.\n\
-        \ "
+		\ Gets the list of Bathtub's exclude tags.\n\
+		\ \n\
+		\ The simulator command-line plusarg `+bathtub_exclude=<tags>` sets the comma-separated list of Gherkin tags to exclude.\n\
+		\ Scenarios that have or inherit these tags will not run.\n\
+		\ `get_exclude_tags()` returns the list of tags.\n\
+		\ "
 	*)
 	function strings_t get_exclude_tags();
 		// -------------------------------
@@ -513,18 +516,68 @@ class bathtub extends uvm_component;
 
 
 	(* doc$markdown = "\
-        \ Adds steps to Bathtub's list of undefined steps.\n\
-        \ \n\
-        \ As it runs, Bathtub maintains a list of feature file steps which do not have matching step definitions.\n\
-        \ The Gherkin runner uses `concat_undefined_steps()` to add a queue of `gherkin_pkg::step` objects to the end of the list.\n\
-        \ Bathtub uses the list to produce snippets at the end of `run_test()`.\n\
-        \ This is for internal use.\n\
-        \ "
+		\ Adds steps to Bathtub's list of undefined steps.\n\
+		\ \n\
+		\ As it runs, Bathtub maintains a list of feature file steps which do not have matching step definitions.\n\
+		\ The Gherkin runner uses `concat_undefined_steps()` to add a queue of `gherkin_pkg::step` objects to the end of the list.\n\
+		\ Bathtub uses the list to produce snippets at the end of `run_test()`.\n\
+		\ This is for internal use.\n\
+		\ "
 	*)
 	function void concat_undefined_steps(gherkin_pkg::step steps[$]);
 		// ----------------------------------------------------------
 		undefined_steps = {undefined_steps, steps};
 	endfunction : concat_undefined_steps
+
+
+	(* doc$markdown = "\
+		\ Gets a sequence that can configure and run Bathtub.\n\
+		\ \n\
+		\ The classic way to run Bathtub is with the `run_test()` method.\n\
+		\ This `as_sequence()` method presents an alternative way to run Bathtub.\n\
+		\ Given a `bathtub` instance, `as_sequence()` returns a `uvm_sequence` object.\n\
+		\ The user can start that sequence like any other sequence.\n\
+		\ The sequence automatically configures and runs Bathtub, so the user doesn't have to call `run_test()` or `configure()`.\n\
+		\ The Bathtub sequence may even be run implicitly by providing it as the default sequence instance (not type) to the user's sequencer.\n\
+		\ \n\
+		\ This example explicitly runs the Bathtub sequence with `start()`.\n\
+		\ ```sv\n\
+		\ virtual function void build_phase(uvm_phase phase);\n\
+		\     super.build_phase(phase);\n\
+		\     bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\", this);\n\
+		\     env = basic_env::type_id::create(\"env\", this);\n\
+		\ endfunction\n\
+		\ \n\
+		\ virtual task main_phase(uvm_phase phase);\n\
+		\     uvm_sequence_base bathtub_seq;\n\
+		\ \n\
+		\     bathtub_seq = bathtub.as_sequence();\n\
+		\     bathtub_seq.set_starting_phase(phase);\n\
+		\     bathtub_seq.start(env.seqr);\n\
+		\ endtask\n\
+		\ ```\n\
+		\ \n\
+		\ This example configures the sequencer so that the Bathtub sequence is the default sequence that runs implicitly.\n\
+		\ ```sv\n\
+		\ virtual function void build_phase(uvm_phase phase);\n\
+		\     super.build_phase(phase);\n\
+		\     bathtub = bathtub_pkg::bathtub::type_id::create(\"bathtub\", this);\n\
+		\     env = basic_env::type_id::create(\"env\", this);\n\
+		\ \n\
+		\     uvm_config_db#(uvm_sequence_base)::set(this, \"env.seqr.main_phase\",\n\
+		\         \"default_sequence\", bathtub.as_sequence());\n\
+		\ endfunction\n\
+		\ ```\n\
+		\ "
+	*)
+	function uvm_sequence_base as_sequence();
+		// ----------------------------------
+		if (bathtub_seq == null) begin
+			bathtub_seq = bathtub_sequence::type_id::create("bathtub_seq");
+			bathtub_seq.configure(this);
+		end
+		return bathtub_seq;
+	endfunction : as_sequence
 
 endclass : bathtub
 
@@ -532,6 +585,7 @@ endclass : bathtub
 `include "bathtub_pkg/gherkin_document_printer/gherkin_document_printer.svh"
 `include "bathtub_pkg/plusarg_options.svh"
 `include "bathtub_pkg/snippets.svh"
+`include "bathtub_pkg/bathtub_sequence.svh"
 
 `ifndef __GHERKIN_DOCUMENT_RUNNER_SVH
 `include "bathtub_pkg/gherkin_document_runner/gherkin_document_runner.svh"

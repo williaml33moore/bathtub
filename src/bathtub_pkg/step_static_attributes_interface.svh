@@ -25,7 +25,9 @@ SOFTWARE.
 `ifndef __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 `define __STEP_STATIC_ATTRIBUTES_INTERFACE_SVH
 
+`ifndef __BATHTUB_PKG_SVH
 `include "bathtub_pkg/bathtub_pkg.svh"
+`endif
 
 import uvm_pkg::*;
 
