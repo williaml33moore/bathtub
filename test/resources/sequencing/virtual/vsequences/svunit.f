@@ -1,7 +1,0 @@
--timescale 1ns/1ns
--f bathtub_vip.f
--incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item
--incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item/sequencers
--incdir $BATHTUB_VIP_DIR/test/resources/sequencing/sequence_items/mock_sequence_item/sequences
--incdir $BATHTUB_VIP_DIR/test/resources/sequencing/virtual/vsequencers
--incdir $BATHTUB_VIP_DIR/test/resources/sequencing/virtual/vsequences
