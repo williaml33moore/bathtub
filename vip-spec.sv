@@ -50,7 +50,7 @@ package bathtub_$vip_spec;
      const var static spec_schema spec = '{
         name: "bathtub",
         description: "BDD for SystemVerilog and UVM",
-        version: "0.1.0",
+        version: "1.0.0",
         repository: "https://github.com/williaml33moore/bathtub.git",
         author: "Bill Moore <williaml33moore@gmail.com>",
         license: "MIT",
