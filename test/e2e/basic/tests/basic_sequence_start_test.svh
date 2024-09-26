@@ -22,18 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */  
 
-`ifndef __BASIC_TEST_SVH
-`define __BASIC_TEST_SVH
+`ifndef __BASIC_SEQUENCE_START_TEST_SVH
+`define __BASIC_SEQUENCE_START_TEST_SVH
 
 typedef class basic_env;
-`include "basic_env.svh"
 
-class basic_test extends uvm_test;
-    `uvm_component_utils(basic_test)
+class basic_sequence_start_test extends uvm_test;
+    `uvm_component_utils(basic_sequence_start_test)
     basic_env env; // uvm_env containing the virtual sequencer
     bathtub_pkg::bathtub bathtub;
 
-    function new(string name = "basic_test", uvm_component parent = null);
+    function new(string name = "basic_sequence_start_test", uvm_component parent = null);
         super.new(name, parent);
     endfunction : new
 
@@ -43,14 +42,27 @@ class basic_test extends uvm_test;
         env = basic_env::type_id::create("env", this);
     endfunction : build_phase
 
-    task run_phase(uvm_phase phase);
-        bathtub.configure(env.seqr);
-        phase.raise_objection(this);
-        bathtub.run_test(phase); // Run Bathtub!
-        phase.drop_objection(this);
-    endtask : run_phase
+    virtual task main_phase(uvm_phase phase);
+        uvm_sequence_base bathtub_seq;
 
-endclass : basic_test
+        bathtub_seq = bathtub.as_sequence();
 
-`endif // __BASIC_TEST_SVH
+        `ifdef UVM_VERSION_1_0
+        bathtub_seq.starting_phase = phase;
+`elsif UVM_VERSION_1_1
+        bathtub_seq.starting_phase = phase;
+`elsif UVM_POST_VERSION_1_1
+        bathtub_seq.set_starting_phase(phase);
+`else
+        bathtub_seq.set_starting_phase(phase);
+`endif
+
+        bathtub_seq.start(env.seqr);
+    endtask : main_phase
+
+endclass : basic_sequence_start_test
+
+`include "basic_env.svh"
+
+`endif // __BASIC_SEQUENCE_START_TEST_SVH
   

@@ -22,18 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */  
 
-`ifndef __BASIC_TEST_SVH
-`define __BASIC_TEST_SVH
+`ifndef __BASIC_SEQUENCE_TEST_SVH
+`define __BASIC_SEQUENCE_TEST_SVH
 
 typedef class basic_env;
-`include "basic_env.svh"
 
-class basic_test extends uvm_test;
-    `uvm_component_utils(basic_test)
+class basic_sequence_test extends uvm_test;
+    `uvm_component_utils(basic_sequence_test)
     basic_env env; // uvm_env containing the virtual sequencer
     bathtub_pkg::bathtub bathtub;
 
-    function new(string name = "basic_test", uvm_component parent = null);
+    function new(string name = "basic_sequence_test", uvm_component parent = null);
         super.new(name, parent);
     endfunction : new
 
@@ -41,16 +40,14 @@ class basic_test extends uvm_test;
         bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
         super.build_phase(phase);
         env = basic_env::type_id::create("env", this);
+        
+        uvm_config_db#(uvm_sequence_base)::set(this, "env.seqr.main_phase",
+            "default_sequence", bathtub.as_sequence());
     endfunction : build_phase
 
-    task run_phase(uvm_phase phase);
-        bathtub.configure(env.seqr);
-        phase.raise_objection(this);
-        bathtub.run_test(phase); // Run Bathtub!
-        phase.drop_objection(this);
-    endtask : run_phase
+endclass : basic_sequence_test
 
-endclass : basic_test
+`include "basic_env.svh"
 
-`endif // __BASIC_TEST_SVH
+`endif // __BASIC_SEQUENCE_TEST_SVH
   

@@ -39,7 +39,7 @@ class gherkin_parser_rules_test extends uvm_test;
     endfunction : new
 
     virtual function void build_phase(uvm_phase phase);
-        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
+        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
         super.build_phase(phase);
         env = gherkin_parser_env::type_id::create("env", this);
     endfunction : build_phase
@@ -70,7 +70,7 @@ class gherkin_parser_rules_test extends uvm_test;
                     `uvm_info(get_name(), "Got one!", UVM_NONE)
                     assert ($cast(obj_item, item));
                     assert ($cast(actual_step_def, obj_item.get_payload()));
-                    step_text = actual_step_def.get_step_attributes().get_text();
+                    step_text = actual_step_def.get_step_attributes().get_step().get_text();
                     `uvm_info(get_name(), step_text, UVM_MEDIUM)
                     step_sb.push_back(step_text);
                     phase.drop_objection(this);

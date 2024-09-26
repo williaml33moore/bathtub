@@ -37,10 +37,19 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 	protected uvm_object_wrapper step_obj;
 	protected string step_obj_name;
 
-	function new(string name="step_nature");
+	function new(
+			string name="step_nature",
+			step_keyword_t keyword=\* ,
+			string expression="/^.*$/",
+			uvm_object_wrapper step_obj=null
+		);
 		super.new(name);
+		this.keyword = keyword;
+		this.expression = expression;
+		this.regexp = (bathtub_utils::is_regex(expression)) ? expression : bathtub_utils::bathtub_to_regexp(expression);
+		this.step_obj = step_obj;
+		this.step_obj_name = step_obj ? step_obj.get_type_name() : "null";
 	endfunction : new
-
 
 	`uvm_object_utils_begin(step_nature)
 		`uvm_field_enum(step_keyword_t, keyword, UVM_DEFAULT)
@@ -53,17 +62,7 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 	static function step_static_attributes_interface register_step(step_keyword_t keyword, string expression, uvm_object_wrapper step_obj, bit store_in_db=1'b1);
 		step_nature new_obj;
 
-		new_obj = new("static_step_object");
-		new_obj.keyword = keyword;
-		new_obj.expression = expression;
-		new_obj.set_step_obj(step_obj);
-		
-		if (bathtub_utils::is_regex(expression)) begin
-			new_obj.regexp = expression;
-		end
-		else begin
-			new_obj.regexp = bathtub_utils::bathtub_to_regexp(expression);
-		end
+		new_obj = new("static_step_object", keyword, expression, step_obj);
 		
 		if (store_in_db) begin
 			uvm_resource_db#(uvm_object_wrapper)::set(new_obj.regexp, STEP_DEF_RESOURCE_NAME, step_obj);
@@ -82,11 +81,6 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 		`uvm_info_end
 	endfunction : print_attributes
 			
-	// Set keyword
-	virtual function void set_keyword(step_keyword_t keyword);
-		this.keyword = keyword;
-	endfunction : set_keyword
-
 	// Get keyword
 	virtual function step_keyword_t get_keyword();
 		return keyword;
@@ -97,16 +91,6 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 		return expression;
 	endfunction : get_expression
 
-	// Set expression
-	virtual function void set_expression(string expression);
-		this.expression = expression;
-	endfunction : set_expression
-
-	// Set regexp
-	virtual function void set_regexp(string regexp);
-		this.regexp = regexp;
-	endfunction : set_regexp
-
 	// Get regexp
 	virtual function string get_regexp();
 		return regexp;
@@ -116,21 +100,10 @@ class step_nature extends uvm_object implements step_static_attributes_interface
 	virtual function uvm_object_wrapper get_step_obj();
 		return step_obj;
 	endfunction : get_step_obj
-
-	// Set obj_name
-	virtual function void set_step_obj(uvm_object_wrapper step_obj);
-		this.step_obj = step_obj;
-		this.step_obj_name = step_obj ? step_obj.get_type_name() : "null";
-	endfunction : set_step_obj
 	
 	// Get step_obj_name
 	virtual function string get_step_obj_name();
 		return step_obj_name;
 	endfunction : get_step_obj_name
-
-	// Set step_obj_name
-	virtual function void set_step_obj_name(string step_obj_name);
-		this.step_obj_name = step_obj_name;
-	endfunction : set_step_obj_name
 	
 endclass : step_nature

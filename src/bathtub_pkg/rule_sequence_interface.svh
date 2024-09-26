@@ -27,7 +27,30 @@ SOFTWARE.
 
 `include "bathtub_pkg/pool_provider_interface.svh"
 
+(* doc$markdown = "\
+    \ Interface for rule-level context sequences.\n\
+    \ \n\
+    \ The rule-level context sequences implement this interface.\n\
+    \ A user step definition sequence can access the current rule-level context sequence through its `get_current_rule_sequence()` function.\n\
+    \ "
+*)
 interface class rule_sequence_interface extends pool_provider_interface;
+	// =================================================================
+
+	(* doc$markdown = "\
+        \ Gets a reference to the rule object.\n\
+        \ \n\
+        \ When Bathtub parses a rule in a Gherkin feature file, Bathtub creates a `gherkin_pkg::rule` object for it.\n\
+        \ The rule-level context sequence contains a reference to the rule object.\n\
+        \ A user step definition sequence can retrieve a reference to the rule object with the context sequence's implementation of this function, e.g.:\n\
+        \ ```sv\n\
+        \ gherkin_pkg::rule my_rule = (get_current_rule_sequence() == null) ? null : get_current_rule_sequence().get_rule();\n\
+        \ ```\n\
+        \ Rules are optional in Gherkin feature files, so it's a good practice to check if the rule is present by testing if the rule sequence reference is null.\n\
+        \ "
+    *)
+    pure virtual function gherkin_pkg::rule get_rule();
+		// --------------------------------------------
 endclass : rule_sequence_interface
 
 `endif // __RULE_SEQUENCE_INTERFACE_SVH

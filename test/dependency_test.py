@@ -24,7 +24,9 @@ import pytest
 
 classes_under_test = [
     "bathtub_pkg/bathtub.svh",
+    "bathtub_pkg/bathtub_interface.svh",
     "bathtub_pkg/bathtub_pkg.svh",
+    "bathtub_pkg/bathtub_sequence.svh",
     "bathtub_pkg/bathtub_utils.svh",
     "bathtub_pkg/context_sequence.svh",
     "bathtub_pkg/feature_sequence.svh",
@@ -44,6 +46,7 @@ classes_under_test = [
     "bathtub_pkg/scenario_sequence_interface.svh",
     "bathtub_pkg/snippets.svh",
     "bathtub_pkg/step_attributes_interface.svh",
+    "bathtub_pkg/step_attributes_pool_t.svh",
     "bathtub_pkg/step_definition_interface.svh",
     "bathtub_pkg/step_definition_seq.svh", 
     "bathtub_pkg/step_nature.svh",

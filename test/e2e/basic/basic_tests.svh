@@ -23,4 +23,7 @@ SOFTWARE.
 */
 
 typedef class basic_test;
+typedef class basic_sequence_test;
 `include "basic_test.svh"
+`include "basic_sequence_test.svh"
+`include "basic_sequence_start_test.svh"

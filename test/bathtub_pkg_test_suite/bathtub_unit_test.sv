@@ -45,7 +45,7 @@ module bathtub_unit_test;
   function void build();
     svunit_ut = new(name);
 
-    my_bathtub = new(/* New arguments if needed */);
+    my_bathtub = new("my_bathtub", null);
   endfunction
 
 

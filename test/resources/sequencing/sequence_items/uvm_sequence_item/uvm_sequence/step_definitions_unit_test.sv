@@ -16,6 +16,7 @@ module step_definitions_unit_test;
 
   
   uvm_sequencer sequencer;
+  bathtub_pkg::step_attributes_pool_t global_step_attributes_pool;
 
 
   //===================================
@@ -38,6 +39,7 @@ module step_definitions_unit_test;
   task setup();
     svunit_ut.setup();
     /* Place Setup Code Here */
+    global_step_attributes_pool = bathtub_pkg::step_attributes_pool_t::get_global_pool();
   endtask
 
 
@@ -92,17 +94,13 @@ module step_definitions_unit_test;
     `SVTEST(Hello_parameters)
       // ====================
       hello_parameters_vseq my_hello_parameters_vseq;
+      gherkin_pkg::step step;
       bathtub_pkg::step_nurture step_attributes;
 
       my_hello_parameters_vseq = hello_parameters_vseq::type_id::create("my_hello_parameters_vseq");
-			step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.set_runtime_keyword("Given");
-			step_attributes.set_text(hello_parameters_vseq::magic_step_text);
-			step_attributes.set_argument(null);
-			step_attributes.set_static_attributes(my_hello_parameters_vseq.get_step_static_attributes());
-			step_attributes.set_current_feature_sequence(null);
-			step_attributes.set_current_scenario_sequence(null);
-			my_hello_parameters_vseq.set_step_attributes(step_attributes);
+      step = new("step", '{"Given", hello_parameters_vseq::magic_step_text, null});
+			step_attributes = new("step_attributes", step);
+			global_step_attributes_pool.add(my_hello_parameters_vseq, step_attributes);
 
       my_hello_parameters_vseq.start(null);
 
@@ -112,6 +110,7 @@ module step_definitions_unit_test;
     `SVTEST(Hello_pool)
       // ==============
       hello_parameters_pool_vseq my_hello_parameters_pool_vseq;
+      gherkin_pkg::step step;
       bathtub_pkg::step_nurture step_attributes;
       bathtub_pkg::scenario_sequence pools;
       int actual_i;
@@ -120,12 +119,9 @@ module step_definitions_unit_test;
     
       my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
       pools = scenario_sequence::type_id::create("pool");
-			step_attributes = step_nurture::type_id::create("step_attributes");
-			step_attributes.set_runtime_keyword("Given");
-			step_attributes.set_text({hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"});
-			step_attributes.set_static_attributes(my_hello_parameters_pool_vseq.get_step_static_attributes());
-			step_attributes.set_current_scenario_sequence(pools);
-			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+      step = new("step", '{"Given", {hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"}, null});
+			step_attributes = new("step_attributes", step, pools);
+			global_step_attributes_pool.add(my_hello_parameters_pool_vseq, step_attributes);
 
       my_hello_parameters_pool_vseq.start(null);
       
@@ -157,10 +153,9 @@ module step_definitions_unit_test;
       step_string = {"Given ", hello_parameters_pool_vseq::magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_pool_vseq = hello_parameters_pool_vseq::type_id::create("my_hello_parameters_pool_vseq");
-      pools = scenario_sequence::type_id::create("pool");
-			step_attributes = step_nurture::type_id::create("step_attributes");
-      step_attributes.configure(step_bundle.step, my_hello_parameters_pool_vseq, pools);
-			my_hello_parameters_pool_vseq.set_step_attributes(step_attributes);
+      pools = scenario_sequence::type_id::create("pools");
+			step_attributes = new("step_attributes", step_bundle.step, pools);
+			global_step_attributes_pool.add(my_hello_parameters_pool_vseq, step_attributes);
 
       my_hello_parameters_pool_vseq.start(null);
       
@@ -192,9 +187,8 @@ module step_definitions_unit_test;
       step_string = {"Given ", hello_parameters_seq_item_vseq::magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_hello_parameters_seq_item_vseq = hello_parameters_seq_item_vseq::type_id::create("my_hello_parameters_seq_item_vseq");
-			step_attributes = step_nurture::type_id::create("step_attributes");
-      step_attributes.configure(step_bundle.step, my_hello_parameters_seq_item_vseq);
-			my_hello_parameters_seq_item_vseq.set_step_attributes(step_attributes);
+			step_attributes = new("step_attributes", step_bundle.step);
+			global_step_attributes_pool.add(my_hello_parameters_seq_item_vseq, step_attributes);
 
       fork
         begin
@@ -242,9 +236,8 @@ module step_definitions_unit_test;
       step_string = {"Given ", my_sequence.magic_step_text, "42, 98.6, and Gherkin"};
       parser.parse_step_string(step_string, step_bundle);
       my_sequence = hello_parameters_seq_item_uvm_do_vseq::type_id::create("my_sequence");
-			step_attributes = step_nurture::type_id::create("step_attributes");
-      step_attributes.configure(step_bundle.step, my_sequence);
-			my_sequence.set_step_attributes(step_attributes);
+			step_attributes = new("step_attributes", step_bundle.step);
+			global_step_attributes_pool.add(my_sequence, step_attributes);
 
       fork
         begin

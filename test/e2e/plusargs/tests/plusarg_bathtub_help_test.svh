@@ -38,7 +38,7 @@ class plusarg_bathtub_help_test extends uvm_test;
     endfunction : new
 
     virtual function void build_phase(uvm_phase phase);
-        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
+        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
         super.build_phase(phase);
         my_plusargs_env = plusargs_env::type_id::create("my_plusargs_env", this);
     endfunction : build_phase

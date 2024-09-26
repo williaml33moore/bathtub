@@ -102,14 +102,14 @@ module top();
     endfunction : new
 
     virtual function void build_phase(uvm_phase phase);
-      bathtub = bathtub_pkg::bathtub::type_id::create("bathtub");
+      bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
       super.build_phase(phase);
       my_alu_env = alu_env::type_id::create("my_alu_env", this);
     endfunction : build_phase
     
     task run_phase(uvm_phase phase);
       bathtub.configure(my_alu_env.alu_vseqr); // Virtual sequencer
-      bathtub.feature_files.push_back("alu_division.feature"); // Feature file
+      bathtub.push_back_feature_file("alu_division.feature"); // Feature file
       phase.raise_objection(this);
       bathtub.run_test(phase); // Run Bathtub!
       phase.drop_objection(this);

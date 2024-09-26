@@ -20,37 +20,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/  
+*/
 
-`ifndef __BASIC_TEST_SVH
-`define __BASIC_TEST_SVH
+`ifndef __STEP_ATTRIBUTES_POOL_T_SVH
+`define __STEP_ATTRIBUTES_POOL_T_SVH
 
-typedef class basic_env;
-`include "basic_env.svh"
+import uvm_pkg::*;
+typedef class step_nurture;
 
-class basic_test extends uvm_test;
-    `uvm_component_utils(basic_test)
-    basic_env env; // uvm_env containing the virtual sequencer
-    bathtub_pkg::bathtub bathtub;
+typedef uvm_pool#(uvm_sequence_base, step_nurture) step_attributes_pool_t;
 
-    function new(string name = "basic_test", uvm_component parent = null);
-        super.new(name, parent);
-    endfunction : new
+`include "bathtub_pkg/step_nurture.svh"
 
-    virtual function void build_phase(uvm_phase phase);
-        bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
-        super.build_phase(phase);
-        env = basic_env::type_id::create("env", this);
-    endfunction : build_phase
-
-    task run_phase(uvm_phase phase);
-        bathtub.configure(env.seqr);
-        phase.raise_objection(this);
-        bathtub.run_test(phase); // Run Bathtub!
-        phase.drop_objection(this);
-    endtask : run_phase
-
-endclass : basic_test
-
-`endif // __BASIC_TEST_SVH
-  
+`endif // __STEP_ATTRIBUTES_POOL_T_SVH
