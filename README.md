@@ -13,7 +13,7 @@ enabling executable specifications and true living documentation.
 Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
 
 For more information and complete documentation, visit:
-* [bathtubBDD.dev](https://bathtubbdd.dev)
+* [bathtubBDD.dev](https://bathtubbdd.dev): Web site and blog
 * [GitHub Releases](https://github.com/williaml33moore/bathtub/releases): Bathtub downloads
 * [GitHub Wiki](https://github.com/williaml33moore/bathtub/wiki): Technical documentation and user guides
 * [GitHub Discussions](https://github.com/williaml33moore/bathtub/discussions): Join the conversation (requires a free [account](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_))
