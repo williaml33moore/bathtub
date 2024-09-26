@@ -1,3 +1,5 @@
 .venv
 tmp
 **/__pycache__
+pytest.ini
+test
