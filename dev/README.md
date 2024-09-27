@@ -50,15 +50,15 @@ When it's time to tag and release, it's fine to work directly in the `release` b
 Merge `main` into `release`.
 Make sure `release` does not have `test/`, `dev/`, or the test file `pytest.ini`.
 ```sh
-git fetch origin
+git fetch origin --tags
 git checkout release
-git pull # Do what's necessary to get release branch clean
+git pull # Do what's necessary to get working directory clean
 git merge main
-git rm test dev pytest.ini
+git rm -r test dev pytest.ini # Errors are fine if dirs are missing or unmanaged
 git commit
 ```
 The tagging procedures are detailed below.
-When the tag is done, push `release`.
+When the tag is done, push `release` to origin.
 
 When `release` is tagged with a new tag `vX.Y.Z`, apply a matching tag to `main`, then create a new `tagged/main` branch.
 ```sh
