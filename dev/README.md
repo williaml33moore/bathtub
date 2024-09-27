@@ -5,8 +5,9 @@ The Bathtub repository has a number of special persistent branches.
 * `main` -- The default trunk branch.
   Contains complete `src/`, and `test/`, and `dev/` directories.
   Contains a minimal `docs/` directory.
-  Contains the version of `README.md` file displayed on Bathtub's GitHub home page.
+  Contains the version of `README.md` displayed on Bathtub's GitHub home page.
 * `pages` -- The branch for the web page <https://williaml33moore.github.io/bathtub/>, also available at <https://bathtubbdd.dev/>.
+  Contains a custom, minimal `README.md`.
   Contains complete `src/` and `test/` directories merged in from `main`.
   These directories are only for citation purposes, so web pages can link to Bathtub source files, e.g., <https://github.com/williaml33moore/bathtub/blob/pages/src/bathtub_vip.f>.
   Contains a complete `docs/` directory with the source code for the web page and blog.
@@ -14,6 +15,7 @@ The Bathtub repository has a number of special persistent branches.
   `main` is for code; `pages` is for the web page.
 * `release` -- The branch for preparing GitHub releases.
   Releases consist of the directories and files that are [tagged](https://github.com/williaml33moore/bathtub/tags) in Git and packaged for users to download from the Bathtub [releases](https://github.com/williaml33moore/bathtub/releases) page.
+  Contains a version of `README.md` customized for user downloads.
   Contains a complete `src/` directory and a minimal `docs/` directory.
   Omits `test/` and `dev/`.
   Most of the time, `release` represents the state of the latest release.
@@ -40,4 +42,31 @@ When the feature work is done, create a [pull request](https://github.com/willia
 Delete the feature branch when the pull request is completed.
 GitHub automatically [rebuilds](https://github.com/williaml33moore/bathtub/actions) the web page every time there's a pull request, commit, or push to `pages`.
 
+_Do_ merge `main` into `pages` from time to time.
+_Do not_ merge `pages` back into `main` ever.
+We do not want web content and blog posts in `main`.
+
+When it's time to tag and release, it's fine to work directly in the `release` branch.
+Merge `main` into `release`.
+Make sure `release` does not have `test/`, `dev/`, or the test file `pytest.ini`.
+```sh
+git fetch origin
+git checkout release
+git pull # Do what's necessary to get release branch clean
+git merge main
+git rm test dev pytest.ini
+git commit
+```
+The tagging procedures are detailed below.
+When the tag is done, push `release`.
+
+When `release` is tagged with a new tag `vX.Y.Z`, apply a matching tag to `main`, then create a new `tagged/main` branch.
+```sh
+git fetch origin --tags
+git checkout main
+git tag -a main/vX.Y.Z -m "Release version X.Y.Z"
+git push main/vX.Y.Z
+git branch tagged/main/vX.Y.Z
+git push tagged/main/vX.Y.Z
+```
 
