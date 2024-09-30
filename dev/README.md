@@ -60,17 +60,20 @@ git merge main
 git rm -r test dev pytest.ini # Errors are fine if dirs are missing or unmanaged
 git commit
 ```
+Other than removing unwanted files and perhaps maintaining `README.md`, which is specific to the `release` branch, do not commit any new files or file modifications into `release`.
+All file changes should be done in `main` and merged into `release`.
+We never want `release` to get ahead of `main`.
+
 The tagging procedures are detailed below.
-When the tag is done, push `release` to origin.
+When the tag is done, push `release` to `origin`.
 
 When `release` is tagged with a new tag `vX.Y.Z`, apply a matching tag to `main`, then create a new `tagged/main` branch.
 ```sh
 git fetch origin --tags
 git checkout main
 git tag -a main/vX.Y.Z -m "Release version X.Y.Z"
-git push main/vX.Y.Z
 git branch tagged/main/vX.Y.Z
-git push tagged/main/vX.Y.Z
+git push main/vX.Y.Z tagged/main/vX.Y.Z # Push tag and branch
 ```
 Do not commit changes into the `src/` directory of a tagged `main/vX.Y.Z` branch.
 The intent is that the `src/` directory should stay unchanged from the matching tag.
@@ -133,4 +136,16 @@ Create the GitHub release at <https://github.com/williaml33moore/bathtub/release
 
 When the release is complete, tag `main` and `pages` with matching version tags as snapshots.
 ```sh
+git fetch origin --tags
+git checkout main
+git tag -a main/vX.Y.Z -m "Release version X.Y.Z"
+git branch tagged/main/vX.Y.Z
+git push main/vX.Y.Z tagged/main/vX.Y.Z # Push tag and branch
+```
+```sh
+git fetch origin --tags
+git checkout pages
+git merge tagged/main/vX.Y.Z
+git tag -a pages/vX.Y.Z -m "Release version X.Y.Z"
+git push pages/vX.Y.Z pages # Push tag and branch
 ```
