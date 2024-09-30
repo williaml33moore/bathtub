@@ -131,9 +131,10 @@ This QR code takes you to the home page.
 These pages present a relatively user-friendly façade for general audiences with content like blog posts, background material, and announcements. The GitHub project is more technical and requires some GitHub familiarity to navigate, but it is the complete single source of truth for Bathtub.
 
 The GitHub repo contains the following:
-[Source code](https://github.com/williaml33moore/bathtub)
-: The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
-The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone. Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
+
+[Releases](https://github.com/williaml33moore/bathtub/releases)
+: Download and try the latest release.
+Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
 
 [Pages](https://williaml33moore.github.io/bathtub/)
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
@@ -147,6 +148,10 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 [Issues](https://github.com/williaml33moore/bathtub/issues)
 : Tasks are tracked and bugs are reported here.
 
-Bathtub is a new work-in-progress so everything is incomplete today, but continuously improving.
+[Source code](https://github.com/williaml33moore/bathtub)
+: The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
+The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone.
+
+Bathtub is a work-in-progress so everything is incomplete today, but continuously improving!
 
 ---
