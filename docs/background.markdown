@@ -97,6 +97,12 @@ Bathtub is a library written entirely in SystemVerilog that enables BDD for IC p
 It's built on top of UVM so it integrates seamlessly with existing verification environments.
 Users run it in their simulators along with their RTL models; it reads and parses their Gherkin files, and executes them as tests.
 
+Now your entire IC development team can enjoy the full benefits of BDD that software developers have been been receiving for years.
+RTL designers, DV engineers, firmware and embedded software coders, system architects, and project managers can collaborate on mapping out upcoming features, complete with examples, at a high level, in a language the whole team understands.
+These are invaluable conversations--best held together in real time with index cards, whiteboards, or their digital equivalents--where every colleague contributes to a shared understanding of a feature's behavior.
+Two or three participants distill those features into executable Gherkin files for everyone to review and reference.
+Then, with Bathtub, DV engineers simulate those feature files as tests, using the automated tools and flows they know best.
+
 A slightly deeper dive for the UVM community.
 Assuming you already have a working UVM testbench, you need to do a few things to add Bathtub to it.
 First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
@@ -104,7 +110,7 @@ These are called step definitions and they effectively map your natural language
 Bathtub provides macros that simplify step definition creation.
 Your _Then_ steps should include assertions or equivalent conditionals so your scenarios can be self-checking.
 Then you need to write a new UVM test that's a lot like your existing tests in that it instantiates your UVM environment, but it also instantiates and configures a `bathtub` object from the package `bathtub_pkg`.
-When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all sequentially on your existing virtual sequencer.
+When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a hand-coded default sequence, your test "runs" your `bathtub` object, which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all sequentially on your existing virtual sequencer.
 
 Bathtub supports only SystemVerilog, not VHDL. 
 
@@ -125,15 +131,16 @@ This QR code takes you to the home page.
 These pages present a relatively user-friendly façade for general audiences with content like blog posts, background material, and announcements. The GitHub project is more technical and requires some GitHub familiarity to navigate, but it is the complete single source of truth for Bathtub.
 
 The GitHub repo contains the following:
-[Source code](https://github.com/williaml33moore/bathtub)
-: The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
-The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone. Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
+
+[Releases](https://github.com/williaml33moore/bathtub/releases)
+: Download and try the latest release.
+Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog simulator with UVM to run.
 
 [Pages](https://williaml33moore.github.io/bathtub/)
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 
 [Wiki](https://github.com/williaml33moore/bathtub/wiki)
-: For technical documentation and user guides.
+: For technical documentation and user guides, including a detailed [Getting Started](https://github.com/williaml33moore/bathtub/wiki/Getting-Started) page.
 
 [Discussions](https://github.com/williaml33moore/bathtub/discussions)
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
@@ -141,6 +148,10 @@ The repo is available for cloning and forking, but I don't expect to entertain p
 [Issues](https://github.com/williaml33moore/bathtub/issues)
 : Tasks are tracked and bugs are reported here.
 
-Bathtub is a new work-in-progress so everything is incomplete today, but continuously improving.
+[Source code](https://github.com/williaml33moore/bathtub)
+: The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
+The repo is available for cloning and forking, but I'm not accepting pull requests at this time.
+
+Bathtub is a work-in-progress so everything is incomplete today, but continuously improving!
 
 ---
