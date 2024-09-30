@@ -97,6 +97,12 @@ Bathtub is a library written entirely in SystemVerilog that enables BDD for IC p
 It's built on top of UVM so it integrates seamlessly with existing verification environments.
 Users run it in their simulators along with their RTL models; it reads and parses their Gherkin files, and executes them as tests.
 
+Now your entire IC development team can enjoy the full benefits of BDD that software developers have been been receiving for years.
+RTL designers, DV engineers, firmware and embedded software coders, system architects, and project managers can collaborate on mapping out upcoming features, complete with examples, at a high level, in a language the whole team understands.
+These are invaluable conversations--best held together in real time with index cards, whiteboards, or their digital equivalents--where every colleague contributes to a shared understanding of a feature's behavior.
+Two or three participants distill those features into executable Gherkin files for everyone to review and reference.
+Then, with Bathtub, DV engineers simulate those feature files as tests, using the automated tools and flows they know best.
+
 A slightly deeper dive for the UVM community.
 Assuming you already have a working UVM testbench, you need to do a few things to add Bathtub to it.
 First, you need to write UVM virtual sequences that cover every _Given_, _When_, and _Then_ step in your Gherkin file.
@@ -104,7 +110,7 @@ These are called step definitions and they effectively map your natural language
 Bathtub provides macros that simplify step definition creation.
 Your _Then_ steps should include assertions or equivalent conditionals so your scenarios can be self-checking.
 Then you need to write a new UVM test that's a lot like your existing tests in that it instantiates your UVM environment, but it also instantiates and configures a `bathtub` object from the package `bathtub_pkg`.
-When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a default sequence, your test "runs" your `bathtub` object which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all sequentially on your existing virtual sequencer.
+When you run your test, e.g., with `+UVM_TESTNAME=bathtub_test`, instead of running a hand-coded default sequence, your test "runs" your `bathtub` object, which reads and parses your Gherkin files at run time, maps its steps to your step definition virtual sequences, then runs them all sequentially on your existing virtual sequencer.
 
 Bathtub supports only SystemVerilog, not VHDL. 
 
