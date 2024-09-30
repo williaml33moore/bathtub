@@ -140,7 +140,7 @@ Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog s
 : These web pages, deployed and served from the [`pages`](https://github.com/williaml33moore/bathtub/tree/pages) branch to [https://williaml33moore.github.io/bathtub/](https://williaml33moore.github.io/bathtub/).
 
 [Wiki](https://github.com/williaml33moore/bathtub/wiki)
-: For technical documentation and user guides.
+: For technical documentation and user guides, including a detailed [Getting Started](https://github.com/williaml33moore/bathtub/wiki/Getting-Started) page.
 
 [Discussions](https://github.com/williaml33moore/bathtub/discussions)
 : This is currently the preferred forum for community conversation about Bathtub. It requires a free GitHub account. You can sign up [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fdiscussions%2Findex&source=header-repo&source_repo=williaml33moore%2Fbathtub_).
@@ -150,7 +150,7 @@ Bathtub is written in SystemVerilog and requires a full-featured SystemVerilog s
 
 [Source code](https://github.com/williaml33moore/bathtub)
 : The Bathtub code is available open-source under the [M.I.T. license](https://github.com/williaml33moore/bathtub/blob/main/LICENSE).
-The repo is available for cloning and forking, but I don't expect to entertain pull requests until it has reached a more complete release milestone.
+The repo is available for cloning and forking, but I'm not accepting pull requests at this time.
 
 Bathtub is a work-in-progress so everything is incomplete today, but continuously improving!
 
