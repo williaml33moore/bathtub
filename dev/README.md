@@ -47,6 +47,9 @@ _Do not_ merge `pages` back into `main` ever.
 We do not want web content and blog posts in `main`.
 
 When it's time to tag and release, it's fine to work directly in the `release` branch.
+
+__Important:__ In `main`, edit file `vip-spec.sv` and update the `version:` number to the new version you want to create, and commit the change.
+
 Merge `main` into `release`.
 Make sure `release` does not have `test/`, `dev/`, or the test file `pytest.ini`.
 ```sh
@@ -69,4 +72,65 @@ git push main/vX.Y.Z
 git branch tagged/main/vX.Y.Z
 git push tagged/main/vX.Y.Z
 ```
+Do not commit changes into the `src/` directory of a tagged `main/vX.Y.Z` branch.
+The intent is that the `src/` directory should stay unchanged from the matching tag.
+Do feel free to commit changes into the `test/` and `dev/` directories, for example, to add retroactively new tests or modify old tests that apply to the source code tagged `vX.Y.Z`.
 
+## Tags
+The Bathub repository contains the following tags, where "X.Y.Z" follows the [semantic versioning](https://semver.org/) numbering format.
+* `vX.Y.Z` -- The tag used to create a GitHub [release](https://github.com/williaml33moore/bathtub/releases/new).
+* `main/vX.Y.Z` -- A snapshot of the `main` branch when release `vX.Y.Z` was created.
+* `pages/vX.Y.Z` -- A snapshot of the `pages` branch when release `vX.Y.Z` was created.
+
+### Procedures and Guidelines
+Follow the procedures above to prepare the `release` branch in a working directory.
+Get the working directory clean, i.e., no outstanding commits or unmodified files.
+```sh
+$ git status
+# On branch release
+nothing to commit, working directory clean
+```
+Run whatever tests you deem necessary in the working directory to validate the code prior to the release.
+To run tests, temporarily checkout directory `test/` and file `pytest.ini`, but do not commit them to the branch.
+
+To run the latest tests, check out the test artifacts from `main`:
+```sh
+git reset
+git checkout main -- pytest.ini test
+pytest
+```
+
+To run compatibility tests, check out the test artifacts from the tagged `main` branch from an earlier tag. In this example, `vX.Y.0` represents a version earlier than `vX.Y.Z`, and you are testing that `vX.Y.Z` source doesn't break earlier `vX.Y.0` tests.
+```sh
+git reset
+git checkout tagged/main/vX.Y.0 -- test pytest.ini
+pytest
+```
+Repeat with as many prior releases as necessary.
+For example, you might also test against `tagged/main/vX.0.0`.
+
+If any tests fail, fix them in `main`, and restart the release process.
+If the latest source is incompatible with an earlier release, increment the appropriate semantic versioning field in the version number.
+
+When your tests are clean, reset your work directory to clear out your temporary test artifacts.
+Double-check the version in `vip-spec.sv`, then tag the `release` branch, and push the tag and branch.
+```sh
+git fetch origin --tags
+git reset
+git status # Should be on branch release, and working directory should be clean and up-to-date
+cat vip-spec.sv # Check version
+git tag -a vX.Y.Z -m "Release version X.Y.Z"
+git push origin vX.Y.Z release
+```
+Create the GitHub release at <https://github.com/williaml33moore/bathtub/releases/new>.
+* Choose a tag: "vX.Y.Z"
+* Previous tag: Auto or manual
+* Generate release notes
+* Release title: "Bathtub vX.Y.Z"
+* Set as the latest release: Yes
+* Create a discussion for this release: Yes
+* Publish release
+
+When the release is complete, tag `main` and `pages` with matching version tags as snapshots.
+```sh
+```
