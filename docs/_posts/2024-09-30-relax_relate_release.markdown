@@ -6,7 +6,7 @@ date: 2024-09-30 06:00:00 -0700
 tags: bathtub github livingdocs systemverilog uvm wiki pytest
 ---
 Back in the spring of this year, I formulated a plan to spend the summer working hard on Bathtub, with the goal of creating a 1.0.0 release before the fall.
-My [digital almanac](https://www.timeanddate.com/calendar/seasons.html) informed me that in my neck of the woods, autumn started on Sunday, September 22 at 5:43 am, so I circled the date in my mind and got to grinding.
+My [digital almanac](https://www.timeanddate.com/calendar/seasons.html) informed me that in my corner of the planet, autumn started on Sunday, September 22 at 5:43 am, so I circled the date in my mind and got to grinding.
 
 Three weeks before the golden day, things were going great, but I decided to sabotage myself by embarking on a new little side project.
 (It's under wraps for now, but I'll share more when I can.)
@@ -111,4 +111,3 @@ The tag and release process went smoothly, and [Bathtub v1.0.0](https://github.c
 1.5 days out of 150 is only one percent over schedule. I can live with that.
 
 What a great summer.
-    
