@@ -140,12 +140,12 @@ git fetch origin --tags
 git checkout main
 git tag -a main/vX.Y.Z -m "Release version X.Y.Z"
 git branch tagged/main/vX.Y.Z
-git push main/vX.Y.Z tagged/main/vX.Y.Z # Push tag and branch
+git push origin main/vX.Y.Z tagged/main/vX.Y.Z # Push tag and branch
 ```
 ```sh
 git fetch origin --tags
 git checkout pages
 git merge tagged/main/vX.Y.Z
 git tag -a pages/vX.Y.Z -m "Release version X.Y.Z"
-git push pages/vX.Y.Z pages # Push tag and branch
+git push origin pages/vX.Y.Z pages # Push tag and branch
 ```
