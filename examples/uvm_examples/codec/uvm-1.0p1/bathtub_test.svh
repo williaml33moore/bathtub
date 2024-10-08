@@ -42,7 +42,7 @@ class bathtub_test extends test;
 
         bathtub = bathtub_pkg::bathtub::type_id::create("bathtub", this);
 
-        virtual_sequencer = tb_virtual_sequencer#(tb_env, codec_step_definition_rif)::type_id::create("virtual_sequencer", this);
+        virtual_sequencer = tb_virtual_sequencer#(tb_env)::type_id::create("virtual_sequencer", this);
 
         // Override default sequences set in the base class.
         uvm_config_db#(uvm_object_wrapper)::set(null, "env.vip.sqr.main_phase",

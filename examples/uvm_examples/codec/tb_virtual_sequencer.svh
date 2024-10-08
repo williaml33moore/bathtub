@@ -10,7 +10,7 @@ interface class codec_step_definition_rif;
     pure virtual function vip_sequencer vip_sqr();
 endclass : codec_step_definition_rif
 
-class tb_virtual_sequencer#(type ENV=tb_env, type SEQ_RIF=codec_step_definition_rif) extends uvm_sequencer implements codec_step_definition_rif;
+class tb_virtual_sequencer#(type ENV=tb_env) extends uvm_sequencer implements codec_step_definition_rif;
     protected ENV env_;
 
     function new(input string name="tb_virtual_sequencer", input uvm_component parent=null, ENV env=null);
