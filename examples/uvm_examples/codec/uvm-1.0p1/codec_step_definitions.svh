@@ -20,9 +20,9 @@ $error({"\n",
 
 import uvm_pkg::*;
 
-virtual class codec_step_definition extends uvm_sequence implements bathtub_pkg::step_definition_interface;
+virtual class codec_step_definition#(type VSQR_TYPE=codec_step_definition_rif) extends uvm_sequence implements bathtub_pkg::step_definition_interface;
     `virtual_step_definition("abstract base class for step definitions")
-    `uvm_declare_p_sequencer(tb_virtual_sequencer)
+    `uvm_declare_p_sequencer(VSQR_TYPE)
     function new (string name="codec_step_definition");
         super.new(name);
     endfunction : new
@@ -58,7 +58,7 @@ class transmit_chr_seq extends codec_step_definition;
         chr_str = `step_parameter_get_next_arg_as(string);
         `step_parameter_get_args_end
         chr = chr_str.atohex();
-        `uvm_create_on(tr, p_sequencer.tx_src)
+        `uvm_create_on(tr, p_sequencer.tx_src())
         start_item(tr, -1, tr.get_sequencer());
         if (!tr.randomize() with {chr == local::chr;} ) begin 
             `uvm_warning("RNDFLD", "Randomization failed") 
@@ -86,7 +86,7 @@ class vip_transmit_chr_seq extends codec_step_definition;
         chr_str = `step_parameter_get_next_arg_as(string);
         `step_parameter_get_args_end
         chr = chr_str.atohex();
-        `uvm_create_on(tr, p_sequencer.vip_sqr)
+        `uvm_create_on(tr, p_sequencer.vip_sqr())
         start_item(tr, -1, tr.get_sequencer());
         if (!tr.randomize() with {chr == local::chr;} ) begin 
             `uvm_warning("RNDFLD", "Randomization failed") 
