@@ -26,7 +26,7 @@ I published a paper on Bathtub called "[Gherkin Implementation in SystemVerilog 
 I have tons of plans for this tool and I'm excited to be on this adventure.
 
 ![QR code for bathtub pages]({{ site.baseurl }}/assets/about/qrcode_williaml33moore.github.io.png) \
-Bathtub home page
+Bathtub home page: <https://BathtubBDD.dev>
 
 **Please Note**--The views and opinions expressed by me in these pages and the underlying GitHub repository are mine alone, and do not necessarily reflect the views or opinions of my employers, clients, partners, or vendors--past, current, or future--or any other organizations which with I am affiliated.
 Bathtub was begun at Everactive, but currently it is a personal project I work on on my own time.
