@@ -1,3 +1,7 @@
+.env
 .venv
-tmp
 **/__pycache__
+launch.json
+settings.json
+tasks.json
+tmp
