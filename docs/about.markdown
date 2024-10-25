@@ -7,7 +7,7 @@ permalink: /about/
 
 My name is [Bill Moore](https://www.linkedin.com/in/william7moore/).
 I received a B.S. in Electrical Engineering from Stanford University and have enjoyed a thirty year career in IC design and verification, working for or with over a dozen companies.
-I am currently a Senior Verification Engineer with [Paradigm Works](http://paradigm-works.com).
+I am currently a Design Verification Engineering consultant.
 A compulsive lifelong learner, I have a passion for finding creative solutions to technical problems, and a gift for helping teams and individuals communicate more effectively.
 I live in San Jose, California--the "Capital of Silicon Valley"--with my wife and son.
 
